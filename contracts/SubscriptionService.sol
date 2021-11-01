@@ -13,7 +13,7 @@ contract SubscriptionService {
         address to;
         uint128 value;
         uint32 period;
-        address myaddress;
+        uint256 pubkey;
         string name;
         string description;
     }
@@ -31,6 +31,7 @@ contract SubscriptionService {
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), tvm.pubkey()), 103);
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), serviceKey), 104);
         (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = svc_params.toSlice().decode(address, uint128, uint32, string, string);
+	svcparams.pubkey = serviceKey;
         params = svc_params;
     }
 
