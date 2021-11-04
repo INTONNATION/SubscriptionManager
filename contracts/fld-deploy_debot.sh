@@ -3,7 +3,11 @@
 set -xe
 
 for i in SubsMan clientDebot Subscription serviceDebot SubscriptionService SubscriptionIndex Wallet; do
-	tondev sol compile $i.sol;
+	 solc_0_47_0_linux $i.sol;
+done
+
+for i in Subscription SubscriptionService SubscriptionIndex Wallet; do
+         tondev sol compile $i.sol;
 done
 
 tos=tonos-cli
