@@ -13,7 +13,15 @@ contract SubscriptionIndex {
     address static user_wallet;
     uint256 public ownerKey;
     address public subscription_addr;
+    ServiceParams public svcparams;
 
+    struct ServiceParams {
+        address to;
+        uint128 value;
+        uint32 period;
+        string name;
+        string description;
+    }
 
     modifier onlyOwner {
 		require(msg.pubkey() == tvm.pubkey(), 100);
@@ -32,6 +40,7 @@ contract SubscriptionIndex {
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), ownerKey), 106);
         require(subsAddr != address(0), 107);
         subscription_addr = subsAddr;
+	(svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = svc_params.toSlice().decode(address, uint128, uint32, string, string);
     }
 
     function cancel() public onlyOwner {
