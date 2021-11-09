@@ -42,7 +42,7 @@ contract Subscription {
             code: image,
             pubkey: tvm.pubkey(),
             varInit: { 
-                svcParams: svcParams,
+                params: svcParams,
                 user_wallet: user_wallet
             },
             contr: SubscriptionIndex
