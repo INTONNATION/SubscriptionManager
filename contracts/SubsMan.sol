@@ -180,7 +180,8 @@ contract SubsMan is Debot {
         new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildSubscriptionIndex(ownerKey), signature, subsAddr);
     }
 
-    function deployAccount(bytes signature) public view {
+    function deployAccount(bytes signature) public {
+	Terminal.print(0, signature);
         TvmCell body = tvm.encodeBody(SubsMan.deployAccountHelper, m_ownerKey, m_serviceKey, svcParams, signature);
         this.callMultisig(m_wallet, m_ownerKey, m_sbHandle, address(this), body, DEPLOY_FEE, tvm.functionId(checkAccount));
     }

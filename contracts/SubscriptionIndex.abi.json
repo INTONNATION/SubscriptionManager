@@ -1,6 +1,5 @@
 {
 	"ABI version": 2,
-	"version": "2.2",
 	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
@@ -42,6 +41,14 @@
 			"outputs": [
 				{"name":"subscription_addr","type":"address"}
 			]
+		},
+		{
+			"name": "svcparams",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"bytes"},{"name":"description","type":"bytes"}],"name":"svcparams","type":"tuple"}
+			]
 		}
 	],
 	"data": [
@@ -49,14 +56,5 @@
 		{"key":2,"name":"user_wallet","type":"address"}
 	],
 	"events": [
-	],
-	"fields": [
-		{"name":"_pubkey","type":"uint256"},
-		{"name":"_timestamp","type":"uint64"},
-		{"name":"_constructorFlag","type":"bool"},
-		{"name":"params","type":"cell"},
-		{"name":"user_wallet","type":"address"},
-		{"name":"ownerKey","type":"uint256"},
-		{"name":"subscription_addr","type":"address"}
 	]
 }
