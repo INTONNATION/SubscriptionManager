@@ -8,6 +8,7 @@ contract SubscriptionService {
     TvmCell params;
     uint256 static serviceKey;
     ServiceParams public svcparams;
+    uint8 status;
 
     struct ServiceParams {
         address to;
