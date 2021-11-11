@@ -3,10 +3,12 @@
 set -xe
 
 for i in SubsMan clientDebot Subscription serviceDebot SubscriptionService SubscriptionIndex Wallet; do
-	 solc_0_47_0_linux $i.sol;
+	solc_0_47_0_linux $i.sol;
+    tvc=`tvm_linker compile $i.code --lib ~/TON-Solidity-Compiler/lib/stdlib_sol.tvm | grep 'Saved contract to file' | awk '{print $NF}'`
+    mv $tvc $i.tvc
 done
 
-for i in Subscription SubscriptionService SubscriptionIndex Wallet; do
+for i in Subscription SubscriptionService SubscriptionIndex Wallet SubscriptionServiceIndex; do
          tondev sol compile $i.sol;
 done
 
@@ -152,7 +154,9 @@ $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionIndexCode "{\"image\":\"$
 # SET IMAGE for SERVICE
 IMAGE=$(base64 -w 0 SubscriptionService.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
-
+# SET IMAGE for SERVICE INDEX
+IMAGE=$(base64 -w 0 SubscriptionServiceIndex.tvc)
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionServiceIndex "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
 echo DONE ------------------------------------------------------------------
 echo debot $DEBOT_ADDRESS
 

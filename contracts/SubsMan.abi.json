@@ -53,6 +53,14 @@
 			]
 		},
 		{
+			"name": "setSubscriptionServiceIndex",
+			"inputs": [
+				{"name":"image","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "start",
 			"inputs": [
 			],

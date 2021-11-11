@@ -2,13 +2,18 @@
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
+import "SubscriptionServiceIndex.sol";
+
+interface ISubscriptionServiceIndexContract {
+    function cancel () external;
+}
 
 contract SubscriptionService {
 
     TvmCell params;
     uint256 static serviceKey;
     ServiceParams public svcparams;
-    uint8 status;
+    address subscriptionServiceIndexAddress;
 
     struct ServiceParams {
         address to;
@@ -24,7 +29,7 @@ contract SubscriptionService {
 		_;
     }
 
-    constructor(bytes signature, TvmCell svc_params) public {
+    constructor(TvmCell indexCode, bytes signature, TvmCell svc_params) public {
         require(msg.value >= 1 ton, 101);
         TvmCell code = tvm.code();
         require(msg.sender != address(0), 102);
@@ -32,9 +37,25 @@ contract SubscriptionService {
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), serviceKey), 104);
         (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = svc_params.toSlice().decode(address, uint128, uint32, string, string);
         params = svc_params;
+        TvmCell state = tvm.buildStateInit({
+            code: indexCode,
+            pubkey: tvm.pubkey(),
+            varInit: { 
+                params: svc_params
+            },
+            contr: SubscriptionServiceIndex
+        });
+        TvmCell stateInit = tvm.insertPubkey(state, tvm.pubkey());
+        subscriptionServiceIndexAddress = address(tvm.hash(stateInit));
+        new SubscriptionServiceIndex{value: 0.5 ton, flag: 1, bounce: true, stateInit: stateInit}(signature,tvm.code());
     }
 
     function selfdelete() public onlyOwner {
+        if (msg.isInternal){
+            require(msg.sender == subscriptionServiceIndexAddress, 105);
+        } else {
+            ISubscriptionServiceIndexContract(subscriptionServiceIndexAddress).cancel();
+        }
         selfdestruct(svcparams.to);
     }
 }

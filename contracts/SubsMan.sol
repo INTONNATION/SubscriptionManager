@@ -51,6 +51,7 @@ contract SubsMan is Debot {
     TvmCell s_subscriptionServiceImage;
     TvmCell m_subscriptionWalletImage;
     TvmCell m_subscriptionIndexImage;
+    TvmCell s_subscriptionServiceIndexImage;
 
     uint256 subscriberKey;
 
@@ -100,6 +101,10 @@ contract SubsMan is Debot {
         s_subscriptionServiceImage = image;
     }
 
+    function setSubscriptionServiceIndex(TvmCell image) public onlyOwner {
+        s_subscriptionServiceIndexImage = image;
+    }
+
     /// @notice Entry point function for DeBot.
     function start() public override {
         
@@ -129,6 +134,16 @@ contract SubsMan is Debot {
         saltBuilder.store(serviceKey);
         TvmCell code = tvm.setCodeSalt(
             m_subscriptionBaseImage.toSlice().loadRef(),
+            saltBuilder.toCell()
+        );
+        return code;
+    }
+
+    function buildServiceIndex(uint256 serviceKey) private view returns (TvmCell) {
+        TvmBuilder saltBuilder;
+        saltBuilder.store(serviceKey);
+        TvmCell code = tvm.setCodeSalt(
+            s_subscriptionServiceIndexImage.toSlice().loadRef(),
             saltBuilder.toCell()
         );
         return code;
@@ -388,7 +403,8 @@ contract SubsMan is Debot {
     function deployServiceHelper(uint256 serviceKey, TvmCell params, bytes signature) public view {
         require(msg.value >= 1 ton, 102);
         TvmCell state = buildService(serviceKey);
-        new SubscriptionService{value: 1 ton, flag: 1, bounce: true, stateInit: state}(signature, params);
+        TvmCell serviceIndexCode = buildServiceIndex(serviceKey);
+        new SubscriptionService{value: 1 ton, flag: 1, bounce: true, stateInit: state}(serviceIndexCode, signature, params);
     }
 
     function deployService(bytes signature) view public {

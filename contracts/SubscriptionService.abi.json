@@ -6,6 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
+				{"name":"indexCode","type":"cell"},
 				{"name":"signature","type":"bytes"},
 				{"name":"svc_params","type":"cell"}
 			],
@@ -40,6 +41,6 @@
 		{"name":"params","type":"cell"},
 		{"name":"serviceKey","type":"uint256"},
 		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"}],"name":"svcparams","type":"tuple"},
-		{"name":"status","type":"uint8"}
+		{"name":"subscriptionServiceIndexAddress","type":"address"}
 	]
 }
