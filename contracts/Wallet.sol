@@ -51,7 +51,7 @@ contract Wallet {
             varInit: {
                 serviceKey: serviceKey,
                 user_wallet: myaddress,
-                svcParams: params
+                params: params
             },
             contr: Subscription
         });

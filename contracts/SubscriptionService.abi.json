@@ -7,8 +7,7 @@
 			"name": "constructor",
 			"inputs": [
 				{"name":"indexCode","type":"cell"},
-				{"name":"signature","type":"bytes"},
-				{"name":"svc_params","type":"cell"}
+				{"name":"signature","type":"bytes"}
 			],
 			"outputs": [
 			]
@@ -30,7 +29,8 @@
 		}
 	],
 	"data": [
-		{"key":1,"name":"serviceKey","type":"uint256"}
+		{"key":1,"name":"params","type":"cell"},
+		{"key":2,"name":"serviceKey","type":"uint256"}
 	],
 	"events": [
 	],

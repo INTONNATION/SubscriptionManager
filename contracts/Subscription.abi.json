@@ -68,18 +68,18 @@
 			]
 		},
 		{
-			"name": "svcParams",
+			"name": "params",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"svcParams","type":"cell"}
+				{"name":"params","type":"cell"}
 			]
 		}
 	],
 	"data": [
 		{"key":1,"name":"serviceKey","type":"uint256"},
 		{"key":2,"name":"user_wallet","type":"address"},
-		{"key":3,"name":"svcParams","type":"cell"}
+		{"key":3,"name":"params","type":"cell"}
 	],
 	"events": [
 	],
@@ -89,7 +89,7 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"serviceKey","type":"uint256"},
 		{"name":"user_wallet","type":"address"},
-		{"name":"svcParams","type":"cell"},
+		{"name":"params","type":"cell"},
 		{"name":"m_subscriptionIndexImage","type":"cell"},
 		{"name":"subscriptionIndexState","type":"cell"},
 		{"name":"subscriptionIndexAddress","type":"address"},

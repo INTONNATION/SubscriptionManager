@@ -12,7 +12,7 @@ contract Subscription {
 
     uint256 static public serviceKey;
     address static public user_wallet;
-    TvmCell static public svcParams;
+    TvmCell static public params;
     TvmCell m_subscriptionIndexImage;
     TvmCell subscriptionIndexState;
     address subscriptionIndexAddress;
@@ -31,7 +31,7 @@ contract Subscription {
     Payment subscription;
     
     constructor(TvmCell image, bytes signature, address subsAddr) public {
-        (address to, uint128 value, uint32 period) = svcParams.toSlice().decode(address, uint128, uint32);
+        (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
         require(msg.value >= 1 ton, 100);
         require(value > 0 && period > 0, 102);
         tvm.accept();
@@ -42,7 +42,7 @@ contract Subscription {
             code: image,
             pubkey: tvm.pubkey(),
             varInit: { 
-                params: svcParams,
+                params: params,
                 user_wallet: user_wallet
             },
             contr: SubscriptionIndex
@@ -75,7 +75,7 @@ contract Subscription {
             require(subscription.status != STATUS_EXECUTED, 103);
         }
         tvm.accept();
-        IWallet(user_wallet).paySubscription{value: 0.2 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, svcParams);
+        IWallet(user_wallet).paySubscription{value: 0.2 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, params);
     }
 
     function onPaySubscription(uint8 status) public {
