@@ -1,4 +1,4 @@
-pragma ton-solidity ^ 0.47.0;
+//pragma ton-solidity ^ 0.47.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -254,7 +254,6 @@ contract SubsMan is Debot {
         m_gotoId = gotoId;
         IMultisig(src).sendTransaction{
             abiVer: 2,
-            extMsg: true,
             sign: true,
             pubkey: pubkey,
             time: 0,
@@ -262,7 +261,7 @@ contract SubsMan is Debot {
             signBoxHandle: sbhandle,
             callbackId: tvm.functionId(onSuccess),
             onErrorId: tvm.functionId(onError)
-        }(dest, value, true, 3, payload);
+        }(dest, value, true, 3, payload).extMsg;
     }
 
     function onSuccess() public view {

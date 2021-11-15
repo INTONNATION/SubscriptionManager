@@ -1,5 +1,6 @@
 {
 	"ABI version": 2,
+	"version": "2.2",
 	"header": ["time", "expire"],
 	"functions": [
 		{
@@ -24,7 +25,7 @@
 		{
 			"name": "paySubscription",
 			"inputs": [
-				{"name":"_answer_id","type":"uint32"},
+				{"name":"answerId","type":"uint32"},
 				{"name":"serviceKey","type":"uint256"},
 				{"name":"bounce","type":"bool"},
 				{"name":"params","type":"cell"}
@@ -125,5 +126,21 @@
 	"data": [
 	],
 	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"subscr_Image","type":"cell"},
+		{"name":"myaddress","type":"address"},
+		{"name":"last_req_exp_address","type":"address"},
+		{"name":"last_req_real_address","type":"address"},
+		{"name":"mdest","type":"address"},
+		{"name":"mvalue","type":"uint128"},
+		{"name":"mbounce","type":"bool"},
+		{"name":"mserviceKey","type":"uint256"},
+		{"name":"mperiod","type":"uint32"},
+		{"name":"tvmKey","type":"uint256"},
+		{"name":"msgKey","type":"uint256"}
 	]
 }

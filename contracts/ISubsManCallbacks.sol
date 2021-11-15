@@ -1,4 +1,4 @@
-pragma ton-solidity ^ 0.47.0;
+//pragma ton-solidity ^ 0.47.0;
 import "https://raw.githubusercontent.com/tonlabs/debots/main/Sdk.sol";
 
 enum Status {
