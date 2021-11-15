@@ -272,9 +272,9 @@ contract SubsMan is Debot {
         if (m_gotoId == tvm.functionId(printWalletStatus)) {
             this.printWalletStatus();
         }
-        if (m_gotoId == tvm.functionId(printServiceStatus)) {
+        /*if (m_gotoId == tvm.functionId(printServiceStatus)) {
             this.printServiceStatus();
-        }
+        }*/
         if (m_gotoId == tvm.functionId(onSignSubscriptionWalletCode)) {
             this.onSignSubscriptionWalletCode();
         }
@@ -342,12 +342,12 @@ contract SubsMan is Debot {
         s_args = args;
         s_sbHandle = sbHandle;
         s_wallet = wallet;
-        signServiceCode();
+        //signServiceCode();
     }
 
-    function signServiceCode() public {
+    /*function signServiceCode() public {
         Sdk.signHash(tvm.functionId(deployService), s_sbHandle, tvm.hash(buildServiceHelper()));
-    }
+    }*/
 
     function signSubscriptionIndexCode(uint256 ownerKey) public {
         Sdk.signHash(tvm.functionId(deployAccount), m_sbHandle, tvm.hash(buildSubscriptionIndex(ownerKey)));
@@ -379,19 +379,25 @@ contract SubsMan is Debot {
     }
 
     //On-chain function
-    function buildServiceHelper() private view returns (TvmCell) {
-        TvmCell code = s_subscriptionServiceImage.toSlice().loadRef();
-        return code;      
+    function buildServiceHelper(string serviceCategory) private view returns (TvmCell) {
+        TvmBuilder saltBuilder;
+        saltBuilder.store(serviceCategory);
+        TvmCell code = tvm.setCodeSalt(
+            s_subscriptionServiceImage.toSlice().loadRef(),
+            saltBuilder.toCell()
+        );
+        return code;
     }
 
     //On-chain function
-    function buildService(uint256 serviceKey, TvmCell params) private view returns (TvmCell image) {
-        TvmCell code = buildServiceHelper();
+    function buildService(uint256 serviceKey, TvmCell params, string serviceCategory) private view returns (TvmCell image) {
+        TvmCell code = buildServiceHelper(serviceCategory);
         TvmCell state = tvm.buildStateInit({
             code: code,
             pubkey: serviceKey,
             varInit: {
                 serviceKey: serviceKey,
+                serviceCategory: serviceCategory,
                 params: params
             },
             contr: SubscriptionService
@@ -400,23 +406,23 @@ contract SubsMan is Debot {
     }
 
     //On-chain function
-    function deployServiceHelper(uint256 serviceKey, TvmCell params, bytes signature) public view {
+    function deployServiceHelper(uint256 serviceKey, TvmCell params, bytes signature, string serviceCategory) public view {
         require(msg.value >= 1 ton, 102);
-        TvmCell state = buildService(serviceKey,params);
+        TvmCell state = buildService(serviceKey,params,serviceCategory);
         TvmCell serviceIndexCode = buildServiceIndex(serviceKey);
         new SubscriptionService{value: 1 ton, flag: 1, bounce: true, stateInit: state}(serviceIndexCode, signature);
     }
 
-    function deployService(bytes signature) view public {
+    /*function deployService(bytes signature) view public {
         TvmCell body = tvm.encodeBody(SubsMan.deployServiceHelper, s_ownerKey, svcParams, signature);
         this.callMultisig(s_wallet, s_ownerKey, s_sbHandle, address(this), body, DEPLOY_FEE, tvm.functionId(printServiceStatus));
-    }
+    }*/
 
-    function printServiceStatus() public view {
+    /*function printServiceStatus() public view {
         // need to add check for code_hash by address
         address addr = address(tvm.hash(buildService(s_ownerKey,svcParams)));
         ISubsManCallbacksService(s_invoker).onSubscriptionServiceDeploy(Status.Success, addr);
-    }
+    }*/
 
     /// @notice API function.
     function invokeQuerySubscriptions(uint256 ownerKey) public {

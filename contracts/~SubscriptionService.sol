@@ -12,7 +12,6 @@ contract SubscriptionService {
 
     TvmCell static params;
     uint256 static serviceKey;
-    string static public serviceCategory;
     ServiceParams public svcparams;
     address subscriptionServiceIndexAddress;
 
@@ -41,8 +40,7 @@ contract SubscriptionService {
             code: indexCode,
             pubkey: tvm.pubkey(),
             varInit: { 
-                params: params,
-                serviceCategory: serviceCategory
+                params: params
             },
             contr: SubscriptionServiceIndex
         });

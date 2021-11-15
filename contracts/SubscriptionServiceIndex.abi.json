@@ -1,6 +1,5 @@
 {
 	"ABI version": 2,
-	"version": "2.2",
 	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
@@ -24,7 +23,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"bytes"},{"name":"description","type":"bytes"}],"name":"svcparams","type":"tuple"}
 			]
 		},
 		{
@@ -34,19 +33,20 @@
 			"outputs": [
 				{"name":"params","type":"cell"}
 			]
+		},
+		{
+			"name": "serviceCategory",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"serviceCategory","type":"bytes"}
+			]
 		}
 	],
 	"data": [
-		{"key":1,"name":"params","type":"cell"}
+		{"key":1,"name":"params","type":"cell"},
+		{"key":2,"name":"serviceCategory","type":"bytes"}
 	],
 	"events": [
-	],
-	"fields": [
-		{"name":"_pubkey","type":"uint256"},
-		{"name":"_timestamp","type":"uint64"},
-		{"name":"_constructorFlag","type":"bool"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"}],"name":"svcparams","type":"tuple"},
-		{"name":"params","type":"cell"},
-		{"name":"serviceAddress","type":"address"}
 	]
 }

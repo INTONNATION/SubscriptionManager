@@ -241,13 +241,6 @@
 			]
 		},
 		{
-			"name": "signServiceCode",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "signSubscriptionIndexCode",
 			"inputs": [
 				{"name":"ownerKey","type":"uint256"}
@@ -275,22 +268,8 @@
 			"inputs": [
 				{"name":"serviceKey","type":"uint256"},
 				{"name":"params","type":"cell"},
-				{"name":"signature","type":"bytes"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "deployService",
-			"inputs": [
-				{"name":"signature","type":"bytes"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "printServiceStatus",
-			"inputs": [
+				{"name":"signature","type":"bytes"},
+				{"name":"serviceCategory","type":"bytes"}
 			],
 			"outputs": [
 			]

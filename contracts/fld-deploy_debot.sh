@@ -2,10 +2,12 @@
 #!/bin/bash
 set -xe
 
-for i in SubsMan clientDebot Subscription serviceDebot SubscriptionService SubscriptionIndex Wallet; do
+solc_0_47_0_linux SubsMan.sol;
+tvc=`tvm_linker compile SubsMan.code --lib ~/TON-Solidity-Compiler/lib/stdlib_sol.tvm | grep 'Saved contract to file' | awk '{print $NF}'`
+mv $tvc SubsMan.tvc
+
+for i in clientDebot Subscription serviceDebot SubscriptionService SubscriptionIndex Wallet; do
 	solc_0_47_0_linux $i.sol;
-    tvc=`tvm_linker compile $i.code --lib ~/TON-Solidity-Compiler/lib/stdlib_sol.tvm | grep 'Saved contract to file' | awk '{print $NF}'`
-    mv $tvc $i.tvc
 done
 
 for i in Subscription SubscriptionService SubscriptionIndex Wallet SubscriptionServiceIndex; do

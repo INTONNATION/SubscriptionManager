@@ -17,6 +17,7 @@ contract SubscriptionServiceIndex {
         string description;
     }
     TvmCell public static params;
+    string static public serviceCategory;
     address serviceAddress;
 
     modifier onlyOwner {

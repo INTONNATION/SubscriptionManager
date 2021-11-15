@@ -1,6 +1,5 @@
 {
 	"ABI version": 2,
-	"version": "2.2",
 	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
@@ -82,17 +81,5 @@
 		{"key":3,"name":"params","type":"cell"}
 	],
 	"events": [
-	],
-	"fields": [
-		{"name":"_pubkey","type":"uint256"},
-		{"name":"_timestamp","type":"uint64"},
-		{"name":"_constructorFlag","type":"bool"},
-		{"name":"serviceKey","type":"uint256"},
-		{"name":"user_wallet","type":"address"},
-		{"name":"params","type":"cell"},
-		{"name":"m_subscriptionIndexImage","type":"cell"},
-		{"name":"subscriptionIndexState","type":"cell"},
-		{"name":"subscriptionIndexAddress","type":"address"},
-		{"components":[{"name":"pubkey","type":"uint256"},{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
 }
