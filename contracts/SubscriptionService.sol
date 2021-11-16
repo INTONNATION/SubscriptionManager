@@ -22,6 +22,7 @@ contract SubscriptionService {
         uint32 period;
         string name;
         string description;
+        string image;
     }
 
     modifier onlyOwner {
@@ -36,7 +37,7 @@ contract SubscriptionService {
         require(msg.sender != address(0), 102);
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), tvm.pubkey()), 103);
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), serviceKey), 104);
-        (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = params.toSlice().decode(address, uint128, uint32, string, string);
+        (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.image) = params.toSlice().decode(address, uint128, uint32, string, string, string);
         TvmCell state = tvm.buildStateInit({
             code: indexCode,
             pubkey: tvm.pubkey(),

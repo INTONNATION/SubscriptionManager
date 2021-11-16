@@ -15,6 +15,7 @@ contract SubscriptionServiceIndex {
         uint32 period;
         string name;
         string description;
+        string image;
     }
     TvmCell public static params;
     string static public serviceCategory;
@@ -29,7 +30,7 @@ contract SubscriptionServiceIndex {
     constructor(bytes signature,TvmCell svcCode) public {
         require(msg.sender != address(0), 101);
         require(tvm.checkSign(tvm.hash(svcCode), signature.toSlice(), tvm.pubkey()), 102);
-        (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = params.toSlice().decode(address, uint128, uint32, string, string);
+        (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.image) = params.toSlice().decode(address, uint128, uint32, string, string, string);
         serviceAddress = msg.sender;
     }
 
