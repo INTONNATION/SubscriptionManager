@@ -1,5 +1,5 @@
 pragma ton-solidity ^ 0.51.0;
-cvi vpragma AbiHeader expire;
+pragma AbiHeader expire;
 pragma AbiHeader time;
 import "Subscription.sol";
 
