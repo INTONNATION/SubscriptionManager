@@ -3,7 +3,7 @@
 set -xe
 
 for i in ../debots/SubsMan ../debots/clientDebot ../contracts/Subscription ../debots/serviceDebot ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex ../contracts/Wallet; do
-	tondev sol compile $i.sol;
+	tondev sol compile $i.sol -o ../abi;
 done
 
 tos=tonos-cli
@@ -18,7 +18,7 @@ giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
 
 
 function giver {
-$tos --url $NETWORK call --abi local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
+$tos --url $NETWORK call --abi ../abi/local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
 }
 function get_address {
 echo $(cat log.log | grep "Raw address:" | cut -d ' ' -f 3)
@@ -37,17 +37,17 @@ $tos getkeypair $1.keys.json "$2"
 }
 
 function genaddrclient {
-$tos genaddr $1.tvc $1.abi.json --setkey client.keys.json > log.log
+$tos genaddr ../abi/$1.tvc ../abi/$1.abi.json --setkey client.keys.json > log.log
 }
 
 function genaddrservice {
-$tos genaddr $1.tvc $1.abi.json --setkey service.keys.json > log.log
+$tos genaddr ../abi/$1.tvc ../abi/$1.abi.json --setkey service.keys.json > log.log
 }
 function genaddr {
-$tos genaddr $1.tvc $1.abi.json --setkey $1.keys.json > log.log
+$tos genaddr ../abi/$1.tvc ../abi/$1.abi.json --setkey $1.keys.json > log.log
 }
 function genaddrgen {
-$tos genaddr $1.tvc $1.abi.json --genkey $1.keys.json > log.log
+$tos genaddr ../abi/$1.tvc ../abi/$1.abi.json --genkey $1.keys.json > log.log
 }
 
 function deploy {
@@ -64,9 +64,9 @@ DEBOT_ADDRESS=$(get_address)
 echo GIVER $1 ------------------------------------------------
 giver $DEBOT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
-$tos --url $NETWORK deploy $1.tvc "{}" --sign $1.keys.json --abi $1.abi.json
-DEBOT_ABI=$(cat $1.abi.json | jq -c . | xxd -ps -c 20000)
-$tos --url $NETWORK call $DEBOT_ADDRESS setABI "{\"dabi\":\"$DEBOT_ABI\"}" --sign $1.keys.json --abi $1.abi.json
+$tos --url $NETWORK deploy ../abi/$1.tvc "{}" --sign $1.keys.json --abi ../abi/$1.abi.json
+DEBOT_ABI=$(cat ../abi/$1.abi.json | jq -c . | xxd -ps -c 20000)
+$tos --url $NETWORK call $DEBOT_ADDRESS setABI "{\"dabi\":\"$DEBOT_ABI\"}" --sign $1.keys.json --abi ../abi/$1.abi.json
 echo -n $DEBOT_ADDRESS > $1.addr
 }
 function deploygen {
@@ -76,9 +76,9 @@ DEBOT_ADDRESS=$(get_address)
 echo GIVER $1 ------------------------------------------------
 giver $DEBOT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
-$tos --url $NETWORK deploy $1.tvc "{}" --sign $1.keys.json --abi $1.abi.json
-DEBOT_ABI=$(cat $1.abi.json | jq -c . | xxd -ps -c 20000)
-$tos --url $NETWORK call $DEBOT_ADDRESS setABI "{\"dabi\":\"$DEBOT_ABI\"}" --sign $1.keys.json --abi $1.abi.json
+$tos --url $NETWORK deploy ../abi/$1.tvc "{}" --sign $1.keys.json --abi ../abi/$1.abi.json
+DEBOT_ABI=$(cat ../abi/$1.abi.json | jq -c . | xxd -ps -c 20000)
+$tos --url $NETWORK call $DEBOT_ADDRESS setABI "{\"dabi\":\"$DEBOT_ABI\"}" --sign $1.keys.json --abi ../abi/$1.abi.json
 echo -n $DEBOT_ADDRESS > $1.addr
 }
 
@@ -98,7 +98,7 @@ echo GIVER $msig ------------------------------------------------
 giver $ADDRESS
 echo DEPLOY $msig -----------------------------------------------
 PUBLIC_KEY=$(cat client.keys.json | jq .public)
-$tos --url $NETWORK deploy $msig.tvc "{\"owners\":[\"0x${PUBLIC_KEY:1:64}\"],\"reqConfirms\":1}" --sign client.keys.json --abi $msig.abi.json
+$tos --url $NETWORK deploy ../abi/$msig.tvc "{\"owners\":[\"0x${PUBLIC_KEY:1:64}\"],\"reqConfirms\":1}" --sign client.keys.json --abi ../abi/$msig.abi.json
 echo -n $ADDRESS > msig.client.addr
 }
 
@@ -118,7 +118,7 @@ echo GIVER $msig ------------------------------------------------
 giver $ADDRESS
 echo DEPLOY $msig -----------------------------------------------
 PUBLIC_KEY=$(cat service.keys.json | jq .public)
-$tos --url $NETWORK deploy $msig.tvc "{\"owners\":[\"0x${PUBLIC_KEY:1:64}\"],\"reqConfirms\":1}" --sign service.keys.json --abi $msig.abi.json
+$tos --url $NETWORK deploy ../abi/$msig.tvc "{\"owners\":[\"0x${PUBLIC_KEY:1:64}\"],\"reqConfirms\":1}" --sign service.keys.json --abi ../abi/$msig.abi.json
 echo -n $ADDRESS > msig.service.addr
 }
 
@@ -139,37 +139,37 @@ DEBOT_ADDRESS=$(cat $DEBOT_NAME.addr)
 ACCMAN_ADDRESS=$DEBOT_ADDRESS
 
 IMAGE=$(base64 -w 0 Subscription.tvc)
-$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionBase "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionBase "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 IMAGE=$(base64 -w 0 Wallet.tvc)
-$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 
 IMAGE=$(base64 -w 0 SubscriptionIndex.tvc)
-$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionIndexCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionIndexCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 # SET IMAGE for SERVICE
 IMAGE=$(base64 -w 0 SubscriptionService.tvc)
-$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 # SET IMAGE for SERVICE INDEX
 IMAGE=$(base64 -w 0 SubscriptionServiceIndex.tvc)
-$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionServiceIndex "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionServiceIndex "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 echo DONE ------------------------------------------------------------------
 echo debot $DEBOT_ADDRESS
 
 ##ACCMAN_ADDRESS=0:e20b930f512c6bee12e3f62f868eb428ec10e7159d4394d6377cc8a306ddf49f
 deploy $DEBOT_CLIENT
 DEBOT_ADDRESS=$(cat $DEBOT_CLIENT.addr)
-$tos --url $NETWORK call $DEBOT_ADDRESS setSubsman "{\"addr\":\"$ACCMAN_ADDRESS\"}" --sign $DEBOT_CLIENT.keys.json --abi $DEBOT_CLIENT.abi.json
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubsman "{\"addr\":\"$ACCMAN_ADDRESS\"}" --sign $DEBOT_CLIENT.keys.json --abi ../abi/$DEBOT_CLIENT.abi.json
 ## SET WALLET IMAGE
-IMAGE=$(base64 -w 0 Wallet.tvc)
-$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
+IMAGE=$(base64 -w 0 ../abi/Wallet.tvc)
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 ## SET IMAGE for SERVICE
-IMAGE=$(base64 -w 0 SubscriptionService.tvc)
-$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $DEBOT_CLIENT.keys.json --abi $DEBOT_CLIENT.abi.json
+IMAGE=$(base64 -w 0 ../abi/SubscriptionService.tvc)
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $DEBOT_CLIENT.keys.json --abi ../abi/$DEBOT_CLIENT.abi.json
 
 # SERVICE DEBOT DEPLOY
 deploygen serviceDebot
 DEBOT_ADDRESS_SVC=$(cat serviceDebot.addr)
-$tos --url $NETWORK call $DEBOT_ADDRESS_SVC setSubsman "{\"addr\":\"$ACCMAN_ADDRESS\"}" --sign serviceDebot.keys.json --abi serviceDebot.abi.json
-$tos --url $NETWORK call $DEBOT_ADDRESS_SVC setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign serviceDebot.keys.json --abi serviceDebot.abi.json
+$tos --url $NETWORK call $DEBOT_ADDRESS_SVC setSubsman "{\"addr\":\"$ACCMAN_ADDRESS\"}" --sign serviceDebot.keys.json --abi ../abi/serviceDebot.abi.json
+$tos --url $NETWORK call $DEBOT_ADDRESS_SVC setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign serviceDebot.keys.json --abi ../abi/serviceDebot.abi.json
 
 echo client $DEBOT_ADDRESS
 echo service $DEBOT_ADDRESS_SVC
