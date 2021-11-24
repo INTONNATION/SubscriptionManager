@@ -1,4 +1,4 @@
-//pragma ton-solidity ^ 0.47.0;
+pragma ton-solidity ^ 0.51.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -13,12 +13,11 @@ contract Subscription {
     uint256 static public serviceKey;
     address static public user_wallet;
     TvmCell static public params;
-    TvmCell m_subscriptionIndexImage;
-    TvmCell subscriptionIndexState;
-    address subscriptionIndexAddress;
+    TvmCell public subscription_indificator;
+    address public subscriptionIndexAddress;
 
     uint8 constant STATUS_ACTIVE   = 1;
-    uint8 constant STATUS_EXECUTED = 2;
+    uint8 constant STATUS_NONACTIVE = 2;
 
     struct Payment {
         uint256 pubkey;
@@ -28,16 +27,25 @@ contract Subscription {
         uint32 start;
         uint8 status;
     }
-    Payment subscription;
+
+    Payment public subscription;
     
     constructor(TvmCell image, bytes signature, address subsAddr) public {
-        (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
+        (address to, uint128 value, uint32 period, , ,TvmCell indificator) = params.toSlice().decode(address, uint128, uint32, string, string, TvmCell);
+        TvmCell code = tvm.code();
+        optional(TvmCell) salt = tvm.codeSalt(code);
+        address wallet_from_salt;
+        require(salt.hasValue(), 104);
+        (, , wallet_from_salt) = salt.get().toSlice().decode(uint256,TvmCell,address);
+        require(wallet_from_salt == user_wallet);
         require(msg.value >= 1 ton, 100);
         require(value > 0 && period > 0, 102);
+        require(tvm.checkSign(tvm.hash(image), signature.toSlice(), tvm.pubkey()), 105);
         tvm.accept();
+        subscription_indificator = indificator;
         uint32 _period = period * 3600 * 24;
         uint128 _value = value * 1000000000;
-        subscription = Payment(tvm.pubkey(), to, _value, _period, 0, STATUS_ACTIVE);
+        subscription = Payment(tvm.pubkey(), to, _value, _period, uint32(now), STATUS_NONACTIVE);
         TvmCell state = tvm.buildStateInit({
             code: image,
             pubkey: tvm.pubkey(),
@@ -65,22 +73,21 @@ contract Subscription {
         selfdestruct(user_wallet);
     }
 
-    function executeSubscription() public {
-        require(msg.value >= 0.2 ton, 101);
-        tvm.accept();
-        require(subscription.status != 0, 101);
+    function executeSubscription() public {        
         if (now > (subscription.start + subscription.period)) {
-            subscription.start = uint32(now);
+            // need to add buffer and condition
+            tvm.accept();
+            subscription.status = STATUS_NONACTIVE;
+            IWallet(user_wallet).paySubscription{value: 0.1 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, params);
         } else {
-            require(subscription.status != STATUS_EXECUTED, 103);
+            require(subscription.status == STATUS_ACTIVE, 103);
         }
-        tvm.accept();
-        IWallet(user_wallet).paySubscription{value: 0.2 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, params);
     }
 
-    function onPaySubscription(uint8 status) public {
-        if (status == 0) {
-            subscription.status = STATUS_EXECUTED;
+    function onPaySubscription(uint8 status) internal {
+        if (status == 0 && user_wallet == msg.sender) {
+            subscription.status = STATUS_ACTIVE;
+            subscription.start = uint32(now);
         }
     }
 }

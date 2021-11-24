@@ -1,5 +1,5 @@
-//pragma ton-solidity ^ 0.47.0;
-import "https://raw.githubusercontent.com/tonlabs/debots/main/Sdk.sol";
+pragma ton-solidity ^ 0.51.0;
+//import "https://raw.githubusercontent.com/tonlabs/debots/main/Sdk.sol";
 
 enum Status {
     Success, ZeroKey, EmptySubscription, InvalidSigningBoxHandle,
@@ -14,9 +14,9 @@ interface ISubsManCallbacksService {
     function onSubscriptionServiceDeploy(Status status, address addr) external;
 }
 
-interface IonQuerySubscriptions {
-    function onQuerySubscriptions(AccData[] accounts) external;
-}
+//interface IonQuerySubscriptions {
+//    function onQuerySubscriptions(AccData[] accounts) external;
+//}
 
 interface IonQuerySubscribers {
     function onQuerySubscribers(uint256[] keys) external;

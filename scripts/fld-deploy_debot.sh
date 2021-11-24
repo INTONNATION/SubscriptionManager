@@ -2,7 +2,7 @@
 #!/bin/bash
 set -xe
 
-for i in SubsMan clientDebot Subscription serviceDebot SubscriptionService SubscriptionIndex Wallet; do
+for i in ../debots/SubsMan ../debots/clientDebot ../contracts/Subscription ../debots/serviceDebot ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex ../contracts/Wallet; do
 	tondev sol compile $i.sol;
 done
 
@@ -18,7 +18,7 @@ giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
 
 
 function giver {
-$tos --url $NETWORK call --abi ../local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
+$tos --url $NETWORK call --abi local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
 }
 function get_address {
 echo $(cat log.log | grep "Raw address:" | cut -d ' ' -f 3)
@@ -65,7 +65,7 @@ echo GIVER $1 ------------------------------------------------
 giver $DEBOT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
 $tos --url $NETWORK deploy $1.tvc "{}" --sign $1.keys.json --abi $1.abi.json
-DEBOT_ABI=$(cat $1.abi.json | xxd -ps -c 20000)
+DEBOT_ABI=$(cat $1.abi.json | jq -c . | xxd -ps -c 20000)
 $tos --url $NETWORK call $DEBOT_ADDRESS setABI "{\"dabi\":\"$DEBOT_ABI\"}" --sign $1.keys.json --abi $1.abi.json
 echo -n $DEBOT_ADDRESS > $1.addr
 }
@@ -77,7 +77,7 @@ echo GIVER $1 ------------------------------------------------
 giver $DEBOT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
 $tos --url $NETWORK deploy $1.tvc "{}" --sign $1.keys.json --abi $1.abi.json
-DEBOT_ABI=$(cat $1.abi.json | xxd -ps -c 20000)
+DEBOT_ABI=$(cat $1.abi.json | jq -c . | xxd -ps -c 20000)
 $tos --url $NETWORK call $DEBOT_ADDRESS setABI "{\"dabi\":\"$DEBOT_ABI\"}" --sign $1.keys.json --abi $1.abi.json
 echo -n $DEBOT_ADDRESS > $1.addr
 }
@@ -138,17 +138,19 @@ deploy $DEBOT_NAME
 DEBOT_ADDRESS=$(cat $DEBOT_NAME.addr)
 ACCMAN_ADDRESS=$DEBOT_ADDRESS
 
-IMAGE=$(base64 Subscription.tvc)
+IMAGE=$(base64 -w 0 Subscription.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionBase "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
-IMAGE=$(base64 Wallet.tvc)
+IMAGE=$(base64 -w 0 Wallet.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
 
-IMAGE=$(base64 SubscriptionIndex.tvc)
+IMAGE=$(base64 -w 0 SubscriptionIndex.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionIndexCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
 # SET IMAGE for SERVICE
-IMAGE=$(base64 SubscriptionService.tvc)
+IMAGE=$(base64 -w 0 SubscriptionService.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
-
+# SET IMAGE for SERVICE INDEX
+IMAGE=$(base64 -w 0 SubscriptionServiceIndex.tvc)
+$tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionServiceIndex "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
 echo DONE ------------------------------------------------------------------
 echo debot $DEBOT_ADDRESS
 
@@ -157,10 +159,10 @@ deploy $DEBOT_CLIENT
 DEBOT_ADDRESS=$(cat $DEBOT_CLIENT.addr)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubsman "{\"addr\":\"$ACCMAN_ADDRESS\"}" --sign $DEBOT_CLIENT.keys.json --abi $DEBOT_CLIENT.abi.json
 ## SET WALLET IMAGE
-IMAGE=$(base64 Wallet.tvc)
+IMAGE=$(base64 -w 0 Wallet.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi $DEBOT_NAME.abi.json
 ## SET IMAGE for SERVICE
-IMAGE=$(base64 SubscriptionService.tvc)
+IMAGE=$(base64 -w 0 SubscriptionService.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $DEBOT_CLIENT.keys.json --abi $DEBOT_CLIENT.abi.json
 
 # SERVICE DEBOT DEPLOY
@@ -182,5 +184,5 @@ cat service.keys.json
 #
 #tonos-cli config --pubkey 0x$(cat client.keys.json | jq .public -r) --wallet $(cat msig.client.addr)
 #$tos --url $NETWORK debot fetch `cat clientDebot.addr`
-tonos-cli config --pubkey 0x$(cat service.keys.json | jq .public -r) --wallet $(cat msig.service.addr)
-$tos --url $NETWORK debot fetch `cat serviceDebot.addr`
+#tonos-cli config --pubkey 0x$(cat service.keys.json | jq .public -r) --wallet $(cat msig.service.addr)
+#$tos --url $NETWORK debot fetch `cat serviceDebot.addr`

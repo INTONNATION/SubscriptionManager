@@ -1,5 +1,5 @@
-//pragma ton-solidity ^ 0.47.0;
-pragma AbiHeader expire;
+pragma ton-solidity ^ 0.51.0;
+cvi vpragma AbiHeader expire;
 pragma AbiHeader time;
 import "Subscription.sol";
 
@@ -60,7 +60,6 @@ contract Wallet {
 
     function paySubscription(uint256 serviceKey, bool bounce, TvmCell params) public view responsible returns (uint8) {
         require(msg.value >= 0.1 ton, 104);
-        tvm.accept();
         (address to, uint128 value) = params.toSlice().decode(address, uint128);
         require(msg.sender == address(tvm.hash(buildSubscriptionState(serviceKey,params))), 105);
         to.transfer(value * 1000000000, bounce, 0);

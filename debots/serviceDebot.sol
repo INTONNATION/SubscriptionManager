@@ -1,4 +1,4 @@
-pragma ton-solidity ^ 0.47.0;
+pragma ton-solidity ^ 0.51.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -10,8 +10,8 @@ import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/Termi
 import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/AddressInput/AddressInput.sol";
 import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/UserInfo/UserInfo.sol";
 import "https://raw.githubusercontent.com/tonlabs/debots/main/Sdk.sol";
-import "ISubsManCallbacks.sol";
-import "IMultisig.sol";
+import "../contracts/interfaces/ISubsManCallbacks.sol";
+import "../contracts/interfaces/IMultisig.sol";
 import "SubsMan.sol";
 
 contract ServiceDebot is Debot, ISubsManCallbacksService, IonQuerySubscribers {
@@ -123,7 +123,6 @@ contract ServiceDebot is Debot, ISubsManCallbacksService, IonQuerySubscribers {
         optional(uint32) sbhandle = s_sbHandle;
         SubscriptionService(serviceAddr).selfdelete{
             abiVer: 2,
-            extMsg: true,
             sign: true,
             pubkey: pubkey,
             time: 0,
@@ -131,7 +130,7 @@ contract ServiceDebot is Debot, ISubsManCallbacksService, IonQuerySubscribers {
             signBoxHandle: sbhandle,
             callbackId: tvm.functionId(onSuccess),
             onErrorId: tvm.functionId(onError)
-        }();
+        }().extMsg;
     }
 
     function onSuccess() public {

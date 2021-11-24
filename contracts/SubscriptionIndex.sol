@@ -1,4 +1,4 @@
-//pragma ton-solidity ^ 0.47.0;
+pragma ton-solidity ^ 0.51.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -10,7 +10,7 @@ interface ISubscriptionContract {
 contract SubscriptionIndex {
 
     TvmCell public static params;
-    address static user_wallet;
+    address public static user_wallet;
     uint256 public ownerKey;
     address public subscription_addr;
     ServiceParams public svcparams;
@@ -21,6 +21,7 @@ contract SubscriptionIndex {
         uint32 period;
         string name;
         string description;
+        TvmCell subscription_indificator;
     }
 
     modifier onlyOwner {
@@ -40,7 +41,7 @@ contract SubscriptionIndex {
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), ownerKey), 106);
         require(subsAddr != address(0), 107);
         subscription_addr = subsAddr;
-	(svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = params.toSlice().decode(address, uint128, uint32, string, string);
+	    (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.subscription_indificator) = params.toSlice().decode(address, uint128, uint32, string, string, TvmCell);
     }
 
     function cancel() public onlyOwner {

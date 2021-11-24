@@ -1,4 +1,4 @@
-//pragma ton-solidity ^ 0.47.0;
+pragma ton-solidity ^ 0.51.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -7,11 +7,11 @@ import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/Signi
 import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/Menu/Menu.sol";
 import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/Terminal/Terminal.sol";
 import "https://raw.githubusercontent.com/tonlabs/debots/main/Sdk.sol";
-import "ISubsManCallbacks.sol";
-import "IMultisig.sol";
-import "Subscription.sol";
-import "Wallet.sol";
-import "SubscriptionService.sol";
+import "../contracts/interfaces/ISubsManCallbacks.sol";
+import "../contracts/interfaces/IMultisig.sol";
+import "../contracts/Subscription.sol";
+import "../contracts/Wallet.sol";
+import "../contracts/SubscriptionService.sol";
 
 contract SubsMan is Debot {
     uint128 constant DEPLOY_FEE = 1 ton;
@@ -115,7 +115,7 @@ contract SubsMan is Debot {
     }
 
     function buildAccount(uint256 ownerKey, uint256 serviceKey, TvmCell params) private view returns (TvmCell image) {
-        TvmCell code = buildAccountHelper(serviceKey,params);
+        TvmCell code = buildAccountHelper(serviceKey, params, address(tvm.hash(buildWallet(ownerKey))));
         TvmCell newImage = tvm.buildStateInit({
             code: code,
             pubkey: ownerKey,
@@ -129,9 +129,9 @@ contract SubsMan is Debot {
         image = newImage;
     }
 
-    function buildAccountHelper(uint256 serviceKey, TvmCell params) private view returns (TvmCell) {
+    function buildAccountHelper(uint256 serviceKey, TvmCell params, address userWallet) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        saltBuilder.store(serviceKey,params);
+        saltBuilder.store(serviceKey,params,userWallet);
         TvmCell code = tvm.setCodeSalt(
             m_subscriptionBaseImage.toSlice().loadRef(),
             saltBuilder.toCell()
@@ -451,7 +451,7 @@ contract SubsMan is Debot {
     
     function _getAccountCodeSubscriber(uint256 serviceKey) private view returns (TvmCell) {
         // need to get svcParams from selected service
-        TvmCell code = buildAccountHelper(serviceKey,svcParams);
+        TvmCell code = buildAccountHelper(serviceKey, svcParams, address(tvm.hash(buildWallet(m_ownerKey))));
         return code;
     }
 
@@ -462,7 +462,7 @@ contract SubsMan is Debot {
     }
 
     function setSubscriptions(AccData[] accounts) public view {
-       IonQuerySubscriptions(m_invoker).onQuerySubscriptions(accounts);
+       //IonQuerySubscriptions(m_invoker).onQuerySubscriptions(accounts);
     }
 
     function _decodeAccountAddressSubscriber(TvmCell data) internal returns (uint256) {

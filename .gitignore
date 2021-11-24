@@ -1,3 +1,4 @@
+
 *.addr
 *.code
 *.tvc
@@ -8,6 +9,8 @@
 *.log
 *.conf.json
 *.swp
+*solc_imports
+
 tests/*.log
 tests/*.conf.json
 *.name

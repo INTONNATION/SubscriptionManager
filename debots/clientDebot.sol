@@ -9,15 +9,15 @@ import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/Amoun
 import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/ConfirmInput/ConfirmInput.sol";
 import "https://raw.githubusercontent.com/tonlabs/debots/main/Sdk.sol";
 import "SubsMan.sol";
-import "ISubsManCallbacks.sol";
-import "SubscriptionService.sol";
+import "../contracts/interfaces/ISubsManCallbacks.sol";
+import "../contracts/SubscriptionService.sol";
 import "https://raw.githubusercontent.com/tonlabs/DeBot-IS-consortium/main/AddressInput/AddressInput.sol";
 
 interface ISubscription {
     function cancel() external;
 }
 
-contract DeployerDebot is Debot, ISubsManCallbacks, IonQuerySubscriptions  {
+contract DeployerDebot is Debot, ISubsManCallbacks {
     bytes m_icon;
     uint128 m_tons;
 
@@ -169,14 +169,13 @@ contract DeployerDebot is Debot, ISubsManCallbacks, IonQuerySubscriptions  {
         TvmCell m_payload;
         IMultisig(m_wallet).submitTransaction{
             abiVer: 2,
-            extMsg: true,
             sign: true,
             pubkey: pubkey,
             time: uint64(now),
             expire: 0,
             callbackId: tvm.functionId(_onSuccess),
             onErrorId: tvm.functionId(_onError)
-        } (walletAddr, m_tons, false, false, m_payload);
+        } (walletAddr, m_tons, false, false, m_payload).extMsg;
     }
 
     function _onSuccess(uint64 transId) public {
@@ -380,7 +379,6 @@ contract DeployerDebot is Debot, ISubsManCallbacks, IonQuerySubscriptions  {
         optional(uint32) sbhandle = m_sbHandle;
         ISubscription(subscrAddr).cancel{
             abiVer: 2,
-            extMsg: true,
             sign: true,
             pubkey: pubkey,
             time: 0,
@@ -388,7 +386,7 @@ contract DeployerDebot is Debot, ISubsManCallbacks, IonQuerySubscriptions  {
             signBoxHandle: sbhandle,
             callbackId: tvm.functionId(onSuccess),
             onErrorId: tvm.functionId(onError)
-        }();       
+        }().extMsg;       
     }
 
     function subsmanInvokeDeploy() public view {
@@ -414,7 +412,7 @@ contract DeployerDebot is Debot, ISubsManCallbacks, IonQuerySubscriptions  {
         this.start();
     }
 
-    function onQuerySubscriptions(AccData[] accounts) external override{
+    /*function onQuerySubscriptions(AccData[] accounts) external override{
         MenuItem[] items;
         m_accounts = accounts;
         SubscriptionService.ServiceParams sparams;
@@ -453,7 +451,7 @@ contract DeployerDebot is Debot, ISubsManCallbacks, IonQuerySubscriptions  {
             query_type = 0;
             menuManageWallet();
         }
-    }
+    }*/
 
     function menuManageSubscription(uint32 index) public {
         subscrAddr = m_accounts[index].id;
