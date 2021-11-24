@@ -1,4 +1,3 @@
-
 *.addr
 *.code
 *.tvc
@@ -11,6 +10,7 @@
 *.swp
 *solc_imports
 
-tests/*.log
-tests/*.conf.json
+debots/tests/*.log
+debots/tests/*.conf.json
 *.name
+.vscode
