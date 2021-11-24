@@ -1,0 +1,56 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"indexCode","type":"cell"},
+				{"name":"signature","type":"bytes"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "selfdelete",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "serviceCategory",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"serviceCategory","type":"string"}
+			]
+		},
+		{
+			"name": "svcparams",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"}],"name":"svcparams","type":"tuple"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"params","type":"cell"},
+		{"key":2,"name":"serviceKey","type":"uint256"},
+		{"key":3,"name":"serviceCategory","type":"string"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"params","type":"cell"},
+		{"name":"serviceKey","type":"uint256"},
+		{"name":"serviceCategory","type":"string"},
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"}],"name":"svcparams","type":"tuple"},
+		{"name":"subscriptionServiceIndexAddress","type":"address"}
+	]
+}

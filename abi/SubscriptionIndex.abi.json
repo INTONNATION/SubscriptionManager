@@ -1,0 +1,79 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"signature","type":"bytes"},
+				{"name":"subsAddr","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "cancel",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"params","type":"cell"}
+			]
+		},
+		{
+			"name": "user_wallet",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"user_wallet","type":"address"}
+			]
+		},
+		{
+			"name": "ownerKey",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"ownerKey","type":"uint256"}
+			]
+		},
+		{
+			"name": "subscription_addr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_addr","type":"address"}
+			]
+		},
+		{
+			"name": "svcparams",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"}],"name":"svcparams","type":"tuple"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"params","type":"cell"},
+		{"key":2,"name":"user_wallet","type":"address"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"params","type":"cell"},
+		{"name":"user_wallet","type":"address"},
+		{"name":"ownerKey","type":"uint256"},
+		{"name":"subscription_addr","type":"address"},
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"}],"name":"svcparams","type":"tuple"}
+	]
+}
