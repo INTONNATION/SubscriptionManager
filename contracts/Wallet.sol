@@ -40,7 +40,7 @@ contract Wallet {
 
     function buildSubscriptionState(uint256 serviceKey, TvmCell params) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        saltBuilder.store(serviceKey);
+        saltBuilder.store(serviceKey, params, myaddress);
         TvmCell code = tvm.setCodeSalt(
             subscr_Image.toSlice().loadRef(),
             saltBuilder.toCell()

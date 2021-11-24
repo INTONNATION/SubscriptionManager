@@ -37,15 +37,16 @@ contract Subscription {
         address wallet_from_salt;
         require(salt.hasValue(), 104);
         (, , wallet_from_salt) = salt.get().toSlice().decode(uint256,TvmCell,address);
-        require(wallet_from_salt == user_wallet);
+        require(wallet_from_salt == user_wallet, 111);
         require(msg.value >= 1 ton, 100);
         require(value > 0 && period > 0, 102);
         require(tvm.checkSign(tvm.hash(image), signature.toSlice(), tvm.pubkey()), 105);
         tvm.accept();
         subscription_indificator = indificator;
-        uint32 _period = period * 3600 * 24;
+        //uint32 _period = period * 3600 * 24;
+        uint32 _period = period;
         uint128 _value = value * 1000000000;
-        subscription = Payment(tvm.pubkey(), to, _value, _period, uint32(now), STATUS_NONACTIVE);
+        subscription = Payment(tvm.pubkey(), to, _value, _period, 0, STATUS_NONACTIVE);
         TvmCell state = tvm.buildStateInit({
             code: image,
             pubkey: tvm.pubkey(),
