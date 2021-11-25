@@ -79,7 +79,7 @@ contract Subscription {
             // need to add buffer and condition
             tvm.accept();
             subscription.status = STATUS_NONACTIVE;
-            IWallet(user_wallet).paySubscription{value: 0.1 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, params);
+            IWallet(user_wallet).paySubscription{value: 0.2 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, params);
         } else {
             require(subscription.status == STATUS_ACTIVE, 103);
         }
