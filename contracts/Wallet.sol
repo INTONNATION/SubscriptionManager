@@ -22,7 +22,7 @@ contract Wallet {
         tvmKey = tvm.pubkey();
         msgKey = msg.pubkey();  // need to verify external message deployment
         require(tvm.pubkey() != 0, 100);
-        require(tvm.checkSign(tvm.hash(tvm.code()), signature.toSlice(), tvm.pubkey()), 102);
+        //require(tvm.checkSign(tvm.hash(tvm.code()), signature.toSlice(), tvm.pubkey()), 102);
         tvm.accept();
         subscr_Image = image;
         TvmCell wImage = tvm.buildStateInit({
@@ -40,7 +40,7 @@ contract Wallet {
 
     function buildSubscriptionState(uint256 serviceKey, TvmCell params) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        saltBuilder.store(serviceKey, params, myaddress);
+        saltBuilder.store(serviceKey, params, tvm.hash(tvm.code()));
         TvmCell code = tvm.setCodeSalt(
             subscr_Image.toSlice().loadRef(),
             saltBuilder.toCell()

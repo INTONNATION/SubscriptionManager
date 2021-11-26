@@ -115,7 +115,8 @@ contract SubsMan is Debot {
     }
 
     function buildAccount(uint256 ownerKey, uint256 serviceKey, TvmCell params) private view returns (TvmCell image) {
-        TvmCell code = buildAccountHelper(serviceKey, params, address(tvm.hash(buildWallet(ownerKey))));
+        TvmCell walletCode = m_subscriptionWalletImage.toSlice().loadRef();
+        TvmCell code = buildAccountHelper(serviceKey, params, tvm.hash(walletCode));
         TvmCell newImage = tvm.buildStateInit({
             code: code,
             pubkey: ownerKey,
@@ -129,7 +130,7 @@ contract SubsMan is Debot {
         image = newImage;
     }
 
-    function buildAccountHelper(uint256 serviceKey, TvmCell params, address userWallet) private view returns (TvmCell) {
+    function buildAccountHelper(uint256 serviceKey, TvmCell params, uint256 userWallet) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         saltBuilder.store(serviceKey,params,userWallet);
         TvmCell code = tvm.setCodeSalt(
@@ -188,16 +189,17 @@ contract SubsMan is Debot {
         return code;             
     }
 
-    function deployAccountHelper(uint256 ownerKey, uint256 serviceKey, TvmCell params, bytes signature) public view {
+    function deployAccountHelper(uint256 ownerKey, uint256 serviceKey, TvmCell params, bytes signature, TvmCell indificator) public view {
         require(msg.value >= 1 ton, 102);
         TvmCell state = buildAccount(ownerKey,serviceKey,params);
         address subsAddr = address(tvm.hash(state));
-        new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildSubscriptionIndex(ownerKey), signature, subsAddr);
+        new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildSubscriptionIndex(ownerKey), signature, subsAddr, indificator);
     }
 
     function deployAccount(bytes signature) public {
 	Terminal.print(0, signature);
-        TvmCell body = tvm.encodeBody(SubsMan.deployAccountHelper, m_ownerKey, m_serviceKey, svcParams, signature);
+        TvmCell indificator;
+        TvmCell body = tvm.encodeBody(SubsMan.deployAccountHelper, m_ownerKey, m_serviceKey, svcParams, signature, indificator);
         this.callMultisig(m_wallet, m_ownerKey, m_sbHandle, address(this), body, DEPLOY_FEE, tvm.functionId(checkAccount));
     }
  
@@ -451,7 +453,7 @@ contract SubsMan is Debot {
     
     function _getAccountCodeSubscriber(uint256 serviceKey) private view returns (TvmCell) {
         // need to get svcParams from selected service
-        TvmCell code = buildAccountHelper(serviceKey, svcParams, address(tvm.hash(buildWallet(m_ownerKey))));
+        TvmCell code = buildAccountHelper(serviceKey, svcParams, tvm.hash(buildWallet(m_ownerKey)));
         return code;
     }
 

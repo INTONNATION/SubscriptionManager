@@ -30,14 +30,14 @@ contract Subscription {
 
     Payment public subscription;
     
-    constructor(TvmCell image, bytes signature, address subsAddr) public {
-        (address to, uint128 value, uint32 period, , ,TvmCell indificator) = params.toSlice().decode(address, uint128, uint32, string, string, TvmCell);
+    constructor(TvmCell image, bytes signature, address subsAddr, TvmCell indificator) public {
+        (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
         TvmCell code = tvm.code();
         optional(TvmCell) salt = tvm.codeSalt(code);
         address wallet_from_salt;
         require(salt.hasValue(), 104);
-        (, , wallet_from_salt) = salt.get().toSlice().decode(uint256,TvmCell,address);
-        require(wallet_from_salt == user_wallet, 111);
+        //(, , wallet_hash) = salt.get().toSlice().decode(uint256,TvmCell,uint256);
+        //require(wallet_hash == user_wallet, 111);
         require(msg.value >= 1 ton, 100);
         require(value > 0 && period > 0, 102);
         require(tvm.checkSign(tvm.hash(image), signature.toSlice(), tvm.pubkey()), 105);
@@ -58,7 +58,7 @@ contract Subscription {
         });
         TvmCell stateInit = tvm.insertPubkey(state, tvm.pubkey());
         subscriptionIndexAddress = address(tvm.hash(stateInit));
-        new SubscriptionIndex{value: 0.5 ton, flag: 1, bounce: true, stateInit: stateInit}(signature, subsAddr);
+        new SubscriptionIndex{value: 0.5 ton, flag: 1, bounce: true, stateInit: stateInit}(signature, subsAddr, indificator);
     }
 
     function getWallet() public view returns (address) {

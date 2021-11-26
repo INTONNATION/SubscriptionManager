@@ -7,7 +7,8 @@
 			"name": "constructor",
 			"inputs": [
 				{"name":"signature","type":"bytes"},
-				{"name":"subsAddr","type":"address"}
+				{"name":"subsAddr","type":"address"},
+				{"name":"indificator","type":"cell"}
 			],
 			"outputs": [
 			]

@@ -30,7 +30,7 @@ contract SubscriptionIndex {
 		_;
     }
 
-    constructor(bytes signature, address subsAddr) public {
+    constructor(bytes signature, address subsAddr, TvmCell indificator) public {
         require(msg.value >= 0.5 ton, 102);
         require(msg.sender != address(0), 103);
         TvmCell code = tvm.code();
@@ -40,8 +40,9 @@ contract SubscriptionIndex {
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), tvm.pubkey()), 105);
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), ownerKey), 106);
         require(subsAddr != address(0), 107);
+        svcparams.subscription_indificator = indificator;
         subscription_addr = subsAddr;
-	    (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.subscription_indificator) = params.toSlice().decode(address, uint128, uint32, string, string, TvmCell);
+	    (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = params.toSlice().decode(address, uint128, uint32, string, string);
     }
 
     function cancel() public onlyOwner {
