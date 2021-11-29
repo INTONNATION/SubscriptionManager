@@ -85,7 +85,7 @@ contract Subscription {
         }
     }
 
-    function onPaySubscription(uint8 status) internal {
+    function onPaySubscription(uint8 status) external {
         if (status == 0 && user_wallet == msg.sender) {
             subscription.status = STATUS_ACTIVE;
             subscription.start = uint32(now);

@@ -45,6 +45,14 @@
 			]
 		},
 		{
+			"name": "onPaySubscription",
+			"inputs": [
+				{"name":"status","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "serviceKey",
 			"inputs": [
 			],
