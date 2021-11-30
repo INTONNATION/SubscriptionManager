@@ -189,17 +189,16 @@ contract SubsMan is Debot {
         return code;             
     }
 
-    function deployAccountHelper(uint256 ownerKey, uint256 serviceKey, TvmCell params, bytes signature, TvmCell indificator) public view {
+    function deployAccountHelper(uint256 ownerKey, uint256 serviceKey, TvmCell params, bytes signature, TvmCell indificator, TvmCell walletCode) public view {
         require(msg.value >= 1 ton, 102);
         TvmCell state = buildAccount(ownerKey,serviceKey,params);
         address subsAddr = address(tvm.hash(state));
-        new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildSubscriptionIndex(ownerKey), signature, subsAddr, indificator);
+        new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildSubscriptionIndex(ownerKey), signature, subsAddr, indificator, walletCode);
     }
 
     function deployAccount(bytes signature) public {
-	Terminal.print(0, signature);
         TvmCell indificator;
-        TvmCell body = tvm.encodeBody(SubsMan.deployAccountHelper, m_ownerKey, m_serviceKey, svcParams, signature, indificator);
+        TvmCell body = tvm.encodeBody(SubsMan.deployAccountHelper, m_ownerKey, m_serviceKey, svcParams, signature, indificator, m_subscriptionWalletImage.toSlice().loadRef());
         this.callMultisig(m_wallet, m_ownerKey, m_sbHandle, address(this), body, DEPLOY_FEE, tvm.functionId(checkAccount));
     }
  
