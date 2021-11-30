@@ -7,22 +7,10 @@ contract Wallet {
 
     TvmCell public subscr_Image;
     address public myaddress;
-    address public last_req_exp_address;
-    address public last_req_real_address;
-    address public mdest;
-    uint128 public mvalue;
-    bool public mbounce;
-    uint256 public mserviceKey;
-    uint32 public mperiod;
-
-    uint256 public tvmKey;
-    uint256 public msgKey;
 
     constructor(TvmCell image, bytes signature) public {
-        tvmKey = tvm.pubkey();
-        msgKey = msg.pubkey();  // need to verify external message deployment
         require(tvm.pubkey() != 0, 100);
-        //require(tvm.checkSign(tvm.hash(tvm.code()), signature.toSlice(), tvm.pubkey()), 102);
+        require(tvm.checkSign(tvm.hash(tvm.code()), signature.toSlice(), tvm.pubkey()), 102);
         tvm.accept();
         subscr_Image = image;
         TvmCell wImage = tvm.buildStateInit({
@@ -38,7 +26,7 @@ contract Wallet {
         dest.transfer(value, bounce, 0);
     }
 
-    function buildSubscriptionState(uint256 serviceKey, TvmCell params) private view returns (TvmCell) {
+    function buildSubscriptionState(uint256 serviceKey, TvmCell params, TvmCell indificator) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         saltBuilder.store(serviceKey, params, tvm.hash(tvm.code()));
         TvmCell code = tvm.setCodeSalt(
@@ -51,17 +39,18 @@ contract Wallet {
             varInit: {
                 serviceKey: serviceKey,
                 user_wallet: myaddress,
-                params: params
+                params: params,
+                subscription_indificator: indificator
             },
             contr: Subscription
         });
         return newImage;
     }
 
-    function paySubscription(uint256 serviceKey, bool bounce, TvmCell params) public view responsible returns (uint8) {
+    function paySubscription(uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) public view responsible returns (uint8) {
         require(msg.value >= 0.1 ton, 104);
         (address to, uint128 value) = params.toSlice().decode(address, uint128);
-        require(msg.sender == address(tvm.hash(buildSubscriptionState(serviceKey,params))), 105);
+        require(msg.sender == address(tvm.hash(buildSubscriptionState(serviceKey,params,indificator))), 105);
         to.transfer(value * 1000000000, bounce, 0);
         return{value: 0, bounce: false, flag: 64} 0;  
     }
