@@ -114,7 +114,7 @@ contract SubsMan is Debot {
         return [ Menu.ID, SigningBoxInput.ID ];
     }
 
-    function buildAccount(uint256 ownerKey, uint256 serviceKey, TvmCell params) private view returns (TvmCell image) {
+    function buildAccount(uint256 ownerKey, uint256 serviceKey, TvmCell params, TvmCell indificator) private view returns (TvmCell image) {
         TvmCell walletCode = m_subscriptionWalletImage.toSlice().loadRef();
         TvmCell code = buildAccountHelper(serviceKey, params, tvm.hash(walletCode));
         TvmCell newImage = tvm.buildStateInit({
@@ -123,7 +123,8 @@ contract SubsMan is Debot {
             varInit: { 
                 serviceKey: serviceKey,
                 user_wallet: address(tvm.hash(buildWallet(ownerKey))),
-                params: params
+                params: params,
+                subscription_indificator: indificator
             },
             contr: Subscription
         });
@@ -191,9 +192,9 @@ contract SubsMan is Debot {
 
     function deployAccountHelper(uint256 ownerKey, uint256 serviceKey, TvmCell params, bytes signature, TvmCell indificator, TvmCell walletCode) public view {
         require(msg.value >= 1 ton, 102);
-        TvmCell state = buildAccount(ownerKey,serviceKey,params);
+        TvmCell state = buildAccount(ownerKey,serviceKey,params, indificator);
         address subsAddr = address(tvm.hash(state));
-        new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildSubscriptionIndex(ownerKey), signature, subsAddr, indificator, walletCode);
+        new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildSubscriptionIndex(ownerKey), signature, subsAddr, walletCode);
     }
 
     function deployAccount(bytes signature) public {
@@ -234,7 +235,8 @@ contract SubsMan is Debot {
     }
 
     function checkAccount() public {
-        address account = address(tvm.hash(buildAccount(m_ownerKey, m_serviceKey, svcParams)));
+        TvmCell emptyIndificator;
+        address account = address(tvm.hash(buildAccount(m_ownerKey, m_serviceKey, svcParams, emptyIndificator)));
         Sdk.getAccountCodeHash(tvm.functionId(checkHash), account);
     }
 
@@ -244,7 +246,8 @@ contract SubsMan is Debot {
     }
 
     function checkHash(uint256 code_hash) public {
-        if (code_hash == tvm.hash(buildAccount(m_ownerKey, m_serviceKey, svcParams)) || code_hash == 0) {
+        TvmCell emptyIndificator;
+        if (code_hash == tvm.hash(buildAccount(m_ownerKey, m_serviceKey, svcParams, emptyIndificator)) || code_hash == 0) {
             Menu.select("Waiting for the subcription deployment...", "", [ MenuItem("Check again", "", tvm.functionId(menuCheckAccount)) ]);
             return;
         }

@@ -13,7 +13,7 @@ contract Subscription {
     uint256 static public serviceKey;
     address static public user_wallet;
     TvmCell static public params;
-    TvmCell public subscription_indificator;
+    TvmCell static public subscription_indificator;
     address public subscriptionIndexAddress;
 
     uint8 constant STATUS_ACTIVE   = 1;
@@ -30,7 +30,7 @@ contract Subscription {
 
     Payment public subscription;
     
-    constructor(TvmCell image, bytes signature, address subsAddr, TvmCell indificator, TvmCell walletCode) public {
+    constructor(TvmCell image, bytes signature, address subsAddr, TvmCell walletCode) public {
         (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
         TvmCell code = tvm.code();
         optional(TvmCell) salt = tvm.codeSalt(code);
@@ -47,7 +47,6 @@ contract Subscription {
         require(value > 0 && period > 0, 102);
         require(tvm.checkSign(tvm.hash(image), signature.toSlice(), tvm.pubkey()), 105);
         tvm.accept();
-        subscription_indificator = indificator;
         //uint32 _period = period * 3600 * 24;
         uint32 _period = period;
         uint128 _value = value * 1000000000;
@@ -57,13 +56,14 @@ contract Subscription {
             pubkey: tvm.pubkey(),
             varInit: { 
                 params: params,
-                user_wallet: user_wallet
+                user_wallet: user_wallet,
+                subscription_indificator: subscription_indificator
             },
             contr: SubscriptionIndex
         });
         TvmCell stateInit = tvm.insertPubkey(state, tvm.pubkey());
         subscriptionIndexAddress = address(tvm.hash(stateInit));
-        new SubscriptionIndex{value: 0.5 ton, flag: 1, bounce: true, stateInit: stateInit}(signature, subsAddr, indificator);
+        new SubscriptionIndex{value: 0.5 ton, flag: 1, bounce: true, stateInit: stateInit}(signature, subsAddr);
     }
 
     function cancel() public {

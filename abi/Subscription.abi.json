@@ -9,25 +9,9 @@
 				{"name":"image","type":"cell"},
 				{"name":"signature","type":"bytes"},
 				{"name":"subsAddr","type":"address"},
-				{"name":"indificator","type":"cell"}
+				{"name":"walletCode","type":"cell"}
 			],
 			"outputs": [
-			]
-		},
-		{
-			"name": "getWallet",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"address"}
-			]
-		},
-		{
-			"name": "getSubscription",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"pubkey","type":"uint256"},{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"value0","type":"tuple"}
 			]
 		},
 		{
@@ -104,7 +88,8 @@
 	"data": [
 		{"key":1,"name":"serviceKey","type":"uint256"},
 		{"key":2,"name":"user_wallet","type":"address"},
-		{"key":3,"name":"params","type":"cell"}
+		{"key":3,"name":"params","type":"cell"},
+		{"key":4,"name":"subscription_indificator","type":"cell"}
 	],
 	"events": [
 	],
