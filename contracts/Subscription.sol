@@ -5,7 +5,7 @@ pragma AbiHeader pubkey;
 import "SubscriptionIndex.sol";
 
 interface IWallet {
-    function paySubscription (uint256 serviceKey, bool bounce, TvmCell params) external responsible returns (uint8);
+    function paySubscription (uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) external responsible returns (uint8);
 }
 
 contract Subscription {
@@ -76,7 +76,7 @@ contract Subscription {
             // need to add buffer and condition
             tvm.accept();
             subscription.status = STATUS_NONACTIVE;
-            IWallet(user_wallet).paySubscription{value: 0.2 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, params);
+            IWallet(user_wallet).paySubscription{value: 0.2 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, params, subscription_indificator);
         } else {
             require(subscription.status == STATUS_ACTIVE, 103);
         }

@@ -28,7 +28,8 @@
 				{"name":"answerId","type":"uint32"},
 				{"name":"serviceKey","type":"uint256"},
 				{"name":"bounce","type":"bool"},
-				{"name":"params","type":"cell"}
+				{"name":"params","type":"cell"},
+				{"name":"indificator","type":"cell"}
 			],
 			"outputs": [
 				{"name":"value0","type":"uint8"}
@@ -49,78 +50,6 @@
 			"outputs": [
 				{"name":"myaddress","type":"address"}
 			]
-		},
-		{
-			"name": "last_req_exp_address",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"last_req_exp_address","type":"address"}
-			]
-		},
-		{
-			"name": "last_req_real_address",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"last_req_real_address","type":"address"}
-			]
-		},
-		{
-			"name": "mdest",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"mdest","type":"address"}
-			]
-		},
-		{
-			"name": "mvalue",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"mvalue","type":"uint128"}
-			]
-		},
-		{
-			"name": "mbounce",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"mbounce","type":"bool"}
-			]
-		},
-		{
-			"name": "mserviceKey",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"mserviceKey","type":"uint256"}
-			]
-		},
-		{
-			"name": "mperiod",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"mperiod","type":"uint32"}
-			]
-		},
-		{
-			"name": "tvmKey",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"tvmKey","type":"uint256"}
-			]
-		},
-		{
-			"name": "msgKey",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"msgKey","type":"uint256"}
-			]
 		}
 	],
 	"data": [
@@ -132,15 +61,6 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"subscr_Image","type":"cell"},
-		{"name":"myaddress","type":"address"},
-		{"name":"last_req_exp_address","type":"address"},
-		{"name":"last_req_real_address","type":"address"},
-		{"name":"mdest","type":"address"},
-		{"name":"mvalue","type":"uint128"},
-		{"name":"mbounce","type":"bool"},
-		{"name":"mserviceKey","type":"uint256"},
-		{"name":"mperiod","type":"uint32"},
-		{"name":"tvmKey","type":"uint256"},
-		{"name":"msgKey","type":"uint256"}
+		{"name":"myaddress","type":"address"}
 	]
 }
