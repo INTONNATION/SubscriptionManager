@@ -17,20 +17,12 @@ tos=tonos-cli
 
 DEBOT_NAME=SubsMan
 DEBOT_CLIENT=clientDebot
-# FLD old giver
 giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
 
-#giver=0:ece57bcc6c530283becbbd8a3b24d3c5987cdddc3c8b7b33be6e4a6312490415
-
-# FLD old giver
-# function giver {
-# $tos --url $NETWORK call --abi ../abi/local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
-# }
 
 function giver {
-       $tos --url $NETWORK call --abi ../abi/local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
+$tos --url $NETWORK call --abi ../abi/local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
 }
-
 function get_address {
 echo $(cat log.log | grep "Raw address:" | cut -d ' ' -f 3)
 }
@@ -149,18 +141,18 @@ deploy $DEBOT_NAME
 DEBOT_ADDRESS=$(cat $DEBOT_NAME.addr)
 ACCMAN_ADDRESS=$DEBOT_ADDRESS
 
-IMAGE=$(base64 -w 0 ../abi/Subscription.tvc)
+IMAGE=$(base64 ../abi/Subscription.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionBase "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
-IMAGE=$(base64 -w 0 ../abi/Wallet.tvc)
+IMAGE=$(base64 ../abi/Wallet.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 
-IMAGE=$(base64 -w 0 ../abi/SubscriptionIndex.tvc)
+IMAGE=$(base64 ../abi/SubscriptionIndex.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionIndexCode "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 # SET IMAGE for SERVICE
-IMAGE=$(base64 -w 0 ../abi/SubscriptionService.tvc)
+IMAGE=$(base64 ../abi/SubscriptionService.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 # SET IMAGE for SERVICE INDEX
-IMAGE=$(base64 -w 0 ../abi/SubscriptionServiceIndex.tvc)
+IMAGE=$(base64 ../abi/SubscriptionServiceIndex.tvc)
 $tos --url $NETWORK call $DEBOT_ADDRESS setSubscriptionServiceIndex "{\"image\":\"$IMAGE\"}" --sign $DEBOT_NAME.keys.json --abi ../abi/$DEBOT_NAME.abi.json
 echo DONE ------------------------------------------------------------------
 echo debot $DEBOT_ADDRESS
