@@ -7,7 +7,7 @@ contract Wallet {
 
     TvmCell public subscr_Image;
     address public myaddress;
-
+   
     constructor(TvmCell image, bytes signature) public {
         require(tvm.pubkey() != 0, 100);
         require(tvm.checkSign(tvm.hash(tvm.code()), signature.toSlice(), tvm.pubkey()), 102);
@@ -47,10 +47,11 @@ contract Wallet {
         return newImage;
     }
 
-    function paySubscription(uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) public view responsible returns (uint8) {
+    function paySubscription(uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
         require(msg.value >= 0.1 ton, 104);
         (address to, uint128 value) = params.toSlice().decode(address, uint128);
-        require(msg.sender == address(tvm.hash(buildSubscriptionState(serviceKey,params,indificator))), 105);
+        address subsAddr = address(tvm.hash(buildSubscriptionState(serviceKey,params,indificator)));
+        require(msg.sender == subsAddr, 111);
         to.transfer(value * 1000000000, bounce, 0);
         return{value: 0, bounce: false, flag: 64} 0;  
     }
