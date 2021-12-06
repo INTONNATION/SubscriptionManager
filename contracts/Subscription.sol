@@ -45,7 +45,7 @@ contract Subscription {
         require(address(tvm.hash(walletStateInit)) == user_wallet, 123);
         require(msg.value >= 1 ton, 100);
         require(value > 0 && period > 0, 102);
-        require(tvm.checkSign(tvm.hash(image), signature.toSlice(), tvm.pubkey()), 105);
+        require(tvm.checkSign(tvm.hash(image), signature.toSlice(), tvm.pubkey()), 106);
         tvm.accept();
         //uint32 _period = period * 3600 * 24;
         uint32 _period = period;

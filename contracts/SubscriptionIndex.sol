@@ -40,7 +40,7 @@ contract SubscriptionIndex {
         ownerKey = salt.get().toSlice().decode(uint256);
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), tvm.pubkey()), 105);
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), ownerKey), 106);
-        require(subsAddr != address(0), 107);
+        require(subsAddr != address(0), 108);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
 	    (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = params.toSlice().decode(address, uint128, uint32, string, string);

@@ -48,7 +48,7 @@ contract Wallet {
     }
 
     function paySubscription(uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
-        require(msg.value >= 0.1 ton, 104);
+        require(msg.value >= 0.1 ton, 105);
         (address to, uint128 value) = params.toSlice().decode(address, uint128);
         address subsAddr = address(tvm.hash(buildSubscriptionState(serviceKey,params,indificator)));
         require(msg.sender == subsAddr, 111);

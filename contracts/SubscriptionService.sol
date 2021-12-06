@@ -35,8 +35,8 @@ contract SubscriptionService {
         require(msg.value >= 1 ton, 101);
         TvmCell code = tvm.code();
         require(msg.sender != address(0), 102);
-        require(tvm.checkSign(tvm.hash(code), signature.toSlice(), tvm.pubkey()), 103);
-        require(tvm.checkSign(tvm.hash(code), signature.toSlice(), serviceKey), 104);
+        require(tvm.checkSign(tvm.hash(code), signature.toSlice(), tvm.pubkey()), 105);
+        require(tvm.checkSign(tvm.hash(code), signature.toSlice(), serviceKey), 106);
         (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.image) = params.toSlice().decode(address, uint128, uint32, string, string, string);
         TvmCell state = tvm.buildStateInit({
             code: indexCode,
