@@ -32,7 +32,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 			]
 		}
 	],
@@ -50,7 +50,7 @@
 		{"name":"params","type":"cell"},
 		{"name":"serviceKey","type":"uint256"},
 		{"name":"serviceCategory","type":"string"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"}],"name":"svcparams","type":"tuple"},
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
 		{"name":"subscriptionServiceIndexAddress","type":"address"}
 	]
 }

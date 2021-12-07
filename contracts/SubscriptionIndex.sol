@@ -23,6 +23,8 @@ contract SubscriptionIndex {
         string name;
         string description;
         TvmCell subscription_indificator;
+        string image;
+        string category;
     }
 
     modifier onlyOwner {
@@ -43,7 +45,7 @@ contract SubscriptionIndex {
         require(subsAddr != address(0), 108);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
-	    (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description) = params.toSlice().decode(address, uint128, uint32, string, string);
+	    (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.image, svcparams.category) = params.toSlice().decode(address, uint128, uint32, string, string, string, string);
     }
 
     function cancel() public onlyOwner {
