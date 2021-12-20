@@ -7,8 +7,8 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$FLD
 
-tondev sol compile ../contracts/mTIP-3/RootTokenContract.sol -o ../abi;
-tondev sol compile ../contracts/mTIP-3/TONTokenWallet.sol -o ../abi;
+tondev sol compile ../contracts/TIP-3/RootTokenContract.sol -o ../abi;
+tondev sol compile ../contracts/TIP-3/TONTokenWallet.sol -o ../abi;
 name=`echo mUSDT | xxd -ps -c 20000`
 wallet_code=`tvm_linker decode --tvc ../abi/TONTokenWallet.tvc | grep 'code:' | awk '{print $NF}'`
 tvc=`tvm_linker init ../abi/RootTokenContract.tvc "{\"_randomNonce\": 1, \"name\": \"$name\",\"symbol\": \"$name\", \"decimals\": 6, \"wallet_code\": \"$wallet_code\"}" ../abi/RootTokenContract.abi.json | grep 'Saved contract to file' | awk '{print $NF}'`

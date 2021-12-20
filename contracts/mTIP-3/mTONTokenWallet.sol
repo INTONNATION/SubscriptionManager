@@ -54,11 +54,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             ITokenWalletDeployedCallback(owner_address).notifyWalletDeployed{value: 0.00001 ton, flag: 1}(root_address);
         }
         subscr_image = image;
-        TvmCell wImage = tvm.buildStateInit({
-            code: tvm.code(),
-            pubkey: tvm.pubkey()
-        });
-        wallet_address = address(tvm.hash(wImage));
+        wallet_address = address(this);
     }
 
     function getVersion() override external pure responsible returns (uint32) {

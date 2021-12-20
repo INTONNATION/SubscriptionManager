@@ -11,7 +11,7 @@ import "../interfaces/IRootTokenContract.sol";
 import "../interfaces/ITONTokenWallet.sol";
 import "../interfaces/IReceiveSurplusGas.sol";
 import "../interfaces/ISendSurplusGas.sol";
-import "./TONTokenWallet.sol";
+import "./mTONTokenWallet.sol";
 import "../interfaces/IPausable.sol";
 import "../interfaces/IPausedCallback.sol";
 import "../interfaces/ITransferOwner.sol";
