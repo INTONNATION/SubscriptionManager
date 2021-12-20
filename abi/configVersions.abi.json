@@ -1,0 +1,70 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getTvcLatest",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"tvcService","type":"cell"},{"name":"tvcWallet","type":"cell"},{"name":"tvcSubsciption","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSuscriptionIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+			]
+		},
+		{
+			"name": "getVersions",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"arr","type":"uint8[]"}
+			]
+		},
+		{
+			"name": "getTvcVersion",
+			"inputs": [
+				{"name":"versionTvc","type":"uint8"}
+			],
+			"outputs": [
+				{"components":[{"name":"tvcService","type":"cell"},{"name":"tvcWallet","type":"cell"},{"name":"tvcSubsciption","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSuscriptionIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+			]
+		},
+		{
+			"name": "setTvc",
+			"inputs": [
+				{"name":"tvcServiceInput","type":"cell"},
+				{"name":"tvcWalletInput","type":"cell"},
+				{"name":"tvcSubsciptionInput","type":"cell"},
+				{"name":"tvcSubscriptionServiceIndexInput","type":"cell"},
+				{"name":"tvcSuscriptionIndexInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "version",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"version","type":"uint8"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"version","type":"uint8"},
+		{"components":[{"name":"tvcService","type":"cell"},{"name":"tvcWallet","type":"cell"},{"name":"tvcSubsciption","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSuscriptionIndex","type":"cell"}],"name":"vrsparams","type":"map(uint8,tuple)"}
+	]
+}
