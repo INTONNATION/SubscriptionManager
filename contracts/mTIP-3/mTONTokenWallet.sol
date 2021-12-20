@@ -3,17 +3,17 @@ pragma ton-solidity >= 0.39.0;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
-import "./interfaces/IDestroyable.sol";
-import "./interfaces/ITONTokenWallet.sol";
-import "./interfaces/IBurnableByOwnerTokenWallet.sol";
-import "./interfaces/IBurnableByRootTokenWallet.sol";
-import "./interfaces/IBurnableTokenRootContract.sol";
-import "./interfaces/ITokenWalletDeployedCallback.sol";
-import "./interfaces/ITokensReceivedCallback.sol";
-import "./interfaces/ITokensBouncedCallback.sol";
-import "./libraries/TONTokenWalletErrors.sol";
-import "./libraries/TONTokenWalletConstants.sol";
-import "./interfaces/IVersioned.sol";
+import "../interfaces/IDestroyable.sol";
+import "../interfaces/ITONTokenWallet.sol";
+import "../interfaces/IBurnableByOwnerTokenWallet.sol";
+import "../interfaces/IBurnableByRootTokenWallet.sol";
+import "../interfaces/IBurnableTokenRootContract.sol";
+import "../interfaces/ITokenWalletDeployedCallback.sol";
+import "../interfaces/ITokensReceivedCallback.sol";
+import "../interfaces/ITokensBouncedCallback.sol";
+import "../libraries/TONTokenWalletErrors.sol";
+import "../libraries/TONTokenWalletConstants.sol";
+import "../interfaces/IVersioned.sol";
 import "../Subscription.sol";
 
 

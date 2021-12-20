@@ -7,15 +7,15 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$FLD
 
-tondev sol compile ../contracts/mTIP-3/mRootTokenContract.sol -o ../abi;
-tondev sol compile ../contracts/mTIP-3/mTONTokenWallet.sol -o ../abi;
+tondev sol compile ../contracts/mTIP-3/RootTokenContract.sol -o ../abi;
+tondev sol compile ../contracts/mTIP-3/TONTokenWallet.sol -o ../abi;
 name=`echo mUSDT | xxd -ps -c 20000`
-wallet_code=`tvm_linker decode --tvc ../abi/mTONTokenWallet.tvc | grep 'code:' | awk '{print $NF}'`
-tvc=`tvm_linker init ../abi/mRootTokenContract.tvc "{\"_randomNonce\": 1, \"name\": \"$name\",\"symbol\": \"$name\", \"decimals\": 6, \"wallet_code\": \"$wallet_code\"}" ../abi/mRootTokenContract.abi.json | grep 'Saved contract to file' | awk '{print $NF}'`
-mv $tvc ../abi/mRootTokenContract.tvc
+wallet_code=`tvm_linker decode --tvc ../abi/TONTokenWallet.tvc | grep 'code:' | awk '{print $NF}'`
+tvc=`tvm_linker init ../abi/RootTokenContract.tvc "{\"_randomNonce\": 1, \"name\": \"$name\",\"symbol\": \"$name\", \"decimals\": 6, \"wallet_code\": \"$wallet_code\"}" ../abi/RootTokenContract.abi.json | grep 'Saved contract to file' | awk '{print $NF}'`
+mv $tvc ../abi/RootTokenContract.tvc
 tos=tonos-cli
 
-CONTRACT_NAME=mRootTokenContract
+CONTRACT_NAME=RootTokenContract
 
 # Giver FLD
 giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
@@ -63,6 +63,3 @@ echo -n $CONTRACT_ADDRESS > $1.addr
 
 deploy $CONTRACT_NAME
 CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
-
-IMAGE=$(base64 -w 0 ../abi/Subscription.tvc)
-$tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionImage "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json

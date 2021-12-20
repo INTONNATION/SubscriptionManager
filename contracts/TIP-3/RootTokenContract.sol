@@ -2,21 +2,21 @@ pragma ton-solidity >= 0.39.0;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
-import "./interfaces/IBurnableByRootTokenWallet.sol";
-import "./interfaces/IBurnableTokenRootContract.sol";
-import "./interfaces/IBurnableByRootTokenRootContract.sol";
-import "./interfaces/IExpectedWalletAddressCallback.sol";
-import "./interfaces/IBurnTokensCallback.sol";
-import "./interfaces/IRootTokenContract.sol";
-import "./interfaces/ITONTokenWallet.sol";
-import "./interfaces/IReceiveSurplusGas.sol";
-import "./interfaces/ISendSurplusGas.sol";
+import "../interfaces/IBurnableByRootTokenWallet.sol";
+import "../interfaces/IBurnableTokenRootContract.sol";
+import "../interfaces/IBurnableByRootTokenRootContract.sol";
+import "../interfaces/IExpectedWalletAddressCallback.sol";
+import "../interfaces/IBurnTokensCallback.sol";
+import "../interfaces/IRootTokenContract.sol";
+import "../interfaces/ITONTokenWallet.sol";
+import "../interfaces/IReceiveSurplusGas.sol";
+import "../interfaces/ISendSurplusGas.sol";
 import "./TONTokenWallet.sol";
-import "./interfaces/IPausable.sol";
-import "./interfaces/IPausedCallback.sol";
-import "./interfaces/ITransferOwner.sol";
-import "./libraries/RootTokenContractErrors.sol";
-import "./interfaces/IVersioned.sol";
+import "../interfaces/IPausable.sol";
+import "../interfaces/IPausedCallback.sol";
+import "../interfaces/ITransferOwner.sol";
+import "../libraries/RootTokenContractErrors.sol";
+import "../interfaces/IVersioned.sol";
 
 
 /*
@@ -33,7 +33,6 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
     uint8 public static decimals;
 
     TvmCell static wallet_code;
-    TvmCell subscr_image;
 
     uint128 total_supply;
 
@@ -127,11 +126,6 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
         return { value: 0, bounce: false, flag: 64 } getExpectedWalletAddress(wallet_public_key_, owner_address_);
     }
 
-    function setSubscriptionImage(TvmCell image) public onlyOwner {
-        tvm.accept();
-        subscr_image = image;
-    }
-
     /*
         @notice Allows any contract to receive token wallet address in expectedWalletAddressCallback method
         @param wallet_public_key_ Token wallet owner public key
@@ -212,7 +206,7 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_image);
+            }();
         } else {
             wallet = address(tvm.hash(stateInit));
         }
@@ -269,7 +263,7 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
                 wallet_public_key: wallet_public_key_,
                 owner_address: owner_address_
             }
-        }(subscr_image);
+        }();
 
         if (gas_back_address.value != 0) {
             gas_back_address.transfer({ value: 0, flag: 128 });
