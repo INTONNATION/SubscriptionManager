@@ -18,6 +18,7 @@ contract SubsMan {
     TvmCell s_subscriptionServiceIndexImage;
 
     modifier onlyOwner() {
+        require(msg.pubkey() == tvm.pubkey(), 101);
         tvm.accept();
         _;
     }
