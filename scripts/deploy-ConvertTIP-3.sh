@@ -108,6 +108,7 @@ $tos --url $NETWORK deploy ../abi/mRootTokenContract.tvc "{\"root_public_key_\":
 echo -n $CONTRACT_ADDRESS > mRootTokenContract.addr
 IMAGE=$(base64 -w 0 ../abi/Subscription.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionImage "{\"image\":\"$IMAGE\"}" --sign mRootTokenContract.keys.json --abi ../abi/mRootTokenContract.abi.json
+giver $CONTRACT_ADDRESS
 }
 
 function genseedConvert {
