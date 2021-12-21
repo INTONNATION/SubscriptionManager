@@ -92,18 +92,7 @@ contract convertTIP3 {
         // Add burning tokens
         } else if (token_wallet == mtip3_token_wallet) {
             address senderAddress = getExpectedAddress(sender_public_key, sender_address);
-            TvmCell payload_;
-            IBurnableByRootTokenRootContract(mtip3_token_root).proxyBurn{
-                    value: 2 ton,
-                    flag: 1
-                }(
-                    tokens_amount,
-                    sender_address,
-                    original_gas_to,
-                    address.makeAddrStd(0, 0),
-                    payload_ // temp
-                );
-            //add this call through callback
+            TvmCell payload_; 
             ITONTokenWallet(tip3_token_wallet).transfer{
                     value: 2 ton,
                     flag: 1
@@ -115,6 +104,18 @@ contract convertTIP3 {
                     false,
                     payload
                 );
+            // need to ensure that tokens transfered and only after that burn mTIP3 tokens
+            IBurnableByRootTokenRootContract(mtip3_token_root).proxyBurn{
+                    value: 2 ton,
+                    flag: 1
+                }(
+                    tokens_amount,
+                    sender_address,
+                    original_gas_to,
+                    address.makeAddrStd(0, 0),
+                    payload_ // temp
+                );
+            // verify that tokens were burn
         }
     }
 }
