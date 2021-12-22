@@ -110,7 +110,7 @@ contract convertTIP3 {
                     flag: 1
                 }(
                     tokens_amount,
-                    sender_address,
+                    token_wallet,
                     original_gas_to,
                     address.makeAddrStd(0, 0),
                     payload_ // temp
