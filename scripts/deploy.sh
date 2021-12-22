@@ -7,7 +7,7 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$FLD
 
-for i in ../contracts/SubsMan ../contracts/Subscription ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex ../contracts/Wallet; do
+for i in ../contracts/SubsMan ../contracts/Subscription ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex ../contracts/mTIP-3/mTONTokenWallet; do
        tondev sol compile $i.sol -o ../abi;
 done
 
@@ -70,7 +70,7 @@ CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
 
 IMAGE=$(base64 -w 0 ../abi/Subscription.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionBase "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
-IMAGE=$(base64 -w 0 ../abi/Wallet.tvc)
+IMAGE=$(base64 -w 0 ../abi/mTONTokenWallet.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
 IMAGE=$(base64 -w 0 ../abi/SubscriptionIndex.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionIndexCode "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
@@ -78,4 +78,6 @@ IMAGE=$(base64 -w 0 ../abi/SubscriptionService.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
 IMAGE=$(base64 -w 0 ../abi/SubscriptionServiceIndex.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionServiceIndex "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
-echo debot $CONTRACT_ADDRESS
+echo $CONTRACT_ADDRESS
+
+./deploy-ConvertTIP-3.sh

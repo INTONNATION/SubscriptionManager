@@ -4,7 +4,6 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "../contracts/Subscription.sol";
-import "../contracts/Wallet.sol";
 import "../contracts/SubscriptionService.sol";
 
 contract SubsMan {
