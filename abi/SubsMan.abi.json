@@ -59,8 +59,7 @@
 				{"name":"serviceKey","type":"uint256"},
 				{"name":"params","type":"cell"},
 				{"name":"signature","type":"bytes"},
-				{"name":"indificator","type":"cell"},
-				{"name":"walletCode","type":"cell"}
+				{"name":"indificator","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -72,15 +71,6 @@
 				{"name":"params","type":"cell"},
 				{"name":"signature","type":"bytes"},
 				{"name":"serviceCategory","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "deployWalletHelper",
-			"inputs": [
-				{"name":"ownerKey","type":"uint256"},
-				{"name":"signature","type":"bytes"}
 			],
 			"outputs": [
 			]
