@@ -12,7 +12,7 @@ contract SubsMan {
     
     TvmCell m_subscriptionBaseImage;
     TvmCell s_subscriptionServiceImage;
-    TvmCell m_subscriptionWalletImage;
+    TvmCell m_subscriptionWalletImage_mUSDT;
     TvmCell m_subscriptionIndexImage;
     TvmCell s_subscriptionServiceIndexImage;
 
@@ -28,8 +28,8 @@ contract SubsMan {
         m_subscriptionBaseImage = image;
     }
  
-    function setSubscriptionWalletCode(TvmCell image) public onlyOwner {
-        m_subscriptionWalletImage = image;
+    function setSubscriptionWalletCode_mUSDT(TvmCell image) public onlyOwner {
+        m_subscriptionWalletImage_mUSDT = image;
     }
 
     function setSubscriptionIndexCode(TvmCell image) public onlyOwner {
@@ -46,15 +46,15 @@ contract SubsMan {
 
     // Build States
 
-    function buildAccount(uint256 ownerKey, uint256 serviceKey, TvmCell params, TvmCell indificator) private view returns (TvmCell image) {
-        TvmCell walletCode = m_subscriptionWalletImage.toSlice().loadRef();
+    function buildAccount(uint256 ownerKey, uint256 serviceKey, TvmCell params, TvmCell indificator, TvmCell accountWallet) private view returns (TvmCell image) {
+        TvmCell walletCode = accountWallet.toSlice().loadRef();
         TvmCell code = buildAccountHelper(serviceKey, params, tvm.hash(walletCode));
         TvmCell newImage = tvm.buildStateInit({
             code: code,
             pubkey: ownerKey,
             varInit: { 
                 serviceKey: serviceKey,
-                user_wallet: address(tvm.hash(buildWallet(ownerKey))),
+                user_wallet: address(tvm.hash(buildWallet(ownerKey, accountWallet))),
                 params: params,
                 subscription_indificator: indificator
             },
@@ -118,8 +118,8 @@ contract SubsMan {
         return code;
     }
 
-    function buildWallet(uint256 ownerKey) private view returns (TvmCell image) {
-        TvmCell code = m_subscriptionWalletImage.toSlice().loadRef();
+    function buildWallet(uint256 ownerKey, TvmCell accountWallet) private view returns (TvmCell image) {
+        TvmCell code = accountWallet.toSlice().loadRef();
         TvmCell newImage = tvm.buildStateInit({
             code: code,
             pubkey: ownerKey
@@ -129,11 +129,16 @@ contract SubsMan {
 
     // Deploy contracts
 
-    function deployAccountHelper(uint256 ownerKey, uint256 serviceKey, TvmCell params, bytes signature, TvmCell indificator ) public view {
+    function deployAccountHelper(uint256 ownerKey, uint256 serviceKey, TvmCell params, bytes signature, TvmCell indificator, string currency) public view {
+        TvmCell accountWallet;
+        if (currency == 'USDT') {
+            accountWallet = m_subscriptionWalletImage_mUSDT;
+        } 
         require(msg.value >= 1 ton, 102);
-        TvmCell state = buildAccount(ownerKey,serviceKey,params, indificator);
+        require(accountWallet.toSlice().empty() != true, 111);
+        TvmCell state = buildAccount(ownerKey,serviceKey,params, indificator, accountWallet);
         address subsAddr = address(tvm.hash(state));
-        new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildAccountIndex(ownerKey), signature, subsAddr, m_subscriptionWalletImage.toSlice().loadRef());
+        new Subscription{value: 1 ton, flag: 1, bounce: true, stateInit: state}(buildAccountIndex(ownerKey), signature, subsAddr, accountWallet.toSlice().loadRef());
     }
  
     function deployServiceHelper(uint256 serviceKey, TvmCell params, bytes signature, string serviceCategory) public view {

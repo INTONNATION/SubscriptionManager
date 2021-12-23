@@ -70,8 +70,8 @@ CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
 
 IMAGE=$(base64 -w 0 ../abi/Subscription.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionBase "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
-IMAGE=$(base64 -w 0 ../abi/mTONTokenWallet.tvc)
-$tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionWalletCode "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
+IMAGE=$(base64 -w 0 ../abi/mUSDTTokenWallet.tvc)
+$tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionWalletCode_mUSDT "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
 IMAGE=$(base64 -w 0 ../abi/SubscriptionIndex.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionIndexCode "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
 IMAGE=$(base64 -w 0 ../abi/SubscriptionService.tvc)
@@ -80,4 +80,4 @@ IMAGE=$(base64 -w 0 ../abi/SubscriptionServiceIndex.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionServiceIndex "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
 echo $CONTRACT_ADDRESS
 
-./deploy-ConvertTIP-3.sh
+./deploy-ConvertUSDT.sh

@@ -17,13 +17,14 @@ contract SubscriptionIndex {
     ServiceParams public svcparams;
 
     struct ServiceParams {
-        address to;
+        uint256 to;
         uint128 value;
         uint32 period;
         string name;
         string description;
         TvmCell subscription_indificator;
         string image;
+        string currency;
         string category;
     }
 
@@ -45,7 +46,11 @@ contract SubscriptionIndex {
         require(subsAddr != address(0), 108);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
-	    (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.image, svcparams.category) = params.toSlice().decode(address, uint128, uint32, string, string, string, string);
+	    TvmCell nextCell;
+        (svcparams.to, svcparams.value, svcparams.period, nextCell) = params.toSlice().decode(uint256, uint128, uint32, TvmCell);
+        TvmCell nextCell2;
+        (svcparams.name, svcparams.description, svcparams.image, nextCell2) = nextCell.toSlice().decode(string, string, string, TvmCell);
+        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
     }
 
     function cancel() public onlyOwner {
