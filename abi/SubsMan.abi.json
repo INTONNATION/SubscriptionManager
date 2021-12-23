@@ -12,7 +12,7 @@
 			]
 		},
 		{
-			"name": "setSubscriptionWalletCode",
+			"name": "setSubscriptionWalletCode_mUSDT",
 			"inputs": [
 				{"name":"image","type":"cell"}
 			],
@@ -59,7 +59,8 @@
 				{"name":"serviceKey","type":"uint256"},
 				{"name":"params","type":"cell"},
 				{"name":"signature","type":"bytes"},
-				{"name":"indificator","type":"cell"}
+				{"name":"indificator","type":"cell"},
+				{"name":"currency","type":"string"}
 			],
 			"outputs": [
 			]
@@ -93,7 +94,7 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"m_subscriptionBaseImage","type":"cell"},
 		{"name":"s_subscriptionServiceImage","type":"cell"},
-		{"name":"m_subscriptionWalletImage","type":"cell"},
+		{"name":"m_subscriptionWalletImage_mUSDT","type":"cell"},
 		{"name":"m_subscriptionIndexImage","type":"cell"},
 		{"name":"s_subscriptionServiceIndexImage","type":"cell"}
 	]

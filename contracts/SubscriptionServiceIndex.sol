@@ -10,12 +10,13 @@ interface ISubscriptionServiceContract {
 contract SubscriptionServiceIndex {
     ServiceParams public svcparams;
     struct ServiceParams {
-        address to;
+        uint256 to;
         uint128 value;
         uint32 period;
         string name;
         string description;
         string image;
+        string currency;
         string category;
     }
     TvmCell public static params;
@@ -31,12 +32,16 @@ contract SubscriptionServiceIndex {
     constructor(bytes signature,TvmCell svcCode) public {
         require(msg.sender != address(0), 101);
         require(tvm.checkSign(tvm.hash(svcCode), signature.toSlice(), tvm.pubkey()), 103);
-        (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.image, svcparams.category) = params.toSlice().decode(address, uint128, uint32, string, string, string, string);
+        TvmCell nextCell;
+        (svcparams.to, svcparams.value, svcparams.period, nextCell) = params.toSlice().decode(uint256, uint128, uint32, TvmCell);
+        TvmCell nextCell2;
+        (svcparams.name, svcparams.description, svcparams.image, nextCell2) = nextCell.toSlice().decode(string, string, string, TvmCell);
+        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
         serviceAddress = msg.sender;
     }
 
     function cancel() public onlyOwner {
         ISubscriptionServiceContract(serviceAddress).selfdelete();
-        selfdestruct(svcparams.to);
+        selfdestruct(serviceAddress);
     }
 }

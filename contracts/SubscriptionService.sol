@@ -13,12 +13,13 @@ contract SubscriptionService {
     address subscriptionServiceIndexAddress;
 
     struct ServiceParams {
-        address to;
+        uint256 to;
         uint128 value;
         uint32 period;
         string name;
         string description;
         string image;
+        string currency;
         string category;
     }
 
@@ -34,7 +35,11 @@ contract SubscriptionService {
         require(msg.sender != address(0), 102);
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), tvm.pubkey()), 105);
         require(tvm.checkSign(tvm.hash(code), signature.toSlice(), serviceKey), 106);
-        (svcparams.to, svcparams.value, svcparams.period, svcparams.name, svcparams.description, svcparams.image, svcparams.category) = params.toSlice().decode(address, uint128, uint32, string, string, string, string);
+        TvmCell nextCell;
+        (svcparams.to, svcparams.value, svcparams.period, nextCell) = params.toSlice().decode(uint256, uint128, uint32, TvmCell);
+        TvmCell nextCell2;
+        (svcparams.name, svcparams.description, svcparams.image, nextCell2) = nextCell.toSlice().decode(string, string, string, TvmCell);
+        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
         TvmCell state = tvm.buildStateInit({
             code: indexCode,
             pubkey: tvm.pubkey(),
@@ -51,6 +56,6 @@ contract SubscriptionService {
 
     function selfdelete() public {
         require(msg.sender == subscriptionServiceIndexAddress, 106);
-        selfdestruct(svcparams.to);
+        selfdestruct(msg.sender);
     }
 }
