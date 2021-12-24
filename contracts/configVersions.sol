@@ -5,9 +5,10 @@ pragma AbiHeader time;
 contract configVersions {
   
 
-    uint8 public version;
+    uint8 public versionTvc;
+	uint8 public versionAbi;
         
-	struct VersionsParams {
+	struct VersionsTvcParams {
 		TvmCell tvcService;
 		TvmCell tvcWallet;
 		TvmCell tvcSubsciption;
@@ -16,7 +17,15 @@ contract configVersions {
 
 }
 
-	mapping (uint8 => VersionsParams) vrsparams;
+	struct VersionsAbiParams {
+		string abiServiceContract;
+		string abiServiceIndexContract;
+		string abiSubscriptionIndexContract;
+		string abiSubsManDebot;
+
+}
+	mapping (uint8 => VersionsTvcParams) public vrsparamsTvc;
+    mapping (uint8 => VersionsAbiParams) public vrsparamsAbi;
 
 	constructor() public {
 		require(tvm.pubkey() != 0, 101);
@@ -29,31 +38,56 @@ contract configVersions {
 		tvm.accept();
 		_;
     }
-    function getTvcLatest() public view returns(optional (VersionsParams)){
-        optional(VersionsParams) value = vrsparams.fetch(version);
+    function getTvcLatest() public view returns(optional (VersionsTvcParams)){
+        optional(VersionsTvcParams) value = vrsparamsTvc.fetch(versionTvc);
 		return value;
     }
 
-    function getVersions() public view returns (uint8[] arr ){
-        for ((uint8 k,) : vrsparams) {
+	function getAbiLatest() public view returns(optional (VersionsAbiParams)){
+        optional(VersionsAbiParams) value = vrsparamsAbi.fetch(versionAbi);
+		return value;
+    }
+
+    function getTvcVersions() public view returns (uint8[] arr ){
+        for ((uint8 k,) : vrsparamsTvc) {
         arr.push(k);
         }
-    }    
+    }   
+
+    function getAbiVersions() public view returns (uint8[] arr ){
+        for ((uint8 k,) : vrsparamsAbi) {
+        arr.push(k);
+        }
+    }     
 	
-	function getTvcVersion(uint8 versionTvc) public view returns(optional (VersionsParams)){
-        optional(VersionsParams) value = vrsparams.fetch(versionTvc);
+	function getTvcVersion(uint8 tvcVersion) public view returns(optional (VersionsTvcParams)){
+        optional(VersionsTvcParams) value = vrsparamsTvc.fetch(tvcVersion);
+		return value;
+    }
+    function getAbiVersion(uint8 AbiVersion) public view returns(optional (VersionsAbiParams)){
+        optional(VersionsAbiParams) value = vrsparamsAbi.fetch(AbiVersion);
 		return value;
     }
 
     function setTvc(TvmCell tvcServiceInput,TvmCell tvcWalletInput, TvmCell tvcSubsciptionInput, TvmCell tvcSubscriptionServiceIndexInput,TvmCell tvcSuscriptionIndexInput)  public onlyOwner {
-		version++;
-		VersionsParams params;
+		versionTvc++;
+		VersionsTvcParams params;
 		params.tvcService = tvcServiceInput;
 		params.tvcWallet = tvcWalletInput;
 		params.tvcSubsciption = tvcSubsciptionInput;
 		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
 		params.tvcSuscriptionIndex = tvcSuscriptionIndexInput;
-		vrsparams.add(version, params);
+		vrsparamsTvc.add(versionTvc, params);
+		
+    }
+    function setAbi(string abiServiceContractInput, string abiServiceIndexContractInput, string abiSubscriptionIndexContractInput,string abiSubsManDebotInput)  public onlyOwner {
+		versionAbi++;
+		VersionsAbiParams params;
+		params.abiServiceContract = abiServiceContractInput;
+		params.abiServiceIndexContract = abiServiceIndexContractInput;
+		params.abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
+		params.abiSubsManDebot = abiSubsManDebotInput;
+		vrsparamsAbi.add(versionAbi, params);
 		
     }
 }

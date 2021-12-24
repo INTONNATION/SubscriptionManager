@@ -19,7 +19,23 @@
 			]
 		},
 		{
-			"name": "getVersions",
+			"name": "getAbiLatest",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
+			]
+		},
+		{
+			"name": "getTvcVersions",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"arr","type":"uint8[]"}
+			]
+		},
+		{
+			"name": "getAbiVersions",
 			"inputs": [
 			],
 			"outputs": [
@@ -29,10 +45,19 @@
 		{
 			"name": "getTvcVersion",
 			"inputs": [
-				{"name":"versionTvc","type":"uint8"}
+				{"name":"tvcVersion","type":"uint8"}
 			],
 			"outputs": [
 				{"components":[{"name":"tvcService","type":"cell"},{"name":"tvcWallet","type":"cell"},{"name":"tvcSubsciption","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSuscriptionIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+			]
+		},
+		{
+			"name": "getAbiVersion",
+			"inputs": [
+				{"name":"AbiVersion","type":"uint8"}
+			],
+			"outputs": [
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -48,11 +73,46 @@
 			]
 		},
 		{
-			"name": "version",
+			"name": "setAbi",
+			"inputs": [
+				{"name":"abiServiceContractInput","type":"string"},
+				{"name":"abiServiceIndexContractInput","type":"string"},
+				{"name":"abiSubscriptionIndexContractInput","type":"string"},
+				{"name":"abiSubsManDebotInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "versionTvc",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"version","type":"uint8"}
+				{"name":"versionTvc","type":"uint8"}
+			]
+		},
+		{
+			"name": "versionAbi",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"versionAbi","type":"uint8"}
+			]
+		},
+		{
+			"name": "vrsparamsTvc",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"tvcService","type":"cell"},{"name":"tvcWallet","type":"cell"},{"name":"tvcSubsciption","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSuscriptionIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"}
+			]
+		},
+		{
+			"name": "vrsparamsAbi",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 			]
 		}
 	],
@@ -64,7 +124,9 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"version","type":"uint8"},
-		{"components":[{"name":"tvcService","type":"cell"},{"name":"tvcWallet","type":"cell"},{"name":"tvcSubsciption","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSuscriptionIndex","type":"cell"}],"name":"vrsparams","type":"map(uint8,tuple)"}
+		{"name":"versionTvc","type":"uint8"},
+		{"name":"versionAbi","type":"uint8"},
+		{"components":[{"name":"tvcService","type":"cell"},{"name":"tvcWallet","type":"cell"},{"name":"tvcSubsciption","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSuscriptionIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
+		{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 	]
 }
