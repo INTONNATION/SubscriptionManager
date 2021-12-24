@@ -13,7 +13,7 @@ contract configVersions {
 		TvmCell tvcWallet;
 		TvmCell tvcSubsciption;
 		TvmCell tvcSubscriptionServiceIndex;
-		TvmCell tvcSuscriptionIndex;
+		TvmCell tvcSubscriptionIndex;
 
 }
 
@@ -69,14 +69,14 @@ contract configVersions {
 		return value;
     }
 
-    function setTvc(TvmCell tvcServiceInput,TvmCell tvcWalletInput, TvmCell tvcSubsciptionInput, TvmCell tvcSubscriptionServiceIndexInput,TvmCell tvcSuscriptionIndexInput)  public onlyOwner {
+    function setTvc(TvmCell tvcServiceInput,TvmCell tvcWalletInput, TvmCell tvcSubsciptionInput, TvmCell tvcSubscriptionServiceIndexInput,TvmCell tvcSubscriptionIndexInput)  public onlyOwner {
 		versionTvc++;
 		VersionsTvcParams params;
 		params.tvcService = tvcServiceInput;
 		params.tvcWallet = tvcWalletInput;
 		params.tvcSubsciption = tvcSubsciptionInput;
 		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
-		params.tvcSuscriptionIndex = tvcSuscriptionIndexInput;
+		params.tvcSubscriptionIndex = tvcSubscriptionIndexInput;
 		vrsparamsTvc.add(versionTvc, params);
 		
     }
