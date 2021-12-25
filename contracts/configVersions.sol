@@ -9,9 +9,9 @@ contract configVersions {
 	uint8 public versionAbi;
         
 	struct VersionsTvcParams {
-		TvmCell tvcService;
+		TvmCell tvcSubscriptionService;
 		TvmCell tvcWallet;
-		TvmCell tvcSubsciption;
+		TvmCell tvcSubscription;
 		TvmCell tvcSubscriptionServiceIndex;
 		TvmCell tvcSubscriptionIndex;
 
@@ -69,12 +69,12 @@ contract configVersions {
 		return value;
     }
 
-    function setTvc(TvmCell tvcServiceInput,TvmCell tvcWalletInput, TvmCell tvcSubsciptionInput, TvmCell tvcSubscriptionServiceIndexInput,TvmCell tvcSubscriptionIndexInput)  public onlyOwner {
+    function setTvc(TvmCell tvcSubscriptionServiceInput,TvmCell tvcWalletInput, TvmCell tvcSubscriptionInput, TvmCell tvcSubscriptionServiceIndexInput,TvmCell tvcSubscriptionIndexInput)  public onlyOwner {
 		versionTvc++;
 		VersionsTvcParams params;
-		params.tvcService = tvcServiceInput;
+		params.tvcSubscriptionService = tvcSubscriptionServiceInput;
 		params.tvcWallet = tvcWalletInput;
-		params.tvcSubsciption = tvcSubsciptionInput;
+		params.tvcSubscription = tvcSubscriptionInput;
 		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
 		params.tvcSubscriptionIndex = tvcSubscriptionIndexInput;
 		vrsparamsTvc.add(versionTvc, params);
