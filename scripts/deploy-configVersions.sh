@@ -17,7 +17,6 @@ tondev sol compile ../contracts/$contract_name.sol -o ../abi;
 tvc="../abi/$contract_name.tvc"
 contract_address=`tonos-cli genaddr $tvc $contract_abi --genkey $contract_name.keys.json | grep 'Raw address' | awk '{print $NF}'`
 
-# Change gen key to set key if needed
 echo $contract_address > $contract_name.addr
 
 tonos-cli --url $NETWORK call --abi ../abi/local_giver.abi.json $giver sendGrams "{\"dest\":\"$contract_address\",\"amount\":20000000000}"

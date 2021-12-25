@@ -14,16 +14,17 @@ contract configVersions {
 		TvmCell tvcSubscription;
 		TvmCell tvcSubscriptionServiceIndex;
 		TvmCell tvcSubscriptionIndex;
-
-}
+	}
 
 	struct VersionsAbiParams {
 		string abiServiceContract;
 		string abiServiceIndexContract;
+		string abiSubscriptionContract;
 		string abiSubscriptionIndexContract;
 		string abiSubsManDebot;
+	}
 
-}
+	string[] public categories;
 	mapping (uint8 => VersionsTvcParams) public vrsparamsTvc;
     mapping (uint8 => VersionsAbiParams) public vrsparamsAbi;
 
@@ -60,35 +61,41 @@ contract configVersions {
         }
     }     
 	
+	// get TVC by version
 	function getTvcVersion(uint8 tvcVersion) public view returns(optional (VersionsTvcParams)){
         optional(VersionsTvcParams) value = vrsparamsTvc.fetch(tvcVersion);
 		return value;
     }
+
+	// get ABI by version
     function getAbiVersion(uint8 AbiVersion) public view returns(optional (VersionsAbiParams)){
         optional(VersionsAbiParams) value = vrsparamsAbi.fetch(AbiVersion);
 		return value;
     }
 
-    function setTvc(TvmCell tvcSubscriptionServiceInput,TvmCell tvcWalletInput, TvmCell tvcSubscriptionInput, TvmCell tvcSubscriptionServiceIndexInput,TvmCell tvcSubscriptionIndexInput)  public onlyOwner {
+    function setTvc(TvmCell tvcSubscriptionServiceInput, TvmCell tvcSubscriptionInput, TvmCell tvcSubscriptionServiceIndexInput,TvmCell tvcSubscriptionIndexInput)  public onlyOwner {
 		versionTvc++;
 		VersionsTvcParams params;
 		params.tvcSubscriptionService = tvcSubscriptionServiceInput;
-		params.tvcWallet = tvcWalletInput;
 		params.tvcSubscription = tvcSubscriptionInput;
 		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
 		params.tvcSubscriptionIndex = tvcSubscriptionIndexInput;
 		vrsparamsTvc.add(versionTvc, params);
-		
     }
-    function setAbi(string abiServiceContractInput, string abiServiceIndexContractInput, string abiSubscriptionIndexContractInput,string abiSubsManDebotInput)  public onlyOwner {
+
+    function setAbi(string abiServiceContractInput, string abiServiceIndexContractInput, string abiSubscriptionContractInput, string abiSubscriptionIndexContractInput, string abiSubsManDebotInput) public onlyOwner {
 		versionAbi++;
 		VersionsAbiParams params;
 		params.abiServiceContract = abiServiceContractInput;
 		params.abiServiceIndexContract = abiServiceIndexContractInput;
+		params.abiSubscriptionContract = abiSubscriptionContractInput;
 		params.abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
 		params.abiSubsManDebot = abiSubsManDebotInput;
 		vrsparamsAbi.add(versionAbi, params);
-		
     }
+
+	function setCategories(string[] categoriesInput) public onlyOwner {
+		categories = categoriesInput;
+	}
 }
 

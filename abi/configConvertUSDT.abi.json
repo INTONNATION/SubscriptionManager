@@ -1,0 +1,176 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setTvcWallet",
+			"inputs": [
+				{"name":"tvcWalletINPUT","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setmUSDTRootAddr",
+			"inputs": [
+				{"name":"mUSDTRootAddrINPUT","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setUSDTRootAddr",
+			"inputs": [
+				{"name":"USDTRootAddrINPUT","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setmUSDTConvertWallet",
+			"inputs": [
+				{"name":"mUSDTConvertWalletINPUT","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setUSDTConvertWallet",
+			"inputs": [
+				{"name":"USDTConvertWalletINPUT","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbimRootTokenContract",
+			"inputs": [
+				{"name":"mRootTokenContractINPUT","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbimTONTokenWallet",
+			"inputs": [
+				{"name":"mTONTokenWalletINPUT","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiRootTokenContract",
+			"inputs": [
+				{"name":"RootTokenContractINPUT","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiTONTokenWallet",
+			"inputs": [
+				{"name":"TONTokenWalletINPUT","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "tvcWallet",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"tvcWallet","type":"cell"}
+			]
+		},
+		{
+			"name": "mUSDTRootAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"mUSDTRootAddr","type":"address"}
+			]
+		},
+		{
+			"name": "USDTRootAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"USDTRootAddr","type":"address"}
+			]
+		},
+		{
+			"name": "mUSDTConvertWallet",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"mUSDTConvertWallet","type":"address"}
+			]
+		},
+		{
+			"name": "USDTConvertWallet",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"USDTConvertWallet","type":"address"}
+			]
+		},
+		{
+			"name": "mRootTokenContract",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"mRootTokenContract","type":"string"}
+			]
+		},
+		{
+			"name": "mTONTokenWallet",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"mTONTokenWallet","type":"string"}
+			]
+		},
+		{
+			"name": "RootTokenContract",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"RootTokenContract","type":"string"}
+			]
+		},
+		{
+			"name": "TONTokenWallet",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"TONTokenWallet","type":"string"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"tvcWallet","type":"cell"},
+		{"name":"mUSDTRootAddr","type":"address"},
+		{"name":"USDTRootAddr","type":"address"},
+		{"name":"mUSDTConvertWallet","type":"address"},
+		{"name":"USDTConvertWallet","type":"address"},
+		{"name":"mRootTokenContract","type":"string"},
+		{"name":"mTONTokenWallet","type":"string"},
+		{"name":"RootTokenContract","type":"string"},
+		{"name":"TONTokenWallet","type":"string"}
+	]
+}
