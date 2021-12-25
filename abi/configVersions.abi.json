@@ -23,7 +23,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -57,14 +57,13 @@
 				{"name":"AbiVersion","type":"uint8"}
 			],
 			"outputs": [
-				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
 			"name": "setTvc",
 			"inputs": [
 				{"name":"tvcSubscriptionServiceInput","type":"cell"},
-				{"name":"tvcWalletInput","type":"cell"},
 				{"name":"tvcSubscriptionInput","type":"cell"},
 				{"name":"tvcSubscriptionServiceIndexInput","type":"cell"},
 				{"name":"tvcSubscriptionIndexInput","type":"cell"}
@@ -77,8 +76,17 @@
 			"inputs": [
 				{"name":"abiServiceContractInput","type":"string"},
 				{"name":"abiServiceIndexContractInput","type":"string"},
+				{"name":"abiSubscriptionContractInput","type":"string"},
 				{"name":"abiSubscriptionIndexContractInput","type":"string"},
 				{"name":"abiSubsManDebotInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setCategories",
+			"inputs": [
+				{"name":"categoriesInput","type":"string[]"}
 			],
 			"outputs": [
 			]
@@ -100,6 +108,14 @@
 			]
 		},
 		{
+			"name": "categories",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"categories","type":"string[]"}
+			]
+		},
+		{
 			"name": "vrsparamsTvc",
 			"inputs": [
 			],
@@ -112,7 +128,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 			]
 		}
 	],
@@ -126,7 +142,8 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"versionTvc","type":"uint8"},
 		{"name":"versionAbi","type":"uint8"},
+		{"name":"categories","type":"string[]"},
 		{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcWallet","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
-		{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+		{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 	]
 }
