@@ -6,10 +6,10 @@ contract configVersions {
         
 	TvmCell public tvcWallet;
 
-	address public mUSDTRootAddr;
-	address public USDTRootAddr;
-	address public mUSDTConvertWallet;
-	address public USDTConvertWallet;
+	address public mRootAddr;
+	address public RootAddr;
+	address public mConvertWallet;
+	address public ConvertWallet;
 
 	string public mRootTokenContract;
 	string public mTONTokenWallet;
@@ -31,19 +31,19 @@ contract configVersions {
 		tvcWallet = tvcWalletINPUT;
 	}
 
-	function setmUSDTRootAddr(address mUSDTRootAddrINPUT) public onlyOwner {
-		mUSDTRootAddr = mUSDTRootAddrINPUT;
+	function setmRootAddr(address mRootAddrINPUT) public onlyOwner {
+		mRootAddr = mRootAddrINPUT;
 	}
 
-	function setUSDTRootAddr(address USDTRootAddrINPUT) public onlyOwner {
-		USDTRootAddr = USDTRootAddrINPUT;
+	function setRootAddr(address RootAddrINPUT) public onlyOwner {
+		RootAddr = RootAddrINPUT;
 	}
-	function setmUSDTConvertWallet(address mUSDTConvertWalletINPUT) public onlyOwner {
-		mUSDTConvertWallet = mUSDTConvertWalletINPUT;
+	function setmConvertWallet(address mConvertWalletINPUT) public onlyOwner {
+		mConvertWallet = mConvertWalletINPUT;
 	}
 
-	function setUSDTConvertWallet(address USDTConvertWalletINPUT) public onlyOwner {
-		USDTConvertWallet = USDTConvertWalletINPUT;
+	function setConvertWallet(address ConvertWalletINPUT) public onlyOwner {
+		ConvertWallet = ConvertWalletINPUT;
 	}
 
 	function setAbimRootTokenContract(string mRootTokenContractINPUT) public onlyOwner {

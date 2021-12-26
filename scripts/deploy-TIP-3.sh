@@ -8,6 +8,10 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$FLD
 
+if [[ `uname` = "Linux" ]]; then
+    prefix="-w0"
+fi
+
 cp ../contracts/TIP-3/RootTokenContract.sol ../contracts/TIP-3/$1RootTokenContract.sol
 cp ../contracts/TIP-3/TONTokenWallet.sol ../contracts/TIP-3/$1TokenWallet.sol
 tondev sol compile ../contracts/TIP-3/$1RootTokenContract.sol -o ../abi;

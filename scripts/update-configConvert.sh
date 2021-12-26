@@ -2,18 +2,18 @@
 
 set -xe
 
-if [[ $1 = "linux" ]]; then
+if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
-# mUSDT TVC
-mUSDTwalletTvc=`cat ../abi/mUSDTTokenWallet.tvc | base64 $prefix`
+# mWalletTVC
+mwalletTvc=`cat ../abi/m$1TokenWallet.tvc | base64 $prefix`
 
 # Addresses
-mUSDTRootAddr=`cat mUSDTRootTokenContract.addr`
-USDTRootAddr=`cat USDTRootTokenContract.addr`
-mUSDTConvertWallet=`cat mUSDTConvertWallet.addr`
-USDTConvertWallet=`cat USDTConvertWallet.addr`
+mRootAddr=`cat m$1RootTokenContract.addr`
+RootAddr=`cat $1RootTokenContract.addr`
+mConvertWallet=`cat m$1ConvertWallet.addr`
+ConvertWallet=`cat $1ConvertWallet.addr`
 
 # ABIs
 mRootTokenContract=`cat ../abi/mRootTokenContract.abi.json | base64 $prefix`
@@ -27,15 +27,15 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$FLD
 
-configName='configConvertUSDT'
+configName="configConvert$1"
 configAddr=$(cat ./$configName.addr)
 echo $configAddr
 
-tonos-cli --url $NETWORK call $configAddr setTvcWallet "{\"tvcWalletINPUT\": \"$mUSDTwalletTvc\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
-tonos-cli --url $NETWORK call $configAddr setmUSDTRootAddr "{\"mUSDTRootAddrINPUT\": \"$mUSDTRootAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
-tonos-cli --url $NETWORK call $configAddr setUSDTRootAddr "{\"USDTRootAddrINPUT\": \"$USDTRootAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
-tonos-cli --url $NETWORK call $configAddr setmUSDTConvertWallet "{\"mUSDTConvertWalletINPUT\": \"$mUSDTConvertWallet\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
-tonos-cli --url $NETWORK call $configAddr setUSDTConvertWallet "{\"USDTConvertWalletINPUT\": \"$USDTConvertWallet\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
+tonos-cli --url $NETWORK call $configAddr setTvcWallet "{\"tvcWalletINPUT\": \"$mwalletTvc\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
+tonos-cli --url $NETWORK call $configAddr setmRootAddr "{\"mRootAddrINPUT\": \"$mRootAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
+tonos-cli --url $NETWORK call $configAddr setRootAddr "{\"RootAddrINPUT\": \"$RootAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
+tonos-cli --url $NETWORK call $configAddr setmConvertWallet "{\"mConvertWalletINPUT\": \"$mConvertWallet\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
+tonos-cli --url $NETWORK call $configAddr setConvertWallet "{\"ConvertWalletINPUT\": \"$ConvertWallet\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbimRootTokenContract "{\"mRootTokenContractINPUT\": \"$mRootTokenContract\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbimTONTokenWallet "{\"mTONTokenWalletINPUT\": \"$mTONTokenWallet\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbiRootTokenContract "{\"RootTokenContractINPUT\": \"$RootTokenContract\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json

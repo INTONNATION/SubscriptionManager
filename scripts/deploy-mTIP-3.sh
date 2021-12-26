@@ -7,6 +7,10 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$FLD
 
+if [[ `uname` = "Linux" ]]; then
+    prefix="-w0"
+fi
+
 tondev sol compile ../contracts/mTIP-3/mRootTokenContract.sol -o ../abi;
 tondev sol compile ../contracts/mTIP-3/mTONTokenWallet.sol -o ../abi;
 name=`echo mUSDT | xxd -ps -c 20000`
@@ -64,5 +68,5 @@ echo -n $CONTRACT_ADDRESS > $1.addr
 deploy $CONTRACT_NAME
 CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
 
-IMAGE=$(base64 -w 0 ../abi/Subscription.tvc)
+IMAGE=$(base64 $prefix ../abi/Subscription.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionImage "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json

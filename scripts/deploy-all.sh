@@ -7,6 +7,10 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$FLD
 
+if [[ `uname` = "Linux" ]]; then
+    prefix="-w0"
+fi
+
 for i in ../contracts/SubsMan ../contracts/Subscription ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex ../contracts/mTIP-3/mTONTokenWallet; do
        tondev sol compile $i.sol -o ../abi;
 done
@@ -68,16 +72,32 @@ echo -n $CONTRACT_ADDRESS > $1.addr
 deploy $CONTRACT_NAME
 CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
 
-IMAGE=$(base64 -w 0 ../abi/Subscription.tvc)
+IMAGE=$(base64 $prefix ../abi/Subscription.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionBase "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
-IMAGE=$(base64 -w 0 ../abi/mUSDTTokenWallet.tvc)
+IMAGE=$(base64 $prefix ../abi/mUSDTTokenWallet.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionWalletCode_mUSDT "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
-IMAGE=$(base64 -w 0 ../abi/SubscriptionIndex.tvc)
+IMAGE=$(base64 $prefix ../abi/SubscriptionIndex.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionIndexCode "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
-IMAGE=$(base64 -w 0 ../abi/SubscriptionService.tvc)
+IMAGE=$(base64 $prefix ../abi/SubscriptionService.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionService "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
-IMAGE=$(base64 -w 0 ../abi/SubscriptionServiceIndex.tvc)
+IMAGE=$(base64 $prefix ../abi/SubscriptionServiceIndex.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionServiceIndex "{\"image\":\"$IMAGE\"}" --sign $CONTRACT_NAME.keys.json --abi ../abi/$CONTRACT_NAME.abi.json
 echo $CONTRACT_ADDRESS
 
-./deploy-ConvertUSDT.sh
+# Need to run once to deploy TIP-3 tokens (emulation of main net)
+#./deploy-TIP-3.sh USDT
+#./deploy-TIP-3.sh EUPI
+
+# Convert system (mTIP-3 and TIP-3 convert system wallets and mTIP-3 root)
+./deploy-Convert.sh USDT
+./deploy-Convert.sh EUPI
+
+# configs
+./deploy-configVersions.sh
+./deploy-configConvert.sh USDT
+./deploy-configConvert.sh EUPI
+
+# Fill in or update config
+./update-configVersions.sh
+./update-configConvert.sh USDT
+./update-configConvert.sh EUPI
