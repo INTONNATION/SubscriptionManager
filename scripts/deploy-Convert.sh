@@ -15,12 +15,14 @@ fi
 name=`echo m$1 | xxd -ps -c 20000`
 cp ../contracts/mTIP-3/mRootTokenContract.sol ../contracts/mTIP-3/m$1RootTokenContract.sol
 cp ../contracts/mTIP-3/mTONTokenWallet.sol ../contracts/mTIP-3/m$1TokenWallet.sol
-tondev sol compile ../contracts/mTIP-3/m$1RootTokenContract.sol -o ../abi;
-tondev sol compile ../contracts/mTIP-3/m$1TokenWallet.sol -o ../abi;
+tondev sol compile ../contracts/mTIP-3/m$1RootTokenContract.sol -o ../abi
+tondev sol compile ../contracts/mTIP-3/m$1TokenWallet.sol -o ../abi
 rm ../contracts/mTIP-3/m$1RootTokenContract.sol
 rm ../contracts/mTIP-3/m$1TokenWallet.sol
 
-tondev sol compile ../contracts/ConvertTIP3.sol -o ../abi;
+cp ../contracts/ConvertTIP3.sol ../contracts/$1ConvertTIP3.sol
+tondev sol compile ../contracts/$1ConvertTIP3.sol -o ../abi
+rm ../contracts/$1ConvertTIP3.sol
 
 # $1 wallet code
 wallet_code=`tvm_linker decode --tvc ../abi/$1TokenWallet.tvc | grep 'code:' | awk '{print $NF}'`
@@ -30,8 +32,8 @@ tvc=`tvm_linker init ../abi/m$1RootTokenContract.tvc "{\"_randomNonce\": 1, \"na
 mv $tvc ../abi/m$1RootTokenContract.tvc
 
 # Converter contract code
-tvc=`tvm_linker init ../abi/ConvertTIP3.tvc "{\"tip3_wallet_code\": \"$wallet_code\"}" ../abi/ConvertTIP3.abi.json | grep 'Saved contract to file' | awk '{print $NF}'`
-mv $tvc ../abi/ConvertTIP3.tvc
+tvc=`tvm_linker init ../abi/$1ConvertTIP3.tvc "{\"tip3_wallet_code\": \"$wallet_code\"}" ../abi/$1ConvertTIP3.abi.json | grep 'Saved contract to file' | awk '{print $NF}'`
+mv $tvc ../abi/$1ConvertTIP3.tvc
 
 # Giver FLD
 giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
@@ -57,39 +59,39 @@ function genseed {
 $tos genphrase > $1.seed
 }
 
-function genseedConvert {
-genseed ConvertTIP3
-seed=`cat ConvertTIP3.seed | grep -o '".*"' | tr -d '"'`
+function genseedConvert () {
+genseed $1ConvertTIP3
+seed=`cat $1ConvertTIP3.seed | grep -o '".*"' | tr -d '"'`
 echo " seed - $seed"
-genkeypair "ConvertTIP3" "$seed"       
+genkeypair "$1ConvertTIP3" "$seed"       
 }
 
-function genkeypair {
+function genkeypair () {
 $tos getkeypair $1.keys.json "$2"
 }
 
-function genaddr {
+function genaddr () {
 $tos genaddr ../abi/$1.tvc ../abi/$1.abi.json --setkey $1.keys.json > log.log
 }
 
-function genaddrConvert {
-$tos genaddr ../abi/ConvertTIP3.tvc ../abi/ConvertTIP3.abi.json --setkey ConvertTIP3.keys.json > log.log
+function genaddrConvert () {
+$tos genaddr ../abi/$1ConvertTIP3.tvc ../abi/$1ConvertTIP3.abi.json --setkey $1ConvertTIP3.keys.json > log.log
 }
 
-function deployConvert_m {
-pub=`cat ConvertTIP3.keys.json | jq .public -r`
-echo GENADDR ConvertTIP3 ----------------------------------------------
-genaddr ConvertTIP3
+function deployConvert_m () {
+pub=`cat $1ConvertTIP3.keys.json | jq .public -r`
+echo GENADDR $1ConvertTIP3 ----------------------------------------------
+genaddr $1ConvertTIP3
 CONTRACT_ADDRESS=$(get_address)
-echo GIVER ConvertTIP3 ------------------------------------------------
+echo GIVER $1ConvertTIP3 ------------------------------------------------
 giver $CONTRACT_ADDRESS
-echo DEPLOY ConvertTIP3 -----------------------------------------------
-$tos --url $NETWORK deploy ../abi/ConvertTIP3.tvc '{"tip3_token_root_": "'$(cat $1RootTokenContract.addr)'", "mtip3_token_root_": "'$(cat m$1RootTokenContract.addr)'","tip3_token_wallet_": "'$(cat $1ConvertWallet.addr)'","mtip3_token_wallet_":"'$(cat m$1ConvertWallet.addr)'"}' --sign ConvertTIP3.keys.json --abi ../abi/ConvertTIP3.abi.json
-echo -n $CONTRACT_ADDRESS > ConvertTIP3.addr
-$tos --url $NETWORK call $CONTRACT_ADDRESS setReceiveCallback '{}' --abi ../abi/ConvertTIP3.abi.json --sign ConvertTIP3.keys.json
+echo DEPLOY $1ConvertTIP3 -----------------------------------------------
+$tos --url $NETWORK deploy ../abi/$1ConvertTIP3.tvc '{"tip3_token_root_": "'$(cat $1RootTokenContract.addr)'", "mtip3_token_root_": "'$(cat m$1RootTokenContract.addr)'","tip3_token_wallet_": "'$(cat $1ConvertWallet.addr)'","mtip3_token_wallet_":"'$(cat m$1ConvertWallet.addr)'"}' --sign $1ConvertTIP3.keys.json --abi ../abi/$1ConvertTIP3.abi.json
+echo -n $CONTRACT_ADDRESS > $1ConvertTIP3.addr
+$tos --url $NETWORK call $CONTRACT_ADDRESS setReceiveCallback '{}' --abi ../abi/$1ConvertTIP3.abi.json --sign $1ConvertTIP3.keys.json
 }
 
-function deployRoot_m {
+function deployRoot_m () {
 genseed m$1RootTokenContract
 seed=`cat m$1RootTokenContract.seed | grep -o '".*"' | tr -d '"'`
 echo "DeBot seed - $seed"
@@ -108,28 +110,28 @@ $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionImage "{\"image\":\"$I
 giver $CONTRACT_ADDRESS
 }
 
-function deployWallet {
-genaddrConvert
+function deployWallet () {
+genaddrConvert $1
 convert_address=`get_address`
 $tos --url $NETWORK call `cat $1RootTokenContract.addr` deployWallet '{"tokens": 11, "deploy_grams": 1000000000, "wallet_public_key_": "0x0000000000000000000000000000000000000000000000000000000000000000", "owner_address_": "'$convert_address'","gas_back_address": "'$(cat $1RootTokenContract.addr)'"}' --abi ../abi/$1RootTokenContract.abi.json --sign $1RootTokenContract.keys.json > log.log
 wallet_address=`get_wallet_address`
 echo $wallet_address > $1ConvertWallet.addr
 }
 
-function deployWallet_m {
+function deployWallet_m () {
 pub=`cat m$1RootTokenContract.keys.json | jq .public -r`
-genaddrConvert
+genaddrConvert $1
 convert_address=`get_address`
 $tos --url $NETWORK call `cat m$1RootTokenContract.addr` deployWallet '{"tokens": 1000, "deploy_grams": 1000000000, "wallet_public_key_": "0x0000000000000000000000000000000000000000000000000000000000000000", "owner_address_": "'$convert_address'","gas_back_address": "'$(cat m$1RootTokenContract.addr)'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
 wallet_address=`get_wallet_address`
 echo $wallet_address > m$1ConvertWallet.addr
-genaddrConvert
+genaddrConvert $1
 convert_address=`get_address`
 $tos --url $NETWORK call `cat m$1RootTokenContract.addr` transferOwner '{"root_public_key_":"0x0000000000000000000000000000000000000000000000000000000000000000","root_owner_address_":"'$convert_address'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
 }
 
-genseedConvert
-deployRoot_m
-deployWallet_m
-deployWallet
-deployConvert_m
+genseedConvert $1
+deployRoot_m $1
+deployWallet_m $1
+deployWallet $1 
+deployConvert_m $1

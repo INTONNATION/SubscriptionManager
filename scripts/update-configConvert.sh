@@ -16,10 +16,10 @@ mConvertWallet=`cat m$1ConvertWallet.addr`
 ConvertWallet=`cat $1ConvertWallet.addr`
 
 # ABIs
-mRootTokenContract=`cat ../abi/mRootTokenContract.abi.json | base64 $prefix`
-mTONTokenWallet=`cat ../abi/mTONTokenWallet.abi.json | base64 $prefix `
-RootTokenContract=`cat ../abi/RootTokenContract.abi.json | base64 $prefix`
-TONTokenWallet=`cat ../abi/TONTokenWallet.abi.json | base64 $prefix`
+mRootTokenContract=`cat ../abi/mRootTokenContract.abi.json | jq -c . | base64 $prefix`
+mTONTokenWallet=`cat ../abi/mTONTokenWallet.abi.json | jq -c . | base64 $prefix `
+RootTokenContract=`cat ../abi/RootTokenContract.abi.json | jq -c . | base64 $prefix`
+TONTokenWallet=`cat ../abi/TONTokenWallet.abi.json | jq -c . | base64 $prefix`
 
 LOCALNET=http://127.0.0.1
 DEVNET=https://net.ton.dev
