@@ -2,7 +2,7 @@
 
 set -xe
 
-if [[ $1 = "linux" ]]; then
+if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 

@@ -10,10 +10,11 @@ NETWORK=$FLD
 giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
 
 SafeMultisigWalletABI="../abi/SafeMultisigWallet.abi.json"
-contract_name="configConvertUSDT"
-contract_abi="../abi/$contract_name.abi.json"
-
+contract_name="configConvert$1"
+cp ../contracts/configConvert.sol ../contracts/configConvert$1.sol
 tondev sol compile ../contracts/$contract_name.sol -o ../abi;
+rm ../contracts/configConvert$1.sol
+contract_abi="../abi/$contract_name.abi.json"
 tvc="../abi/$contract_name.tvc"
 contract_address=`tonos-cli genaddr $tvc $contract_abi --genkey $contract_name.keys.json | grep 'Raw address' | awk '{print $NF}'`
 
