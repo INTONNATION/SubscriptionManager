@@ -14,7 +14,7 @@ fi
 
 name=`echo m$1 | xxd -ps -c 20000`
 cp ../contracts/mTIP-3/mRootTokenContract.sol ../contracts/mTIP-3/m$1RootTokenContract.sol
-cp ../contracts/mTIP-3/mTONTokenWallet.sol ../contracts/mTIP-3/m$1TokenWallet.sol
+cp ../contracts/mTIP-3/mTONTokenWalletContract.sol ../contracts/mTIP-3/m$1TokenWallet.sol
 tondev sol compile ../contracts/mTIP-3/m$1RootTokenContract.sol -o ../abi
 tondev sol compile ../contracts/mTIP-3/m$1TokenWallet.sol -o ../abi
 rm ../contracts/mTIP-3/m$1RootTokenContract.sol
@@ -86,7 +86,7 @@ CONTRACT_ADDRESS=$(get_address)
 echo GIVER $1ConvertTIP3 ------------------------------------------------
 giver $CONTRACT_ADDRESS
 echo DEPLOY $1ConvertTIP3 -----------------------------------------------
-$tos --url $NETWORK deploy ../abi/$1ConvertTIP3.tvc '{"tip3_token_root_": "'$(cat $1RootTokenContract.addr)'", "mtip3_token_root_": "'$(cat m$1RootTokenContract.addr)'","tip3_token_wallet_": "'$(cat $1ConvertWallet.addr)'","mtip3_token_wallet_":"'$(cat m$1ConvertWallet.addr)'"}' --sign $1ConvertTIP3.keys.json --abi ../abi/$1ConvertTIP3.abi.json
+$tos --url $NETWORK deploy ../abi/$1ConvertTIP3.tvc '{"tip3_token_root_": "'$(cat $1RootTokenContract.addr)'", "mtip3_token_root_": "'$(cat m$1RootTokenContract.addr)'","tip3_token_wallet_": "'$(cat $1ConvertWalletAddr.addr)'","mtip3_token_wallet_":"'$(cat m$1ConvertWalletAddr.addr)'"}' --sign $1ConvertTIP3.keys.json --abi ../abi/$1ConvertTIP3.abi.json
 echo -n $CONTRACT_ADDRESS > $1ConvertTIP3.addr
 $tos --url $NETWORK call $CONTRACT_ADDRESS setReceiveCallback '{}' --abi ../abi/$1ConvertTIP3.abi.json --sign $1ConvertTIP3.keys.json
 }
@@ -115,7 +115,7 @@ genaddrConvert $1
 convert_address=`get_address`
 $tos --url $NETWORK call `cat $1RootTokenContract.addr` deployWallet '{"tokens": 11, "deploy_grams": 1000000000, "wallet_public_key_": "0x0000000000000000000000000000000000000000000000000000000000000000", "owner_address_": "'$convert_address'","gas_back_address": "'$(cat $1RootTokenContract.addr)'"}' --abi ../abi/$1RootTokenContract.abi.json --sign $1RootTokenContract.keys.json > log.log
 wallet_address=`get_wallet_address`
-echo $wallet_address > $1ConvertWallet.addr
+echo $wallet_address > $1ConvertWalletAddr.addr
 }
 
 function deployWallet_m () {
@@ -124,7 +124,7 @@ genaddrConvert $1
 convert_address=`get_address`
 $tos --url $NETWORK call `cat m$1RootTokenContract.addr` deployWallet '{"tokens": 1000, "deploy_grams": 1000000000, "wallet_public_key_": "0x0000000000000000000000000000000000000000000000000000000000000000", "owner_address_": "'$convert_address'","gas_back_address": "'$(cat m$1RootTokenContract.addr)'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
 wallet_address=`get_wallet_address`
-echo $wallet_address > m$1ConvertWallet.addr
+echo $wallet_address > m$1ConvertWalletAddr.addr
 genaddrConvert $1
 convert_address=`get_address`
 $tos --url $NETWORK call `cat m$1RootTokenContract.addr` transferOwner '{"root_public_key_":"0x0000000000000000000000000000000000000000000000000000000000000000","root_owner_address_":"'$convert_address'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
