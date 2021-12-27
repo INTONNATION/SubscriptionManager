@@ -13,6 +13,7 @@ contract SubsMan {
     TvmCell m_subscriptionBaseImage;
     TvmCell s_subscriptionServiceImage;
     TvmCell m_subscriptionWalletImage_mUSDT;
+    TvmCell m_subscriptionWalletImage_mEUPI;
     TvmCell m_subscriptionIndexImage;
     TvmCell s_subscriptionServiceIndexImage;
 
@@ -30,6 +31,10 @@ contract SubsMan {
  
     function setSubscriptionWalletCode_mUSDT(TvmCell image) public onlyOwner {
         m_subscriptionWalletImage_mUSDT = image;
+    }
+
+    function setSubscriptionWalletCode_mEUPI(TvmCell image) public onlyOwner {
+        m_subscriptionWalletImage_mEUPI = image;
     }
 
     function setSubscriptionIndexCode(TvmCell image) public onlyOwner {
@@ -133,6 +138,9 @@ contract SubsMan {
         TvmCell accountWallet;
         if (currency == 'USDT') {
             accountWallet = m_subscriptionWalletImage_mUSDT;
+        }
+        if (currency == 'EUPI') {
+            accountWallet = m_subscriptionWalletImage_mEUPI;
         } 
         require(msg.value >= 1 ton, 102);
         require(accountWallet.toSlice().empty() != true, 111);
