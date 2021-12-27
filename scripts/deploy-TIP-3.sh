@@ -13,7 +13,7 @@ if [[ `uname` = "Linux" ]]; then
 fi
 
 cp ../contracts/TIP-3/RootTokenContract.sol ../contracts/TIP-3/$1RootTokenContract.sol
-cp ../contracts/TIP-3/TONTokenWallet.sol ../contracts/TIP-3/$1TokenWallet.sol
+cp ../contracts/TIP-3/TONTokenWalletContract.sol ../contracts/TIP-3/$1TokenWallet.sol
 tondev sol compile ../contracts/TIP-3/$1RootTokenContract.sol -o ../abi;
 tondev sol compile ../contracts/TIP-3/$1TokenWallet.sol -o ../abi;
 rm ../contracts/TIP-3/$1TokenWallet.sol
@@ -21,7 +21,7 @@ rm ../contracts/TIP-3/$1RootTokenContract.sol
 
 name=`echo $1 | xxd -ps -c 20000`
 wallet_code=`tvm_linker decode --tvc ../abi/$1TokenWallet.tvc | grep 'code:' | awk '{print $NF}'`
-tvc=`tvm_linker init ../abi/RootTokenContract.tvc "{\"_randomNonce\": 1, \"name\": \"$name\",\"symbol\": \"$name\", \"decimals\": 6, \"wallet_code\": \"$wallet_code\"}" ../abi/RootTokenContract.abi.json | grep 'Saved contract to file' | awk '{print $NF}'`
+tvc=`tvm_linker init ../abi/$1RootTokenContract.tvc "{\"_randomNonce\": 1, \"name\": \"$name\",\"symbol\": \"$name\", \"decimals\": 6, \"wallet_code\": \"$wallet_code\"}" ../abi/RootTokenContract.abi.json | grep 'Saved contract to file' | awk '{print $NF}'`
 mv $tvc ../abi/$1RootTokenContract.tvc
 tos=tonos-cli
 
