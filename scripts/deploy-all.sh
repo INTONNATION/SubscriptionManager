@@ -5,8 +5,6 @@ set -xe
 #./deploy-TIP-3.sh USDT
 #./deploy-TIP-3.sh EUPI
 
-./deploy-SubsMan.sh
-
 # Convert system (mTIP-3 and TIP-3 convert system wallets and mTIP-3 root)
 ./deploy-Convert.sh USDT
 ./deploy-Convert.sh EUPI
@@ -20,3 +18,7 @@ set -xe
 ./update-configVersions.sh
 ./update-configConvert.sh USDT
 ./update-configConvert.sh EUPI
+
+# Deploy Subscription Manager
+./deploy-SubsMan.sh
+./update-SubsMan.sh
