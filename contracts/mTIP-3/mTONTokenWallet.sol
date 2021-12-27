@@ -560,25 +560,26 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         );
         TvmCell newImage = tvm.buildStateInit({
             code: codeSalt,
-            pubkey: tvm.pubkey(),
+            pubkey: 0,
             varInit: {
                 serviceKey: serviceKey,
                 user_wallet: wallet_address,
                 params: params,
-                subscription_indificator: indificator
+                subscription_indificator: indificator,
+                owner_address: owner_address
             },
             contr: Subscription
         });
         return newImage;
     }
 
-    function paySubscription(uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
+    function paySubscription(uint256 serviceKey, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
         require(msg.value >= 0.1 ton, 105);
         (address to, uint128 value) = params.toSlice().decode(address, uint128);
-        address subsAddr = address(tvm.hash(buildSubscriptionState(serviceKey,params,indificator)));
+        address subsAddr = address(tvm.hash(buildSubscriptionState(serviceKey, params, indificator)));
         require(msg.sender == subsAddr, 111);
         TvmCell none;
-        this.transfer(to, value, 200000000, wallet_address, false, none);
+        this.transfer(to, value, 200000000, wallet_address, true, none);
         return{value: 0, bounce: false, flag: 64} 0;  
     }
     /*

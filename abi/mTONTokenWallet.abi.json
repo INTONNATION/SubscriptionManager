@@ -184,7 +184,6 @@
 			"inputs": [
 				{"name":"answerId","type":"uint32"},
 				{"name":"serviceKey","type":"uint256"},
-				{"name":"bounce","type":"bool"},
 				{"name":"params","type":"cell"},
 				{"name":"indificator","type":"cell"}
 			],

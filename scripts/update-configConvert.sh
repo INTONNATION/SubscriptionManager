@@ -12,14 +12,14 @@ mwalletTvc=`cat ../abi/m$1TokenWallet.tvc | base64 $prefix`
 # Addresses
 mRootAddr=`cat m$1RootTokenContract.addr`
 RootAddr=`cat $1RootTokenContract.addr`
-mConvertWalletAddrAddr=`cat m$1ConvertWalletAddr.addr`
+mConvertWalletAddr=`cat m$1ConvertWalletAddr.addr`
 ConvertWalletAddr=`cat $1ConvertWalletAddr.addr`
 
 # ABIs
 mRootTokenContract=`cat ../abi/mRootTokenContract.abi.json | jq -c . | base64 $prefix`
-mTONTokenWalletContract=`cat ../abi/mTONTokenWalletContract.abi.json | jq -c . | base64 $prefix `
+mTONTokenWalletContract=`cat ../abi/mTONTokenWallet.abi.json | jq -c . | base64 $prefix `
 RootTokenContract=`cat ../abi/RootTokenContract.abi.json | jq -c . | base64 $prefix`
-TONTokenWalletContract=`cat ../abi/TONTokenWalletContract.abi.json | jq -c . | base64 $prefix`
+TONTokenWalletContract=`cat ../abi/TONTokenWallet.abi.json | jq -c . | base64 $prefix`
 
 LOCALNET=http://127.0.0.1
 DEVNET=https://net.ton.dev

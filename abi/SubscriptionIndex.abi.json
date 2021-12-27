@@ -6,8 +6,8 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"signature","type":"bytes"},
-				{"name":"subsAddr","type":"address"}
+				{"name":"subsAddr","type":"address"},
+				{"name":"ownerAddress","type":"address"}
 			],
 			"outputs": [
 			]
@@ -44,11 +44,11 @@
 			]
 		},
 		{
-			"name": "ownerKey",
+			"name": "ownerAddress",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"ownerKey","type":"uint256"}
+				{"name":"ownerAddress","type":"uint256"}
 			]
 		},
 		{
@@ -82,7 +82,7 @@
 		{"name":"params","type":"cell"},
 		{"name":"user_wallet","type":"address"},
 		{"name":"subscription_indificator","type":"cell"},
-		{"name":"ownerKey","type":"uint256"},
+		{"name":"ownerAddress","type":"uint256"},
 		{"name":"subscription_addr","type":"address"},
 		{"components":[{"name":"to","type":"uint256"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 	]
