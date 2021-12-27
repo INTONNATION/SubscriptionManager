@@ -14,11 +14,13 @@ set -xe
 
 # configs
 ./deploy-configVersions.sh
+./deploy-configAutobiller.sh
 ./deploy-configConvert.sh USDT
 ./deploy-configConvert.sh EUPI
 
 # Fill in or update config
 ./update-configVersions.sh
+./update-configAutobiller.sh
 ./update-configConvert.sh USDT
 ./update-configConvert.sh EUPI
 
