@@ -3,9 +3,10 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 import "SubscriptionIndex.sol";
+import "../contracts/mTIP-3/mTONTokenWallet2.sol";
 
-interface IWallet {
-    function paySubscription (uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) external responsible returns (uint8);
+interface IWallet  {
+    function paySubscription (uint256 serviceKey, TvmCell params, TvmCell indificator) external responsible returns (uint8);
 }
 
 contract Subscription {
@@ -14,13 +15,13 @@ contract Subscription {
     address static public user_wallet;
     TvmCell static public params;
     TvmCell static public subscription_indificator;
+    address static public owner_address;
     address public subscriptionIndexAddress;
 
     uint8 constant STATUS_ACTIVE   = 1;
     uint8 constant STATUS_NONACTIVE = 2;
 
     struct Payment {
-        uint256 pubkey;
         uint256 to;
         uint128 value;
         uint32 period;
@@ -30,40 +31,35 @@ contract Subscription {
 
     Payment public subscription;
     
-    constructor(TvmCell image, bytes signature, address subsAddr, TvmCell walletCode) public {
+    constructor(address ownerAddress, TvmCell walletCode, address rootAddress, address subsIndexAddr) public {
         (uint256 to, uint128 value, uint32 period) = params.toSlice().decode(uint256, uint128, uint32);
         TvmCell code = tvm.code();
         optional(TvmCell) salt = tvm.codeSalt(code);
         address wallet_from_salt;
         require(salt.hasValue(), 104);
-        (, , uint256 wallet_hash) = salt.get().toSlice().decode(uint256,TvmCell,uint256);
+        (, , uint256 wallet_hash, address subsmanAddr) = salt.get().toSlice().decode(uint256,TvmCell,uint256,address);
+        require(msg.sender == subsmanAddr,333);
+        require(owner_address == ownerAddress,444);
         require(wallet_hash == tvm.hash(walletCode), 111);
         TvmCell walletStateInit = tvm.buildStateInit({
             code: walletCode,
-            pubkey: tvm.pubkey()
+            pubkey: 0,
+            contr: TONTokenWallet2,
+            varInit: {
+                root_address: rootAddress,
+                code: walletCode,
+                wallet_public_key: uint256(0),
+                owner_address: ownerAddress
+            }
         });
         require(address(tvm.hash(walletStateInit)) == user_wallet, 123);
         require(msg.value >= 1 ton, 100);
         require(value > 0 && period > 0, 102);
-        require(tvm.checkSign(tvm.hash(image), signature.toSlice(), tvm.pubkey()), 106);
-        tvm.accept();
         //uint32 _period = period * 3600 * 24;
         uint32 _period = period;
         uint128 _value = value * 1000000000;
-        subscription = Payment(tvm.pubkey(), to, _value, _period, 0, STATUS_NONACTIVE);
-        TvmCell state = tvm.buildStateInit({
-            code: image,
-            pubkey: tvm.pubkey(),
-            varInit: { 
-                params: params,
-                user_wallet: user_wallet,
-                subscription_indificator: subscription_indificator
-            },
-            contr: SubscriptionIndex
-        });
-        TvmCell stateInit = tvm.insertPubkey(state, tvm.pubkey());
-        subscriptionIndexAddress = address(tvm.hash(stateInit));
-        new SubscriptionIndex{value: 0.5 ton, flag: 1, bounce: true, stateInit: stateInit}(signature, subsAddr);
+        subscription = Payment(to, _value, _period, 0, STATUS_NONACTIVE);
+        subscriptionIndexAddress = subsIndexAddr;
     }
 
     function cancel() public {
@@ -76,7 +72,7 @@ contract Subscription {
             // need to add buffer and condition
             tvm.accept();
             subscription.status = STATUS_NONACTIVE;
-            IWallet(user_wallet).paySubscription{value: 0.2 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, false, params, subscription_indificator);
+            IWallet(user_wallet).paySubscription{value: 0.2 ton, bounce: false, flag: 0, callback: Subscription.onPaySubscription}(serviceKey, params, subscription_indificator);
         } else {
             require(subscription.status == STATUS_ACTIVE, 103);
         }

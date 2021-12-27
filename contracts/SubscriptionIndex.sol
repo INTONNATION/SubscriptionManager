@@ -12,7 +12,7 @@ contract SubscriptionIndex {
     TvmCell public static params;
     address public static user_wallet;
     TvmCell public static subscription_indificator;
-    uint256 public ownerKey;
+    uint256 public ownerAddress;
     address public subscription_addr;
     ServiceParams public svcparams;
 
@@ -34,16 +34,18 @@ contract SubscriptionIndex {
 		_;
     }
 
-    constructor(bytes signature, address subsAddr) public {
+    constructor(address subsAddr, address ownerAddress) public {
         require(msg.value >= 0.5 ton, 102);
         require(msg.sender != address(0), 103);
         TvmCell code = tvm.code();
         optional(TvmCell) salt = tvm.codeSalt(code);
         require(salt.hasValue(), 104);
-        ownerKey = salt.get().toSlice().decode(uint256);
-        require(tvm.checkSign(tvm.hash(code), signature.toSlice(), tvm.pubkey()), 105);
-        require(tvm.checkSign(tvm.hash(code), signature.toSlice(), ownerKey), 106);
+        address subsmanAddr;
+        address owner_address;
+        (owner_address, subsmanAddr) = salt.get().toSlice().decode(address, address);
         require(subsAddr != address(0), 108);
+        require(ownerAddress == owner_address, 333);
+        require(subsmanAddr == msg.sender, 222);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
 	    TvmCell nextCell;

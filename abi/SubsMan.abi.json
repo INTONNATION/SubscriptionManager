@@ -12,22 +12,6 @@
 			]
 		},
 		{
-			"name": "setSubscriptionWalletCode_mUSDT",
-			"inputs": [
-				{"name":"image","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setSubscriptionWalletCode_mEUPI",
-			"inputs": [
-				{"name":"image","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "setSubscriptionIndexCode",
 			"inputs": [
 				{"name":"image","type":"cell"}
@@ -54,7 +38,11 @@
 		{
 			"name": "buildAccountIndex",
 			"inputs": [
-				{"name":"ownerKey","type":"uint256"}
+				{"name":"ownerAddress","type":"address"},
+				{"name":"params","type":"cell"},
+				{"name":"indificator","type":"cell"},
+				{"name":"accountWallet","type":"cell"},
+				{"name":"walletRootAddress","type":"address"}
 			],
 			"outputs": [
 				{"name":"value0","type":"cell"}
@@ -63,12 +51,11 @@
 		{
 			"name": "deployAccountHelper",
 			"inputs": [
-				{"name":"ownerKey","type":"uint256"},
 				{"name":"serviceKey","type":"uint256"},
 				{"name":"params","type":"cell"},
-				{"name":"signature","type":"bytes"},
 				{"name":"indificator","type":"cell"},
-				{"name":"currency","type":"string"}
+				{"name":"accountWallet","type":"cell"},
+				{"name":"walletRootAddress","type":"address"}
 			],
 			"outputs": [
 			]
