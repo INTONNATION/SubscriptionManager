@@ -13,7 +13,7 @@ if [[ `uname` = "Linux" ]]; then
 fi
 
 cp ../contracts/TIP-3/RootTokenContract.sol ../contracts/TIP-3/$1RootTokenContract.sol
-cp ../contracts/TIP-3/TONTokenWalletContract.sol ../contracts/TIP-3/$1TokenWallet.sol
+cp ../contracts/TIP-3/TONTokenWallet.sol ../contracts/TIP-3/$1TokenWallet.sol
 tondev sol compile ../contracts/TIP-3/$1RootTokenContract.sol -o ../abi;
 tondev sol compile ../contracts/TIP-3/$1TokenWallet.sol -o ../abi;
 rm ../contracts/TIP-3/$1TokenWallet.sol

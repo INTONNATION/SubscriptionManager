@@ -1,9 +1,9 @@
 pragma ton-solidity >= 0.51.0;
 
 import "interfaces/IRootTokenContract.sol";
-import "interfaces/ITONTokenWalletContract.sol";
+import "interfaces/ITONTokenWallet.sol";
 import "interfaces/IBurnableByRootTokenRootContract.sol";
-import "TIP-3/TONTokenWalletContract.sol";
+import "TIP-3/TONTokenWallet.sol";
 
 contract convertTIP3 {
 
@@ -39,7 +39,7 @@ contract convertTIP3 {
         address
     ) {
         TvmCell stateInit = tvm.buildStateInit({
-            contr: TONTokenWalletContract,
+            contr: TONTokenWallet,
             varInit: {
                 root_address: tip3_token_root,
                 code: tip3_wallet_code,
@@ -54,11 +54,11 @@ contract convertTIP3 {
     }
 
     function setReceiveCallback() public onlyOwner {
-        ITONTokenWalletContract(tip3_token_wallet).setReceiveCallback{
+        ITONTokenWallet(tip3_token_wallet).setReceiveCallback{
                     value: 0.1 ton,
                     flag: 0
                 }(address(this),true);
-        ITONTokenWalletContract(mtip3_token_wallet).setReceiveCallback{
+        ITONTokenWallet(mtip3_token_wallet).setReceiveCallback{
                     value: 0.1 ton,
                     flag: 0
                 }(address(this),true);
@@ -93,7 +93,7 @@ contract convertTIP3 {
         } else if (token_wallet == mtip3_token_wallet) {
             address senderAddress = getExpectedAddress(sender_public_key, sender_address);
             TvmCell payload_; 
-            ITONTokenWalletContract(tip3_token_wallet).transfer{
+            ITONTokenWallet(tip3_token_wallet).transfer{
                     value: 2 ton,
                     flag: 1
                 }(

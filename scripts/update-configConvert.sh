@@ -34,7 +34,7 @@ echo $configAddr
 tonos-cli --url $NETWORK call $configAddr setTvcWallet "{\"tvcWalletINPUT\": \"$mwalletTvc\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setmRootAddr "{\"mRootAddrINPUT\": \"$mRootAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setRootAddr "{\"RootAddrINPUT\": \"$RootAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
-tonos-cli --url $NETWORK call $configAddr setmConvertWalletAddrAddr "{\"mConvertWalletAddrAddrINPUT\": \"$mConvertWalletAddrAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
+tonos-cli --url $NETWORK call $configAddr setmConvertWalletAddr "{\"mConvertWalletAddrINPUT\": \"$mConvertWalletAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setConvertWalletAddr "{\"ConvertWalletAddrINPUT\": \"$ConvertWalletAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbimRootTokenContract "{\"mRootTokenContractINPUT\": \"$mRootTokenContract\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbimTONTokenWalletContract "{\"mTONTokenWalletContractINPUT\": \"$mTONTokenWalletContract\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json

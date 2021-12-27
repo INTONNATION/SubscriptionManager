@@ -14,7 +14,7 @@ fi
 
 name=`echo m$1 | xxd -ps -c 20000`
 cp ../contracts/mTIP-3/mRootTokenContract.sol ../contracts/mTIP-3/m$1RootTokenContract.sol
-cp ../contracts/mTIP-3/mTONTokenWalletContract.sol ../contracts/mTIP-3/m$1TokenWallet.sol
+cp ../contracts/mTIP-3/mTONTokenWallet.sol ../contracts/mTIP-3/m$1TokenWallet.sol
 tondev sol compile ../contracts/mTIP-3/m$1RootTokenContract.sol -o ../abi
 tondev sol compile ../contracts/mTIP-3/m$1TokenWallet.sol -o ../abi
 rm ../contracts/mTIP-3/m$1RootTokenContract.sol

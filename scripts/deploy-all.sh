@@ -1,6 +1,9 @@
 #!/bin/bash
 set -xe
 
+# Deploy Subscription Manager
+./deploy-SubsMan.sh
+
 # Need to run once to deploy TIP-3 tokens (emulation of main net)
 #./deploy-TIP-3.sh USDT
 #./deploy-TIP-3.sh EUPI
@@ -19,6 +22,5 @@ set -xe
 ./update-configConvert.sh USDT
 ./update-configConvert.sh EUPI
 
-# Deploy Subscription Manager
-./deploy-SubsMan.sh
+# Set Subscription Manager
 ./update-SubsMan.sh
