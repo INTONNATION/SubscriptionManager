@@ -35,17 +35,17 @@
 			]
 		},
 		{
-			"name": "setmConvertWallet",
+			"name": "setmConvertWalletAddr",
 			"inputs": [
-				{"name":"mConvertWalletINPUT","type":"address"}
+				{"name":"mConvertWalletAddrINPUT","type":"address"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setConvertWallet",
+			"name": "setConvertWalletAddr",
 			"inputs": [
-				{"name":"ConvertWalletINPUT","type":"address"}
+				{"name":"ConvertWalletAddrINPUT","type":"address"}
 			],
 			"outputs": [
 			]
@@ -59,9 +59,9 @@
 			]
 		},
 		{
-			"name": "setAbimTONTokenWallet",
+			"name": "setAbimTONTokenWalletContract",
 			"inputs": [
-				{"name":"mTONTokenWalletINPUT","type":"string"}
+				{"name":"mTONTokenWalletContractINPUT","type":"string"}
 			],
 			"outputs": [
 			]
@@ -75,9 +75,9 @@
 			]
 		},
 		{
-			"name": "setAbiTONTokenWallet",
+			"name": "setAbiTONTokenWalletContract",
 			"inputs": [
-				{"name":"TONTokenWalletINPUT","type":"string"}
+				{"name":"TONTokenWalletContractINPUT","type":"string"}
 			],
 			"outputs": [
 			]
@@ -107,19 +107,19 @@
 			]
 		},
 		{
-			"name": "mConvertWallet",
+			"name": "mConvertWalletAddr",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"mConvertWallet","type":"address"}
+				{"name":"mConvertWalletAddr","type":"address"}
 			]
 		},
 		{
-			"name": "ConvertWallet",
+			"name": "ConvertWalletAddr",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"ConvertWallet","type":"address"}
+				{"name":"ConvertWalletAddr","type":"address"}
 			]
 		},
 		{
@@ -131,11 +131,11 @@
 			]
 		},
 		{
-			"name": "mTONTokenWallet",
+			"name": "mTONTokenWalletContract",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"mTONTokenWallet","type":"string"}
+				{"name":"mTONTokenWalletContract","type":"string"}
 			]
 		},
 		{
@@ -147,11 +147,11 @@
 			]
 		},
 		{
-			"name": "TONTokenWallet",
+			"name": "TONTokenWalletContract",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"TONTokenWallet","type":"string"}
+				{"name":"TONTokenWalletContract","type":"string"}
 			]
 		}
 	],
@@ -166,11 +166,11 @@
 		{"name":"tvcWallet","type":"cell"},
 		{"name":"mRootAddr","type":"address"},
 		{"name":"RootAddr","type":"address"},
-		{"name":"mConvertWallet","type":"address"},
-		{"name":"ConvertWallet","type":"address"},
+		{"name":"mConvertWalletAddr","type":"address"},
+		{"name":"ConvertWalletAddr","type":"address"},
 		{"name":"mRootTokenContract","type":"string"},
-		{"name":"mTONTokenWallet","type":"string"},
+		{"name":"mTONTokenWalletContract","type":"string"},
 		{"name":"RootTokenContract","type":"string"},
-		{"name":"TONTokenWallet","type":"string"}
+		{"name":"TONTokenWalletContract","type":"string"}
 	]
 }

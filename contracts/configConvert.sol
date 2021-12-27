@@ -8,13 +8,13 @@ contract configVersions {
 
 	address public mRootAddr;
 	address public RootAddr;
-	address public mConvertWallet;
-	address public ConvertWallet;
+	address public mConvertWalletAddr;
+	address public ConvertWalletAddr;
 
 	string public mRootTokenContract;
-	string public mTONTokenWallet;
+	string public mTONTokenWalletContract;
 	string public RootTokenContract;
-	string public TONTokenWallet;
+	string public TONTokenWalletContract;
 
 	constructor() public {
 		require(tvm.pubkey() != 0, 101);
@@ -38,28 +38,28 @@ contract configVersions {
 	function setRootAddr(address RootAddrINPUT) public onlyOwner {
 		RootAddr = RootAddrINPUT;
 	}
-	function setmConvertWallet(address mConvertWalletINPUT) public onlyOwner {
-		mConvertWallet = mConvertWalletINPUT;
+	function setmConvertWalletAddr(address mConvertWalletAddrINPUT) public onlyOwner {
+		mConvertWalletAddr = mConvertWalletAddrINPUT;
 	}
 
-	function setConvertWallet(address ConvertWalletINPUT) public onlyOwner {
-		ConvertWallet = ConvertWalletINPUT;
+	function setConvertWalletAddr(address ConvertWalletAddrINPUT) public onlyOwner {
+		ConvertWalletAddr = ConvertWalletAddrINPUT;
 	}
 
 	function setAbimRootTokenContract(string mRootTokenContractINPUT) public onlyOwner {
 		mRootTokenContract = mRootTokenContractINPUT;
 	}
 
-	function setAbimTONTokenWallet(string mTONTokenWalletINPUT) public onlyOwner {
-		mTONTokenWallet = mTONTokenWalletINPUT;
+	function setAbimTONTokenWalletContract(string mTONTokenWalletContractINPUT) public onlyOwner {
+		mTONTokenWalletContract = mTONTokenWalletContractINPUT;
 	}
 
 	function setAbiRootTokenContract(string RootTokenContractINPUT) public onlyOwner {
 		RootTokenContract = RootTokenContractINPUT;
 	}
 
-	function setAbiTONTokenWallet(string TONTokenWalletINPUT) public onlyOwner {
-		TONTokenWallet = TONTokenWalletINPUT;
+	function setAbiTONTokenWalletContract(string TONTokenWalletContractINPUT) public onlyOwner {
+		TONTokenWalletContract = TONTokenWalletContractINPUT;
 	}
 
 }
