@@ -11,7 +11,7 @@ if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
-for i in ../contracts/SubsMan ../contracts/Subscription ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex ../contracts/mTIP-3/mTONTokenWallet; do
+for i in ../contracts/SubsMan ../contracts/Subscription ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex ../contracts/mTIP-3/mTONTokenWalletContract; do
        tondev sol compile $i.sol -o ../abi;
 done
 
