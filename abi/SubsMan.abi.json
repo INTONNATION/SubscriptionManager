@@ -20,6 +20,14 @@
 			]
 		},
 		{
+			"name": "setSubscriptionWalletCode_mEUPI",
+			"inputs": [
+				{"name":"image","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setSubscriptionIndexCode",
 			"inputs": [
 				{"name":"image","type":"cell"}
@@ -95,6 +103,7 @@
 		{"name":"m_subscriptionBaseImage","type":"cell"},
 		{"name":"s_subscriptionServiceImage","type":"cell"},
 		{"name":"m_subscriptionWalletImage_mUSDT","type":"cell"},
+		{"name":"m_subscriptionWalletImage_mEUPI","type":"cell"},
 		{"name":"m_subscriptionIndexImage","type":"cell"},
 		{"name":"s_subscriptionServiceIndexImage","type":"cell"}
 	]
