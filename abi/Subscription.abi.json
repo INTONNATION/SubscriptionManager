@@ -6,7 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"ownerAddress","type":"address"},
+				{"name":"senderAddress","type":"address"},
 				{"name":"walletCode","type":"cell"},
 				{"name":"rootAddress","type":"address"},
 				{"name":"subsIndexAddr","type":"address"}

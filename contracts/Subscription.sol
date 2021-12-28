@@ -31,15 +31,16 @@ contract Subscription {
 
     Payment public subscription;
     
-    constructor(address ownerAddress, TvmCell walletCode, address rootAddress, address subsIndexAddr) public {
+    constructor(address senderAddress, TvmCell walletCode, address rootAddress, address subsIndexAddr) public {
         (uint256 to, uint128 value, uint32 period) = params.toSlice().decode(uint256, uint128, uint32);
         TvmCell code = tvm.code();
         optional(TvmCell) salt = tvm.codeSalt(code);
         address wallet_from_salt;
         require(salt.hasValue(), 104);
-        (, , uint256 wallet_hash, address subsmanAddr) = salt.get().toSlice().decode(uint256,TvmCell,uint256,address);
-        require(msg.sender == subsmanAddr,333);
-        require(owner_address == ownerAddress,444);
+        (, , uint256 wallet_hash, TvmCell Addrs) = salt.get().toSlice().decode(uint256, TvmCell, uint256, TvmCell);
+        (address ownerAddress, address subsmanAddr) = Addrs.toSlice().decode(address, address);
+        require(msg.sender == subsmanAddr, 333);
+        require(owner_address == ownerAddress &&  owner_address == senderAddress, 444);
         require(wallet_hash == tvm.hash(walletCode), 111);
         TvmCell walletStateInit = tvm.buildStateInit({
             code: walletCode,
@@ -48,7 +49,7 @@ contract Subscription {
             varInit: {
                 root_address: rootAddress,
                 code: walletCode,
-                wallet_public_key: uint256(0),
+                wallet_public_key: 0,
                 owner_address: ownerAddress
             }
         });

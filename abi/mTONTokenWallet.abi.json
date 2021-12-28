@@ -6,7 +6,8 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"image","type":"cell"}
+				{"name":"subsImage","type":"cell"},
+				{"name":"subsmanAddrINPUT","type":"address"}
 			],
 			"outputs": [
 			]
@@ -223,6 +224,14 @@
 			"outputs": [
 				{"name":"subscr_image","type":"cell"}
 			]
+		},
+		{
+			"name": "subsmanAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subsmanAddr","type":"address"}
+			]
 		}
 	],
 	"data": [
@@ -240,6 +249,7 @@
 		{"name":"root_address","type":"address"},
 		{"name":"wallet_address","type":"address"},
 		{"name":"subscr_image","type":"cell"},
+		{"name":"subsmanAddr","type":"address"},
 		{"name":"code","type":"cell"},
 		{"name":"wallet_public_key","type":"uint256"},
 		{"name":"owner_address","type":"address"},

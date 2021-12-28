@@ -567,8 +567,8 @@ contract TONTokenWallet2 is ITONTokenWallet, IDestroyable, IBurnableByOwnerToken
     function paySubscription(uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
         require(msg.value >= 0.1 ton, 105);
         (address to, uint128 value) = params.toSlice().decode(address, uint128);
-        address subsAddr = address(tvm.hash(buildSubscriptionState(serviceKey,params,indificator)));
-        require(msg.sender == subsAddr, 111);
+        address subscriptionAddr = address(tvm.hash(buildSubscriptionState(serviceKey,params,indificator)));
+        require(msg.sender == subscriptionAddr, 111);
         TvmCell none;
         this.transfer(to, value, 200000000, wallet_address, false, none);
         return{value: 0, bounce: false, flag: 64} 0;  
