@@ -22,7 +22,7 @@ contract Subscription {
     uint8 constant STATUS_NONACTIVE = 2;
 
     struct Payment {
-        uint256 to;
+        address to;
         uint128 value;
         uint32 period;
         uint32 start;
@@ -32,7 +32,7 @@ contract Subscription {
     Payment public subscription;
     
     constructor(address senderAddress, TvmCell walletCode, address rootAddress, address subsIndexAddr) public {
-        (uint256 to, uint128 value, uint32 period) = params.toSlice().decode(uint256, uint128, uint32);
+        (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
         TvmCell code = tvm.code();
         optional(TvmCell) salt = tvm.codeSalt(code);
         address wallet_from_salt;

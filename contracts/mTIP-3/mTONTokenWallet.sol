@@ -579,11 +579,12 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
 
     function paySubscription(uint256 serviceKey, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
         require(msg.value >= 0.1 ton, 105);
-        (address to, uint128 value) = params.toSlice().decode(address, uint128);
+        (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
+        address recipient = getExpectedAddress(0, service_owner_address);
         address subsAddr = address(tvm.hash(buildSubscriptionState(serviceKey, params, indificator)));
         require(msg.sender == subsAddr, 111);
         TvmCell none;
-        this.transfer(to, value, 200000000, wallet_address, true, none);
+        this.transfer{value: 1 ton}(recipient, value, 1000000000, wallet_address, true, none);
         return{value: 0, bounce: false, flag: 64} 0;  
     }
     /*
@@ -647,7 +648,8 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
 
     modifier onlyOwner() {
         require((owner_address.value != 0 && owner_address == msg.sender) ||
-                (wallet_public_key != 0 && wallet_public_key == msg.pubkey()),
+                (wallet_public_key != 0 && wallet_public_key == msg.pubkey()) ||
+                (msg.sender == address(this)),
                 TONTokenWalletErrors.error_message_sender_is_not_my_owner);
         _;
     }

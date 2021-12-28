@@ -151,8 +151,7 @@ contract SubsMan {
     function deployAccountHelper(uint256 serviceKey, TvmCell params, TvmCell indificator, TvmCell accountWallet, address walletRootAddress) public view {
         require(msg.value >= 1 ton, 102);
         require(accountWallet.toSlice().empty() != true, 111);
-        address messageSender = msg.sender;
-        TvmCell state = buildAccount(serviceKey, params, indificator, accountWallet, walletRootAddress, messageSender);
+        TvmCell state = buildAccount(serviceKey, params, indificator, accountWallet, walletRootAddress, msg.sender);
         address subsAddr = address(tvm.hash(state));
         TvmCell subsIndexStateInit = buildAccountIndex(msg.sender, params, indificator, accountWallet, walletRootAddress);
         address subscriptionIndexAddress = address(tvm.hash(subsIndexStateInit));

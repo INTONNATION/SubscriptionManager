@@ -203,6 +203,22 @@
 			]
 		},
 		{
+			"name": "subscr_image",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscr_image","type":"cell"}
+			]
+		},
+		{
+			"name": "subsmanAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subsmanAddr","type":"address"}
+			]
+		},
+		{
 			"name": "start_gas_balance",
 			"inputs": [
 			],

@@ -17,7 +17,7 @@ contract SubscriptionIndex {
     ServiceParams public svcparams;
 
     struct ServiceParams {
-        uint256 to;
+        address to;
         uint128 value;
         uint32 period;
         string name;
@@ -49,7 +49,7 @@ contract SubscriptionIndex {
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
 	    TvmCell nextCell;
-        (svcparams.to, svcparams.value, svcparams.period, nextCell) = params.toSlice().decode(uint256, uint128, uint32, TvmCell);
+        (svcparams.to, svcparams.value, svcparams.period, nextCell) = params.toSlice().decode(address, uint128, uint32, TvmCell);
         TvmCell nextCell2;
         (svcparams.name, svcparams.description, svcparams.image, nextCell2) = nextCell.toSlice().decode(string, string, string, TvmCell);
         (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
