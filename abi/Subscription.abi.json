@@ -89,7 +89,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"uint256"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 			]
 		}
 	],
@@ -112,6 +112,6 @@
 		{"name":"subscription_indificator","type":"cell"},
 		{"name":"owner_address","type":"address"},
 		{"name":"subscriptionIndexAddress","type":"address"},
-		{"components":[{"name":"to","type":"uint256"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
 }

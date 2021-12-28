@@ -33,8 +33,8 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
     uint8 public static decimals;
 
     TvmCell static wallet_code;
-    TvmCell subscr_image;
-    address subsmanAddr;
+    TvmCell public subscr_image;
+    address public subsmanAddr;
 
     uint128 total_supply;
 
