@@ -21,3 +21,4 @@ echo $contract_address > $contract_name.addr
 
 tonos-cli --url $NETWORK call --abi ../abi/local_giver.abi.json $giver sendGrams "{\"dest\":\"$contract_address\",\"amount\":20000000000}"
 tonos-cli --url $NETWORK deploy $tvc {} --abi $contract_abi --sign $contract_name.keys.json 
+./update-configVersions.sh

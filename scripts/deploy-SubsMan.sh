@@ -62,11 +62,11 @@ genkeypair "$1" "$seed"
 echo GENADDR $1 ----------------------------------------------
 genaddr $1
 CONTRACT_ADDRESS=$(get_address)
+echo -n $CONTRACT_ADDRESS > $1.addr
 echo GIVER $1 ------------------------------------------------
 giver $CONTRACT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
 $tos --url $NETWORK deploy ../abi/$1.tvc "{}" --sign $1.keys.json --abi ../abi/$1.abi.json
-echo -n $CONTRACT_ADDRESS > $1.addr
 }
 
 deploy $CONTRACT_NAME

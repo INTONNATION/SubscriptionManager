@@ -1,28 +1,26 @@
 #!/bin/bash
 set -xe
 
+trap terminate SIGINT
+terminate(){
+    pkill -SIGINT -P $$
+    exit
+}
+
 # Deploy Subscription Manager
-./deploy-SubsMan.sh
+./deploy-SubsMan.sh 
 
 # Need to run once to deploy TIP-3 tokens (emulation of main net)
 #./deploy-TIP-3.sh USDT
 #./deploy-TIP-3.sh EUPI
 
-# Convert system (mTIP-3 and TIP-3 convert system wallets and mTIP-3 root)
-./deploy-Convert.sh USDT
-./deploy-Convert.sh EUPI
+# Convert system (mTIP-3 and TIP-3 convert system wallets and mTIP-3 root) with configs
+./deploy-Convert.sh USDT &
+./deploy-Convert.sh EUPI &
 
 # configs
-./deploy-configVersions.sh
-./deploy-configAutobiller.sh
-./deploy-configConvert.sh USDT
-./deploy-configConvert.sh EUPI
+./deploy-configVersions.sh &
 
-# Fill in or update config
-./update-configVersions.sh
-./update-configAutobiller.sh
-./update-configConvert.sh USDT
-./update-configConvert.sh EUPI
-
-# Set Subscription Manager
+# Update Subscription Manager
 ./update-SubsMan.sh
+wait

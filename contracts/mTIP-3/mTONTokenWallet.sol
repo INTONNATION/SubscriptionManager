@@ -26,6 +26,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     address static root_address;
     address wallet_address;
     TvmCell public subscr_image;
+    address public subsmanAddr;
     TvmCell static code;
     //for external owner
     uint256 static wallet_public_key;
@@ -44,7 +45,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         @dev All the parameters are specified as initial data
         @dev If owner_address is not empty, it will be notified with .notifyWalletDeployed
     */
-    constructor(TvmCell image) public {
+    constructor(TvmCell subsImage, address subsmanAddrINPUT) public {
         require(wallet_public_key == tvm.pubkey() && (owner_address.value == 0 || wallet_public_key == 0));
         tvm.accept();
 
@@ -53,7 +54,8 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         if (owner_address.value != 0) {
             ITokenWalletDeployedCallback(owner_address).notifyWalletDeployed{value: 0.00001 ton, flag: 1}(root_address);
         }
-        subscr_image = image;
+        subscr_image = subsImage;
+        subsmanAddr = subsmanAddrINPUT;
         wallet_address = address(this);
     }
 
@@ -230,7 +232,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_image);
+            }(subscr_image, subsmanAddr);
         } else {
             to = address(tvm.hash(stateInit));
         }
@@ -553,7 +555,9 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
 
     function buildSubscriptionState(uint256 serviceKey, TvmCell params, TvmCell indificator) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        saltBuilder.store(serviceKey, params, tvm.hash(tvm.code()));
+        TvmBuilder addrsBuilder;
+        addrsBuilder.store(owner_address, subsmanAddr);
+        saltBuilder.store(serviceKey, params, tvm.hash(tvm.code()), addrsBuilder.toCell());
         TvmCell codeSalt = tvm.setCodeSalt(
             subscr_image.toSlice().loadRef(),
             saltBuilder.toCell()

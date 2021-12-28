@@ -34,6 +34,7 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
 
     TvmCell static wallet_code;
     TvmCell subscr_image;
+    address subsmanAddr;
 
     uint128 total_supply;
 
@@ -132,6 +133,11 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
         subscr_image = image;
     }
 
+    function setSubsmanAddr(address subsmanAddrINPUT) public onlyOwner {
+        tvm.accept();
+        subsmanAddr = subsmanAddrINPUT;
+    }
+
     /*
         @notice Allows any contract to receive token wallet address in expectedWalletAddressCallback method
         @param wallet_public_key_ Token wallet owner public key
@@ -212,7 +218,7 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_image);
+            }(subscr_image, subsmanAddr);
         } else {
             wallet = address(tvm.hash(stateInit));
         }
@@ -269,7 +275,7 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
                 wallet_public_key: wallet_public_key_,
                 owner_address: owner_address_
             }
-        }(subscr_image);
+        }(subscr_image, subsmanAddr);
 
         if (gas_back_address.value != 0) {
             gas_back_address.transfer({ value: 0, flag: 128 });
