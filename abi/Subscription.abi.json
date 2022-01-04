@@ -91,22 +91,6 @@
 			"outputs": [
 				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 			]
-		},
-		{
-			"name": "debug_wallet_hash",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"debug_wallet_hash","type":"uint256"}
-			]
-		},
-		{
-			"name": "debug_wallet_hash2",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"debug_wallet_hash2","type":"uint256"}
-			]
 		}
 	],
 	"data": [
@@ -128,8 +112,6 @@
 		{"name":"subscription_indificator","type":"cell"},
 		{"name":"owner_address","type":"address"},
 		{"name":"subscriptionIndexAddress","type":"address"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"},
-		{"name":"debug_wallet_hash","type":"uint256"},
-		{"name":"debug_wallet_hash2","type":"uint256"}
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
 }

@@ -32,9 +32,6 @@ contract Subscription {
     }
     Payment public subscription;
 
-    uint256 public debug_wallet_hash;
-    uint256 public debug_wallet_hash2;
-    
     constructor(
         address senderAddress, 
         TvmCell walletCode, 
@@ -48,7 +45,7 @@ contract Subscription {
         (, , uint256 wallet_hash, TvmCell Addrs) = salt.get().toSlice().decode(address, TvmCell, uint256, TvmCell);
         (, address ownerAddress, address subsmanAddr) = Addrs.toSlice().decode(address, address, address);
         require(msg.sender == subsmanAddr, SubscriptionErrors.error_message_sender_is_not_subsman);
-        require(owner_address == ownerAddress &&  owner_address == senderAddress, SubscriptionErrors.error_define_owner_address_in_static_vars);
+        require(owner_address == ownerAddress && owner_address == senderAddress, SubscriptionErrors.error_define_owner_address_in_static_vars);
         require(wallet_hash == tvm.hash(walletCode), SubscriptionErrors.error_define_wallet_hash_in_salt);
         TvmCell walletStateInit = tvm.buildStateInit({
             code: walletCode,
