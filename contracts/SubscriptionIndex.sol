@@ -3,19 +3,14 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
+
 interface ISubscriptionContract {
     function cancel () external;
 }
 
+
 contract SubscriptionIndex {
-
-    TvmCell public static params;
-    address public static user_wallet;
-    TvmCell public static subscription_indificator;
-    uint256 public ownerAddress;
-    address public subscription_addr;
-    ServiceParams public svcparams;
-
+    
     struct ServiceParams {
         address to;
         uint128 value;
@@ -27,6 +22,12 @@ contract SubscriptionIndex {
         string currency;
         string category;
     }
+    TvmCell public static params;
+    address public static user_wallet;
+    TvmCell public static subscription_indificator;
+    uint256 public ownerAddress;
+    address public subscription_addr;
+    ServiceParams public svcparams;
 
     modifier onlyOwner {
 		require(msg.pubkey() == tvm.pubkey(), 100);
@@ -37,21 +38,38 @@ contract SubscriptionIndex {
     constructor(address subsAddr, address ownerAddress) public {
         require(msg.value >= 0.5 ton, 102);
         require(msg.sender != address(0), 103);
-        TvmCell code = tvm.code();
-        optional(TvmCell) salt = tvm.codeSalt(code);
+        optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), 104);
-        address subsmanAddr;
-        address owner_address;
-        (owner_address, subsmanAddr) = salt.get().toSlice().decode(address, address);
+        (address owner_address, address subsmanAddr) = salt.get().toSlice().decode(address, address);
         require(subsAddr != address(0), 108);
         require(ownerAddress == owner_address, 333);
         require(subsmanAddr == msg.sender, 222);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
 	    TvmCell nextCell;
-        (svcparams.to, svcparams.value, svcparams.period, nextCell) = params.toSlice().decode(address, uint128, uint32, TvmCell);
+        (
+            svcparams.to, 
+            svcparams.value, 
+            svcparams.period, 
+            nextCell
+        ) = params.toSlice().decode(
+            address, 
+            uint128, 
+            uint32, 
+            TvmCell
+        );
         TvmCell nextCell2;
-        (svcparams.name, svcparams.description, svcparams.image, nextCell2) = nextCell.toSlice().decode(string, string, string, TvmCell);
+        (
+            svcparams.name, 
+            svcparams.description, 
+            svcparams.image, 
+            nextCell2
+        ) = nextCell.toSlice().decode(
+            string, 
+            string, 
+            string, 
+            TvmCell
+        );
         (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
     }
 

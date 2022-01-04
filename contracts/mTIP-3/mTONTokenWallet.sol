@@ -1,5 +1,4 @@
 pragma ton-solidity >= 0.39.0;
-
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
@@ -15,7 +14,6 @@ import "../libraries/TONTokenWalletErrors.sol";
 import "../libraries/TONTokenWalletConstants.sol";
 import "../interfaces/IVersioned.sol";
 import "../Subscription.sol";
-
 
 
 /*
