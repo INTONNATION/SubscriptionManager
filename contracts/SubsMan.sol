@@ -140,7 +140,7 @@ contract SubsMan {
         address _userWallet = address(tvm.hash(buildWallet(
             walletCode, 
             rootAddress, 
-            serviceOwner
+            ownerAddress
         )));
         TvmCell newImage = tvm.buildStateInit({
             code: code,
