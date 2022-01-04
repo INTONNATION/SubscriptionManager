@@ -3,6 +3,8 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
+import "libraries/SubscriptionErrors.sol";
+
 
 interface ISubscriptionContract {
     function cancel () external;
@@ -23,27 +25,24 @@ contract SubscriptionIndex {
         string category;
     }
     TvmCell public static params;
-    address public static user_wallet;
     TvmCell public static subscription_indificator;
-    uint256 public ownerAddress;
+    address public ownerAddress;
     address public subscription_addr;
     ServiceParams public svcparams;
 
     modifier onlyOwner {
-		require(msg.pubkey() == tvm.pubkey(), 100);
-		tvm.accept();
+		require(msg.sender == ownerAddress, SubscriptionErrors.error_message_sender_is_not_my_owner);
 		_;
     }
 
-    constructor(address subsAddr, address ownerAddress) public {
-        require(msg.value >= 0.5 ton, 102);
-        require(msg.sender != address(0), 103);
+    constructor(address subsAddr, address ownerAddress_) public {
+        require(msg.value >= 0.5 ton, SubscriptionErrors.error_not_enough_balance_in_message);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
-        require(salt.hasValue(), 104);
+        require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
         (address owner_address, address subsmanAddr) = salt.get().toSlice().decode(address, address);
-        require(subsAddr != address(0), 108);
-        require(ownerAddress == owner_address, 333);
-        require(subsmanAddr == msg.sender, 222);
+        require(subsAddr != address(0), SubscriptionErrors.incorrect_subscription_address_in_constructor);
+        require(ownerAddress_ == owner_address, SubscriptionErrors.error_define_owner_address_in_static_vars);
+        require(subsmanAddr == msg.sender, SubscriptionErrors.error_message_sender_is_not_subsman);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
 	    TvmCell nextCell;
@@ -71,10 +70,11 @@ contract SubscriptionIndex {
             TvmCell
         );
         (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
+        ownerAddress = ownerAddress_;
     }
 
     function cancel() public onlyOwner {
         ISubscriptionContract(subscription_addr).cancel();
-        selfdestruct(user_wallet);
+        selfdestruct(ownerAddress);
     }
 }

@@ -5,13 +5,13 @@ pragma AbiHeader pubkey;
 
 import "../contracts/Subscription.sol";
 import "../contracts/SubscriptionService.sol";
+import "../contracts/SubscriptionServiceIndex.sol";
 import "../contracts/mTIP-3/mTONTokenWallet.sol";
+import "libraries/SubsManErrors.sol";
 
 
 contract SubsMan {
    
-    uint128 constant DEPLOY_FEE = 1 ton;
-    
     TvmCell m_subscriptionBaseImage;
     TvmCell s_subscriptionServiceImage;
     TvmCell m_subscriptionWalletImage_mUSDT;
@@ -20,7 +20,7 @@ contract SubsMan {
     TvmCell s_subscriptionServiceIndexImage;
 
     modifier onlyOwner() {
-        require(msg.pubkey() == tvm.pubkey(), 101);
+        require(msg.pubkey() == tvm.pubkey(), SubsManErrors.error_message_sender_is_not_my_owner);
         tvm.accept();
         _;
     }
@@ -43,8 +43,8 @@ contract SubsMan {
     }
 
     // Deploy contracts
-    function deployAccountHelper(
-        uint256 serviceKey, 
+    function deployAccount(
+        address serviceOwner,
         TvmCell params, 
         TvmCell indificator, 
         TvmCell accountWallet, 
@@ -52,23 +52,22 @@ contract SubsMan {
     ) 
         public view 
     {
-        require(msg.value >= 1 ton, 102);
-        require(accountWallet.toSlice().empty() != true, 111);
+        require(msg.value >= 1 ton, SubsManErrors.error_not_enough_balance_in_message);
+        require(msg.sender != address(0), 111);
+        require(accountWallet.toSlice().empty() != true, SubsManErrors.error_wrong_wallet_tvc);
         TvmCell state = buildAccount(
-            serviceKey, 
+            serviceOwner, 
             params, 
             indificator, 
             accountWallet, 
-            walletRootAddress, 
+            walletRootAddress,
             msg.sender
         );
         address subsAddr = address(tvm.hash(state));
         TvmCell subsIndexStateInit = buildAccountIndex(
             msg.sender, 
             params, 
-            indificator, 
-            accountWallet, 
-            walletRootAddress
+            indificator
         );
         address subscriptionIndexAddress = address(tvm.hash(subsIndexStateInit));
         new Subscription{
@@ -93,53 +92,61 @@ contract SubsMan {
             );
     }
  
-    function deployServiceHelper(uint256 serviceKey, TvmCell params, bytes signature, string serviceCategory) public view {
-        require(msg.value >= 1 ton, 102);
-        TvmCell state = buildService(
-            serviceKey,
+    function deployService(TvmCell params, string serviceCategory) public view {
+        require(msg.value >= 1 ton, SubsManErrors.error_not_enough_balance_in_message);
+        require(msg.sender != address(0), 111);
+        TvmCell serviceStateInit = buildService(
+            msg.sender,
             params,
             serviceCategory
         );
-        TvmCell serviceIndexCode = buildServiceIndex(
-            serviceKey
-        );
-        new SubscriptionService{
+        TvmCell serviceIndexStateInit = buildServiceIndex(msg.sender, params, serviceCategory);
+        address serviceIndexAddress = address(tvm.hash(serviceIndexStateInit));
+        address serviceAddr = new SubscriptionService{
             value: 1 ton, 
             flag: 1, 
             bounce: true, 
-            stateInit: state
+            stateInit: serviceStateInit
             }(
-                serviceIndexCode, 
-                signature
+                serviceIndexAddress,
+                msg.sender
+            );
+        new SubscriptionServiceIndex{
+            value: 1 ton, 
+            flag: 1, 
+            bounce: true, 
+            stateInit: serviceIndexStateInit
+            }(
+                serviceAddr,
+                msg.sender
             );
     }
     // Build States
     function buildAccount(
-        uint256 serviceKey, 
+        address serviceOwner, 
         TvmCell params, 
         TvmCell indificator, 
         TvmCell accountWallet, 
-        address rootAddress, 
+        address rootAddress,
         address ownerAddress
     ) private view returns (TvmCell image)
     {
         TvmCell walletCode = accountWallet.toSlice().loadRef();
         TvmCell code = buildAccountHelper(
-            serviceKey, 
+            serviceOwner, 
             params, 
-            tvm.hash(walletCode), 
-            ownerAddress
+            tvm.hash(walletCode) 
         );
         address _userWallet = address(tvm.hash(buildWallet(
             walletCode, 
             rootAddress, 
-            ownerAddress
+            serviceOwner
         )));
         TvmCell newImage = tvm.buildStateInit({
             code: code,
             pubkey: 0,
             varInit: { 
-                serviceKey: serviceKey,
+                serviceOwner: serviceOwner,
                 user_wallet: _userWallet,
                 params: params,
                 subscription_indificator: indificator,
@@ -150,15 +157,15 @@ contract SubsMan {
         image = newImage;
     }
 
-    function buildAccountHelper(uint256 serviceKey, TvmCell params, uint256 userWallet, address ownerAddress) private view returns (TvmCell) {
+    function buildAccountHelper(address serviceOwner, TvmCell params, uint256 userWallet) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         TvmBuilder addrsBuilder;
         addrsBuilder.store(
-            ownerAddress, 
+            serviceOwner, 
             address(this)
         );
         saltBuilder.store(
-            serviceKey, 
+            serviceOwner, 
             params, 
             userWallet, 
             addrsBuilder.toCell()
@@ -173,18 +180,10 @@ contract SubsMan {
     function buildAccountIndex(
         address ownerAddress, 
         TvmCell params, 
-        TvmCell indificator, 
-        TvmCell accountWallet, 
-        address walletRootAddress
+        TvmCell indificator
     ) private view returns (TvmCell) 
     {
         TvmBuilder saltBuilder;
-        TvmCell walletCode = accountWallet.toSlice().loadRef();
-        address userWallet = address(tvm.hash(buildWallet(
-            walletCode,
-            walletRootAddress,
-            msg.sender
-        )));
         saltBuilder.store(
             ownerAddress, 
             address(this)
@@ -198,7 +197,6 @@ contract SubsMan {
             pubkey: 0,
             varInit: { 
                 params: params,
-                user_wallet: userWallet,
                 subscription_indificator: indificator
             },
             contr: SubscriptionIndex
@@ -206,39 +204,51 @@ contract SubsMan {
         return stateInit;             
     }
 
-    function buildService(uint256 serviceKey, TvmCell params, string serviceCategory) private view returns (TvmCell image) {
+    function buildService(address serviceOwner, TvmCell params, string serviceCategory) private view returns (TvmCell image) {
         TvmCell code = buildServiceHelper(
             serviceCategory
         );
         TvmCell state = tvm.buildStateInit({
             code: code,
-            pubkey: serviceKey,
+            pubkey: 0,
             varInit: {
-                serviceKey: serviceKey,
+                serviceOwner: serviceOwner,
                 serviceCategory: serviceCategory,
                 params: params
             },
             contr: SubscriptionService
         });
-        image = tvm.insertPubkey(
-            state, 
-            serviceKey
-        );
     }
 
     function buildServiceHelper(string serviceCategory) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        saltBuilder.store(serviceCategory);
+        saltBuilder.store(serviceCategory,address(this));
         TvmCell code = tvm.setCodeSalt(
             s_subscriptionServiceImage.toSlice().loadRef(),
             saltBuilder.toCell()
         );
         return code;
     }
+    
+    function buildServiceIndex(address serviceOwner, TvmCell params, string serviceCategory) private view returns (TvmCell) {
+        TvmCell code = buildServiceIndexHelper(
+            serviceOwner
+        );
+        TvmCell state = tvm.buildStateInit({
+            code: code,
+            pubkey: 0,
+            varInit: { 
+                params: params,
+                serviceCategory: serviceCategory
+            },
+            contr: SubscriptionServiceIndex
+        });
+        return state;
+    }
 
-    function buildServiceIndex(uint256 serviceKey) private view returns (TvmCell) {
+    function buildServiceIndexHelper(address serviceOwner) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        saltBuilder.store(serviceKey);
+        saltBuilder.store(serviceOwner,address(this));
         TvmCell code = tvm.setCodeSalt(
             s_subscriptionServiceIndexImage.toSlice().loadRef(),
             saltBuilder.toCell()

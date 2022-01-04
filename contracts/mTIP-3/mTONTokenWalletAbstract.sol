@@ -15,11 +15,10 @@ import "../libraries/TONTokenWalletConstants.sol";
 import "../interfaces/IVersioned.sol";
 
 
-
 /*
     @title FT token wallet contract
 */
-contract TONTokenWallet2 is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenWallet, IBurnableByRootTokenWallet, IVersioned {
+contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenWallet, IBurnableByRootTokenWallet, IVersioned {
 
     address static root_address;
     address wallet_address;
@@ -209,7 +208,7 @@ contract TONTokenWallet2 is ITONTokenWallet, IDestroyable, IBurnableByOwnerToken
         }
 
         TvmCell stateInit = tvm.buildStateInit({
-            contr: TONTokenWallet2,
+            contr: TONTokenWalletAbstract,
             varInit: {
                 root_address: root_address,
                 code: code,
@@ -223,7 +222,7 @@ contract TONTokenWallet2 is ITONTokenWallet, IDestroyable, IBurnableByOwnerToken
         address to;
 
         if(deploy_grams > 0) {
-            to = new TONTokenWallet2{
+            to = new TONTokenWalletAbstract{
                 stateInit: stateInit,
                 value: deploy_grams,
                 wid: address(this).wid,
@@ -659,7 +658,7 @@ contract TONTokenWallet2 is ITONTokenWallet, IDestroyable, IBurnableByOwnerToken
         address
     ) {
         TvmCell stateInit = tvm.buildStateInit({
-            contr: TONTokenWallet2,
+            contr: TONTokenWalletAbstract,
             varInit: {
                 root_address: root_address,
                 code: code,

@@ -3,13 +3,13 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "SubscriptionServiceIndex.sol";
+import "libraries/SubscriptionServiceErrors.sol";
 
 
 contract SubscriptionService {
 
     struct ServiceParams {
-        uint256 to;
+        address to;
         uint128 value;
         uint32 period;
         string name;
@@ -19,22 +19,17 @@ contract SubscriptionService {
         string category;
     }
     TvmCell static params;
-    uint256 static serviceKey;
+    address static serviceOwner;
     string static public serviceCategory;
     ServiceParams public svcparams;
     address public subscriptionServiceIndexAddress;
 
-    modifier onlyOwner {
-		require(msg.pubkey() == tvm.pubkey(), 100);
-		tvm.accept();
-		_;
-    }
-
-    constructor(TvmCell indexCode, bytes signature) public {
+    constructor(address subscriptionServiceIndexAddress_, address senderAddress) public {
         require(msg.value >= 1 ton, 101);
-        require(msg.sender != address(0), 102);
-        require(tvm.checkSign(tvm.hash(tvm.code()), signature.toSlice(), tvm.pubkey()), 105);
-        require(tvm.checkSign(tvm.hash(tvm.code()), signature.toSlice(), serviceKey), 106);
+        optional(TvmCell) salt = tvm.codeSalt(tvm.code());
+        require(salt.hasValue(), SubscriptionServiceErrors.error_salt_is_empty);
+        (, address subsmanAddr) = salt.get().toSlice().decode(string, address);
+        require(msg.sender == subsmanAddr, SubscriptionServiceErrors.error_define_owner_in_salt);
         TvmCell nextCell;
         (
             svcparams.to, 
@@ -42,7 +37,7 @@ contract SubscriptionService {
             svcparams.period, 
             nextCell
         ) = params.toSlice().decode(
-            uint256, 
+            address, 
             uint128, 
             uint32, 
             TvmCell
@@ -60,30 +55,11 @@ contract SubscriptionService {
             TvmCell
         );
         (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
-        TvmCell state = tvm.buildStateInit({
-            code: indexCode,
-            pubkey: tvm.pubkey(),
-            varInit: { 
-                params: params,
-                serviceCategory: serviceCategory
-            },
-            contr: SubscriptionServiceIndex
-        });
-        TvmCell stateInit = tvm.insertPubkey(state, tvm.pubkey());
-        subscriptionServiceIndexAddress = address(tvm.hash(stateInit));
-        new SubscriptionServiceIndex{
-            value: 0.5 ton, 
-            flag: 1, 
-            bounce: true, 
-            stateInit: stateInit
-            }(
-                signature,
-                tvm.code()
-            );
+        subscriptionServiceIndexAddress = subscriptionServiceIndexAddress_;
     }
 
     function selfdelete() public {
-        require(msg.sender == subscriptionServiceIndexAddress, 106);
+        require(msg.sender == subscriptionServiceIndexAddress, 101);
         selfdestruct(msg.sender);
     }
 }

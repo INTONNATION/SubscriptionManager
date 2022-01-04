@@ -36,22 +36,9 @@
 			]
 		},
 		{
-			"name": "buildAccountIndex",
+			"name": "deployAccount",
 			"inputs": [
-				{"name":"ownerAddress","type":"address"},
-				{"name":"params","type":"cell"},
-				{"name":"indificator","type":"cell"},
-				{"name":"accountWallet","type":"cell"},
-				{"name":"walletRootAddress","type":"address"}
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
-			"name": "deployAccountHelper",
-			"inputs": [
-				{"name":"serviceKey","type":"uint256"},
+				{"name":"serviceOwner","type":"address"},
 				{"name":"params","type":"cell"},
 				{"name":"indificator","type":"cell"},
 				{"name":"accountWallet","type":"cell"},
@@ -61,11 +48,9 @@
 			]
 		},
 		{
-			"name": "deployServiceHelper",
+			"name": "deployService",
 			"inputs": [
-				{"name":"serviceKey","type":"uint256"},
 				{"name":"params","type":"cell"},
-				{"name":"signature","type":"bytes"},
 				{"name":"serviceCategory","type":"string"}
 			],
 			"outputs": [
