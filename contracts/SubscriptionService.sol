@@ -24,8 +24,7 @@ contract SubscriptionService {
     ServiceParams public svcparams;
     address public subscriptionServiceIndexAddress;
 
-    constructor(address subscriptionServiceIndexAddress_, address senderAddress) public {
-        require(msg.value >= 1 ton, 101);
+    constructor(address subscriptionServiceIndexAddress_) public {
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionServiceErrors.error_salt_is_empty);
         (, address subsmanAddr) = salt.get().toSlice().decode(string, address);
@@ -37,9 +36,9 @@ contract SubscriptionService {
             svcparams.period, 
             nextCell
         ) = params.toSlice().decode(
-            address, 
-            uint128, 
-            uint32, 
+            address,
+            uint128,
+            uint32,
             TvmCell
         );
         TvmCell nextCell2;

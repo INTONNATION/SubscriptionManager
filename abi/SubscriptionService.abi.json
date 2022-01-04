@@ -6,8 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"subscriptionServiceIndexAddress_","type":"address"},
-				{"name":"senderAddress","type":"address"}
+				{"name":"subscriptionServiceIndexAddress_","type":"address"}
 			],
 			"outputs": [
 			]
