@@ -6,8 +6,8 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"indexCode","type":"cell"},
-				{"name":"signature","type":"bytes"}
+				{"name":"subscriptionServiceIndexAddress_","type":"address"},
+				{"name":"senderAddress","type":"address"}
 			],
 			"outputs": [
 			]
@@ -32,13 +32,21 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"uint256"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+			]
+		},
+		{
+			"name": "subscriptionServiceIndexAddress",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscriptionServiceIndexAddress","type":"address"}
 			]
 		}
 	],
 	"data": [
 		{"key":1,"name":"params","type":"cell"},
-		{"key":2,"name":"serviceKey","type":"uint256"},
+		{"key":2,"name":"serviceOwner","type":"address"},
 		{"key":3,"name":"serviceCategory","type":"string"}
 	],
 	"events": [
@@ -48,9 +56,9 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"params","type":"cell"},
-		{"name":"serviceKey","type":"uint256"},
+		{"name":"serviceOwner","type":"address"},
 		{"name":"serviceCategory","type":"string"},
-		{"components":[{"name":"to","type":"uint256"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
 		{"name":"subscriptionServiceIndexAddress","type":"address"}
 	]
 }

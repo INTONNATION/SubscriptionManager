@@ -13,7 +13,7 @@ SafeMultisigWalletABI="../abi/SafeMultisigWallet.abi.json"
 contract_name="configVersions"
 contract_abi="../abi/$contract_name.abi.json"
 
-tondev sol compile ../contracts/$contract_name.sol -o ../abi;
+tondev sol compile ../contracts/configs/$contract_name.sol -o ../abi;
 tvc="../abi/$contract_name.tvc"
 contract_address=`tonos-cli genaddr $tvc $contract_abi --genkey $contract_name.keys.json | grep 'Raw address' | awk '{print $NF}'`
 

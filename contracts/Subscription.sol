@@ -5,16 +5,17 @@ pragma AbiHeader pubkey;
 
 import "SubscriptionIndex.sol";
 import "../contracts/mTIP-3/mTONTokenWalletAbstract.sol";
+import "libraries/SubscriptionErrors.sol";
 
 
 interface IWallet  {
-    function paySubscription (uint256 serviceKey, TvmCell params, TvmCell indificator) external responsible returns (uint8);
+    function paySubscription (address serviceOwner, TvmCell params, TvmCell indificator) external responsible returns (uint8);
 }
 
 
 contract Subscription {
 
-    uint256 static public serviceKey;
+    address static public serviceOwner;
     address static public user_wallet;
     TvmCell static public params;
     TvmCell static public subscription_indificator;
@@ -31,20 +32,25 @@ contract Subscription {
     }
     Payment public subscription;
     
-    constructor(address senderAddress, TvmCell walletCode, address rootAddress, address subsIndexAddr) public {
-        (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
+    constructor(
+        address senderAddress, 
+        TvmCell walletCode, 
+        address rootAddress, 
+        address subsIndexAddr
+    ) 
+        public 
+    {
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
-        address wallet_from_salt;
-        require(salt.hasValue(), 104);
+        require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
         (, ,uint256 wallet_hash, TvmCell Addrs) = salt.get().toSlice().decode(uint256, TvmCell, uint256, TvmCell);
         (address ownerAddress, address subsmanAddr) = Addrs.toSlice().decode(address, address);
-        require(msg.sender == subsmanAddr, 333);
-        require(owner_address == ownerAddress &&  owner_address == senderAddress, 444);
-        require(wallet_hash == tvm.hash(walletCode), 111);
+        require(msg.sender == subsmanAddr, SubscriptionErrors.error_message_sender_is_not_subsman);
+        require(owner_address == ownerAddress &&  owner_address == senderAddress, SubscriptionErrors.error_define_owner_address_in_static_vars);
+        require(wallet_hash == tvm.hash(walletCode), SubscriptionErrors.error_define_wallet_hash_in_salt);
         TvmCell walletStateInit = tvm.buildStateInit({
             code: walletCode,
             pubkey: 0,
-            contr: TONTokenWallet2,
+            contr: TONTokenWalletAbstract,
             varInit: {
                 root_address: rootAddress,
                 code: walletCode,
@@ -52,17 +58,18 @@ contract Subscription {
                 owner_address: ownerAddress
             }
         });
-        require(address(tvm.hash(walletStateInit)) == user_wallet, 123);
-        require(msg.value >= 1 ton, 100);
-        require(value > 0 && period > 0, 102);
+        require(address(tvm.hash(walletStateInit)) == user_wallet, SubscriptionErrors.error_define_wallet_address_in_static_vars);
+        require(msg.value >= 1 ton, SubscriptionErrors.error_not_enough_balance_in_message);
+        (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
+        require(value > 0 && period > 0, SubscriptionErrors.error_incorrect_service_params);
         uint32 _period = period * 3600 * 24;
-        uint128 _value = value * 1000000000; // depens on Decimals in TIP3
+        uint128 _value = value * 1000000000; // depends on Decimals in TIP3
         subscription = Payment(to, _value, _period, 0, STATUS_NONACTIVE);
         subscriptionIndexAddress = subsIndexAddr;
     }
 
     function cancel() public {
-        require(msg.sender == subscriptionIndexAddress, 106);
+        require(msg.sender == subscriptionIndexAddress, SubscriptionErrors.error_message_sender_is_not_index);
         selfdestruct(user_wallet);
     }
 
@@ -77,12 +84,12 @@ contract Subscription {
                 flag: 0, 
                 callback: Subscription.onPaySubscription
             }(
-                serviceKey, 
+                serviceOwner, 
                 params, 
                 subscription_indificator
             );
         } else {
-            require(subscription.status == STATUS_ACTIVE, 103);
+            require(subscription.status == STATUS_ACTIVE, SubscriptionErrors.error_subscription_status_already_active);
         }
     }
 

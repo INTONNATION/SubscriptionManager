@@ -551,11 +551,11 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             );
     }
 
-    function buildSubscriptionState(uint256 serviceKey, TvmCell params, TvmCell indificator) private view returns (TvmCell) {
+    function buildSubscriptionState(address serviceOwner, TvmCell params, TvmCell indificator) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         TvmBuilder addrsBuilder;
         addrsBuilder.store(owner_address, subsmanAddr);
-        saltBuilder.store(serviceKey, params, tvm.hash(tvm.code()), addrsBuilder.toCell());
+        saltBuilder.store(serviceOwner, params, tvm.hash(tvm.code()), addrsBuilder.toCell());
         TvmCell codeSalt = tvm.setCodeSalt(
             subscr_image.toSlice().loadRef(),
             saltBuilder.toCell()
@@ -564,7 +564,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             code: codeSalt,
             pubkey: 0,
             varInit: {
-                serviceKey: serviceKey,
+                serviceOwner: serviceOwner,
                 user_wallet: wallet_address,
                 params: params,
                 subscription_indificator: indificator,
@@ -575,11 +575,15 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         return newImage;
     }
 
-    function paySubscription(uint256 serviceKey, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
+    function paySubscription(address serviceOwner, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
         require(msg.value >= 0.1 ton, 105);
         (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
         address recipient = getExpectedAddress(0, service_owner_address);
-        address subsAddr = address(tvm.hash(buildSubscriptionState(serviceKey, params, indificator)));
+        address subsAddr = address(tvm.hash(buildSubscriptionState(
+            serviceOwner, 
+            params, 
+            indificator
+        )));
         require(msg.sender == subsAddr, 111);
         TvmCell none;
         this.transfer{value: 1 ton}(recipient, value, 1000000000, wallet_address, true, none);

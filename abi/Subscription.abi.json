@@ -37,11 +37,11 @@
 			]
 		},
 		{
-			"name": "serviceKey",
+			"name": "serviceOwner",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"serviceKey","type":"uint256"}
+				{"name":"serviceOwner","type":"address"}
 			]
 		},
 		{
@@ -94,7 +94,7 @@
 		}
 	],
 	"data": [
-		{"key":1,"name":"serviceKey","type":"uint256"},
+		{"key":1,"name":"serviceOwner","type":"address"},
 		{"key":2,"name":"user_wallet","type":"address"},
 		{"key":3,"name":"params","type":"cell"},
 		{"key":4,"name":"subscription_indificator","type":"cell"},
@@ -106,7 +106,7 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"serviceKey","type":"uint256"},
+		{"name":"serviceOwner","type":"address"},
 		{"name":"user_wallet","type":"address"},
 		{"name":"params","type":"cell"},
 		{"name":"subscription_indificator","type":"cell"},

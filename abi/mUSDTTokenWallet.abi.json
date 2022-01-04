@@ -184,7 +184,7 @@
 			"name": "paySubscription",
 			"inputs": [
 				{"name":"answerId","type":"uint32"},
-				{"name":"serviceKey","type":"uint256"},
+				{"name":"serviceOwner","type":"address"},
 				{"name":"params","type":"cell"},
 				{"name":"indificator","type":"cell"}
 			],

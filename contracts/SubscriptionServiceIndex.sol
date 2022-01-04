@@ -3,6 +3,7 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
+import "libraries/SubscriptionServiceErrors.sol";
 
 interface ISubscriptionServiceContract {
     function selfdelete () external;
@@ -12,7 +13,7 @@ interface ISubscriptionServiceContract {
 contract SubscriptionServiceIndex {
 
     struct ServiceParams {
-        uint256 to;
+        address to;
         uint128 value;
         uint32 period;
         string name;
@@ -25,16 +26,20 @@ contract SubscriptionServiceIndex {
     TvmCell static public params;
     string static public serviceCategory;
     address public serviceAddress;
+    address public serviceOwner;
 
     modifier onlyOwner {
-		require(msg.pubkey() == tvm.pubkey(), 100);
-		tvm.accept();
+		require(msg.sender == serviceOwner, 100);
 		_;
     }
 
-    constructor(bytes signature,TvmCell svcCode) public {
-        require(msg.sender != address(0), 101);
-        require(tvm.checkSign(tvm.hash(svcCode), signature.toSlice(), tvm.pubkey()), 103);
+    constructor(address serviceAddress_, address senderAddress) public {
+        require(msg.value >= 1 ton, 101);
+        optional(TvmCell) salt = tvm.codeSalt(tvm.code());
+        require(salt.hasValue(), SubscriptionServiceErrors.error_salt_is_empty);
+        (, address ownerAddress, address subsmanAddr) = salt.get().toSlice().decode(string, address, address);
+        require(msg.sender == subsmanAddr, SubscriptionServiceErrors.error_message_sender_is_not_subsman);
+        require(ownerAddress == senderAddress, SubscriptionServiceErrors.error_define_owner_in_salt);
         TvmCell nextCell;
         (
             svcparams.to, 
@@ -42,7 +47,7 @@ contract SubscriptionServiceIndex {
             svcparams.period, 
             nextCell
         ) = params.toSlice().decode(
-            uint256, 
+            address, 
             uint128, 
             uint32, 
             TvmCell
@@ -60,11 +65,12 @@ contract SubscriptionServiceIndex {
             TvmCell
         );
         (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
-        serviceAddress = msg.sender;
+        serviceAddress = serviceAddress_;
+        serviceOwner = ownerAddress;
     }
 
     function cancel() public onlyOwner {
         ISubscriptionServiceContract(serviceAddress).selfdelete();
-        selfdestruct(serviceAddress);
+        selfdestruct(serviceOwner);
     }
 }
