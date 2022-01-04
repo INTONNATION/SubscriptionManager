@@ -31,6 +31,9 @@ contract Subscription {
         uint8 status;
     }
     Payment public subscription;
+
+    uint256 public debug_wallet_hash;
+    uint256 public debug_wallet_hash2;
     
     constructor(
         address senderAddress, 
@@ -42,8 +45,8 @@ contract Subscription {
     {
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
-        (, ,uint256 wallet_hash, TvmCell Addrs) = salt.get().toSlice().decode(uint256, TvmCell, uint256, TvmCell);
-        (address ownerAddress, address subsmanAddr) = Addrs.toSlice().decode(address, address);
+        (, , uint256 wallet_hash, TvmCell Addrs) = salt.get().toSlice().decode(address, TvmCell, uint256, TvmCell);
+        (, address ownerAddress, address subsmanAddr) = Addrs.toSlice().decode(address, address, address);
         require(msg.sender == subsmanAddr, SubscriptionErrors.error_message_sender_is_not_subsman);
         require(owner_address == ownerAddress &&  owner_address == senderAddress, SubscriptionErrors.error_define_owner_address_in_static_vars);
         require(wallet_hash == tvm.hash(walletCode), SubscriptionErrors.error_define_wallet_hash_in_salt);
@@ -63,8 +66,7 @@ contract Subscription {
         (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
         require(value > 0 && period > 0, SubscriptionErrors.error_incorrect_service_params);
         uint32 _period = period * 3600 * 24;
-        uint128 _value = value * 1000000000; // depends on Decimals in TIP3
-        subscription = Payment(to, _value, _period, 0, STATUS_NONACTIVE);
+        subscription = Payment(to, value, _period, 0, STATUS_NONACTIVE);
         subscriptionIndexAddress = subsIndexAddr;
     }
 

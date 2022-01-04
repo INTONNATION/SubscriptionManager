@@ -126,7 +126,7 @@ contract convertTIP3 {
                     address.makeAddrStd(0, 0),
                     payload_ // temp
                 );
-            // verify that tokens were burn (optional)
+            // verify that tokens were burn
         }
     }
 }

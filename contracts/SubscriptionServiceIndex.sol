@@ -34,10 +34,9 @@ contract SubscriptionServiceIndex {
     }
 
     constructor(address serviceAddress_, address senderAddress) public {
-        require(msg.value >= 1 ton, 101);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionServiceErrors.error_salt_is_empty);
-        (, address ownerAddress, address subsmanAddr) = salt.get().toSlice().decode(string, address, address);
+        (address ownerAddress, address subsmanAddr) = salt.get().toSlice().decode(address, address);
         require(msg.sender == subsmanAddr, SubscriptionServiceErrors.error_message_sender_is_not_subsman);
         require(ownerAddress == senderAddress, SubscriptionServiceErrors.error_define_owner_in_salt);
         TvmCell nextCell;
