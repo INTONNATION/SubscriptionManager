@@ -15,6 +15,7 @@ import "../libraries/TONTokenWalletConstants.sol";
 import "../interfaces/IVersioned.sol";
 
 
+// This contract is used as a tip to handle cycled dependencies
 /*
     @title FT token wallet contract
 */

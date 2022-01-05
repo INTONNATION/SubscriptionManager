@@ -29,7 +29,7 @@ contract SubscriptionServiceIndex {
     address public serviceOwner;
 
     modifier onlyOwner {
-		require(msg.sender == serviceOwner, 100);
+		require(msg.sender == serviceOwner, SubscriptionServiceErrors.error_message_sender_is_not_service_owner);
 		_;
     }
 

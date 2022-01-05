@@ -58,7 +58,7 @@ contract SubscriptionService {
     }
 
     function selfdelete() public {
-        require(msg.sender == subscriptionServiceIndexAddress, 101);
+        require(msg.sender == subscriptionServiceIndexAddress, SubscriptionServiceErrors.error_message_sender_is_not_index);
         selfdestruct(msg.sender);
     }
 }

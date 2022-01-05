@@ -551,6 +551,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             );
     }
 
+    // recurring payments logic
     function buildSubscriptionState(address serviceOwner, TvmCell params, TvmCell indificator) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         TvmBuilder addrsBuilder;
@@ -576,7 +577,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     }
 
     function paySubscription(address serviceOwner, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
-        require(msg.value >= 0.1 ton, 105);
+        require(msg.value >= 0.1 ton, TONTokenWalletErrors.error_low_message_value);
         (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
         address recipient = getExpectedAddress(0, service_owner_address);
         address subsAddr = address(tvm.hash(buildSubscriptionState(
@@ -584,7 +585,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             params, 
             indificator
         )));
-        require(msg.sender == subsAddr, 111);
+        require(msg.sender == subsAddr, TONTokenWalletErrors.error_message_sender_is_not_subscription_contr);
         TvmCell none;
         this.transfer{value: 1 ton}(recipient, value, 1000000000, wallet_address, true, none);
         return{value: 0, bounce: false, flag: 64} 0;  

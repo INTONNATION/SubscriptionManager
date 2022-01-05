@@ -4,6 +4,7 @@ import "interfaces/IRootTokenContract.sol";
 import "interfaces/ITONTokenWallet.sol";
 import "interfaces/IBurnableByRootTokenRootContract.sol";
 import "TIP-3/TONTokenWallet.sol";
+import "libraries/ConvertTIP3Errors.sol";
 
 
 contract convertTIP3 {
@@ -15,7 +16,7 @@ contract convertTIP3 {
     TvmCell static tip3_wallet_code;
 
     modifier onlyOwner() {
-        require(msg.pubkey() == tvm.pubkey(), 101);
+        require(msg.pubkey() == tvm.pubkey(), ConvertTIP3Errors.error_message_sender_is_not_my_owner);
         tvm.accept();
         _;
     }
@@ -27,7 +28,7 @@ contract convertTIP3 {
         address mtip3_token_wallet_
     ) public 
     {
-        require(msg.pubkey() == tvm.pubkey(), 100);
+        require(msg.pubkey() == tvm.pubkey(), ConvertTIP3Errors.error_message_sender_is_not_my_owner);
         tvm.accept();
         tip3_token_wallet = tip3_token_wallet_;
         mtip3_token_wallet = mtip3_token_wallet_;
@@ -87,7 +88,7 @@ contract convertTIP3 {
         uint128 /*updated_balance*/,
         TvmCell payload
     ) external {
-        require(msg.sender == token_wallet, 102);
+        require(msg.sender == token_wallet, ConvertTIP3Errors.error_message_sender_wallet_is_incorrect);
         // TIP3 -> mTIP3
         if (token_wallet == tip3_token_wallet) {
             IRootTokenContract(mtip3_token_root).deployWallet{
