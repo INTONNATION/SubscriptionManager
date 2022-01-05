@@ -4,33 +4,17 @@
 	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
-			"name": "setSubscriptionBase",
+			"name": "constructor",
 			"inputs": [
-				{"name":"image","type":"cell"}
+				{"name":"configVersionsAddrINPUT","type":"address"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setSubscriptionIndexCode",
+			"name": "setTVCs",
 			"inputs": [
-				{"name":"image","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setSubscriptionService",
-			"inputs": [
-				{"name":"image","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setSubscriptionServiceIndex",
-			"inputs": [
-				{"name":"image","type":"cell"}
+				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"}],"name":"tvcs","type":"tuple"}
 			],
 			"outputs": [
 			]
@@ -57,10 +41,43 @@
 			]
 		},
 		{
-			"name": "constructor",
+			"name": "m_subscriptionBaseImage",
 			"inputs": [
 			],
 			"outputs": [
+				{"name":"m_subscriptionBaseImage","type":"cell"}
+			]
+		},
+		{
+			"name": "s_subscriptionServiceImage",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"s_subscriptionServiceImage","type":"cell"}
+			]
+		},
+		{
+			"name": "m_subscriptionIndexImage",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"m_subscriptionIndexImage","type":"cell"}
+			]
+		},
+		{
+			"name": "s_subscriptionServiceIndexImage",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"s_subscriptionServiceIndexImage","type":"cell"}
+			]
+		},
+		{
+			"name": "configVersionsAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"configVersionsAddr","type":"address"}
 			]
 		}
 	],
@@ -74,9 +91,8 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"m_subscriptionBaseImage","type":"cell"},
 		{"name":"s_subscriptionServiceImage","type":"cell"},
-		{"name":"m_subscriptionWalletImage_mUSDT","type":"cell"},
-		{"name":"m_subscriptionWalletImage_mEUPI","type":"cell"},
 		{"name":"m_subscriptionIndexImage","type":"cell"},
-		{"name":"s_subscriptionServiceIndexImage","type":"cell"}
+		{"name":"s_subscriptionServiceIndexImage","type":"cell"},
+		{"name":"configVersionsAddr","type":"address"}
 	]
 }
