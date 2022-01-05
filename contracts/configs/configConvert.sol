@@ -2,6 +2,8 @@ pragma ton-solidity ^ 0.51.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 
+import "../libraries/configsErrors.sol";
+
 
 contract configVersions {
         
@@ -16,13 +18,13 @@ contract configVersions {
 	string public TONTokenWalletContract;
 
     modifier onlyOwner {
-		require(msg.pubkey() == tvm.pubkey(), 100);
+		require(msg.pubkey() == tvm.pubkey(), configsErrors.error_message_sender_is_not_my_owner);
 		tvm.accept();
 		_;
     }
 
 	constructor() public {
-		require(tvm.pubkey() != 0, 101);
+		require(tvm.pubkey() != 0, configsErrors.error_pubkey_not_defined);
 		tvm.accept();
 	}
 

@@ -2,6 +2,8 @@ pragma ton-solidity ^ 0.51.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 
+import "../libraries/configsErrors.sol";
+
 
 contract configAutobiller {
 
@@ -20,12 +22,12 @@ contract configAutobiller {
 	mapping (uint8 => VersionsAutobiller) public vrsAutobiller;
 
 	constructor() public {
-		require(msg.pubkey() == tvm.pubkey(), 100);
+		require(msg.pubkey() == tvm.pubkey(), configsErrors.error_message_sender_is_not_my_owner);
 		tvm.accept();
 	}
 
     modifier onlyOwner {
-		require(msg.pubkey() == tvm.pubkey(), 100);
+		require(msg.pubkey() == tvm.pubkey(), configsErrors.error_message_sender_is_not_my_owner);
 		tvm.accept();
 		_;
     }
