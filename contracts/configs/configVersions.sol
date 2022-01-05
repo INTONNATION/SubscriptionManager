@@ -9,7 +9,6 @@ contract configVersions {
 	uint8 public versionAbi;
 	struct VersionsTvcParams {
 		TvmCell tvcSubscriptionService;
-		TvmCell tvcWallet;
 		TvmCell tvcSubscription;
 		TvmCell tvcSubscriptionServiceIndex;
 		TvmCell tvcSubscriptionIndex;
@@ -36,36 +35,45 @@ contract configVersions {
 		tvm.accept();
 	}
     
-    function getTvcLatest() public view returns(optional(VersionsTvcParams)){
+	// Get all latest TVCs
+    function getTvcsLatest() public view returns(optional(VersionsTvcParams)){
         optional(VersionsTvcParams) value = vrsparamsTvc.fetch(versionTvc);
 		return value;
     }
 
-	function getAbiLatest() public view returns(optional(VersionsAbiParams)){
+	// Get all latest TVCs
+    function getTvcsLatestResponsible() external view responsible returns(VersionsTvcParams){
+        VersionsTvcParams value = vrsparamsTvc[versionTvc];
+		return{value: 0, flag: 64}(value);
+    }
+
+	// Get all latest ABIs
+	function getAbisLatest() public view returns(optional(VersionsAbiParams)){
         optional(VersionsAbiParams) value = vrsparamsAbi.fetch(versionAbi);
 		return value;
     }
 
-    function getTvcVersions() public view returns (uint8[] arr){
+	// Get just list of versions
+    function getTvcVersionsOnly() public view returns (uint8[] arr){
         for ((uint8 k,) : vrsparamsTvc) {
         	arr.push(k);
         }
     }
 
-    function getAbiVersions() public view returns (uint8[] arr){
+    function getAbiVersionsOnly() public view returns (uint8[] arr){
         for ((uint8 k,) : vrsparamsAbi) {
         	arr.push(k);
         }
     }
 	
-	// get TVC by version
-	function getTvcVersion(uint8 tvcVersion) public view returns(optional(VersionsTvcParams)){
+	// get TVC by by specific version
+	function getTvcByVersion(uint8 tvcVersion) public view returns(optional(VersionsTvcParams)){
         optional(VersionsTvcParams) value = vrsparamsTvc.fetch(tvcVersion);
 		return value;
     }
 
-	// get ABI by version
-    function getAbiVersion(uint8 AbiVersion) public view returns(optional(VersionsAbiParams)){
+	// get ABI by specific version
+    function getAbiByVersion(uint8 AbiVersion) public view returns(optional(VersionsAbiParams)){
         optional(VersionsAbiParams) value = vrsparamsAbi.fetch(AbiVersion);
 		return value;
     }

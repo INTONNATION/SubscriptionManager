@@ -11,9 +11,7 @@ if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
-for i in ../contracts/SubsMan ../contracts/Subscription ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex ../contracts/mTIP-3/mTONTokenWallet; do
-       tondev sol compile $i.sol -o ../abi;
-done
+tondev sol compile ../contracts/SubsMan.sol -o ../abi;
 
 tos=tonos-cli
 
@@ -66,8 +64,11 @@ echo -n $CONTRACT_ADDRESS > $1.addr
 echo GIVER $1 ------------------------------------------------
 giver $CONTRACT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
-$tos --url $NETWORK deploy ../abi/$1.tvc "{}" --sign $1.keys.json --abi ../abi/$1.abi.json
+$tos --url $NETWORK deploy ../abi/$1.tvc "{\"configVersionsAddrINPUT\":\"$configAddr\"}" --sign $1.keys.json --abi ../abi/$1.abi.json
 }
+
+configAddr=$(cat ./configVersions.addr)
+echo $configAddr
 
 deploy $CONTRACT_NAME
 CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)

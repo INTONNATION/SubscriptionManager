@@ -10,36 +10,39 @@ import "../contracts/mTIP-3/mTONTokenWallet.sol";
 import "libraries/SubsManErrors.sol";
 
 
+struct VersionsTvcParams {
+    TvmCell tvcSubscriptionService;
+    TvmCell tvcSubscription;
+    TvmCell tvcSubscriptionServiceIndex;
+    TvmCell tvcSubscriptionIndex;
+}
+
+
+interface ISubsMan {
+    function getTvcsLatestResponsible() external responsible returns(VersionsTvcParams);
+}
+
+
 contract SubsMan {
    
-    TvmCell m_subscriptionBaseImage;
-    TvmCell s_subscriptionServiceImage;
-    TvmCell m_subscriptionWalletImage_mUSDT;
-    TvmCell m_subscriptionWalletImage_mEUPI;
-    TvmCell m_subscriptionIndexImage;
-    TvmCell s_subscriptionServiceIndexImage;
+    TvmCell public m_subscriptionBaseImage;
+    TvmCell public s_subscriptionServiceImage;
+    TvmCell public m_subscriptionIndexImage;
+    TvmCell public s_subscriptionServiceIndexImage;
+    address public configVersionsAddr;
 
-    modifier onlyOwner() {
-        require(msg.pubkey() == tvm.pubkey(), SubsManErrors.error_message_sender_is_not_my_owner);
+    constructor(address configVersionsAddrINPUT) public {
         tvm.accept();
-        _;
+        configVersionsAddr = configVersionsAddrINPUT;
+        ISubsMan(configVersionsAddr).getTvcsLatestResponsible{value: 0.5 ton, callback: SubsMan.setTVCs}();
     }
 
-    // Set images (TODO: Move to version contract)
-    function setSubscriptionBase(TvmCell image) public onlyOwner {
-        m_subscriptionBaseImage = image;
-    }
-
-    function setSubscriptionIndexCode(TvmCell image) public onlyOwner {
-        m_subscriptionIndexImage = image;
-    }
-
-    function setSubscriptionService(TvmCell image) public onlyOwner {
-        s_subscriptionServiceImage = image;
-    }
-
-    function setSubscriptionServiceIndex(TvmCell image) public onlyOwner {
-        s_subscriptionServiceIndexImage = image;
+    function setTVCs(VersionsTvcParams tvcs) external {
+        require(msg.sender == configVersionsAddr);
+        m_subscriptionBaseImage = tvcs.tvcSubscription;
+        s_subscriptionServiceImage = tvcs.tvcSubscriptionService;
+        m_subscriptionIndexImage = tvcs.tvcSubscriptionIndex;
+        s_subscriptionServiceIndexImage = tvcs.tvcSubscriptionServiceIndex;
     }
 
     // Deploy contracts
