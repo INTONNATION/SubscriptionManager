@@ -1,0 +1,80 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"subsAddr","type":"address"},
+				{"name":"subscriptionIndexAddressINPUT","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "cancel",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"params","type":"cell"}
+			]
+		},
+		{
+			"name": "subscription_indificator",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_indificator","type":"cell"}
+			]
+		},
+		{
+			"name": "ownerAddress",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"ownerAddress","type":"address"}
+			]
+		},
+		{
+			"name": "subscription_addr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_addr","type":"address"}
+			]
+		},
+		{
+			"name": "svcparams",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"params","type":"cell"},
+		{"key":2,"name":"subscription_indificator","type":"cell"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"params","type":"cell"},
+		{"name":"subscription_indificator","type":"cell"},
+		{"name":"ownerAddress","type":"address"},
+		{"name":"subscription_addr","type":"address"},
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
+		{"name":"subscriptionIndexAddress","type":"address"}
+	]
+}

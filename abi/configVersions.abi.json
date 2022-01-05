@@ -15,7 +15,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIndificatorIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -24,7 +24,7 @@
 				{"name":"answerId","type":"uint32"}
 			],
 			"outputs": [
-				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"}],"name":"value0","type":"tuple"}
+				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIndificatorIndex","type":"cell"}],"name":"value0","type":"tuple"}
 			]
 		},
 		{
@@ -32,7 +32,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIndificatorIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -57,7 +57,7 @@
 				{"name":"tvcVersion","type":"uint8"}
 			],
 			"outputs": [
-				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIndificatorIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -66,7 +66,7 @@
 				{"name":"AbiVersion","type":"uint8"}
 			],
 			"outputs": [
-				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIndificatorIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -75,7 +75,8 @@
 				{"name":"tvcSubscriptionServiceInput","type":"cell"},
 				{"name":"tvcSubscriptionInput","type":"cell"},
 				{"name":"tvcSubscriptionServiceIndexInput","type":"cell"},
-				{"name":"tvcSubscriptionIndexInput","type":"cell"}
+				{"name":"tvcSubscriptionIndexInput","type":"cell"},
+				{"name":"tvcSubscriptionIndificatorIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -87,6 +88,7 @@
 				{"name":"abiServiceIndexContractInput","type":"string"},
 				{"name":"abiSubscriptionContractInput","type":"string"},
 				{"name":"abiSubscriptionIndexContractInput","type":"string"},
+				{"name":"abiSubscriptionIndificatorIndexContractInput","type":"string"},
 				{"name":"abiSubsManDebotInput","type":"string"}
 			],
 			"outputs": [
@@ -129,7 +131,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"}
+				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIndificatorIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"}
 			]
 		},
 		{
@@ -137,7 +139,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+				{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIndificatorIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 			]
 		}
 	],
@@ -152,7 +154,7 @@
 		{"name":"versionTvc","type":"uint8"},
 		{"name":"versionAbi","type":"uint8"},
 		{"name":"categories","type":"string[]"},
-		{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
-		{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+		{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIndificatorIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
+		{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIndificatorIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 	]
 }

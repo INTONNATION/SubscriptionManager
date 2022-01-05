@@ -12,12 +12,14 @@ contract configVersions {
 		TvmCell tvcSubscription;
 		TvmCell tvcSubscriptionServiceIndex;
 		TvmCell tvcSubscriptionIndex;
+		TvmCell tvcSubscriptionIndificatorIndex;
 	}
 	struct VersionsAbiParams {
 		string abiServiceContract;
 		string abiServiceIndexContract;
 		string abiSubscriptionContract;
 		string abiSubscriptionIndexContract;
+		string abiSubscriptionIndificatorIndexContract;
 		string abiSubsManDebot;
 	}
 	string[] public categories;
@@ -82,7 +84,8 @@ contract configVersions {
 		TvmCell tvcSubscriptionServiceInput, 
 		TvmCell tvcSubscriptionInput, 
 		TvmCell tvcSubscriptionServiceIndexInput,
-		TvmCell tvcSubscriptionIndexInput
+		TvmCell tvcSubscriptionIndexInput,
+		TvmCell tvcSubscriptionIndificatorIndexInput
 	)  
 	public onlyOwner 
 	{
@@ -92,6 +95,7 @@ contract configVersions {
 		params.tvcSubscription = tvcSubscriptionInput;
 		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
 		params.tvcSubscriptionIndex = tvcSubscriptionIndexInput;
+		params.tvcSubscriptionIndificatorIndex = tvcSubscriptionIndificatorIndexInput;
 		vrsparamsTvc.add(versionTvc, params);
     }
 
@@ -100,6 +104,7 @@ contract configVersions {
 		string abiServiceIndexContractInput, 
 		string abiSubscriptionContractInput, 
 		string abiSubscriptionIndexContractInput, 
+		string abiSubscriptionIndificatorIndexContractInput,
 		string abiSubsManDebotInput
 	) public onlyOwner 
 	{
@@ -109,6 +114,7 @@ contract configVersions {
 		params.abiServiceIndexContract = abiServiceIndexContractInput;
 		params.abiSubscriptionContract = abiSubscriptionContractInput;
 		params.abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
+		params.abiSubscriptionIndificatorIndexContract = abiSubscriptionIndificatorIndexContractInput;
 		params.abiSubsManDebot = abiSubsManDebotInput;
 		vrsparamsAbi.add(versionAbi, params);
     }
