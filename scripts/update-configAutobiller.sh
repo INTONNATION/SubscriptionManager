@@ -16,6 +16,7 @@ image=$(echo 'QmenYzWrNpCbK6LhHHXxhusT6qNEnYQrkpDz6DBVqX6Tu3'| base64 $prefix)
 description=$(echo 'Autobiller'| base64 $prefix)
 to=$(echo '0:af1eec292203b858a374c06992e37d6a3df90b34e2c5362dc5f332cf41b4d53e'| base64 $prefix)
 category=$(echo 'Other'| base64 $prefix)
+currency=$(echo 'USDT' | base64 $prefix)
 
 
 LOCALNET=http://127.0.0.1
@@ -27,4 +28,4 @@ NETWORK=$FLD
 configAddr=$(cat ./configAutobiller.addr)
 echo $configAddr
 
-tonos-cli --url $NETWORK call $configAddr setAutobillerConfig "{\"pubkeyINPUT\": \"$pubkey\", \"nameINPUT\": \"$name\",\"periodINPUT\": \"$period\",\"valueINPUT\": \"$value\",\"imageINPUT\": \"$image\",\"descriptionINPUT\": \"$description\",\"toINPUT\": \"$to\",\"categoryINPUT\": \"$category\"}" --abi ../abi/configAutobiller.abi.json --sign configAutobiller.keys.json
+tonos-cli --url $NETWORK call $configAddr setAutobillerConfig "{\"pubkeyINPUT\": \"$pubkey\", \"nameINPUT\": \"$name\",\"periodINPUT\": \"$period\",\"valueINPUT\": \"$value\",\"imageINPUT\": \"$image\",\"descriptionINPUT\": \"$description\",\"toINPUT\": \"$to\",\"categoryINPUT\": \"$category\",\"currencyINPUT\": \"$currency\"}" --abi ../abi/configAutobiller.abi.json --sign configAutobiller.keys.json
