@@ -164,7 +164,6 @@ contract SubsMan {
         TvmBuilder saltBuilder;
         TvmBuilder addrsBuilder;
         addrsBuilder.store(
-            serviceOwner,
             ownerAddress, 
             address(this)
         );
