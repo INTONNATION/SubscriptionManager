@@ -23,6 +23,8 @@ contract Subscription {
     uint8 constant STATUS_ACTIVE   = 1;
     uint8 constant STATUS_NONACTIVE = 2;
     address public subscriptionIndexAddress;
+    uint32 public cooldown = 0;
+
     struct Payment {
         address to;
         uint128 value;
@@ -65,6 +67,7 @@ contract Subscription {
         uint32 _period = period * 3600 * 24;
         subscription = Payment(to, value, _period, 0, STATUS_NONACTIVE);
         subscriptionIndexAddress = subsIndexAddr;
+        this.executeSubscription();
     }
 
     function cancel() public {
@@ -72,21 +75,23 @@ contract Subscription {
         selfdestruct(user_wallet);
     }
 
-    function executeSubscription() public {        
+    function executeSubscription() external {        
         if (now > (subscription.start + subscription.period)) {
-            // need to add buffer and condition to avoid spam attack
-            tvm.accept();
-            subscription.status = STATUS_NONACTIVE;
-            IWallet(user_wallet).paySubscription{
-                value: 0.2 ton, 
-                bounce: false, 
-                flag: 0, 
-                callback: Subscription.onPaySubscription
-            }(
-                serviceOwner, 
-                params, 
-                subscription_indificator
-            );
+            if ( now > (cooldown + 3600)) {
+                tvm.accept();
+                cooldown = uint32(now);
+                subscription.status = STATUS_NONACTIVE;
+                IWallet(user_wallet).paySubscription{
+                    value: 0.2 ton, 
+                    bounce: true, 
+                    flag: 0, 
+                    callback: Subscription.onPaySubscription
+                }(
+                    serviceOwner, 
+                    params, 
+                    subscription_indificator
+                );
+            }
         } else {
             require(subscription.status == STATUS_ACTIVE, SubscriptionErrors.error_subscription_status_already_active);
         }

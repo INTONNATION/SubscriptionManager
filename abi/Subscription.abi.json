@@ -85,6 +85,14 @@
 			]
 		},
 		{
+			"name": "cooldown",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"cooldown","type":"uint32"}
+			]
+		},
+		{
 			"name": "subscription",
 			"inputs": [
 			],
@@ -112,6 +120,7 @@
 		{"name":"subscription_indificator","type":"cell"},
 		{"name":"owner_address","type":"address"},
 		{"name":"subscriptionIndexAddress","type":"address"},
+		{"name":"cooldown","type":"uint32"},
 		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
 }

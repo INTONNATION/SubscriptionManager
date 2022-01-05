@@ -6,6 +6,7 @@ pragma AbiHeader pubkey;
 import "../contracts/Subscription.sol";
 import "../contracts/SubscriptionService.sol";
 import "../contracts/SubscriptionServiceIndex.sol";
+import "../contracts/SubscriptionIndificatorIndex.sol";
 import "../contracts/mTIP-3/mTONTokenWallet.sol";
 import "libraries/SubsManErrors.sol";
 
@@ -15,6 +16,7 @@ struct VersionsTvcParams {
     TvmCell tvcSubscription;
     TvmCell tvcSubscriptionServiceIndex;
     TvmCell tvcSubscriptionIndex;
+    TvmCell tvcSubscriptionIndificatorIndex;
 }
 
 
@@ -29,6 +31,7 @@ contract SubsMan {
     TvmCell public s_subscriptionServiceImage;
     TvmCell public m_subscriptionIndexImage;
     TvmCell public s_subscriptionServiceIndexImage;
+    TvmCell public m_subscriptionIndificatorIndexImage;
     address public configVersionsAddr;
 
     constructor(address configVersionsAddrINPUT) public {
@@ -43,6 +46,7 @@ contract SubsMan {
         s_subscriptionServiceImage = tvcs.tvcSubscriptionService;
         m_subscriptionIndexImage = tvcs.tvcSubscriptionIndex;
         s_subscriptionServiceIndexImage = tvcs.tvcSubscriptionServiceIndex;
+        m_subscriptionIndificatorIndexImage = tvcs.tvcSubscriptionIndificatorIndex;
     }
 
     // Deploy contracts
@@ -72,6 +76,10 @@ contract SubsMan {
             params, 
             indificator
         );
+        TvmCell subsIndexIndificatorStateInit = buildAccountIndificatorIndex(
+            params, 
+            indificator
+        );
         address subscriptionIndexAddress = address(tvm.hash(subsIndexStateInit));
         new Subscription{
             value: 1 ton, 
@@ -92,6 +100,15 @@ contract SubsMan {
             }(
                 subsAddr, 
                 msg.sender
+            );
+        new SubscriptionIndificatorIndex{
+            value: 0.5 ton, 
+            flag: 1, 
+            bounce: true, 
+            stateInit: subsIndexIndificatorStateInit
+            }(
+                subsAddr,
+                subscriptionIndexAddress
             );
     }
  
@@ -203,6 +220,32 @@ contract SubsMan {
                 subscription_indificator: indificator
             },
             contr: SubscriptionIndex
+        });
+        return stateInit;             
+    }
+
+    function buildAccountIndificatorIndex(
+        TvmCell params, 
+        TvmCell indificator
+    ) private view returns (TvmCell) 
+    {
+        TvmBuilder saltBuilder;
+        saltBuilder.store(
+            indificator,
+            address(this)
+        );
+        TvmCell code = tvm.setCodeSalt(
+            m_subscriptionIndificatorIndexImage.toSlice().loadRef(),
+            saltBuilder.toCell()
+        );
+        TvmCell stateInit = tvm.buildStateInit({
+            code: code,
+            pubkey: 0,
+            varInit: { 
+                params: params,
+                subscription_indificator: indificator
+            },
+            contr: SubscriptionIndificatorIndex
         });
         return stateInit;             
     }
