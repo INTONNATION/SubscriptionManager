@@ -15,6 +15,7 @@ contract configAutobiller {
         string description;
         string to;
         string category;
+		string currency;
 	}
 	mapping (uint8 => VersionsAutobiller) public vrsAutobiller;
 
@@ -54,7 +55,8 @@ contract configAutobiller {
 		string imageINPUT, 
 		string descriptionINPUT, 
 		string toINPUT, 
-		string categoryINPUT
+		string categoryINPUT,
+		string currencyINPUT
 	) public onlyOwner 
 	{
 		versionAutobiller++;
@@ -67,6 +69,7 @@ contract configAutobiller {
 		params.description = descriptionINPUT;
 		params.to = toINPUT;
 		params.category = categoryINPUT;
+		params.currency = currencyINPUT;
 		vrsAutobiller.add(versionAutobiller, params);
     }
 }
