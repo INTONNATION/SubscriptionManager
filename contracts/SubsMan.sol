@@ -9,6 +9,7 @@ import "../contracts/SubscriptionServiceIndex.sol";
 import "../contracts/SubscriptionIndificatorIndex.sol";
 import "../contracts/mTIP-3/mTONTokenWallet.sol";
 import "libraries/SubsManErrors.sol";
+import "libraries/Upgradable.sol";
 
 
 struct VersionsTvcParams {
@@ -25,7 +26,7 @@ interface ISubsMan {
 }
 
 
-contract SubsMan {
+contract SubsMan is Upgradable {
    
     TvmCell public m_subscriptionBaseImage;
     TvmCell public s_subscriptionServiceImage;
@@ -72,7 +73,7 @@ contract SubsMan {
         );
         address subsAddr = address(tvm.hash(subscriptionStateInit));
         TvmCell subsIndexStateInit = buildAccountIndex(
-            msg.sender, 
+            serviceOwner, 
             params, 
             indificator
         );
@@ -81,6 +82,7 @@ contract SubsMan {
             indificator
         );
         address subscriptionIndexAddress = address(tvm.hash(subsIndexStateInit));
+        address subsIndexIndificatorAddress = address(tvm.hash(subsIndexIndificatorStateInit));
         new Subscription{
             value: 1 ton, 
             flag: 1, 
@@ -90,7 +92,8 @@ contract SubsMan {
                 msg.sender, 
                 accountWallet.toSlice().loadRef(), 
                 walletRootAddress, 
-                subscriptionIndexAddress
+                subscriptionIndexAddress,
+                subsIndexIndificatorAddress
             );
         new SubscriptionIndex{
             value: 0.5 ton, 
@@ -98,8 +101,7 @@ contract SubsMan {
             bounce: true, 
             stateInit: subsIndexStateInit
             }(
-                subsAddr, 
-                msg.sender
+                subsAddr
             );
         
         (string indificatorStr) = indificator.toSlice().decode(string);
@@ -110,8 +112,7 @@ contract SubsMan {
                 bounce: true, 
                 stateInit: subsIndexIndificatorStateInit
                 }(
-                    subsAddr,
-                    subscriptionIndexAddress
+                    subsAddr
                 );
         }
     }
@@ -156,7 +157,6 @@ contract SubsMan {
     {
         TvmCell walletCode = accountWallet.toSlice().loadRef();
         TvmCell code = buildAccountHelper(
-            serviceOwner,
             ownerAddress,
             params, 
             tvm.hash(walletCode) 
@@ -181,18 +181,12 @@ contract SubsMan {
         image = newImage;
     }
 
-    function buildAccountHelper(address serviceOwner, address ownerAddress, TvmCell params, uint256 userWallet) private view returns (TvmCell) {
+    function buildAccountHelper(address ownerAddress, TvmCell params, uint256 userWallet) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        TvmBuilder addrsBuilder;
-        addrsBuilder.store(
-            ownerAddress, 
-            address(this)
-        );
         saltBuilder.store(
-            serviceOwner, 
-            params, 
-            userWallet, 
-            addrsBuilder.toCell()
+            ownerAddress, 
+            address(this),
+            userWallet
         ); // Max 4 items
         TvmCell code = tvm.setCodeSalt(
             m_subscriptionBaseImage.toSlice().loadRef(),
@@ -202,14 +196,14 @@ contract SubsMan {
     }
 
     function buildAccountIndex(
-        address ownerAddress, 
+        address serviceOwner, 
         TvmCell params, 
         TvmCell indificator
     ) private view returns (TvmCell) 
     {
         TvmBuilder saltBuilder;
         saltBuilder.store(
-            ownerAddress, 
+            serviceOwner,
             address(this)
         );
         TvmCell code = tvm.setCodeSalt(
@@ -321,4 +315,9 @@ contract SubsMan {
         });
         image = newImage;
     }
+
+    function onCodeUpgrade() internal override {
+        tvm.resetStorage();
+    }
+
 }
