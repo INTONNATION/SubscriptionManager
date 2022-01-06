@@ -4,13 +4,15 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/SubscriptionServiceErrors.sol";
+import "libraries/Upgradable.sol";
+
 
 interface ISubscriptionServiceContract {
     function selfdelete () external;
 }
 
 
-contract SubscriptionServiceIndex {
+contract SubscriptionServiceIndex is Upgradable {
 
     struct ServiceParams {
         address to;
@@ -71,5 +73,9 @@ contract SubscriptionServiceIndex {
     function cancel() public onlyOwner {
         ISubscriptionServiceContract(serviceAddress).selfdelete();
         selfdestruct(serviceOwner);
+    }
+
+    function onCodeUpgrade() internal override {
+        tvm.resetStorage();
     }
 }

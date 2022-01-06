@@ -6,6 +6,7 @@ pragma AbiHeader pubkey;
 import "SubscriptionIndex.sol";
 import "../contracts/mTIP-3/mTONTokenWalletAbstract.sol";
 import "libraries/SubscriptionErrors.sol";
+import "libraries/Upgradable.sol";
 
 
 interface IWallet  {
@@ -13,7 +14,7 @@ interface IWallet  {
 }
 
 
-contract Subscription {
+contract Subscription is Upgradable {
 
     address static public serviceOwner;
     address static public user_wallet;
@@ -103,4 +104,9 @@ contract Subscription {
             subscription.start = uint32(now);
         }
     }
+
+    function onCodeUpgrade() internal override {
+        tvm.resetStorage();
+    }
+    
 }

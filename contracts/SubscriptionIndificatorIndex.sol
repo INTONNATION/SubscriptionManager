@@ -4,9 +4,10 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/SubscriptionErrors.sol";
+import "libraries/Upgradable.sol";
 
 
-contract SubscriptionIndificatorIndex {
+contract SubscriptionIndificatorIndex is Upgradable {
     
     struct ServiceParams {
         address to;
@@ -67,4 +68,9 @@ contract SubscriptionIndificatorIndex {
         require(msg.sender == subscriptionIndexAddress, SubscriptionErrors.error_message_sender_is_not_index);
         selfdestruct(subscription_addr);
     }
+
+    function onCodeUpgrade() internal override {
+        tvm.resetStorage();
+    }
+    
 }

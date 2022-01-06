@@ -20,6 +20,14 @@
 			]
 		},
 		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"state","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
