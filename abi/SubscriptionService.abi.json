@@ -19,6 +19,14 @@
 			]
 		},
 		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"state","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "serviceCategory",
 			"inputs": [
 			],
