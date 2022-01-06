@@ -22,21 +22,17 @@ import "../Subscription.sol";
 contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenWallet, IBurnableByRootTokenWallet, IVersioned {
 
     address static root_address;
-    address wallet_address;
-    TvmCell public subscr_image;
-    address public subsmanAddr;
-    TvmCell static code;
-    //for external owner
-    uint256 static wallet_public_key;
-    //for internal owner
     address static owner_address;
-
+    TvmCell static code;
+    uint256 static wallet_public_key;
     uint128 balance_;
     optional(AllowanceInfo) allowance_;
-
     address receive_callback;
     address bounced_callback;
     bool allow_non_notifiable;
+    address public subsmanAddr;
+    uint8 public subscr_ver = 0;
+    mapping (uint8 => TvmCell) public subscr_images;
 
     /*
         @notice Creates new token wallet
@@ -52,9 +48,8 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         if (owner_address.value != 0) {
             ITokenWalletDeployedCallback(owner_address).notifyWalletDeployed{value: 0.00001 ton, flag: 1}(root_address);
         }
-        subscr_image = subsImage;
+        subscr_images.add(subscr_ver, subsImage);
         subsmanAddr = subsmanAddrINPUT;
-        wallet_address = address(this);
     }
 
     function getVersion() override external pure responsible returns (uint32) {
@@ -95,7 +90,8 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     }
 
     function setSubscriptionImage(TvmCell image) public onlyOwner {
-        subscr_image = image;
+        subscr_ver++;
+        subscr_images.add(subscr_ver, image);
     }
 
 /*
@@ -230,7 +226,8 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_image, subsmanAddr);
+            }(subscr_images[subscr_ver], subsmanAddr);
+            
         } else {
             to = address(tvm.hash(stateInit));
         }
@@ -552,13 +549,13 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     }
 
     // recurring payments logic
-    function buildSubscriptionState(address serviceOwner, TvmCell params, TvmCell indificator) private view returns (TvmCell) {
+    function buildSubscriptionState(TvmCell subscriptionCode, address serviceOwner, TvmCell params, TvmCell indificator) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         TvmBuilder addrsBuilder;
         addrsBuilder.store(owner_address, subsmanAddr);
         saltBuilder.store(serviceOwner, params, tvm.hash(tvm.code()), addrsBuilder.toCell());
         TvmCell codeSalt = tvm.setCodeSalt(
-            subscr_image.toSlice().loadRef(),
+            subscriptionCode,
             saltBuilder.toCell()
         );
         TvmCell newImage = tvm.buildStateInit({
@@ -566,7 +563,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             pubkey: 0,
             varInit: {
                 serviceOwner: serviceOwner,
-                user_wallet: wallet_address,
+                user_wallet: address(this),
                 params: params,
                 subscription_indificator: indificator,
                 owner_address: owner_address
@@ -580,15 +577,20 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         require(msg.value >= 0.1 ton, TONTokenWalletErrors.error_low_message_value);
         (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
         address recipient = getExpectedAddress(0, service_owner_address);
-        address subsAddr = address(tvm.hash(buildSubscriptionState(
-            serviceOwner, 
-            params, 
-            indificator
-        )));
-        require(msg.sender == subsAddr, TONTokenWalletErrors.error_message_sender_is_not_subscription_contr);
-        TvmCell none;
-        this.transfer{value: 1 ton}(recipient, value, 1000000000, wallet_address, true, none);
-        return{value: 0, bounce: false, flag: 64} 0;  
+        for ((uint8 k,) : subscr_images) {
+            address subsAddr = address(tvm.hash(buildSubscriptionState(
+                subscr_images[k].toSlice().loadRef(),
+                serviceOwner, 
+                params, 
+                indificator
+            )));
+            if (msg.sender == subsAddr) {
+                TvmCell none;
+                this.transfer{value: 1 ton}(recipient, value, 1000000000, address(this), true, none);
+                return{value: 0, bounce: false, flag: 64} 0;  
+            }
+        }
+        revert(TONTokenWalletErrors.error_message_sender_is_not_good_subscription_contract);
     }
     /*
         @notice Set new receive callback receiver

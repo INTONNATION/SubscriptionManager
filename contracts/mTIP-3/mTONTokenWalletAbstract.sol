@@ -14,35 +14,30 @@ import "../libraries/TONTokenWalletErrors.sol";
 import "../libraries/TONTokenWalletConstants.sol";
 import "../interfaces/IVersioned.sol";
 
-
-// This contract is used as a tip to handle cycled dependencies
 /*
     @title FT token wallet contract
 */
 contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenWallet, IBurnableByRootTokenWallet, IVersioned {
 
     address static root_address;
-    address wallet_address;
-    TvmCell public subscr_image;
-    TvmCell static code;
-    //for external owner
-    uint256 static wallet_public_key;
-    //for internal owner
     address static owner_address;
-
+    TvmCell static code;
+    uint256 static wallet_public_key;
     uint128 balance_;
     optional(AllowanceInfo) allowance_;
-
     address receive_callback;
     address bounced_callback;
     bool allow_non_notifiable;
+    address public subsmanAddr;
+    uint8 public subscr_ver = 0;
+    mapping (uint8 => TvmCell) public subscr_images;
 
     /*
         @notice Creates new token wallet
         @dev All the parameters are specified as initial data
         @dev If owner_address is not empty, it will be notified with .notifyWalletDeployed
     */
-    constructor(TvmCell image) public {
+    constructor(TvmCell subsImage, address subsmanAddrINPUT) public {
         require(wallet_public_key == tvm.pubkey() && (owner_address.value == 0 || wallet_public_key == 0));
         tvm.accept();
 
@@ -51,8 +46,8 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
         if (owner_address.value != 0) {
             ITokenWalletDeployedCallback(owner_address).notifyWalletDeployed{value: 0.00001 ton, flag: 1}(root_address);
         }
-        subscr_image = image;
-        wallet_address = address(this);
+        subscr_images.add(subscr_ver, subsImage);
+        subsmanAddr = subsmanAddrINPUT;
     }
 
     function getVersion() override external pure responsible returns (uint32) {
@@ -93,7 +88,8 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
     }
 
     function setSubscriptionImage(TvmCell image) public onlyOwner {
-        subscr_image = image;
+        subscr_ver++;
+        subscr_images.add(subscr_ver, image);
     }
 
 /*
@@ -228,7 +224,8 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_image);
+            }(subscr_images[subscr_ver], subsmanAddr);
+            
         } else {
             to = address(tvm.hash(stateInit));
         }
@@ -549,29 +546,6 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
             );
     }
 
-    function buildSubscriptionState(uint256 serviceKey, TvmCell params, TvmCell indificator) private view returns (TvmCell) {
-        TvmBuilder saltBuilder;
-        saltBuilder.store(serviceKey, params, tvm.hash(tvm.code()));
-        TvmCell codeSalt = tvm.setCodeSalt(
-            subscr_image.toSlice().loadRef(),
-            saltBuilder.toCell()
-        );
-        TvmCell newImage = tvm.buildStateInit({
-            code: codeSalt,
-            pubkey: tvm.pubkey()
-        });
-        return newImage;
-    }
-
-    function paySubscription(uint256 serviceKey, bool bounce, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
-        require(msg.value >= 0.1 ton, 105);
-        (address to, uint128 value) = params.toSlice().decode(address, uint128);
-        address subscriptionAddr = address(tvm.hash(buildSubscriptionState(serviceKey,params,indificator)));
-        require(msg.sender == subscriptionAddr, 111);
-        TvmCell none;
-        this.transfer(to, value, 200000000, wallet_address, false, none);
-        return{value: 0, bounce: false, flag: 64} 0;  
-    }
     /*
         @notice Set new receive callback receiver
         @dev Set 0:0 in case you want to disable receive callback
@@ -633,7 +607,8 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
 
     modifier onlyOwner() {
         require((owner_address.value != 0 && owner_address == msg.sender) ||
-                (wallet_public_key != 0 && wallet_public_key == msg.pubkey()),
+                (wallet_public_key != 0 && wallet_public_key == msg.pubkey()) ||
+                (msg.sender == address(this)),
                 TONTokenWalletErrors.error_message_sender_is_not_my_owner);
         _;
     }
