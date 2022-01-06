@@ -7,11 +7,6 @@ import "libraries/SubscriptionErrors.sol";
 import "libraries/Upgradable.sol";
 
 
-interface ISubscriptionContract {
-    function cancel () external;
-}
-
-
 contract SubscriptionIndex is Upgradable {
     
     struct ServiceParams {
@@ -25,24 +20,22 @@ contract SubscriptionIndex is Upgradable {
         string currency;
         string category;
     }
-    TvmCell public static params;
-    TvmCell public static subscription_indificator;
-    address public ownerAddress;
+    TvmCell static params;
+    TvmCell static subscription_indificator;
     address public subscription_addr;
     ServiceParams public svcparams;
 
     modifier onlyOwner {
-		require(msg.sender == ownerAddress, SubscriptionErrors.error_message_sender_is_not_my_owner);
+		require(msg.sender == subscription_addr, SubscriptionErrors.error_message_sender_is_not_my_owner);
 		_;
     }
 
-    constructor(address subsAddr, address ownerAddress_) public {
+    constructor(address subsAddr) public {
         require(msg.value >= 0.5 ton, SubscriptionErrors.error_not_enough_balance_in_message);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
-        (address owner_address, address subsmanAddr) = salt.get().toSlice().decode(address, address);
+        (address serviceOwner, address subsmanAddr) = salt.get().toSlice().decode(address, address);
         require(subsAddr != address(0), SubscriptionErrors.incorrect_subscription_address_in_constructor);
-        require(ownerAddress_ == owner_address, SubscriptionErrors.error_define_owner_address_in_static_vars);
         require(subsmanAddr == msg.sender, SubscriptionErrors.error_message_sender_is_not_subsman);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
@@ -71,12 +64,10 @@ contract SubscriptionIndex is Upgradable {
             TvmCell
         );
         (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
-        ownerAddress = ownerAddress_;
     }
 
     function cancel() public onlyOwner {
-        ISubscriptionContract(subscription_addr).cancel();
-        selfdestruct(ownerAddress);
+        selfdestruct(subscription_addr);
     }
 
     function onCodeUpgrade() internal override {

@@ -6,8 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"subsAddr","type":"address"},
-				{"name":"subscriptionIndexAddressINPUT","type":"address"}
+				{"name":"subsAddr","type":"address"}
 			],
 			"outputs": [
 			]
@@ -25,22 +24,6 @@
 				{"name":"state","type":"cell"}
 			],
 			"outputs": [
-			]
-		},
-		{
-			"name": "params",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"params","type":"cell"}
-			]
-		},
-		{
-			"name": "subscription_indificator",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"subscription_indificator","type":"cell"}
 			]
 		},
 		{
@@ -82,7 +65,6 @@
 		{"name":"subscription_indificator","type":"cell"},
 		{"name":"ownerAddress","type":"address"},
 		{"name":"subscription_addr","type":"address"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
-		{"name":"subscriptionIndexAddress","type":"address"}
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 	]
 }

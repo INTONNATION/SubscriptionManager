@@ -9,14 +9,8 @@
 				{"name":"senderAddress","type":"address"},
 				{"name":"walletCode","type":"cell"},
 				{"name":"rootAddress","type":"address"},
-				{"name":"subsIndexAddr","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "cancel",
-			"inputs": [
+				{"name":"subsIndexAddr","type":"address"},
+				{"name":"subsIndificatorIndexAddrINPUT","type":"address"}
 			],
 			"outputs": [
 			]
@@ -37,6 +31,13 @@
 			]
 		},
 		{
+			"name": "cancel",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgrade",
 			"inputs": [
 				{"name":"state","type":"cell"}
@@ -45,59 +46,11 @@
 			]
 		},
 		{
-			"name": "serviceOwner",
+			"name": "svcparams",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"serviceOwner","type":"address"}
-			]
-		},
-		{
-			"name": "user_wallet",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"user_wallet","type":"address"}
-			]
-		},
-		{
-			"name": "params",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"params","type":"cell"}
-			]
-		},
-		{
-			"name": "subscription_indificator",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"subscription_indificator","type":"cell"}
-			]
-		},
-		{
-			"name": "owner_address",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"owner_address","type":"address"}
-			]
-		},
-		{
-			"name": "subscriptionIndexAddress",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"subscriptionIndexAddress","type":"address"}
-			]
-		},
-		{
-			"name": "cooldown",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"cooldown","type":"uint32"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 			]
 		},
 		{
@@ -128,7 +81,9 @@
 		{"name":"subscription_indificator","type":"cell"},
 		{"name":"owner_address","type":"address"},
 		{"name":"subscriptionIndexAddress","type":"address"},
+		{"name":"subsIndificatorIndexAddr","type":"address"},
 		{"name":"cooldown","type":"uint32"},
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
 		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
 }

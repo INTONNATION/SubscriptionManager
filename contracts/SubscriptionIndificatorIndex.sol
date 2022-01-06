@@ -20,14 +20,18 @@ contract SubscriptionIndificatorIndex is Upgradable {
         string currency;
         string category;
     }
-    TvmCell public static params;
-    TvmCell public static subscription_indificator;
+    TvmCell static params;
+    TvmCell static subscription_indificator;
     address public ownerAddress;
     address public subscription_addr;
     ServiceParams public svcparams;
-    address subscriptionIndexAddress;
 
-    constructor(address subsAddr, address subscriptionIndexAddressINPUT) public {
+    modifier onlyOwner {
+		require(msg.sender == subscription_addr, SubscriptionErrors.error_message_sender_is_not_index);
+		_;
+    }
+
+    constructor(address subsAddr) public {
         require(msg.value >= 0.5 ton, SubscriptionErrors.error_not_enough_balance_in_message);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
@@ -61,16 +65,14 @@ contract SubscriptionIndificatorIndex is Upgradable {
             TvmCell
         );
         (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
-        subscriptionIndexAddress = subscriptionIndexAddressINPUT;
     }
 
-    function cancel() public {
-        require(msg.sender == subscriptionIndexAddress, SubscriptionErrors.error_message_sender_is_not_index);
+    function cancel() public onlyOwner {
         selfdestruct(subscription_addr);
     }
 
     function onCodeUpgrade() internal override {
         tvm.resetStorage();
     }
-    
+
 }
