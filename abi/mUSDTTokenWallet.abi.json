@@ -218,27 +218,35 @@
 			]
 		},
 		{
-			"name": "subscr_image",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"subscr_image","type":"cell"}
-			]
-		},
-		{
 			"name": "subsmanAddr",
 			"inputs": [
 			],
 			"outputs": [
 				{"name":"subsmanAddr","type":"address"}
 			]
+		},
+		{
+			"name": "subscr_ver",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscr_ver","type":"uint8"}
+			]
+		},
+		{
+			"name": "subscr_images",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscr_images","type":"map(uint8,cell)"}
+			]
 		}
 	],
 	"data": [
 		{"key":1,"name":"root_address","type":"address"},
-		{"key":2,"name":"code","type":"cell"},
-		{"key":3,"name":"wallet_public_key","type":"uint256"},
-		{"key":4,"name":"owner_address","type":"address"}
+		{"key":2,"name":"owner_address","type":"address"},
+		{"key":3,"name":"code","type":"cell"},
+		{"key":4,"name":"wallet_public_key","type":"uint256"}
 	],
 	"events": [
 	],
@@ -247,16 +255,16 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"root_address","type":"address"},
-		{"name":"wallet_address","type":"address"},
-		{"name":"subscr_image","type":"cell"},
-		{"name":"subsmanAddr","type":"address"},
+		{"name":"owner_address","type":"address"},
 		{"name":"code","type":"cell"},
 		{"name":"wallet_public_key","type":"uint256"},
-		{"name":"owner_address","type":"address"},
 		{"name":"balance_","type":"uint128"},
 		{"components":[{"name":"remaining_tokens","type":"uint128"},{"name":"spender","type":"address"}],"name":"allowance_","type":"optional(tuple)"},
 		{"name":"receive_callback","type":"address"},
 		{"name":"bounced_callback","type":"address"},
-		{"name":"allow_non_notifiable","type":"bool"}
+		{"name":"allow_non_notifiable","type":"bool"},
+		{"name":"subsmanAddr","type":"address"},
+		{"name":"subscr_ver","type":"uint8"},
+		{"name":"subscr_images","type":"map(uint8,cell)"}
 	]
 }
