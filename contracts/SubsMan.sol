@@ -101,15 +101,19 @@ contract SubsMan {
                 subsAddr, 
                 msg.sender
             );
-        new SubscriptionIndificatorIndex{
-            value: 0.5 ton, 
-            flag: 1, 
-            bounce: true, 
-            stateInit: subsIndexIndificatorStateInit
-            }(
-                subsAddr,
-                subscriptionIndexAddress
-            );
+        
+        (string indificatorStr) = indificator.toSlice().decode(string);
+        if (indificatorStr != 'empty') {
+            new SubscriptionIndificatorIndex{
+                value: 0.5 ton, 
+                flag: 1, 
+                bounce: true, 
+                stateInit: subsIndexIndificatorStateInit
+                }(
+                    subsAddr,
+                    subscriptionIndexAddress
+                );
+        }
     }
  
     function deployService(TvmCell params, string serviceCategory) public view {
