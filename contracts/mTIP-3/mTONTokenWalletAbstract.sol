@@ -14,6 +14,7 @@ import "../libraries/TONTokenWalletErrors.sol";
 import "../libraries/TONTokenWalletConstants.sol";
 import "../interfaces/IVersioned.sol";
 
+
 /*
     @title FT token wallet contract
 */
@@ -29,7 +30,10 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
     address bounced_callback;
     bool allow_non_notifiable;
     address public subsmanAddr;
+    address public configVersionsAddr;
     uint8 public subscr_ver = 0;
+    uint128 serviceFee;
+    uint128 subscriberFee;
     mapping (uint8 => TvmCell) public subscr_images;
 
     /*
@@ -37,7 +41,7 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
         @dev All the parameters are specified as initial data
         @dev If owner_address is not empty, it will be notified with .notifyWalletDeployed
     */
-    constructor(TvmCell subsImage, address subsmanAddrINPUT) public {
+    constructor(TvmCell subsImage, address subsmanAddrINPUT, address configVersionsAddrINPUT) public {
         require(wallet_public_key == tvm.pubkey() && (owner_address.value == 0 || wallet_public_key == 0));
         tvm.accept();
 
@@ -47,6 +51,7 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
             ITokenWalletDeployedCallback(owner_address).notifyWalletDeployed{value: 0.00001 ton, flag: 1}(root_address);
         }
         subscr_images.add(subscr_ver, subsImage);
+        configVersionsAddr = configVersionsAddrINPUT;
         subsmanAddr = subsmanAddrINPUT;
     }
 
@@ -224,7 +229,7 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_images[subscr_ver], subsmanAddr);
+            }(subscr_images[subscr_ver], subsmanAddr, configVersionsAddr);
             
         } else {
             to = address(tvm.hash(stateInit));

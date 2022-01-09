@@ -16,6 +16,16 @@ import "../interfaces/IVersioned.sol";
 import "../Subscription.sol";
 
 
+struct fees {
+    uint128 serviceFee;
+    uint128 subscriberFee;
+    uint128 serviceRegistrationFee;
+}
+
+interface ITONTokenWalletConfigVersions {
+    function getFees() external responsible returns(fees);
+}
+
 /*
     @title FT token wallet contract
 */
@@ -31,7 +41,10 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     address bounced_callback;
     bool allow_non_notifiable;
     address public subsmanAddr;
+    address public configVersionsAddr;
     uint8 public subscr_ver = 0;
+    uint128 serviceFee;
+    uint128 subscriberFee;
     mapping (uint8 => TvmCell) public subscr_images;
 
     /*
@@ -39,7 +52,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         @dev All the parameters are specified as initial data
         @dev If owner_address is not empty, it will be notified with .notifyWalletDeployed
     */
-    constructor(TvmCell subsImage, address subsmanAddrINPUT) public {
+    constructor(TvmCell subsImage, address subsmanAddrINPUT, address configVersionsAddrINPUT) public {
         require(wallet_public_key == tvm.pubkey() && (owner_address.value == 0 || wallet_public_key == 0));
         tvm.accept();
 
@@ -49,6 +62,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             ITokenWalletDeployedCallback(owner_address).notifyWalletDeployed{value: 0.00001 ton, flag: 1}(root_address);
         }
         subscr_images.add(subscr_ver, subsImage);
+        configVersionsAddr = configVersionsAddrINPUT;
         subsmanAddr = subsmanAddrINPUT;
     }
 
@@ -226,7 +240,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_images[subscr_ver], subsmanAddr);
+            }(subscr_images[subscr_ver], subsmanAddr, configVersionsAddr);
             
         } else {
             to = address(tvm.hash(stateInit));
@@ -575,7 +589,10 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
 
     function paySubscription(address serviceOwner, TvmCell params, TvmCell indificator) public responsible returns (uint8) {
         require(msg.value >= 0.1 ton, TONTokenWalletErrors.error_low_message_value);
+        ITONTokenWalletConfigVersions(configVersionsAddr).getFees{value: 0.5 ton, callback: TONTokenWallet.setFees}();
         (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
+        uint128 feeAmount = value * (serviceFee + subscriberFee) / 100; // TODO need to think where to send and how to swap
+        uint128 serviceRevenue = value - feeAmount;
         address recipient = getExpectedAddress(0, service_owner_address);
         for ((uint8 k,) : subscr_images) {
             address subsAddr = address(tvm.hash(buildSubscriptionState(
@@ -586,11 +603,17 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             )));
             if (msg.sender == subsAddr) {
                 TvmCell none;
-                this.transfer{value: 1 ton}(recipient, value, 1000000000, address(this), true, none);
+                this.transfer{value: 1 ton}(recipient, serviceRevenue, 1000000000, address(this), true, none);
                 return{value: 0, bounce: false, flag: 64} 0;  
             }
         }
         revert(TONTokenWalletErrors.error_message_sender_is_not_good_subscription_contract);
+    }
+
+    function setFees(fees paramsFee) external {
+        require(msg.sender == configVersionsAddr);
+        serviceFee = paramsFee.serviceFee;
+        subscriberFee = paramsFee.subscriberFee;
     }
     /*
         @notice Set new receive callback receiver
