@@ -7,7 +7,8 @@
 			"name": "constructor",
 			"inputs": [
 				{"name":"subsImage","type":"cell"},
-				{"name":"subsmanAddrINPUT","type":"address"}
+				{"name":"subsmanAddrINPUT","type":"address"},
+				{"name":"configVersionsAddrINPUT","type":"address"}
 			],
 			"outputs": [
 			]
@@ -193,6 +194,14 @@
 			]
 		},
 		{
+			"name": "setFees",
+			"inputs": [
+				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setReceiveCallback",
 			"inputs": [
 				{"name":"receive_callback_","type":"address"},
@@ -223,6 +232,14 @@
 			],
 			"outputs": [
 				{"name":"subsmanAddr","type":"address"}
+			]
+		},
+		{
+			"name": "configVersionsAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"configVersionsAddr","type":"address"}
 			]
 		},
 		{
@@ -264,7 +281,10 @@
 		{"name":"bounced_callback","type":"address"},
 		{"name":"allow_non_notifiable","type":"bool"},
 		{"name":"subsmanAddr","type":"address"},
+		{"name":"configVersionsAddr","type":"address"},
 		{"name":"subscr_ver","type":"uint8"},
+		{"name":"serviceFee","type":"uint128"},
+		{"name":"subscriberFee","type":"uint128"},
 		{"name":"subscr_images","type":"map(uint8,cell)"}
 	]
 }

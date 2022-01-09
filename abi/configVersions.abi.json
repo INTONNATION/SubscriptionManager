@@ -103,6 +103,25 @@
 			]
 		},
 		{
+			"name": "setFees",
+			"inputs": [
+				{"name":"serviceFeeINPUT","type":"uint8"},
+				{"name":"subscriberFeeINPUT","type":"uint8"},
+				{"name":"serviceRegistrationFeeINPUT","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getFees",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"value0","type":"tuple"}
+			]
+		},
+		{
 			"name": "versionTvc",
 			"inputs": [
 			],
@@ -124,6 +143,14 @@
 			],
 			"outputs": [
 				{"name":"categories","type":"string[]"}
+			]
+		},
+		{
+			"name": "paramsFee",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"}
 			]
 		},
 		{
@@ -154,6 +181,7 @@
 		{"name":"versionTvc","type":"uint8"},
 		{"name":"versionAbi","type":"uint8"},
 		{"name":"categories","type":"string[]"},
+		{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"},
 		{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIndificatorIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
 		{"components":[{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIndificatorIndexContract","type":"string"},{"name":"abiSubsManDebot","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 	]
