@@ -34,6 +34,11 @@ NETWORK=$FLD
 configAddr=$(cat ./configVersions.addr)
 echo $configAddr
 
+serviceFee=5
+subscriberFee=1
+serviceRegistrationFee=2 # one time during registration
+
+tonos-cli --url $NETWORK call $configAddr setFees "{\"serviceFeeINPUT\": $serviceFee, \"subscriberFeeINPUT\": $subscriberFee, \"serviceRegistrationFeeINPUT\": $serviceRegistrationFee}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
 tonos-cli --url $NETWORK call $configAddr setCategories "{\"categoriesInput\": $categories}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
 tonos-cli --url $NETWORK call $configAddr setTvc "{\"tvcSubscriptionIndificatorIndexInput\":\"$subscriptionIndificatorIndexTvc\", \"tvcSubscriptionServiceInput\":\"$subscriptionServiceTvc\", \"tvcSubscriptionInput\":\"$subscriptionTvc\",\"tvcSubscriptionServiceIndexInput\":\"$subscriptionServiceIndexTvc\",\"tvcSubscriptionIndexInput\":\"$subscriptionIndexTvc\"}"  --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbi "{\"abiSubscriptionIndificatorIndexContractInput\":\"$abiSubscriptionIndificatorIndexContract\", \"abiServiceContractInput\":\"$abiServiceContract\",\"abiServiceIndexContractInput\":\"$abiServiceIndexContract\",\"abiSubscriptionContractInput\":\"$abiSubscriptionContract\", \"abiSubscriptionIndexContractInput\":\"$abiSubscriptionIndexContract\",\"abiSubsManDebotInput\":\"$abiSubsManDebot\"}"  --abi ../abi/configVersions.abi.json --sign configVersions.keys.json

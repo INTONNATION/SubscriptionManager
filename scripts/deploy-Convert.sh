@@ -108,7 +108,9 @@ echo -n $CONTRACT_ADDRESS > m$1RootTokenContract.addr
 IMAGE=$(base64 $prefix ../abi/Subscription.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionImage "{\"image\":\"$IMAGE\"}" --sign m$1RootTokenContract.keys.json --abi ../abi/m$1RootTokenContract.abi.json
 subsmanAddr=$(cat SubsMan.addr)
+configVersionsAddr=$(cat configVersions.addr)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubsmanAddr "{\"subsmanAddrINPUT\":\"$subsmanAddr\"}" --sign m$1RootTokenContract.keys.json --abi ../abi/m$1RootTokenContract.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS setConfigVersionsAddr "{\"configVersionsAddrINPUT\":\"$configVersionsAddr\"}" --sign m$1RootTokenContract.keys.json --abi ../abi/m$1RootTokenContract.abi.json
 giver $CONTRACT_ADDRESS
 }
 
