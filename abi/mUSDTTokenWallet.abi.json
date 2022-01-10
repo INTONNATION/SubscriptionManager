@@ -7,7 +7,8 @@
 			"name": "constructor",
 			"inputs": [
 				{"name":"subsImage","type":"cell"},
-				{"name":"subsmanAddrINPUT","type":"address"}
+				{"name":"subsmanAddrINPUT","type":"address"},
+				{"name":"configVersionsAddrINPUT","type":"address"}
 			],
 			"outputs": [
 			]
@@ -183,13 +184,22 @@
 		{
 			"name": "paySubscription",
 			"inputs": [
-				{"name":"answerId","type":"uint32"},
 				{"name":"serviceOwner","type":"address"},
 				{"name":"params","type":"cell"},
 				{"name":"indificator","type":"cell"}
 			],
 			"outputs": [
-				{"name":"value0","type":"uint8"}
+			]
+		},
+		{
+			"name": "setFeesAndPay",
+			"inputs": [
+				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"},
+				{"name":"recipient","type":"address"},
+				{"name":"value","type":"uint128"},
+				{"name":"subsAddr","type":"address"}
+			],
+			"outputs": [
 			]
 		},
 		{
@@ -226,11 +236,67 @@
 			]
 		},
 		{
+			"name": "configVersionsAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"configVersionsAddr","type":"address"}
+			]
+		},
+		{
 			"name": "subscr_ver",
 			"inputs": [
 			],
 			"outputs": [
 				{"name":"subscr_ver","type":"uint8"}
+			]
+		},
+		{
+			"name": "serviceFee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"serviceFee","type":"uint128"}
+			]
+		},
+		{
+			"name": "subscriberFee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscriberFee","type":"uint128"}
+			]
+		},
+		{
+			"name": "subsAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subsAddr","type":"address"}
+			]
+		},
+		{
+			"name": "check",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"check","type":"uint8"}
+			]
+		},
+		{
+			"name": "image",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"image","type":"cell"}
+			]
+		},
+		{
+			"name": "imageCode",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"imageCode","type":"cell"}
 			]
 		},
 		{
@@ -264,7 +330,14 @@
 		{"name":"bounced_callback","type":"address"},
 		{"name":"allow_non_notifiable","type":"bool"},
 		{"name":"subsmanAddr","type":"address"},
+		{"name":"configVersionsAddr","type":"address"},
 		{"name":"subscr_ver","type":"uint8"},
+		{"name":"serviceFee","type":"uint128"},
+		{"name":"subscriberFee","type":"uint128"},
+		{"name":"subsAddr","type":"address"},
+		{"name":"check","type":"uint8"},
+		{"name":"image","type":"cell"},
+		{"name":"imageCode","type":"cell"},
 		{"name":"subscr_images","type":"map(uint8,cell)"}
 	]
 }
