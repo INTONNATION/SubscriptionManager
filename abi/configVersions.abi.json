@@ -115,10 +115,16 @@
 		{
 			"name": "getFees",
 			"inputs": [
-				{"name":"answerId","type":"uint32"}
+				{"name":"answerId","type":"uint32"},
+				{"name":"recipient","type":"address"},
+				{"name":"value","type":"uint128"},
+				{"name":"subsAddr","type":"address"}
 			],
 			"outputs": [
-				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"value0","type":"tuple"}
+				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"value0","type":"tuple"},
+				{"name":"value1","type":"address"},
+				{"name":"value2","type":"uint128"},
+				{"name":"value3","type":"address"}
 			]
 		},
 		{

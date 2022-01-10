@@ -16,4 +16,5 @@ library TONTokenWalletErrors {
     uint8 constant error_recipient_has_disallow_non_notifiable            = 112;
     uint8 constant error_message_sender_is_not_subscription_contr         = 113;
     uint8 constant error_message_sender_is_not_good_subscription_contract = 114;
+    uint8 constant error_message_sender_is_not_good_config_contract       = 115;
 }

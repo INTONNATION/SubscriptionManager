@@ -10,7 +10,7 @@ import "libraries/Upgradable.sol";
 
 
 interface IWallet  {
-    function paySubscription (address serviceOwner, TvmCell params, TvmCell indificator) external responsible returns (uint8);
+    function paySubscription (address serviceOwner, TvmCell params, TvmCell indificator) external;
 }
 
 interface ISubscriptionIndexContract {
@@ -121,10 +121,9 @@ contract Subscription is Upgradable {
                 cooldown = uint32(now);
                 subscription.status = STATUS_NONACTIVE;
                 IWallet(user_wallet).paySubscription{
-                    value: 0.2 ton, 
+                    value: 0.5 ton, 
                     bounce: true, 
-                    flag: 0, 
-                    callback: Subscription.onPaySubscription
+                    flag: 0
                 }(
                     serviceOwner, 
                     params, 

@@ -139,8 +139,9 @@ contract configVersions {
 		paramsFee.serviceRegistrationFee = serviceRegistrationFeeINPUT;
 	}
 
-	function getFees() external view responsible returns(fees){
-		return{value: 0, flag: 64}(paramsFee);
+	function getFees(address recipient, uint128 value, address subsAddr) external view responsible returns(fees, address, uint128, address){
+		fees paramsFeeResp = paramsFee;
+		return{value: 0, flag: 64}(paramsFeeResp, recipient, value, subsAddr);
     }
 
 }
