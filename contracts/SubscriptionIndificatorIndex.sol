@@ -38,6 +38,7 @@ contract SubscriptionIndificatorIndex is Upgradable {
         (TvmCell indificator, address subsmanAddr) = salt.get().toSlice().decode(TvmCell, address);
         require(subsAddr != address(0), SubscriptionErrors.incorrect_subscription_address_in_constructor);
         require(subsmanAddr == msg.sender, SubscriptionErrors.error_message_sender_is_not_subsman);
+	require(indificator == subscription_indificator, SubscriptionErrors.error_salt_is_not_match_static_var);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
 	    TvmCell nextCell;
