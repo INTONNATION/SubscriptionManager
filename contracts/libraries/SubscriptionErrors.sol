@@ -12,4 +12,5 @@ library SubscriptionErrors {
     uint8 constant error_subscription_status_already_active      = 108;
     uint8 constant incorrect_subscription_address_in_constructor = 109;
     uint8 constant error_message_sender_is_not_my_owner          = 110;
+    uint8 constant error_salt_is_not_match_static_var            = 111;
 }
