@@ -15,7 +15,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"pubkey","type":"string"},{"name":"name","type":"string"},{"name":"period","type":"string"},{"name":"value","type":"string"},{"name":"image","type":"string"},{"name":"description","type":"string"},{"name":"to","type":"string"},{"name":"category","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"pubkey","type":"string"},{"name":"name","type":"string"},{"name":"period","type":"string"},{"name":"value","type":"string"},{"name":"image","type":"string"},{"name":"description","type":"string"},{"name":"to","type":"string"},{"name":"category","type":"string"},{"name":"currency","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -32,7 +32,7 @@
 				{"name":"versionAutobiller","type":"uint8"}
 			],
 			"outputs": [
-				{"components":[{"name":"pubkey","type":"string"},{"name":"name","type":"string"},{"name":"period","type":"string"},{"name":"value","type":"string"},{"name":"image","type":"string"},{"name":"description","type":"string"},{"name":"to","type":"string"},{"name":"category","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"pubkey","type":"string"},{"name":"name","type":"string"},{"name":"period","type":"string"},{"name":"value","type":"string"},{"name":"image","type":"string"},{"name":"description","type":"string"},{"name":"to","type":"string"},{"name":"category","type":"string"},{"name":"currency","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -45,7 +45,8 @@
 				{"name":"imageINPUT","type":"string"},
 				{"name":"descriptionINPUT","type":"string"},
 				{"name":"toINPUT","type":"string"},
-				{"name":"categoryINPUT","type":"string"}
+				{"name":"categoryINPUT","type":"string"},
+				{"name":"currencyINPUT","type":"string"}
 			],
 			"outputs": [
 			]
@@ -63,7 +64,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"pubkey","type":"string"},{"name":"name","type":"string"},{"name":"period","type":"string"},{"name":"value","type":"string"},{"name":"image","type":"string"},{"name":"description","type":"string"},{"name":"to","type":"string"},{"name":"category","type":"string"}],"name":"vrsAutobiller","type":"map(uint8,tuple)"}
+				{"components":[{"name":"pubkey","type":"string"},{"name":"name","type":"string"},{"name":"period","type":"string"},{"name":"value","type":"string"},{"name":"image","type":"string"},{"name":"description","type":"string"},{"name":"to","type":"string"},{"name":"category","type":"string"},{"name":"currency","type":"string"}],"name":"vrsAutobiller","type":"map(uint8,tuple)"}
 			]
 		}
 	],
@@ -76,6 +77,6 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"versionAutobiller","type":"uint8"},
-		{"components":[{"name":"pubkey","type":"string"},{"name":"name","type":"string"},{"name":"period","type":"string"},{"name":"value","type":"string"},{"name":"image","type":"string"},{"name":"description","type":"string"},{"name":"to","type":"string"},{"name":"category","type":"string"}],"name":"vrsAutobiller","type":"map(uint8,tuple)"}
+		{"components":[{"name":"pubkey","type":"string"},{"name":"name","type":"string"},{"name":"period","type":"string"},{"name":"value","type":"string"},{"name":"image","type":"string"},{"name":"description","type":"string"},{"name":"to","type":"string"},{"name":"category","type":"string"},{"name":"currency","type":"string"}],"name":"vrsAutobiller","type":"map(uint8,tuple)"}
 	]
 }
