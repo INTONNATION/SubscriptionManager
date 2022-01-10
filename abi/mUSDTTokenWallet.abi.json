@@ -184,19 +184,20 @@
 		{
 			"name": "paySubscription",
 			"inputs": [
-				{"name":"answerId","type":"uint32"},
 				{"name":"serviceOwner","type":"address"},
 				{"name":"params","type":"cell"},
 				{"name":"indificator","type":"cell"}
 			],
 			"outputs": [
-				{"name":"value0","type":"uint8"}
 			]
 		},
 		{
-			"name": "setFees",
+			"name": "setFeesAndPay",
 			"inputs": [
-				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"}
+				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"},
+				{"name":"recipient","type":"address"},
+				{"name":"value","type":"uint128"},
+				{"name":"subsAddr","type":"address"}
 			],
 			"outputs": [
 			]
@@ -251,6 +252,54 @@
 			]
 		},
 		{
+			"name": "serviceFee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"serviceFee","type":"uint128"}
+			]
+		},
+		{
+			"name": "subscriberFee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscriberFee","type":"uint128"}
+			]
+		},
+		{
+			"name": "subsAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subsAddr","type":"address"}
+			]
+		},
+		{
+			"name": "check",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"check","type":"uint8"}
+			]
+		},
+		{
+			"name": "image",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"image","type":"cell"}
+			]
+		},
+		{
+			"name": "imageCode",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"imageCode","type":"cell"}
+			]
+		},
+		{
 			"name": "subscr_images",
 			"inputs": [
 			],
@@ -285,6 +334,10 @@
 		{"name":"subscr_ver","type":"uint8"},
 		{"name":"serviceFee","type":"uint128"},
 		{"name":"subscriberFee","type":"uint128"},
+		{"name":"subsAddr","type":"address"},
+		{"name":"check","type":"uint8"},
+		{"name":"image","type":"cell"},
+		{"name":"imageCode","type":"cell"},
 		{"name":"subscr_images","type":"map(uint8,cell)"}
 	]
 }
