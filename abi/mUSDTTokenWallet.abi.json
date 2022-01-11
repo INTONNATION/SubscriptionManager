@@ -268,38 +268,6 @@
 			]
 		},
 		{
-			"name": "subsAddr",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"subsAddr","type":"address"}
-			]
-		},
-		{
-			"name": "check",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"check","type":"uint8"}
-			]
-		},
-		{
-			"name": "image",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"image","type":"cell"}
-			]
-		},
-		{
-			"name": "imageCode",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"imageCode","type":"cell"}
-			]
-		},
-		{
 			"name": "subscr_images",
 			"inputs": [
 			],
@@ -334,10 +302,6 @@
 		{"name":"subscr_ver","type":"uint8"},
 		{"name":"serviceFee","type":"uint128"},
 		{"name":"subscriberFee","type":"uint128"},
-		{"name":"subsAddr","type":"address"},
-		{"name":"check","type":"uint8"},
-		{"name":"image","type":"cell"},
-		{"name":"imageCode","type":"cell"},
 		{"name":"subscr_images","type":"map(uint8,cell)"}
 	]
 }

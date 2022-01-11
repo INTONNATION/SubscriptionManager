@@ -4,10 +4,8 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/SubscriptionErrors.sol";
-import "libraries/Upgradable.sol";
 
-
-contract SubscriptionIndificatorIndex is Upgradable {
+contract SubscriptionIndificatorIndex {
     
     struct ServiceParams {
         address to;
@@ -31,7 +29,7 @@ contract SubscriptionIndificatorIndex is Upgradable {
 		_;
     }
 
-    constructor(address subsAddr) public {
+    constructor(address subsAddr, address senderAddress) public {
         require(msg.value >= 0.5 ton, SubscriptionErrors.error_not_enough_balance_in_message);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
@@ -71,9 +69,4 @@ contract SubscriptionIndificatorIndex is Upgradable {
     function cancel() public onlyOwner {
         selfdestruct(subscription_addr);
     }
-
-    function onCodeUpgrade() internal override {
-        tvm.resetStorage();
-    }
-
 }
