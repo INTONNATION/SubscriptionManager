@@ -6,7 +6,8 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"subsAddr","type":"address"}
+				{"name":"subsAddr","type":"address"},
+				{"name":"senderAddress","type":"address"}
 			],
 			"outputs": [
 			]
@@ -14,14 +15,6 @@
 		{
 			"name": "cancel",
 			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "upgrade",
-			"inputs": [
-				{"name":"state","type":"cell"}
 			],
 			"outputs": [
 			]

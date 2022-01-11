@@ -6,8 +6,6 @@ pragma AbiHeader pubkey;
 import "SubscriptionIndex.sol";
 import "../contracts/mTIP-3/mTONTokenWalletAbstract.sol";
 import "libraries/SubscriptionErrors.sol";
-import "libraries/Upgradable.sol";
-
 
 interface IWallet  {
     function paySubscription (address serviceOwner, TvmCell params, TvmCell indificator) external;
@@ -17,7 +15,7 @@ interface ISubscriptionIndexContract {
     function cancel () external;
 }
 
-contract Subscription is Upgradable {
+contract Subscription {
 
     address static serviceOwner;
     address static user_wallet;
@@ -148,9 +146,4 @@ contract Subscription is Upgradable {
         ISubscriptionIndexContract(subsIndificatorIndexAddr).cancel();
         selfdestruct(owner_address);
     }
-
-    function onCodeUpgrade() internal override {
-        tvm.resetStorage();
-    }
-    
 }
