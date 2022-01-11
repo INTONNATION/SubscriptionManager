@@ -109,7 +109,7 @@ contract Subscription {
             TvmCell
         );
         (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
-        this.executeSubscription();
+        executeSubscriptionConstructor();
     }
 
     function executeSubscription() external {        
@@ -131,6 +131,20 @@ contract Subscription {
         } else {
             require(subscription.status == STATUS_ACTIVE, SubscriptionErrors.error_subscription_status_already_active);
         }
+    }
+
+    function executeSubscriptionConstructor() private inline {        
+        cooldown = uint32(now);
+        subscription.status = STATUS_NONACTIVE;
+        IWallet(user_wallet).paySubscription{
+            value: 0.5 ton, 
+            bounce: true, 
+            flag: 0
+        }(
+            serviceOwner, 
+            params, 
+            subscription_indificator
+        );
     }
 
     function onPaySubscription(uint8 status) external {
