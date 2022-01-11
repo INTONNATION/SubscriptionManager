@@ -594,10 +594,11 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
         address recipient = getExpectedAddress(0, service_owner_address);
         bool senderIsSubscription;
+        address subsAddr;
         for ((uint8 k,) : subscr_images) {
             TvmCell image = subscr_images[k];
             TvmCell imageCode = image.toSlice().loadRef();
-            address subsAddr = address(tvm.hash(buildSubscriptionState(
+            subsAddr = address(tvm.hash(buildSubscriptionState(
                 imageCode,
                 serviceOwner, 
                 params, 
