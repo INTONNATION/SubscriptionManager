@@ -108,9 +108,9 @@ echo -n $CONTRACT_ADDRESS > m$1RootTokenContract.addr
 IMAGE=$(base64 $prefix ../abi/Subscription.tvc)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubscriptionImage "{\"image\":\"$IMAGE\"}" --sign m$1RootTokenContract.keys.json --abi ../abi/m$1RootTokenContract.abi.json
 subsmanAddr=$(cat SubsMan.addr)
-configVersionsAddr=$(cat configVersions.addr)
+configConvertAddr=$(cat configConvert$1.addr)
 $tos --url $NETWORK call $CONTRACT_ADDRESS setSubsmanAddr "{\"subsmanAddrINPUT\":\"$subsmanAddr\"}" --sign m$1RootTokenContract.keys.json --abi ../abi/m$1RootTokenContract.abi.json
-$tos --url $NETWORK call $CONTRACT_ADDRESS setConfigVersionsAddr "{\"configVersionsAddrINPUT\":\"$configVersionsAddr\"}" --sign m$1RootTokenContract.keys.json --abi ../abi/m$1RootTokenContract.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS setconfigConvertAddr "{\"configConvertAddrINPUT\":\"$configConvertAddr\"}" --sign m$1RootTokenContract.keys.json --abi ../abi/m$1RootTokenContract.abi.json
 giver $CONTRACT_ADDRESS
 }
 
@@ -129,14 +129,28 @@ convert_address=`get_address`
 $tos --url $NETWORK call `cat m$1RootTokenContract.addr` deployWallet '{"tokens": 1000, "deploy_grams": 1000000000, "wallet_public_key_": "0x0000000000000000000000000000000000000000000000000000000000000000", "owner_address_": "'$convert_address'","gas_back_address": "'$(cat m$1RootTokenContract.addr)'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
 wallet_address=`get_wallet_address`
 echo $wallet_address > m$1ConvertWalletAddr.addr
-genaddrConvert $1
-convert_address=`get_address`
-$tos --url $NETWORK call `cat m$1RootTokenContract.addr` transferOwner '{"root_public_key_":"0x0000000000000000000000000000000000000000000000000000000000000000","root_owner_address_":"'$convert_address'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
 }
 
+function deployFeeProxy () {
+    genaddrConvert $1
+    convert_address=`get_address`
+    $tos --url $NETWORK call `cat m$1RootTokenContract.addr` deployWallet '{"tokens": 1000, "deploy_grams": 1000000000, "wallet_public_key_": "0x0000000000000000000000000000000000000000000000000000000000000000", "owner_address_": "'$convert_address'","gas_back_address": "'$(cat m$1RootTokenContract.addr)'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
+    wallet_address=`get_wallet_address`
+    echo $wallet_address > m$name.addr
+}
+
+function transferOwner {
+    genaddrConvert $1
+    convert_address=`get_address`
+    $tos --url $NETWORK call `cat m$1RootTokenContract.addr` transferOwner '{"root_public_key_":"0x0000000000000000000000000000000000000000000000000000000000000000","root_owner_address_":"'$convert_address'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
+}
+
+./deploy-configConvert.sh $1
 genseedConvert $1
 deployRoot_m $1
 deployWallet_m $1
+deployFeeProxy $1
+transferOwner $1
 deployWallet $1 
 deployConvert_m $1
-./deploy-configConvert.sh $1
+./update-configConvert.sh $1

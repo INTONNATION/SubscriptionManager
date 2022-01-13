@@ -35,7 +35,7 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
     TvmCell static wallet_code;
     TvmCell public subscr_image;
     address public subsmanAddr;
-    address public configVersionsAddr;
+    address public configConvertAddr;
 
     uint128 total_supply;
 
@@ -139,9 +139,9 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
         subsmanAddr = subsmanAddrINPUT;
     }
 
-    function setConfigVersionsAddr(address configVersionsAddrINPUT) public onlyOwner {
+    function setconfigConvertAddr(address configConvertAddrINPUT) public onlyOwner {
         tvm.accept();
-        configVersionsAddr = configVersionsAddrINPUT;
+        configConvertAddr = configConvertAddrINPUT;
     }
 
     /*
@@ -224,7 +224,7 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_image, subsmanAddr, configVersionsAddr);
+            }(subscr_image, subsmanAddr, configConvertAddr);
         } else {
             wallet = address(tvm.hash(stateInit));
         }
@@ -281,7 +281,7 @@ IPausable, ITransferOwner, ISendSurplusGas, IVersioned {
                 wallet_public_key: wallet_public_key_,
                 owner_address: owner_address_
             }
-        }(subscr_image, subsmanAddr, configVersionsAddr);
+        }(subscr_image, subsmanAddr, configConvertAddr);
 
         if (gas_back_address.value != 0) {
             gas_back_address.transfer({ value: 0, flag: 128 });

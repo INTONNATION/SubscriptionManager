@@ -17,16 +17,17 @@ import "../Subscription.sol";
 
 
 struct fees {
+    address feeProxyAddr;
     uint128 serviceFee;
     uint128 subscriberFee;
     uint128 serviceRegistrationFee;
-}  
+} 
 
 interface ISubscription {
     function onPaySubscription(uint8 status) external;
 }
 
-interface ITONTokenWalletConfigVersions {
+interface ITONTokenWalletConfigConvert {
     function getFees(address recipient, uint128 value, address subsAddr) external responsible returns(fees, address, uint128, address);
 }
 
@@ -45,10 +46,8 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     address bounced_callback;
     bool allow_non_notifiable;
     address public subsmanAddr;
-    address public configVersionsAddr;
+    address public configConvertAddr;
     uint8 public subscr_ver = 0;
-    uint128 public serviceFee;
-    uint128 public subscriberFee;
     mapping (uint8 => TvmCell) public subscr_images;
 
     /*
@@ -56,7 +55,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         @dev All the parameters are specified as initial data
         @dev If owner_address is not empty, it will be notified with .notifyWalletDeployed
     */
-    constructor(TvmCell subsImage, address subsmanAddrINPUT, address configVersionsAddrINPUT) public {
+    constructor(TvmCell subsImage, address subsmanAddrINPUT, address configConvertAddrINPUT) public {
         require(wallet_public_key == tvm.pubkey() && (owner_address.value == 0 || wallet_public_key == 0));
         tvm.accept();
 
@@ -66,7 +65,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             ITokenWalletDeployedCallback(owner_address).notifyWalletDeployed{value: 0.00001 ton, flag: 1}(root_address);
         }
         subscr_images.add(subscr_ver, subsImage);
-        configVersionsAddr = configVersionsAddrINPUT;
+        configConvertAddr = configConvertAddrINPUT;
         subsmanAddr = subsmanAddrINPUT;
     }
 
@@ -244,7 +243,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
                 value: deploy_grams,
                 wid: address(this).wid,
                 flag: 1
-            }(subscr_images[subscr_ver], subsmanAddr, configVersionsAddr);
+            }(subscr_images[subscr_ver], subsmanAddr, configConvertAddr);
             
         } else {
             to = address(tvm.hash(stateInit));
@@ -610,20 +609,22 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             } 
         }
         if (senderIsSubscription == true) {
-            ITONTokenWalletConfigVersions(configVersionsAddr).getFees{value: 0.5 ton, callback: TONTokenWallet.setFeesAndPay}(recipient, value, subsAddr);
+            ITONTokenWalletConfigConvert(configConvertAddr).getFees{value: 0.5 ton, callback: TONTokenWallet.setFeesAndPay}(recipient, value, subsAddr);
         } else {
             revert(TONTokenWalletErrors.error_message_sender_is_not_good_subscription_contract);
         }
     }
 
     function setFeesAndPay(fees paramsFee, address recipient, uint128 value, address subsAddr) external {
-        require(msg.sender == configVersionsAddr, TONTokenWalletErrors.error_message_sender_is_not_good_config_contract);
-        serviceFee = paramsFee.serviceFee;
-        subscriberFee = paramsFee.subscriberFee;
+        require(msg.sender == configConvertAddr, TONTokenWalletErrors.error_message_sender_is_not_good_config_contract);
+        uint128 serviceFee = paramsFee.serviceFee;
+        uint128 subscriberFee = paramsFee.subscriberFee;
+        address feeProxyAddr = paramsFee.feeProxyAddr;
         uint128 feeAmount = value * (serviceFee + subscriberFee) / 100; // TODO need to think where to send and how to swap
         uint128 serviceRevenue = value - feeAmount;
         TvmCell none;
-        this.transfer{value: 1 ton}(recipient, serviceRevenue, 1000000000, address(this), true, none);
+        this.transfer{value: 0.5 ton}(recipient, serviceRevenue, 500000000, address(this), true, none);
+        this.transfer{value: 0.5 ton}(feeProxyAddr, feeAmount, 500000000, address(this), true, none);
         ISubscription(subsAddr).onPaySubscription(0);
     }
     /*
