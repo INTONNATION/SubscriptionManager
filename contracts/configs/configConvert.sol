@@ -18,7 +18,7 @@ contract configVersions {
 	string public TONTokenWalletContract;
 
 	struct fees {
-		address feeProxyAddr;
+		address feeProxyOwnerAddr;
 		uint128 serviceFee;
 		uint128 subscriberFee;
 		uint128 serviceRegistrationFee;
@@ -73,8 +73,8 @@ contract configVersions {
 		TONTokenWalletContract = TONTokenWalletContractINPUT;
 	}
 
-	function setFees(address feeProxyAddrINPUT, uint8 serviceFeeINPUT, uint8 subscriberFeeINPUT, uint8 serviceRegistrationFeeINPUT) public onlyOwner {
-		paramsFee.feeProxyAddr = feeProxyAddrINPUT;
+	function setFees(address feeProxyOwnerAddrINPUT, uint8 serviceFeeINPUT, uint8 subscriberFeeINPUT, uint8 serviceRegistrationFeeINPUT) public onlyOwner {
+		paramsFee.feeProxyOwnerAddr = feeProxyOwnerAddrINPUT;
 		paramsFee.serviceFee = serviceFeeINPUT;
 		paramsFee.subscriberFee = subscriberFeeINPUT;
 		paramsFee.serviceRegistrationFee = serviceRegistrationFeeINPUT;
