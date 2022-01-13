@@ -8,7 +8,7 @@
 			"inputs": [
 				{"name":"subsImage","type":"cell"},
 				{"name":"subsmanAddrINPUT","type":"address"},
-				{"name":"configVersionsAddrINPUT","type":"address"}
+				{"name":"configConvertAddrINPUT","type":"address"}
 			],
 			"outputs": [
 			]
@@ -194,7 +194,7 @@
 		{
 			"name": "setFeesAndPay",
 			"inputs": [
-				{"components":[{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"},
+				{"components":[{"name":"feeProxyOwnerAddr","type":"address"},{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"},
 				{"name":"recipient","type":"address"},
 				{"name":"value","type":"uint128"},
 				{"name":"subsAddr","type":"address"}
@@ -236,11 +236,11 @@
 			]
 		},
 		{
-			"name": "configVersionsAddr",
+			"name": "configConvertAddr",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"configVersionsAddr","type":"address"}
+				{"name":"configConvertAddr","type":"address"}
 			]
 		},
 		{
@@ -249,22 +249,6 @@
 			],
 			"outputs": [
 				{"name":"subscr_ver","type":"uint8"}
-			]
-		},
-		{
-			"name": "serviceFee",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"serviceFee","type":"uint128"}
-			]
-		},
-		{
-			"name": "subscriberFee",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"subscriberFee","type":"uint128"}
 			]
 		},
 		{
@@ -298,10 +282,8 @@
 		{"name":"bounced_callback","type":"address"},
 		{"name":"allow_non_notifiable","type":"bool"},
 		{"name":"subsmanAddr","type":"address"},
-		{"name":"configVersionsAddr","type":"address"},
+		{"name":"configConvertAddr","type":"address"},
 		{"name":"subscr_ver","type":"uint8"},
-		{"name":"serviceFee","type":"uint128"},
-		{"name":"subscriberFee","type":"uint128"},
 		{"name":"subscr_images","type":"map(uint8,cell)"}
 	]
 }

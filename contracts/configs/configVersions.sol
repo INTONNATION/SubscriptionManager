@@ -26,13 +26,6 @@ contract configVersions {
 		string abiSubsManDebot;
 	}
 
-	struct fees {
-		uint128 serviceFee;
-		uint128 subscriberFee;
-		uint128 serviceRegistrationFee;
-	}
-
-	fees public paramsFee;
 	mapping (uint8 => VersionsTvcParams) public vrsparamsTvc;
     mapping (uint8 => VersionsAbiParams) public vrsparamsAbi;
 
@@ -132,16 +125,5 @@ contract configVersions {
 	function setCategories(string[] categoriesInput) public onlyOwner {
 		categories = categoriesInput;
 	}
-
-	function setFees(uint8 serviceFeeINPUT, uint8 subscriberFeeINPUT, uint8 serviceRegistrationFeeINPUT) public onlyOwner {
-		paramsFee.serviceFee = serviceFeeINPUT;
-		paramsFee.subscriberFee = subscriberFeeINPUT;
-		paramsFee.serviceRegistrationFee = serviceRegistrationFeeINPUT;
-	}
-
-	function getFees(address recipient, uint128 value, address subsAddr) external view responsible returns(fees, address, uint128, address){
-		fees paramsFeeResp = paramsFee;
-		return{value: 0, flag: 64}(paramsFeeResp, recipient, value, subsAddr);
-    }
 
 }
