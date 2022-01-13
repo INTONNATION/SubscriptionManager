@@ -35,6 +35,31 @@ contract SubsMan is Upgradable {
     TvmCell public m_subscriptionIndificatorIndexImage;
     address public configVersionsAddr;
 
+	onBounce(TvmSlice slice) external {
+        // revert change to initial msg.sender in case of failure during deploy
+        // TODO check SubsMan balance after that
+		uint32 functionId = slice.decode(uint32);
+		if (functionId == tvm.functionId(Subscription)) {
+			(address senderAddress,,,,) = slice.decodeFunctionParams(Subscription);
+            senderAddress.transfer(msg.value);
+		} else if (functionId == tvm.functionId(SubscriptionService)) {
+            (, address senderAddress) = slice.decodeFunctionParams(SubscriptionService);
+            senderAddress.transfer(msg.value);
+		}
+        else if (functionId == tvm.functionId(SubscriptionServiceIndex)) {
+			(, address senderAddress) = slice.decodeFunctionParams(SubscriptionServiceIndex);
+            senderAddress.transfer(msg.value);
+		}        
+        else if (functionId == tvm.functionId(SubscriptionIndificatorIndex)) {
+			(, address senderAddress) = slice.decodeFunctionParams(SubscriptionIndificatorIndex);
+            senderAddress.transfer(msg.value);	
+        }
+        else if (functionId == tvm.functionId(SubscriptionIndex)) {
+			(, address senderAddress) = slice.decodeFunctionParams(SubscriptionIndex);
+            senderAddress.transfer(msg.value);
+        }
+    }
+
     constructor(address configVersionsAddrINPUT) public {
         tvm.accept();
         configVersionsAddr = configVersionsAddrINPUT;
@@ -96,23 +121,25 @@ contract SubsMan is Upgradable {
                 subsIndexIndificatorAddress
             );
         new SubscriptionIndex{
-            value: 0.5 ton, 
-            flag: 1, 
+            value: 0.02 ton, 
+            flag: 1,
             bounce: true, 
             stateInit: subsIndexStateInit
             }(
-                subsAddr
+                subsAddr,
+                msg.sender
             );
         
         (string indificatorStr) = indificator.toSlice().decode(string);
         if (indificatorStr != 'empty') {
             new SubscriptionIndificatorIndex{
-                value: 0.5 ton, 
+                value: 0.02 ton, 
                 flag: 1, 
                 bounce: true, 
                 stateInit: subsIndexIndificatorStateInit
                 }(
-                    subsAddr
+                    subsAddr,
+                    msg.sender
                 );
         }
     }
@@ -133,7 +160,8 @@ contract SubsMan is Upgradable {
             bounce: true, 
             stateInit: serviceStateInit
             }(
-                serviceIndexAddress
+                serviceIndexAddress,
+                msg.sender
             );
         new SubscriptionServiceIndex{
             value: 0.5 ton, 
