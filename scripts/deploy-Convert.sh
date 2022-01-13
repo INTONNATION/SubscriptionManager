@@ -136,7 +136,7 @@ function deployFeeProxy () {
     convert_address=`get_address`
     $tos --url $NETWORK call `cat m$1RootTokenContract.addr` deployWallet '{"tokens": 1000, "deploy_grams": 1000000000, "wallet_public_key_": "0x0000000000000000000000000000000000000000000000000000000000000000", "owner_address_": "'$convert_address'","gas_back_address": "'$(cat m$1RootTokenContract.addr)'"}' --abi ../abi/m$1RootTokenContract.abi.json --sign m$1RootTokenContract.keys.json > log.log
     wallet_address=`get_wallet_address`
-    echo $wallet_address > m$name.addr
+    echo $wallet_address > m$1feeProxy.addr
 }
 
 function transferOwner {

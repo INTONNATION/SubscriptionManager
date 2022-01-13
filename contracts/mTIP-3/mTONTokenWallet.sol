@@ -17,7 +17,7 @@ import "../Subscription.sol";
 
 
 struct fees {
-    address feeProxyAddr;
+    address feeProxyOwnerAddr;
     uint128 serviceFee;
     uint128 subscriberFee;
     uint128 serviceRegistrationFee;
@@ -619,7 +619,8 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         require(msg.sender == configConvertAddr, TONTokenWalletErrors.error_message_sender_is_not_good_config_contract);
         uint128 serviceFee = paramsFee.serviceFee;
         uint128 subscriberFee = paramsFee.subscriberFee;
-        address feeProxyAddr = paramsFee.feeProxyAddr;
+        address feeProxyOwnerAddr = paramsFee.feeProxyOwnerAddr;
+        address feeProxyAddr = getExpectedAddress(0, feeProxyOwnerAddr);
         uint128 feeAmount = value * (serviceFee + subscriberFee) / 100; // TODO need to think where to send and how to swap
         uint128 serviceRevenue = value - feeAmount;
         TvmCell none;

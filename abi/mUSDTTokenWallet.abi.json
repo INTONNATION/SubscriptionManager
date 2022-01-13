@@ -194,7 +194,7 @@
 		{
 			"name": "setFeesAndPay",
 			"inputs": [
-				{"components":[{"name":"feeProxyAddr","type":"address"},{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"},
+				{"components":[{"name":"feeProxyOwnerAddr","type":"address"},{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"},
 				{"name":"recipient","type":"address"},
 				{"name":"value","type":"uint128"},
 				{"name":"subsAddr","type":"address"}
