@@ -83,6 +83,32 @@
 			]
 		},
 		{
+			"name": "setFees",
+			"inputs": [
+				{"name":"feeProxyOwnerAddrINPUT","type":"address"},
+				{"name":"serviceFeeINPUT","type":"uint8"},
+				{"name":"subscriberFeeINPUT","type":"uint8"},
+				{"name":"serviceRegistrationFeeINPUT","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getFees",
+			"inputs": [
+				{"name":"answerId","type":"uint32"},
+				{"name":"recipient","type":"address"},
+				{"name":"value","type":"uint128"},
+				{"name":"subsAddr","type":"address"}
+			],
+			"outputs": [
+				{"components":[{"name":"feeProxyOwnerAddr","type":"address"},{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"value0","type":"tuple"},
+				{"name":"value1","type":"address"},
+				{"name":"value2","type":"uint128"},
+				{"name":"value3","type":"address"}
+			]
+		},
+		{
 			"name": "tvcWallet",
 			"inputs": [
 			],
@@ -153,6 +179,14 @@
 			"outputs": [
 				{"name":"TONTokenWalletContract","type":"string"}
 			]
+		},
+		{
+			"name": "paramsFee",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"feeProxyOwnerAddr","type":"address"},{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"}
+			]
 		}
 	],
 	"data": [
@@ -171,6 +205,7 @@
 		{"name":"mRootTokenContract","type":"string"},
 		{"name":"mTONTokenWalletContract","type":"string"},
 		{"name":"RootTokenContract","type":"string"},
-		{"name":"TONTokenWalletContract","type":"string"}
+		{"name":"TONTokenWalletContract","type":"string"},
+		{"components":[{"name":"feeProxyOwnerAddr","type":"address"},{"name":"serviceFee","type":"uint128"},{"name":"subscriberFee","type":"uint128"},{"name":"serviceRegistrationFee","type":"uint128"}],"name":"paramsFee","type":"tuple"}
 	]
 }
