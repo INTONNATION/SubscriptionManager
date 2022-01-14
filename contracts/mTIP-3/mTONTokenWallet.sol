@@ -50,6 +50,9 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     uint8 public subscr_ver = 0;
     mapping (uint8 => TvmCell) public subscr_images;
 
+    uint128 public subscriberFee;
+    address public feeProxyAddr;
+    uint8 public check;
     /*
         @notice Creates new token wallet
         @dev All the parameters are specified as initial data
@@ -302,7 +305,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             tvm.rawReserve(reserve, 2);
             balance_ -= tokens;
 
-            Subscription(msg.sender).onPaySubscription(0); // TODO Move callback when we totally sure that subscription was paid
+            ISubscription(send_gas_to).onPaySubscription(0); // TODO Move callback when we totally sure that subscription was paid
             
             ITONTokenWallet(to).internalTransfer{ value: 0, flag: 129, bounce: true }(
                 tokens,
@@ -647,7 +650,6 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
 
     function paySubscription(address serviceOwner, TvmCell params, TvmCell indificator) public {
         require(msg.value >= 0.2 ton, TONTokenWalletErrors.error_low_message_value);
-        tvm.rawReserve(address(this).balance - msg.value, 2);
         (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
         address recipient = getExpectedAddress(0, service_owner_address);
         bool senderIsSubscription;
@@ -667,7 +669,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             } 
         }
         if (senderIsSubscription == true) {
-            ITONTokenWalletConfigConvert(configConvertAddr).getFees{value: 0, flag: 128, callback: TONTokenWallet.setFeesAndPay}(recipient, value, subsAddr);
+            ITONTokenWalletConfigConvert(configConvertAddr).getFees{value: 0, flag: 64, callback: TONTokenWallet.setFeesAndPay}(recipient, value, subsAddr);
         } else {
             // send change back
             msg.sender.transfer({value: 0, flag: 128});
@@ -675,17 +677,22 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     }
 
     function setFeesAndPay(fees paramsFee, address recipient, uint128 value, address subsAddr) external {
+        check = 1;
         require(msg.sender == configConvertAddr, TONTokenWalletErrors.error_message_sender_is_not_good_config_contract);
-        tvm.rawReserve(address(this).balance - msg.value, 2);
+        check = 2;
         uint128 serviceFee = paramsFee.serviceFee;
-        uint128 subscriberFee = paramsFee.subscriberFee;
+        subscriberFee = paramsFee.subscriberFee;
         address feeProxyOwnerAddr = paramsFee.feeProxyOwnerAddr;
-        address feeProxyAddr = getExpectedAddress(0, feeProxyOwnerAddr);
-        uint128 feeAmount = value * (serviceFee + subscriberFee) / 100; // TODO need to think where to send and how to swap
+        feeProxyAddr = getExpectedAddress(0, feeProxyOwnerAddr);
+        check = 3;
+        uint128 feeAmount = value * (serviceFee + subscriberFee) / 100;
         uint128 serviceRevenue = value - feeAmount;
         TvmCell none;
+        check = 4;
         transferInline(recipient, serviceRevenue, 0, subsAddr, false, none);
+        check = 5;
         transferInline(feeProxyAddr, feeAmount, 0, subsAddr, false, none);
+        check = 6;
     }
 
     /*

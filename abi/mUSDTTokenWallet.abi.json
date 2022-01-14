@@ -258,6 +258,30 @@
 			"outputs": [
 				{"name":"subscr_images","type":"map(uint8,cell)"}
 			]
+		},
+		{
+			"name": "subscriberFee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscriberFee","type":"uint128"}
+			]
+		},
+		{
+			"name": "feeProxyAddr",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"feeProxyAddr","type":"address"}
+			]
+		},
+		{
+			"name": "check",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"check","type":"uint8"}
+			]
 		}
 	],
 	"data": [
@@ -284,6 +308,9 @@
 		{"name":"subsmanAddr","type":"address"},
 		{"name":"configConvertAddr","type":"address"},
 		{"name":"subscr_ver","type":"uint8"},
-		{"name":"subscr_images","type":"map(uint8,cell)"}
+		{"name":"subscr_images","type":"map(uint8,cell)"},
+		{"name":"subscriberFee","type":"uint128"},
+		{"name":"feeProxyAddr","type":"address"},
+		{"name":"check","type":"uint8"}
 	]
 }
