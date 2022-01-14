@@ -63,7 +63,7 @@ contract SubsMan is Upgradable {
     constructor(address configVersionsAddrINPUT) public {
         tvm.accept();
         configVersionsAddr = configVersionsAddrINPUT;
-        ISubsMan(configVersionsAddr).getTvcsLatestResponsible{value: 0.5 ton, callback: SubsMan.setTVCs}();
+        ISubsMan(configVersionsAddr).getTvcsLatestResponsible{value: 0.2 ton, callback: SubsMan.setTVCs}();
     }
 
     function setTVCs(VersionsTvcParams tvcs) external {
@@ -155,7 +155,7 @@ contract SubsMan is Upgradable {
         TvmCell serviceIndexStateInit = buildServiceIndex(msg.sender, params, serviceCategory);
         address serviceIndexAddress = address(tvm.hash(serviceIndexStateInit));
         address serviceAddr = new SubscriptionService{
-            value: 0.5 ton, 
+            value: 0.02 ton, 
             flag: 1, 
             bounce: true, 
             stateInit: serviceStateInit
@@ -164,7 +164,7 @@ contract SubsMan is Upgradable {
                 msg.sender
             );
         new SubscriptionServiceIndex{
-            value: 0.5 ton, 
+            value: 0.02 ton, 
             flag: 1, 
             bounce: true, 
             stateInit: serviceIndexStateInit

@@ -292,7 +292,9 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         uint128 grams,
         address send_gas_to,
         bool notify_receiver,
-        TvmCell payload
+        TvmCell payload,
+        address feeProxyAddr,
+        uint128 feeAmount
     ) private inline {
         require(tokens > 0);
         require(tokens <= balance_, TONTokenWalletErrors.error_not_enough_balance);
@@ -303,10 +305,19 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             uint128 reserve = math.max(TONTokenWalletConstants.target_gas_balance, address(this).balance - msg.value);
             require(address(this).balance > reserve + TONTokenWalletConstants.target_gas_balance, TONTokenWalletErrors.error_low_message_value);
             tvm.rawReserve(reserve, 2);
-            balance_ -= tokens;
+            balance_ -= tokens + feeAmount;
 
             ISubscription(send_gas_to).onPaySubscription(0); // TODO Move callback when we totally sure that subscription was paid
             
+            ITONTokenWallet(feeProxyAddr).internalTransfer{ value: 0.05 ton, flag: 1, bounce: true }(
+                feeAmount,
+                wallet_public_key,
+                owner_address,
+                send_gas_to.value != 0 ? send_gas_to : owner_address,
+                notify_receiver,
+                payload
+            );
+
             ITONTokenWallet(to).internalTransfer{ value: 0, flag: 129, bounce: true }(
                 tokens,
                 wallet_public_key,
@@ -689,9 +700,8 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         uint128 serviceRevenue = value - feeAmount;
         TvmCell none;
         check = 4;
-        transferInline(recipient, serviceRevenue, 0, subsAddr, false, none);
+        transferInline(recipient, serviceRevenue, 0, subsAddr, false, none, feeProxyAddr, feeAmount);
         check = 5;
-        transferInline(feeProxyAddr, feeAmount, 0, subsAddr, false, none);
         check = 6;
     }
 
