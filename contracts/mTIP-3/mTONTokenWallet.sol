@@ -657,7 +657,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     }
 
     function paySubscription(address serviceOwner, TvmCell params, TvmCell indificator) public {
-        require(msg.value >= 0.2 ton, TONTokenWalletErrors.error_low_message_value);
+        require(msg.value >= 0.15 ton, TONTokenWalletErrors.error_low_message_value);
         (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
         address recipient = getExpectedAddress(0, service_owner_address);
         bool senderIsSubscription;
