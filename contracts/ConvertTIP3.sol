@@ -107,7 +107,7 @@ contract convertTIP3 {
             TvmCell payload_; 
             tvm.rawReserve(address(this).balance - msg.value, 2);
             ITONTokenWallet(tip3_token_wallet).transfer{
-                value: 0.05 ton,
+                value: 0.1 ton,
                 flag: 1
             }(
                 senderAddress,
