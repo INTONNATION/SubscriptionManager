@@ -4,10 +4,8 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/SubscriptionErrors.sol";
-import "libraries/Upgradable.sol";
 
-
-contract SubscriptionIndificatorIndex is Upgradable {
+contract SubscriptionIndificatorIndex {
     
     struct ServiceParams {
         address to;
@@ -31,14 +29,14 @@ contract SubscriptionIndificatorIndex is Upgradable {
 		_;
     }
 
-    constructor(address subsAddr) public {
-        require(msg.value >= 0.5 ton, SubscriptionErrors.error_not_enough_balance_in_message);
+    constructor(address subsAddr, address senderAddress) public {
+        require(msg.value >= 0.02 ton, SubscriptionErrors.error_not_enough_balance_in_message);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
         (TvmCell indificator, address subsmanAddr) = salt.get().toSlice().decode(TvmCell, address);
         require(subsAddr != address(0), SubscriptionErrors.incorrect_subscription_address_in_constructor);
         require(subsmanAddr == msg.sender, SubscriptionErrors.error_message_sender_is_not_subsman);
-	require(indificator == subscription_indificator, SubscriptionErrors.error_salt_is_not_match_static_var);
+	    require(indificator == subscription_indificator, SubscriptionErrors.error_salt_is_not_match_static_var);
         svcparams.subscription_indificator = subscription_indificator;
         subscription_addr = subsAddr;
 	    TvmCell nextCell;
@@ -71,9 +69,4 @@ contract SubscriptionIndificatorIndex is Upgradable {
     function cancel() public onlyOwner {
         selfdestruct(subscription_addr);
     }
-
-    function onCodeUpgrade() internal override {
-        tvm.resetStorage();
-    }
-
 }

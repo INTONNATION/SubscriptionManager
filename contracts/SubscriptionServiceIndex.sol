@@ -36,6 +36,7 @@ contract SubscriptionServiceIndex is Upgradable {
     }
 
     constructor(address serviceAddress_, address senderAddress) public {
+        require(msg.value >= 0.02 ton, SubscriptionServiceErrors.error_low_message_value);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionServiceErrors.error_salt_is_empty);
         (address ownerAddress, address subsmanAddr) = salt.get().toSlice().decode(address, address);

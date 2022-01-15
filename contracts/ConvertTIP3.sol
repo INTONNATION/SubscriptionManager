@@ -62,14 +62,14 @@ contract convertTIP3 {
 
     function setReceiveCallback() public onlyOwner {
         ITONTokenWallet(tip3_token_wallet).setReceiveCallback{
-            value: 0.1 ton,
+            value: 0.01 ton,
             flag: 0
         }(
             address(this),
             true
         );
         ITONTokenWallet(mtip3_token_wallet).setReceiveCallback{
-            value: 0.1 ton,
+            value: 0.01 ton,
             flag: 0
         }(
             address(this),
@@ -92,11 +92,11 @@ contract convertTIP3 {
         // TIP3 -> mTIP3
         if (token_wallet == tip3_token_wallet) {
             IRootTokenContract(mtip3_token_root).deployWallet{
-                    value: 2 ton,
-                    flag: 1
+                    value: 0,
+                    flag: 65
                 }(
                     tokens_amount,
-                    1 ton,
+                    0.1 ton,
                     sender_public_key,
                     sender_address,
                     original_gas_to
@@ -105,28 +105,30 @@ contract convertTIP3 {
         } else if (token_wallet == mtip3_token_wallet) {
             address senderAddress = getExpectedAddress(sender_public_key, sender_address);
             TvmCell payload_; 
+            tvm.rawReserve(address(this).balance - msg.value, 2);
             ITONTokenWallet(tip3_token_wallet).transfer{
-                value: 2 ton,
+                value: 0.1 ton,
                 flag: 1
             }(
                 senderAddress,
                 tokens_amount,
-                1 ton,
-                tip3_token_wallet,
+                0,
+                original_gas_to,
                 false,
                 payload
             );
             // need to ensure that tokens transfered and only after that burn mTIP3 tokens (important!)
             IBurnableByRootTokenRootContract(mtip3_token_root).proxyBurn{
-                    value: 2 ton,
-                    flag: 1
+                    value: 0,
+                    flag: 129
                 }(
                     tokens_amount,
-                    token_wallet,
-                    original_gas_to,
+                    sender_address,
+                    original_gas_to, // need to send this gas correctly (now sends to non-existing address)
                     address.makeAddrStd(0, 0),
                     payload_ // temp
                 );
+            
             // verify that tokens were burn
         }
     }
