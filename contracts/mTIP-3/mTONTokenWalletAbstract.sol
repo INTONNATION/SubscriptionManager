@@ -34,10 +34,6 @@ contract TONTokenWalletAbstract is ITONTokenWallet, IDestroyable, IBurnableByOwn
     uint8 public subscr_ver = 0;
     mapping (uint8 => TvmCell) public subscr_images;
 
-    uint128 public subscriberFee;
-    address public feeProxyAddr;
-    uint8 public check;
-
     /*
         @notice Creates new token wallet
         @dev All the parameters are specified as initial data
