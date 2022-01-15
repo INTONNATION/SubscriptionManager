@@ -35,10 +35,35 @@ contract SubsMan is Upgradable {
     TvmCell public m_subscriptionIndificatorIndexImage;
     address public configVersionsAddr;
 
+	onBounce(TvmSlice slice) external {
+        // revert change to initial msg.sender in case of failure during deploy
+        // TODO check SubsMan balance after that
+		uint32 functionId = slice.decode(uint32);
+		if (functionId == tvm.functionId(Subscription)) {
+			(address senderAddress,,,,) = slice.decodeFunctionParams(Subscription);
+            senderAddress.transfer(msg.value);
+		} else if (functionId == tvm.functionId(SubscriptionService)) {
+            (, address senderAddress) = slice.decodeFunctionParams(SubscriptionService);
+            senderAddress.transfer(msg.value);
+		}
+        else if (functionId == tvm.functionId(SubscriptionServiceIndex)) {
+			(, address senderAddress) = slice.decodeFunctionParams(SubscriptionServiceIndex);
+            senderAddress.transfer(msg.value);
+		}        
+        else if (functionId == tvm.functionId(SubscriptionIndificatorIndex)) {
+			(, address senderAddress) = slice.decodeFunctionParams(SubscriptionIndificatorIndex);
+            senderAddress.transfer(msg.value);	
+        }
+        else if (functionId == tvm.functionId(SubscriptionIndex)) {
+			(, address senderAddress) = slice.decodeFunctionParams(SubscriptionIndex);
+            senderAddress.transfer(msg.value);
+        }
+    }
+
     constructor(address configVersionsAddrINPUT) public {
         tvm.accept();
         configVersionsAddr = configVersionsAddrINPUT;
-        ISubsMan(configVersionsAddr).getTvcsLatestResponsible{value: 0.5 ton, callback: SubsMan.setTVCs}();
+        ISubsMan(configVersionsAddr).getTvcsLatestResponsible{value: 0.2 ton, callback: SubsMan.setTVCs}();
     }
 
     function setTVCs(VersionsTvcParams tvcs) external {
@@ -96,29 +121,31 @@ contract SubsMan is Upgradable {
                 subsIndexIndificatorAddress
             );
         new SubscriptionIndex{
-            value: 0.5 ton, 
-            flag: 1, 
+            value: 0.02 ton, 
+            flag: 1,
             bounce: true, 
             stateInit: subsIndexStateInit
             }(
-                subsAddr
+                subsAddr,
+                msg.sender
             );
         
         (string indificatorStr) = indificator.toSlice().decode(string);
         if (indificatorStr != 'empty') {
             new SubscriptionIndificatorIndex{
-                value: 0.5 ton, 
+                value: 0.02 ton, 
                 flag: 1, 
                 bounce: true, 
                 stateInit: subsIndexIndificatorStateInit
                 }(
-                    subsAddr
+                    subsAddr,
+                    msg.sender
                 );
         }
     }
  
     function deployService(TvmCell params, string serviceCategory) public view {
-        require(msg.value >= 1 ton, SubsManErrors.error_not_enough_balance_in_message);
+        require(msg.value >= 0.05 ton, SubsManErrors.error_not_enough_balance_in_message);
         require(msg.sender != address(0), SubsManErrors.error_message_sender_address_not_specified);
         TvmCell serviceStateInit = buildService(
             msg.sender,
@@ -128,15 +155,16 @@ contract SubsMan is Upgradable {
         TvmCell serviceIndexStateInit = buildServiceIndex(msg.sender, params, serviceCategory);
         address serviceIndexAddress = address(tvm.hash(serviceIndexStateInit));
         address serviceAddr = new SubscriptionService{
-            value: 0.5 ton, 
+            value: 0.02 ton, 
             flag: 1, 
             bounce: true, 
             stateInit: serviceStateInit
             }(
-                serviceIndexAddress
+                serviceIndexAddress,
+                msg.sender
             );
         new SubscriptionServiceIndex{
-            value: 0.5 ton, 
+            value: 0.02 ton, 
             flag: 1, 
             bounce: true, 
             stateInit: serviceIndexStateInit

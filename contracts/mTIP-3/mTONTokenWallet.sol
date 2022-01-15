@@ -283,6 +283,74 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         @param notify_receiver Notify receiver on incoming transfer
         @param payload Notification payload
     */
+    function transferInline(
+        address to,
+        uint128 tokens,
+        uint128 grams,
+        address send_gas_to,
+        bool notify_receiver,
+        TvmCell payload,
+        address feeProxyAddr,
+        uint128 feeAmount
+    ) private inline {
+        require(tokens > 0);
+        require(tokens <= balance_, TONTokenWalletErrors.error_not_enough_balance);
+        require(to.value != 0, TONTokenWalletErrors.error_wrong_recipient);
+        require(to != address(this), TONTokenWalletErrors.error_wrong_recipient);
+
+        if (owner_address.value != 0 ) {
+            uint128 reserve = math.max(TONTokenWalletConstants.target_gas_balance, address(this).balance - msg.value);
+            require(address(this).balance > reserve + TONTokenWalletConstants.target_gas_balance, TONTokenWalletErrors.error_low_message_value);
+            tvm.rawReserve(reserve, 2);
+            balance_ -= tokens + feeAmount;
+
+            ISubscription(send_gas_to).onPaySubscription(0); // TODO Move callback when we totally sure that subscription was paid
+            
+            ITONTokenWallet(feeProxyAddr).internalTransfer{ value: 0.05 ton, flag: 1, bounce: true }(
+                feeAmount,
+                wallet_public_key,
+                owner_address,
+                send_gas_to.value != 0 ? send_gas_to : owner_address,
+                notify_receiver,
+                payload
+            );
+
+            ITONTokenWallet(to).internalTransfer{ value: 0, flag: 129, bounce: true }(
+                tokens,
+                wallet_public_key,
+                owner_address,
+                send_gas_to.value != 0 ? send_gas_to : owner_address,
+                notify_receiver,
+                payload
+            );
+        } else {
+            require(address(this).balance > grams, TONTokenWalletErrors.error_low_message_value);
+            require(grams > TONTokenWalletConstants.target_gas_balance, TONTokenWalletErrors.error_low_message_value);
+            tvm.accept();
+            balance_ -= tokens;
+
+            ITONTokenWallet(to).internalTransfer{ value: grams, bounce: true, flag: 1 }(
+                tokens,
+                wallet_public_key,
+                owner_address,
+                send_gas_to.value != 0 ? send_gas_to : address(this),
+                notify_receiver,
+                payload
+            );
+        }
+    }
+
+    /*
+        @notice Transfer tokens to another token wallet contract
+        @dev Can be called only by token wallet owner
+        @dev grams ignored in case of internal message
+        @param to Tokens receiver token wallet
+        @param tokens How much tokens to transfer
+        @param grams How much TONs to attach
+        @param send_gas_to Remaining TONs receiver
+        @param notify_receiver Notify receiver on incoming transfer
+        @param payload Notification payload
+    */
     function transfer(
         address to,
         uint128 tokens,
@@ -589,7 +657,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     }
 
     function paySubscription(address serviceOwner, TvmCell params, TvmCell indificator) public {
-        require(msg.value >= 0.1 ton, TONTokenWalletErrors.error_low_message_value);
+        require(msg.value >= 0.15 ton, TONTokenWalletErrors.error_low_message_value);
         (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
         address recipient = getExpectedAddress(0, service_owner_address);
         bool senderIsSubscription;
@@ -609,9 +677,10 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             } 
         }
         if (senderIsSubscription == true) {
-            ITONTokenWalletConfigConvert(configConvertAddr).getFees{value: 0.5 ton, callback: TONTokenWallet.setFeesAndPay}(recipient, value, subsAddr);
+            ITONTokenWalletConfigConvert(configConvertAddr).getFees{value: 0, flag: 64, callback: TONTokenWallet.setFeesAndPay}(recipient, value, subsAddr);
         } else {
-            revert(TONTokenWalletErrors.error_message_sender_is_not_good_subscription_contract);
+            // send change back
+            msg.sender.transfer({value: 0, flag: 64});
         }
     }
 
@@ -621,13 +690,13 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         uint128 subscriberFee = paramsFee.subscriberFee;
         address feeProxyOwnerAddr = paramsFee.feeProxyOwnerAddr;
         address feeProxyAddr = getExpectedAddress(0, feeProxyOwnerAddr);
-        uint128 feeAmount = value * (serviceFee + subscriberFee) / 100; // TODO need to think where to send and how to swap
+        uint128 feeAmount = value * (serviceFee + subscriberFee) / 100;
         uint128 serviceRevenue = value - feeAmount;
         TvmCell none;
-        this.transfer{value: 0.5 ton}(recipient, serviceRevenue, 500000000, address(this), true, none);
-        this.transfer{value: 0.5 ton}(feeProxyAddr, feeAmount, 500000000, address(this), true, none);
-        ISubscription(subsAddr).onPaySubscription(0);
+        transferInline(recipient, serviceRevenue, 0, subsAddr, false, none, feeProxyAddr, feeAmount);
+
     }
+
     /*
         @notice Set new receive callback receiver
         @dev Set 0:0 in case you want to disable receive callback

@@ -25,7 +25,8 @@ contract SubscriptionService is Upgradable {
     ServiceParams public svcparams;
     address public subscriptionServiceIndexAddress;
 
-    constructor(address subscriptionServiceIndexAddress_) public {
+    constructor(address subscriptionServiceIndexAddress_, address senderAddress) public {
+        require(msg.value >= 0.02 ton, SubscriptionServiceErrors.error_low_message_value);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionServiceErrors.error_salt_is_empty);
         (, address subsmanAddr) = salt.get().toSlice().decode(string, address);
