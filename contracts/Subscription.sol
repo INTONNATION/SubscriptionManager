@@ -137,7 +137,7 @@ contract Subscription {
         cooldown = uint32(now);
         subscription.status = STATUS_NONACTIVE;
         IWallet(user_wallet).paySubscription{
-            value: 0.5 ton, 
+            value: 0.2 ton, 
             bounce: true, 
             flag: 0
         }(

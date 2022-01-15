@@ -50,9 +50,6 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
     uint8 public subscr_ver = 0;
     mapping (uint8 => TvmCell) public subscr_images;
 
-    uint128 public subscriberFee;
-    address public feeProxyAddr;
-    uint8 public check;
     /*
         @notice Creates new token wallet
         @dev All the parameters are specified as initial data
@@ -683,26 +680,21 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             ITONTokenWalletConfigConvert(configConvertAddr).getFees{value: 0, flag: 64, callback: TONTokenWallet.setFeesAndPay}(recipient, value, subsAddr);
         } else {
             // send change back
-            msg.sender.transfer({value: 0, flag: 128});
+            msg.sender.transfer({value: 0, flag: 64});
         }
     }
 
     function setFeesAndPay(fees paramsFee, address recipient, uint128 value, address subsAddr) external {
-        check = 1;
         require(msg.sender == configConvertAddr, TONTokenWalletErrors.error_message_sender_is_not_good_config_contract);
-        check = 2;
         uint128 serviceFee = paramsFee.serviceFee;
-        subscriberFee = paramsFee.subscriberFee;
+        uint128 subscriberFee = paramsFee.subscriberFee;
         address feeProxyOwnerAddr = paramsFee.feeProxyOwnerAddr;
-        feeProxyAddr = getExpectedAddress(0, feeProxyOwnerAddr);
-        check = 3;
+        address feeProxyAddr = getExpectedAddress(0, feeProxyOwnerAddr);
         uint128 feeAmount = value * (serviceFee + subscriberFee) / 100;
         uint128 serviceRevenue = value - feeAmount;
         TvmCell none;
-        check = 4;
         transferInline(recipient, serviceRevenue, 0, subsAddr, false, none, feeProxyAddr, feeAmount);
-        check = 5;
-        check = 6;
+
     }
 
     /*
