@@ -96,7 +96,7 @@ contract convertTIP3 {
                     flag: 65
                 }(
                     tokens_amount,
-                    0.8 ton,
+                    0.1 ton,
                     sender_public_key,
                     sender_address,
                     original_gas_to
