@@ -123,7 +123,7 @@ contract convertTIP3 {
                     flag: 129
                 }(
                     tokens_amount,
-                    sender_address,
+                    address(this),
                     original_gas_to, // need to send this gas correctly (now sends to non-existing address)
                     address.makeAddrStd(0, 0),
                     payload_ // temp
