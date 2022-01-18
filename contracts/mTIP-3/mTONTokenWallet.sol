@@ -299,9 +299,9 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
         require(to != address(this), TONTokenWalletErrors.error_wrong_recipient);
 
         if (owner_address.value != 0 ) {
-            uint128 reserve = math.max(TONTokenWalletConstants.target_gas_balance, address(this).balance - msg.value);
-            require(address(this).balance > reserve + TONTokenWalletConstants.target_gas_balance, TONTokenWalletErrors.error_low_message_value);
-            tvm.rawReserve(reserve, 2);
+            //uint128 reserve = math.max(TONTokenWalletConstants.target_gas_balance, address(this).balance - msg.value);
+            //require(address(this).balance > reserve + TONTokenWalletConstants.target_gas_balance, TONTokenWalletErrors.error_low_message_value);
+            //tvm.rawReserve(reserve, 2);
             balance_ -= tokens + feeAmount;
 
             ISubscription(send_gas_to).onPaySubscription(0); // TODO Move callback when we totally sure that subscription was paid
@@ -315,7 +315,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
                 payload
             );
 
-            ITONTokenWallet(to).internalTransfer{ value: 0, flag: 129, bounce: true }(
+            ITONTokenWallet(to).internalTransfer{ value: 0.15 ton, flag: 64, bounce: true }(
                 tokens,
                 wallet_public_key,
                 owner_address,

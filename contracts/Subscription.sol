@@ -76,7 +76,7 @@ contract Subscription {
             }
         });
         require(address(tvm.hash(walletStateInit)) == user_wallet, SubscriptionErrors.error_define_wallet_address_in_static_vars);
-        require(msg.value >= 1 ton, SubscriptionErrors.error_not_enough_balance_in_message);
+        require(msg.value >= 0.5 ton, SubscriptionErrors.error_not_enough_balance_in_message);
         (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
         require(value > 0 && period > 0, SubscriptionErrors.error_incorrect_service_params);
         uint32 _period = period * 3600 * 24;
