@@ -85,7 +85,7 @@ contract SubsMan is Upgradable {
     ) 
         public view 
     {
-        require(msg.value >= 1 ton, SubsManErrors.error_not_enough_balance_in_message);
+        require(msg.value >= 0.5 ton, SubsManErrors.error_not_enough_balance_in_message);
         require(msg.sender != address(0), SubsManErrors.error_message_sender_address_not_specified);
         require(accountWallet.toSlice().empty() != true, SubsManErrors.error_wrong_wallet_tvc);
         TvmCell subscriptionStateInit = buildAccount(
