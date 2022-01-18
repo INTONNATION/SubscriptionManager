@@ -109,7 +109,7 @@ contract SubsMan is Upgradable {
         address subscriptionIndexAddress = address(tvm.hash(subsIndexStateInit));
         address subsIndexIndificatorAddress = address(tvm.hash(subsIndexIndificatorStateInit));
         new Subscription{
-            value: 1 ton, 
+            value: 0.5 ton, 
             flag: 1, 
             bounce: true, 
             stateInit: subscriptionStateInit
