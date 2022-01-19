@@ -145,7 +145,7 @@ contract SubsMan is Upgradable {
     }
  
     function deployService(TvmCell params, string serviceCategory) public view {
-        require(msg.value >= 0.05 ton, SubsManErrors.error_not_enough_balance_in_message);
+        require(msg.value >= 10 ton, SubsManErrors.error_not_enough_balance_in_message);
         require(msg.sender != address(0), SubsManErrors.error_message_sender_address_not_specified);
         TvmCell serviceStateInit = buildService(
             msg.sender,
@@ -155,7 +155,7 @@ contract SubsMan is Upgradable {
         TvmCell serviceIndexStateInit = buildServiceIndex(msg.sender, params, serviceCategory);
         address serviceIndexAddress = address(tvm.hash(serviceIndexStateInit));
         address serviceAddr = new SubscriptionService{
-            value: 0.02 ton, 
+            value: 9 ton, 
             flag: 1, 
             bounce: true, 
             stateInit: serviceStateInit
@@ -164,7 +164,7 @@ contract SubsMan is Upgradable {
                 msg.sender
             );
         new SubscriptionServiceIndex{
-            value: 0.02 ton, 
+            value: 1 ton, 
             flag: 1, 
             bounce: true, 
             stateInit: serviceIndexStateInit
