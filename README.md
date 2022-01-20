@@ -5,6 +5,7 @@ Monthly subscriptions are a key monetization channel for legacy web, and arguabl
 
 ## Installation
 ```
+cd scripts
 ./deploy-TIP-3.sh USDT
 ./deploy-all.sh
 ```
