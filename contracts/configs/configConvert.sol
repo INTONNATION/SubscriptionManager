@@ -21,7 +21,6 @@ contract configVersions {
 		address feeProxyOwnerAddr;
 		uint128 serviceFee;
 		uint128 subscriberFee;
-		uint128 serviceRegistrationFee;
 	}
 
 	fees public paramsFee;
@@ -73,11 +72,10 @@ contract configVersions {
 		TONTokenWalletContract = TONTokenWalletContractINPUT;
 	}
 
-	function setFees(address feeProxyOwnerAddrINPUT, uint8 serviceFeeINPUT, uint8 subscriberFeeINPUT, uint8 serviceRegistrationFeeINPUT) public onlyOwner {
+	function setFees(address feeProxyOwnerAddrINPUT, uint8 serviceFeeINPUT, uint8 subscriberFeeINPUT) public onlyOwner {
 		paramsFee.feeProxyOwnerAddr = feeProxyOwnerAddrINPUT;
 		paramsFee.serviceFee = serviceFeeINPUT;
 		paramsFee.subscriberFee = subscriberFeeINPUT;
-		paramsFee.serviceRegistrationFee = serviceRegistrationFeeINPUT;
 	}
 
 	function getFees(address recipient, uint128 value, address subsAddr) external view responsible returns(fees, address, uint128, address){

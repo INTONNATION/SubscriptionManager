@@ -22,7 +22,7 @@ contract Subscription {
     TvmCell static params;
     TvmCell static subscription_indificator;
     address static owner_address;
-    uint8 constant STATUS_ACTIVE   = 1;
+    uint8 constant STATUS_ACTIVE = 1;
     uint8 constant STATUS_NONACTIVE = 2;
     address subscriptionIndexAddress;
     address subsIndificatorIndexAddr;

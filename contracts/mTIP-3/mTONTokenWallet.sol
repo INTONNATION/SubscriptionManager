@@ -20,7 +20,6 @@ struct fees {
     address feeProxyOwnerAddr;
     uint128 serviceFee;
     uint128 subscriberFee;
-    uint128 serviceRegistrationFee;
 } 
 
 interface ISubscription {
@@ -304,7 +303,7 @@ contract TONTokenWallet is ITONTokenWallet, IDestroyable, IBurnableByOwnerTokenW
             //tvm.rawReserve(reserve, 2);
             balance_ -= tokens + feeAmount;
 
-            ISubscription(send_gas_to).onPaySubscription(0); // TODO Move callback when we totally sure that subscription was paid
+            ISubscription(send_gas_to).onPaySubscription{ value: 0.05 ton, flag: 1, bounce: true }(0); // TODO Move callback when we totally sure that subscription was paid
             
             ITONTokenWallet(feeProxyAddr).internalTransfer{ value: 0.05 ton, flag: 1, bounce: true }(
                 feeAmount,

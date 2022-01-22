@@ -33,11 +33,10 @@ echo $configAddr
 
 serviceFee=5
 subscriberFee=1
-serviceRegistrationFee=2 # one time during registration
 
 feeProxyOwnerAddr=`cat $1ConvertTIP3.addr`
 
-tonos-cli --url $NETWORK call $configAddr setFees "{\"feeProxyOwnerAddrINPUT\": \"$feeProxyOwnerAddr\", \"serviceFeeINPUT\": $serviceFee, \"subscriberFeeINPUT\": $subscriberFee, \"serviceRegistrationFeeINPUT\": $serviceRegistrationFee}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
+tonos-cli --url $NETWORK call $configAddr setFees "{\"feeProxyOwnerAddrINPUT\": \"$feeProxyOwnerAddr\", \"serviceFeeINPUT\": $serviceFee, \"subscriberFeeINPUT\": $subscriberFee }" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setTvcWallet "{\"tvcWalletINPUT\": \"$mwalletTvc\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setmRootAddr "{\"mRootAddrINPUT\": \"$mRootAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
 tonos-cli --url $NETWORK call $configAddr setRootAddr "{\"RootAddrINPUT\": \"$RootAddr\"}" --abi ../abi/$configName.abi.json --sign $configName.keys.json
