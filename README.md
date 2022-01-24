@@ -1,33 +1,19 @@
-### Project deployment guide
-#### Required utilities:    
+### Required utilities:
 
-Install curl (used version 7.68.0).    
-`$ apt install curl`    
+- curl(used version 7.68.0)
+- nodejs (used version v17.x)
+- npm (used version 8.3.0)
+- tondev (used version 0.11.2)
+- solidity compiler(used version 0.51.0)
+- tonos-cli(used version 0.24.12)
+- tvm_linker(used version 0.14.9)
+- stdlib(used version 0.53.0)
+- jq (used version 1.6)
 
-Next, install nodejs (used version v17.x) and npm (used version 8.3.0).    
-`$ curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash -`    
-`$ sudo apt-get install -y nodejs`    
+If you have problems with Solidity compiler, tvm_linker or stdlib versions(after installation higher versions were installed) use the following command to install the optimal versions:
 
-Install tondev using npm (used version 0.11.2).    
-`$ sudo npm install -g tondev`    
+`$tondev sol set --compiler 0.51.0 --linker 0.14.9 --stdlib 0.53.0`
 
-Install the  solidity compiler (used version 0.51.0) through tondev.    
-`$ tondev sol update`    
+### Installation:
 
-Also, through tondev, install the command utility for working with blockchain tonos-cli (used version 0.24.12).    
-`$ tondev tonos-cli install`    
-
-Install docker (used version 20.10.12).    
-`$ curl -fsSL https://get.docker.com -o get-docker.sh`    
-`$ sh get-docker.sh`    
-
-Next, install yarn (used version 1.22.17) and jq (used version 1.6).    
-`$ npm install --global yarn`    
-`$ apt install jq`    
-
-tvm_linker is installed along with the solidity compiler, but if the tvm_linker not found error occurs, run the following command:    
-`$ ln -s /home/ubuntu/.tondev/solidity/tvm_linker / usr / bin / tvm_linker`    
-Instead of ubuntu, substitute your user    
-
-Then find the deploy-all.sh file, in it we uncomment the lines ./deploy-TIP-3.sh USDT and ./deploy-TIP-3.sh EUPI. Then execute `./deploy-all.sh` and `after ./build.sh`.    
-After successful compiletion, we go to localhost, log into the wallet and can proceed to familiarization.    
+First you need to find the deploy-all.sh file (located in the scipts folder). Then uncomment the ./deploy-TIP-3.sh USDT and ./deploy-TIP-3.sh EUPI lines and run the `./deploy-all.sh` script itself. This script deploys TIP-3 tokens(emulation of main net), main smart contract subscription manager, config versions and convert system(which includes mTIP-3 and TIP-3 convert system wallets and mTIP-3 root) with configs.
