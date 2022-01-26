@@ -4,11 +4,15 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "SubscriptionIndex.sol";
-import "../contracts/mTIP-3/mTONTokenWalletAbstract.sol";
 import "libraries/SubscriptionErrors.sol";
 
-interface IWallet  {
-    function paySubscription (address serviceOwner, TvmCell params, TvmCell indificator) external;
+import "./Platform.sol";
+import "libraries/PlatformTypes.sol";
+import "TIP3/interfaces/ITokenWallet.sol";
+
+
+interface IMetaduesAccount  {
+    function paySubscription (TvmCell params, address account_wallet, address subscription_wallet) external;
 }
 
 interface ISubscriptionIndexContract {
@@ -17,9 +21,16 @@ interface ISubscriptionIndexContract {
 
 contract Subscription {
 
+    address public root;
+    TvmCell platform_code;
+    TvmCell platform_params;
+    uint32 current_version;
+    uint8 type_id;
+    TvmCell service_params;
+    
     address static serviceOwner;
     address static user_wallet;
-    TvmCell static params;
+    
     TvmCell static subscription_indificator;
     address static owner_address;
     uint8 constant STATUS_ACTIVE = 1;
@@ -49,68 +60,9 @@ contract Subscription {
     }
     Payment public subscription;
 
-    constructor(
-        address senderAddress, 
-        TvmCell walletCode, 
-        address rootAddress, 
-        address subsIndexAddr,
-        address subsIndificatorIndexAddrINPUT
-    ) 
-        public 
-    {
-        optional(TvmCell) salt = tvm.codeSalt(tvm.code());
-        require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
-        (address ownerAddress, address subsmanAddr, uint256 wallet_hash) = salt.get().toSlice().decode(address, address, uint256);
-        require(msg.sender == subsmanAddr, SubscriptionErrors.error_message_sender_is_not_subsman);
-        require(owner_address == ownerAddress && owner_address == senderAddress, SubscriptionErrors.error_define_owner_address_in_static_vars);
-        require(wallet_hash == tvm.hash(walletCode), SubscriptionErrors.error_define_wallet_hash_in_salt);
-        TvmCell walletStateInit = tvm.buildStateInit({
-            code: walletCode,
-            pubkey: 0,
-            contr: TONTokenWalletAbstract,
-            varInit: {
-                root_address: rootAddress,
-                code: walletCode,
-                wallet_public_key: 0,
-                owner_address: ownerAddress
-            }
-        });
-        require(address(tvm.hash(walletStateInit)) == user_wallet, SubscriptionErrors.error_define_wallet_address_in_static_vars);
-        require(msg.value >= 0.5 ton, SubscriptionErrors.error_not_enough_balance_in_message);
-        (address to, uint128 value, uint32 period) = params.toSlice().decode(address, uint128, uint32);
-        require(value > 0 && period > 0, SubscriptionErrors.error_incorrect_service_params);
-        uint32 _period = period * 3600 * 24;
-        subscription = Payment(to, value, _period, 0, STATUS_NONACTIVE);
-        subscriptionIndexAddress = subsIndexAddr;
-        subsIndificatorIndexAddr = subsIndificatorIndexAddrINPUT;
-        svcparams.subscription_indificator = subscription_indificator;
-        TvmCell nextCell;
-        (
-            svcparams.to, 
-            svcparams.value, 
-            svcparams.period, 
-            nextCell
-        ) = params.toSlice().decode(
-            address, 
-            uint128, 
-            uint32, 
-            TvmCell
-        );
-        TvmCell nextCell2;
-        (
-            svcparams.name, 
-            svcparams.description, 
-            svcparams.image, 
-            nextCell2
-        ) = nextCell.toSlice().decode(
-            string, 
-            string, 
-            string, 
-            TvmCell
-        );
-        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
-        executeSubscriptionConstructor();
-    }
+    constructor() public { revert(); }
+ 
+
 
     function executeSubscription() external {        
         if (now > (subscription.start + subscription.period)) {
@@ -153,7 +105,60 @@ contract Subscription {
             subscription.start = uint32(now);
         }
     }
+    
+    function onCodeUpgrade(TvmCell upgrade_data) private {
+        
+        TvmSlice s = upgrade_data.toSlice();
+        (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =
+        s.decode(address,address,uint32,uint32,uint8);
 
+        if (old_version == 0) {
+            tvm.resetStorage();
+        }
+
+        root = root_;
+        platform_code = s.loadRef();
+        platform_params = s.loadRef();   
+        current_version = version;  
+        type_id = type_id_;
+
+       optional(TvmCell) salt = tvm.codeSalt(tvm.code());
+       require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
+       (service_params) = salt.get().toSlice().decode(TvmCell);
+       TvmCell nextCell;
+        (
+            svcparams.to, 
+            svcparams.value, 
+            svcparams.period, 
+            nextCell
+        ) = service_params.toSlice().decode(
+            address, 
+            uint128, 
+            uint32, 
+            TvmCell
+        );
+        TvmCell nextCell2;
+        (
+            svcparams.name, 
+            svcparams.description, 
+            svcparams.image, 
+            nextCell2
+        ) = nextCell.toSlice().decode(
+            string, 
+            string, 
+            string, 
+            TvmCell
+        );
+        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
+        uint32 _period = svcparams.period * 3600 * 24;
+        subscription = Payment(svcparams.to, svcparams.value, _period, 0, STATUS_NONACTIVE);
+    //  subscriptionIndexAddress = subsIndexAddr;
+    //  subsIndificatorIndexAddr = subsIndificatorIndexAddrINPUT;
+    //  svcparams.subscription_indificator = subscription_indificator;
+        executeSubscriptionConstructor();
+  
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
+    }
     function cancel() public {
         require(msg.sender == owner_address, SubscriptionErrors.error_message_sender_is_not_index);
         ISubscriptionIndexContract(subscriptionIndexAddress).cancel();
