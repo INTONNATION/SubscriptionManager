@@ -11,11 +11,12 @@ if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
-tondev sol compile ../contracts/SubsMan.sol -o ../abi;
-
+tondev sol compile ../contracts/MetaduesRoot.sol -o ../abi;
+tondev sol compile ../contracts/MetaduesAccount.sol -o ../abi;
+tondev sol compile ../contracts/Platform.sol -o ../abi;
 tos=tonos-cli
 
-CONTRACT_NAME=SubsMan
+CONTRACT_NAME=MetaduesRoot
 
 # Giver FLD
 giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
@@ -64,11 +65,16 @@ echo -n $CONTRACT_ADDRESS > $1.addr
 echo GIVER $1 ------------------------------------------------
 giver $CONTRACT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
-$tos --url $NETWORK deploy ../abi/$1.tvc "{\"configVersionsAddrINPUT\":\"$configAddr\"}" --sign $1.keys.json --abi ../abi/$1.abi.json
+$tos --url $NETWORK deploy ../abi/$1.tvc "{}" --sign $1.keys.json --abi ../abi/$1.abi.json
+
+platform_code=$(tvm_linker decode --tvc ../abi/Platform.tvc |grep "code:"|awk '{print $2}')
+account_code=$(tvm_linker decode --tvc ../abi/MetaduesAccount.tvc |grep "code:"|awk '{print $2}')
+
+$tos --url $NETWORK call $CONTRACT_ADDRESS installPlatformOnce "{\"code\":\"$platform_code\"}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateAccountCode "{\"code\":\"$account_code\"}" --abi ../abi/$1.abi.json
 }
 
-configAddr=$(cat ./configVersions.addr)
-echo $configAddr
+
 
 deploy $CONTRACT_NAME
 CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
