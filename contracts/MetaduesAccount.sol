@@ -7,7 +7,8 @@ pragma AbiHeader pubkey;
 import "libraries/MetaduesRootErrors.sol";
 import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
-
+// import "TIP3/interfaces/ITokenRoot.sol";
+import "TIP3/interfaces/ITokenWallet.sol";
 
 
 contract MetaduesAccount {
@@ -59,18 +60,16 @@ contract MetaduesAccount {
     }
 
 
-    function paySubscription(TvmCell params) public {
-        (address service_owner_address, uint128 value) = params.toSlice().decode(address, uint128);
-        bool senderIsSubscription;
-        address subsAddr;
-        subsAddr = address(tvm.hash(buildPlatformState(
+    function paySubscription(TvmCell params, address account_wallet, address subscription_wallet) public {
+        ( , uint128 tokens) = params.toSlice().decode(address, uint128);
+        address subsciption_addr = address(tvm.hash(buildPlatformState(
             params
             )));
-        
-        require(subsAddr == msg.sender, 333);
-
+        require(subsciption_addr == msg.sender, 333);
+        TvmCell payload; 
+        ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload );
         }
-    
+
 
 
    

@@ -22,7 +22,9 @@
 		{
 			"name": "paySubscription",
 			"inputs": [
-				{"name":"params","type":"cell"}
+				{"name":"params","type":"cell"},
+				{"name":"account_wallet","type":"address"},
+				{"name":"subscription_wallet","type":"address"}
 			],
 			"outputs": [
 			]
