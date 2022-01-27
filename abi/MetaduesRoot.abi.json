@@ -28,7 +28,8 @@
 		{
 			"name": "deploySubscription",
 			"inputs": [
-				{"name":"service_params","type":"cell"}
+				{"name":"service_params","type":"cell"},
+				{"name":"identificator","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -43,6 +44,22 @@
 		},
 		{
 			"name": "installOrUpdateSubscriptionCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateSubscriptionIndexCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateSubscriptionIndexIdentificatorCode",
 			"inputs": [
 				{"name":"code","type":"cell"}
 			],
@@ -80,6 +97,22 @@
 			"outputs": [
 				{"name":"subscription_code","type":"cell"}
 			]
+		},
+		{
+			"name": "subscription_index_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_index_code","type":"cell"}
+			]
+		},
+		{
+			"name": "subscription_index_identificator_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_index_identificator_code","type":"cell"}
+			]
 		}
 	],
 	"data": [
@@ -94,6 +127,8 @@
 		{"name":"has_platform_code","type":"bool"},
 		{"name":"account_code","type":"cell"},
 		{"name":"subscription_code","type":"cell"},
+		{"name":"subscription_index_code","type":"cell"},
+		{"name":"subscription_index_identificator_code","type":"cell"},
 		{"name":"account_version","type":"uint32"},
 		{"name":"subscription_version","type":"uint32"}
 	]
