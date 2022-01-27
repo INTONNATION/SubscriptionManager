@@ -107,7 +107,7 @@
 				{"name":"serviceKey","type":"uint256"},
 				{"name":"params","type":"cell"},
 				{"name":"signature","type":"bytes"},
-				{"name":"indificator","type":"cell"},
+				{"name":"identificator","type":"cell"},
 				{"name":"walletCode","type":"cell"}
 			],
 			"outputs": [

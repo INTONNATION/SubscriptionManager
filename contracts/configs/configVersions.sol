@@ -15,14 +15,14 @@ contract configVersions {
 		TvmCell tvcSubscription;
 		TvmCell tvcSubscriptionServiceIndex;
 		TvmCell tvcSubscriptionIndex;
-		TvmCell tvcSubscriptionIndificatorIndex;
+		TvmCell tvcSubscriptionidentificatorIndex;
 	}
 	struct VersionsAbiParams {
 		string abiServiceContract;
 		string abiServiceIndexContract;
 		string abiSubscriptionContract;
 		string abiSubscriptionIndexContract;
-		string abiSubscriptionIndificatorIndexContract;
+		string abiSubscriptionidentificatorIndexContract;
 		string abiSubsManDebot;
 	}
 
@@ -88,7 +88,7 @@ contract configVersions {
 		TvmCell tvcSubscriptionInput, 
 		TvmCell tvcSubscriptionServiceIndexInput,
 		TvmCell tvcSubscriptionIndexInput,
-		TvmCell tvcSubscriptionIndificatorIndexInput
+		TvmCell tvcSubscriptionidentificatorIndexInput
 	)  
 	public onlyOwner 
 	{
@@ -98,7 +98,7 @@ contract configVersions {
 		params.tvcSubscription = tvcSubscriptionInput;
 		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
 		params.tvcSubscriptionIndex = tvcSubscriptionIndexInput;
-		params.tvcSubscriptionIndificatorIndex = tvcSubscriptionIndificatorIndexInput;
+		params.tvcSubscriptionidentificatorIndex = tvcSubscriptionidentificatorIndexInput;
 		vrsparamsTvc.add(versionTvc, params);
     }
 
@@ -107,7 +107,7 @@ contract configVersions {
 		string abiServiceIndexContractInput, 
 		string abiSubscriptionContractInput, 
 		string abiSubscriptionIndexContractInput, 
-		string abiSubscriptionIndificatorIndexContractInput,
+		string abiSubscriptionidentificatorIndexContractInput,
 		string abiSubsManDebotInput
 	) public onlyOwner 
 	{
@@ -117,7 +117,7 @@ contract configVersions {
 		params.abiServiceIndexContract = abiServiceIndexContractInput;
 		params.abiSubscriptionContract = abiSubscriptionContractInput;
 		params.abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
-		params.abiSubscriptionIndificatorIndexContract = abiSubscriptionIndificatorIndexContractInput;
+		params.abiSubscriptionidentificatorIndexContract = abiSubscriptionidentificatorIndexContractInput;
 		params.abiSubsManDebot = abiSubsManDebotInput;
 		vrsparamsAbi.add(versionAbi, params);
     }

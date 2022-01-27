@@ -29,7 +29,7 @@
 				{"name":"serviceKey","type":"uint256"},
 				{"name":"bounce","type":"bool"},
 				{"name":"params","type":"cell"},
-				{"name":"indificator","type":"cell"}
+				{"name":"identificator","type":"cell"}
 			],
 			"outputs": [
 				{"name":"value0","type":"uint8"}
