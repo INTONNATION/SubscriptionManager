@@ -14,7 +14,7 @@
 		{
 			"name": "setTVCs",
 			"inputs": [
-				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIndificatorIndex","type":"cell"}],"name":"tvcs","type":"tuple"}
+				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionidentificatorIndex","type":"cell"}],"name":"tvcs","type":"tuple"}
 			],
 			"outputs": [
 			]
@@ -24,7 +24,7 @@
 			"inputs": [
 				{"name":"serviceOwner","type":"address"},
 				{"name":"params","type":"cell"},
-				{"name":"indificator","type":"cell"},
+				{"name":"identificator","type":"cell"},
 				{"name":"accountWallet","type":"cell"},
 				{"name":"walletRootAddress","type":"address"}
 			],
@@ -81,11 +81,11 @@
 			]
 		},
 		{
-			"name": "m_subscriptionIndificatorIndexImage",
+			"name": "m_subscriptionidentificatorIndexImage",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"m_subscriptionIndificatorIndexImage","type":"cell"}
+				{"name":"m_subscriptionidentificatorIndexImage","type":"cell"}
 			]
 		},
 		{
@@ -109,7 +109,7 @@
 		{"name":"s_subscriptionServiceImage","type":"cell"},
 		{"name":"m_subscriptionIndexImage","type":"cell"},
 		{"name":"s_subscriptionServiceIndexImage","type":"cell"},
-		{"name":"m_subscriptionIndificatorIndexImage","type":"cell"},
+		{"name":"m_subscriptionidentificatorIndexImage","type":"cell"},
 		{"name":"configVersionsAddr","type":"address"}
 	]
 }

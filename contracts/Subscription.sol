@@ -31,14 +31,14 @@ contract Subscription {
     address static serviceOwner;
     address static user_wallet;
     
-    TvmCell static subscription_indificator;
+    TvmCell static subscription_identificator;
     TvmCell public Tvm_code;
     optional(TvmCell) public Tvm_code_salt;
     address static owner_address;
     uint8 constant STATUS_ACTIVE = 1;
     uint8 constant STATUS_NONACTIVE = 2;
     address subscriptionIndexAddress;
-    address subsIndificatorIndexAddr;
+    address subsidentificatorIndexAddr;
     uint32 cooldown = 0;
 
     struct ServiceParams {
@@ -47,7 +47,7 @@ contract Subscription {
         uint32 period;
         string name;
         string description;
-        TvmCell subscription_indificator;
+        TvmCell subscription_identificator;
         string image;
         string currency;
         string category;
@@ -79,7 +79,7 @@ contract Subscription {
                 // }(
                 //     serviceOwner, 
                 //     svcparams, 
-                //     subscription_indificator
+                //     subscription_identificator
                 // );
             }
         } else {
@@ -97,7 +97,7 @@ contract Subscription {
         // }(
         //     serviceOwner, 
         //     svcparams, 
-        //     subscription_indificator
+        //     subscription_identificator
         // );
     }
 
@@ -158,8 +158,8 @@ contract Subscription {
     //     uint32 _period = svcparams.period * 3600 * 24;
     //     subscription = Payment(svcparams.to, svcparams.value, _period, 0, STATUS_NONACTIVE);
     //  subscriptionIndexAddress = subsIndexAddr;
-    //  subsIndificatorIndexAddr = subsIndificatorIndexAddrINPUT;
-    //  svcparams.subscription_indificator = subscription_indificator;
+    //  subsidentificatorIndexAddr = subsidentificatorIndexAddrINPUT;
+    //  svcparams.subscription_identificator = subscription_identificator;
         executeSubscriptionConstructor();
   
         send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
@@ -167,7 +167,7 @@ contract Subscription {
     function cancel() public {
         require(msg.sender == owner_address, SubscriptionErrors.error_message_sender_is_not_index);
         ISubscriptionIndexContract(subscriptionIndexAddress).cancel();
-        ISubscriptionIndexContract(subsIndificatorIndexAddr).cancel();
+        ISubscriptionIndexContract(subsidentificatorIndexAddr).cancel();
         selfdestruct(owner_address);
     }
 }

@@ -13,13 +13,13 @@ contract SubscriptionIndex {
         uint32 period;
         string name;
         string description;
-        TvmCell subscription_indificator;
+        TvmCell subscription_identificator;
         string image;
         string currency;
         string category;
     }
     TvmCell static params;
-    TvmCell static subscription_indificator;
+    TvmCell static subscription_identificator;
     address public subscription_addr;
     ServiceParams public svcparams;
 
@@ -35,7 +35,7 @@ contract SubscriptionIndex {
         (address serviceOwner, address subsmanAddr) = salt.get().toSlice().decode(address, address);
         require(subsAddr != address(0), SubscriptionErrors.incorrect_subscription_address_in_constructor);
         require(subsmanAddr == msg.sender, SubscriptionErrors.error_message_sender_is_not_subsman);
-        svcparams.subscription_indificator = subscription_indificator;
+        svcparams.subscription_identificator = subscription_identificator;
         subscription_addr = subsAddr;
 	    TvmCell nextCell;
         (
