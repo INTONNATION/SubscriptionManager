@@ -18,9 +18,38 @@
 			]
 		},
 		{
+			"name": "onAcceptTokensTransfer",
+			"inputs": [
+				{"name":"tokenRoot","type":"address"},
+				{"name":"amount","type":"uint128"},
+				{"name":"sender","type":"address"},
+				{"name":"senderWallet","type":"address"},
+				{"name":"remainingGasTo","type":"address"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "onPaySubscription",
 			"inputs": [
 				{"name":"status","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onDeployWallet",
+			"inputs": [
+				{"name":"subscription_wallet_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWalletOf",
+			"inputs": [
+				{"name":"account_wallet_","type":"address"}
 			],
 			"outputs": [
 			]
@@ -41,19 +70,19 @@
 			]
 		},
 		{
-			"name": "Tvm_code",
+			"name": "owner_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"Tvm_code","type":"cell"}
+				{"name":"owner_address","type":"address"}
 			]
 		},
 		{
-			"name": "Tvm_code_salt",
+			"name": "service_params",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"Tvm_code_salt","type":"optional(cell)"}
+				{"name":"service_params","type":"cell"}
 			]
 		},
 		{
@@ -61,7 +90,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 			]
 		},
 		{
@@ -69,15 +98,11 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
+				{"components":[{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 			]
 		}
 	],
 	"data": [
-		{"key":1,"name":"serviceOwner","type":"address"},
-		{"key":2,"name":"user_wallet","type":"address"},
-		{"key":3,"name":"subscription_identificator","type":"cell"},
-		{"key":4,"name":"owner_address","type":"address"}
 	],
 	"events": [
 	],
@@ -86,21 +111,18 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"root","type":"address"},
+		{"name":"owner_address","type":"address"},
 		{"name":"platform_code","type":"cell"},
-		{"name":"platform_params","type":"cell"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
 		{"name":"service_params","type":"cell"},
-		{"name":"serviceOwner","type":"address"},
-		{"name":"user_wallet","type":"address"},
-		{"name":"subscription_identificator","type":"cell"},
-		{"name":"Tvm_code","type":"cell"},
-		{"name":"Tvm_code_salt","type":"optional(cell)"},
-		{"name":"owner_address","type":"address"},
-		{"name":"subscriptionIndexAddress","type":"address"},
-		{"name":"subsidentificatorIndexAddr","type":"address"},
+		{"name":"subscription_wallet","type":"address"},
+		{"name":"account_wallet","type":"address"},
+		{"name":"account_address","type":"address"},
+		{"name":"subscription_index_address","type":"address"},
+		{"name":"subscription_identificator_index_address","type":"address"},
 		{"name":"cooldown","type":"uint32"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
+		{"components":[{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
 }

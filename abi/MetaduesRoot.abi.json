@@ -19,22 +19,6 @@
 			]
 		},
 		{
-			"name": "deployAccount",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "deploySubscription",
-			"inputs": [
-				{"name":"service_params","type":"cell"},
-				{"name":"identificator","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "installOrUpdateAccountCode",
 			"inputs": [
 				{"name":"code","type":"cell"}
@@ -67,9 +51,17 @@
 			]
 		},
 		{
-			"name": "upgrade",
+			"name": "deployAccount",
 			"inputs": [
-				{"name":"state","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deploySubscription",
+			"inputs": [
+				{"name":"service_params","type":"cell"},
+				{"name":"identificator","type":"cell"}
 			],
 			"outputs": [
 			]

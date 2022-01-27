@@ -5,7 +5,6 @@ pragma AbiHeader pubkey;
 
 
 import "libraries/MetaduesRootErrors.sol";
-import "libraries/Upgradable.sol";
 import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
 import "../contracts/SubscriptionIndex.sol";
@@ -13,7 +12,7 @@ import "../contracts/SubscriptionIdentificatorIndex.sol";
 
 
 
-contract MetaduesRoot is Upgradable {
+contract MetaduesRoot {
    
     TvmCell public platform_code;
     bool has_platform_code;
@@ -35,12 +34,35 @@ contract MetaduesRoot is Upgradable {
         tvm.accept();
     }
 
-   function installPlatformOnce(TvmCell code) external onlyOwner {
+    modifier onlyOwner() {
+        tvm.accept();
+        _;
+    }
+
+    function installPlatformOnce(TvmCell code) external onlyOwner {
         // can be installed only once
         require(!has_platform_code, 222);
         platform_code = code;
         has_platform_code = true;
     }
+
+    function installOrUpdateAccountCode(TvmCell code) external onlyOwner {
+        account_code = code;
+        account_version++;
+    }
+
+    function installOrUpdateSubscriptionCode(TvmCell code) external onlyOwner {
+        subscription_code = code;
+        subscription_version++;
+    }  
+
+    function installOrUpdateSubscriptionIndexCode(TvmCell code) external onlyOwner {
+        subscription_index_code = code;
+    }  
+    
+    function installOrUpdateSubscriptionIndexIdentificatorCode(TvmCell code) external onlyOwner {
+        subscription_index_identificator_code = code;
+    }  
 
     // Deploy contracts
     function deployAccount(
@@ -73,8 +95,7 @@ contract MetaduesRoot is Upgradable {
     {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
         tvm.accept();
-        TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender, service_params);
-
+        TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         Platform platform = new Platform {
             stateInit: _buildInitData(PlatformTypes.Subscription, _buildSubscriptionParams(msg.sender, service_params)),
             value: 1 ton,
@@ -89,19 +110,16 @@ contract MetaduesRoot is Upgradable {
             msg.sender
 
         );
-        TvmCell subsIndexStateInit = buildSubscriptionIndex(
+        TvmCell subsIndexStateInit = _buildSubscriptionIndex(
             msg.sender, 
             service_params, 
             identificator
         );
-        TvmCell subsIndexidentificatorStateInit = buildSubscriptionIdentificatorIndex(
+        TvmCell subsIndexidentificatorStateInit = _buildSubscriptionIdentificatorIndex(
             service_params, 
             identificator
         );
-       
-       
-       
-       new SubscriptionIndex{
+        new SubscriptionIndex{
             value: 0.02 ton, 
             flag: 0,
             bounce: true, 
@@ -124,76 +142,6 @@ contract MetaduesRoot is Upgradable {
                 );
         }
     } 
-
-    function buildSubscriptionIndex(
-        address serviceOwner, 
-        TvmCell params, 
-        TvmCell identificator
-    ) private view returns (TvmCell) 
-    {
-        TvmBuilder saltBuilder;
-        saltBuilder.store(
-            serviceOwner,
-            address(this)
-        );
-        TvmCell code = tvm.setCodeSalt(
-            subscription_index_code.toSlice().loadRef(),
-            saltBuilder.toCell()
-        );
-        TvmCell stateInit = tvm.buildStateInit({
-            code: code,
-            pubkey: 0,
-            varInit: { 
-                params: params,
-                subscription_identificator: identificator
-            },
-            contr: SubscriptionIndex
-        });
-        return stateInit;             
-    }
-
-    function buildSubscriptionIdentificatorIndex(
-        TvmCell params, 
-        TvmCell identificator
-    ) private view returns (TvmCell) 
-    {
-        TvmBuilder saltBuilder;
-        saltBuilder.store(
-            identificator,
-            address(this)
-        );
-        TvmCell code = tvm.setCodeSalt(
-            subscription_index_identificator_code.toSlice().loadRef(),
-            saltBuilder.toCell()
-        );
-        TvmCell stateInit = tvm.buildStateInit({
-            code: code,
-            pubkey: 0,
-            varInit: { 
-                params: params,
-                subscription_identificator: identificator
-            },
-            contr: SubscriptionidentificatorIndex
-        });
-        return stateInit;             
-    }
-
-    function installOrUpdateAccountCode(TvmCell code) external onlyOwner {
-        account_code = code;
-        account_version++;
-    }
-
-    function installOrUpdateSubscriptionCode(TvmCell code) external onlyOwner {
-        subscription_code = code;
-        subscription_version++;
-    }  
-
-    function installOrUpdateSubscriptionIndexCode(TvmCell code) external onlyOwner {
-        subscription_index_code = code;
-    }  
-    function installOrUpdateSubscriptionIndexIdentificatorCode(TvmCell code) external onlyOwner {
-        subscription_index_identificator_code = code;
-    }  
 
     function _buildInitData(uint8 type_id, TvmCell params) private inline view returns (TvmCell) {
         return tvm.buildStateInit({
@@ -221,12 +169,11 @@ contract MetaduesRoot is Upgradable {
         return builder.toCell();
     }
 
-    function _buildSubscriptionCode(address subscription_owner, TvmCell service_params) private view returns (TvmCell) {
+    function _buildSubscriptionCode(address subscription_owner) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         saltBuilder.store(
             subscription_owner, 
-            address(this),
-            service_params
+            address(this)
         ); // Max 4 items
         TvmCell code = tvm.setCodeSalt(
             subscription_code,
@@ -235,14 +182,57 @@ contract MetaduesRoot is Upgradable {
         return code;
     }
 
-
-    function onCodeUpgrade() internal override {
-        tvm.resetStorage();
+    function _buildSubscriptionIdentificatorIndex(
+        TvmCell params, 
+        TvmCell identificator
+    ) private view returns (TvmCell) 
+    {
+        TvmBuilder saltBuilder;
+        saltBuilder.store(
+            identificator,
+            address(this)
+        );
+        TvmCell code = tvm.setCodeSalt(
+            subscription_index_identificator_code.toSlice().loadRef(),
+            saltBuilder.toCell()
+        );
+        TvmCell stateInit = tvm.buildStateInit({
+            code: code,
+            pubkey: 0,
+            varInit: { 
+                params: params,
+                subscription_identificator: identificator
+            },
+            contr: SubscriptionidentificatorIndex
+        });
+        return stateInit;             
     }
-    modifier onlyOwner() {
-        tvm.accept();
-        _;
-    }
 
+    function _buildSubscriptionIndex(
+        address serviceOwner, 
+        TvmCell params, 
+        TvmCell identificator
+    ) private view returns (TvmCell) 
+    {
+        TvmBuilder saltBuilder;
+        saltBuilder.store(
+            serviceOwner,
+            address(this)
+        );
+        TvmCell code = tvm.setCodeSalt(
+            subscription_index_code.toSlice().loadRef(),
+            saltBuilder.toCell()
+        );
+        TvmCell stateInit = tvm.buildStateInit({
+            code: code,
+            pubkey: 0,
+            varInit: { 
+                params: params,
+                subscription_identificator: identificator
+            },
+            contr: SubscriptionIndex
+        });
+        return stateInit;             
+    }
 
 }
