@@ -59,14 +59,19 @@ contract MetaduesAccount {
     }
 
 
-    function paySubscription(TvmCell params, address account_wallet, address subscription_wallet) external {
+    function paySubscription(TvmCell params, address account_wallet, address subscription_wallet) 
+        external
+        responsible
+        returns (uint8) {
         ( , uint128 tokens) = params.toSlice().decode(address, uint128);
         address subsciption_addr = address(tvm.hash(buildPlatformState(
             params
             )));
         require(subsciption_addr == msg.sender, 333);
-        TvmCell payload; 
-        ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload );
+        TvmCell payload;
+        //check balance if enouph return 0 if not return 1
+        ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload);
+        return { value: 0, flag: 128, bounce: false } 0;
         }
 
 

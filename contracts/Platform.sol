@@ -8,7 +8,6 @@ contract Platform {
     uint8 static type_id;
     TvmCell static params;
     TvmCell platform_code;
-//    bool has_platform_code;
 
     constructor() public onlyRoot {   
         tvm.accept();
@@ -26,9 +25,6 @@ contract Platform {
         builder.store(type_id);
         builder.store(platform_code);
         builder.store(params);
-        builder.store(code);
-         // ref 3
-             
 
         tvm.setcode(code);
         tvm.setCurrentCode(code);
@@ -37,13 +33,6 @@ contract Platform {
     }
 
     function onCodeUpgrade(TvmCell data) private {}
-
-
-    // function setPlatformCode(TvmCell code) external onlyRoot {
-    //     require(!has_platform_code, 112);
-    //     platform_code = code;
-    //     has_platform_code = true;
-    // }
 
     modifier onlyRoot() {
         require(msg.sender == root, 111);

@@ -22,11 +22,13 @@
 		{
 			"name": "paySubscription",
 			"inputs": [
+				{"name":"answerId","type":"uint32"},
 				{"name":"params","type":"cell"},
 				{"name":"account_wallet","type":"address"},
 				{"name":"subscription_wallet","type":"address"}
 			],
 			"outputs": [
+				{"name":"value0","type":"uint8"}
 			]
 		},
 		{

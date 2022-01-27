@@ -9,10 +9,11 @@ import "libraries/SubscriptionErrors.sol";
 import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
 import "TIP3/interfaces/ITokenWallet.sol";
+import "TIP3/interfaces/ITokenRoot.sol";
 
 
 interface IMetaduesAccount  {
-    function paySubscription (TvmCell params, address account_wallet, address subscription_wallet) external;
+    function paySubscription (TvmCell params, address account_wallet, address subscription_wallet) external responsible returns (uint8);
 }
 
 interface ISubscriptionIndexContract {
@@ -22,26 +23,22 @@ interface ISubscriptionIndexContract {
 contract Subscription {
 
     address public root;
+    address public owner_address;
     TvmCell platform_code;
-    TvmCell platform_params;
     uint32 current_version;
     uint8 type_id;
-    TvmCell service_params;
-    
-    address static serviceOwner;
-    address static user_wallet;
-    
-    TvmCell static subscription_identificator;
-    TvmCell public Tvm_code;
-    optional(TvmCell) public Tvm_code_salt;
-    address static owner_address;
+    TvmCell public service_params;
+    address subscription_wallet;
+    address account_wallet;
+    address account_address;
     uint8 constant STATUS_ACTIVE = 1;
     uint8 constant STATUS_NONACTIVE = 2;
-    address subscriptionIndexAddress;
-    address subsidentificatorIndexAddr;
+    uint8 constant STATUS_PROCESSING = 3;
+    address subscription_index_address;
+    address subscription_identificator_index_address;
     uint32 cooldown = 0;
 
-    struct ServiceParams {
+    struct serviceParams {
         address to;
         uint128 value;
         uint32 period;
@@ -49,67 +46,84 @@ contract Subscription {
         string description;
         TvmCell subscription_identificator;
         string image;
-        string currency;
+        address currency_root;
         string category;
     }
-    ServiceParams public svcparams;
-    struct Payment {
-        address to;
-        uint128 value;
+    serviceParams public svcparams;
+
+    struct paymentStatus {
         uint32 period;
         uint32 start;
         uint8 status;
     }
-    Payment public subscription;
+    paymentStatus public subscription;
 
     constructor() public { revert(); }
- 
-
 
     function executeSubscription() external {        
-        if (now > (subscription.start + subscription.period)) {
+        if (now > (subscription.start + svcparams.period)) {
             if ( now > (cooldown + 3600)) {
                 tvm.accept();
                 cooldown = uint32(now);
                 subscription.status = STATUS_NONACTIVE;
-                // ITokenWallet(user_wallet).paySubscription{
-                //     value: 0.2 ton, 
-                //     bounce: true, 
-                //     flag: 0
-                // }(
-                //     serviceOwner, 
-                //     svcparams, 
-                //     subscription_identificator
-                // );
+                IMetaduesAccount(account_address).paySubscription{
+                    value: 0.2 ton, 
+                    bounce: true,
+                    flag: 0,
+                    callback: Subscription.onPaySubscription
+                }(
+                    service_params,
+                    account_wallet,
+                    subscription_wallet
+                );
             }
         } else {
             require(subscription.status == STATUS_ACTIVE, SubscriptionErrors.error_subscription_status_already_active);
         }
     }
 
-    function executeSubscriptionConstructor() private inline {        
+    function executeSubscriptionInline() private inline {        
         cooldown = uint32(now);
         subscription.status = STATUS_NONACTIVE;
-        // ITokenWallet(user_wallet).paySubscription{
-        //     value: 0.2 ton, 
-        //     bounce: true, 
-        //     flag: 0
-        // }(
-        //     serviceOwner, 
-        //     svcparams, 
-        //     subscription_identificator
-        // );
+        IMetaduesAccount(account_address).paySubscription{
+            value: 0.2 ton, 
+            bounce: true, 
+            flag: 0,
+            callback: Subscription.onPaySubscription
+        }(
+            service_params, 
+            account_wallet, 
+            subscription_wallet
+        );
     }
 
+    function onAcceptTokensTransfer(
+        address tokenRoot,
+        uint128 amount,
+        address sender,
+        address senderWallet,
+        address remainingGasTo,
+        TvmCell payload
+    ) public {
+        ITokenWallet(msg.sender).transferToWallet{value: 0.5 ton}(
+            svcparams.value,
+            svcparams.to, // can be service owner TIP3 Wallet
+            address(this),
+            true,
+            payload
+        );
+        subscription.status = STATUS_ACTIVE;
+    }
+    
     function onPaySubscription(uint8 status) external {
-        if (status == 0 && user_wallet == msg.sender) {
-            subscription.status = STATUS_ACTIVE;
-            subscription.start = uint32(now);
+        if (status == 0) {
+            subscription.status = STATUS_PROCESSING;
+        } else if (status == 1) {
+            subscription.status = STATUS_NONACTIVE;
         }
     }
     
     function onCodeUpgrade(TvmCell upgrade_data) private {
-        
         TvmSlice s = upgrade_data.toSlice();
         (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =
         s.decode(address,address,uint32,uint32,uint8);
@@ -119,55 +133,68 @@ contract Subscription {
         }
 
         root = root_;
-        platform_code = s.loadRef();
-        platform_params = s.loadRef();   
         current_version = version;  
         type_id = type_id_;
-        TvmCell subscription_code = s.loadRef();
-        optional(TvmCell) salt = tvm.codeSalt(subscription_code);
-       
-       Tvm_code_salt = salt;
-       Tvm_code = subscription_code;
-    //    require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
-    //    (service_params) = salt.get().toSlice().decode(TvmCell);
-    //    TvmCell nextCell;
-    //     (
-    //         svcparams.to, 
-    //         svcparams.value, 
-    //         svcparams.period, 
-    //         nextCell
-    //     ) = service_params.toSlice().decode(
-    //         address, 
-    //         uint128, 
-    //         uint32, 
-    //         TvmCell
-    //     );
-    //     TvmCell nextCell2;
-    //     (
-    //         svcparams.name, 
-    //         svcparams.description, 
-    //         svcparams.image, 
-    //         nextCell2
-    //     ) = nextCell.toSlice().decode(
-    //         string, 
-    //         string, 
-    //         string, 
-    //         TvmCell
-    //     );
-    //     (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
-    //     uint32 _period = svcparams.period * 3600 * 24;
-    //     subscription = Payment(svcparams.to, svcparams.value, _period, 0, STATUS_NONACTIVE);
-    //  subscriptionIndexAddress = subsIndexAddr;
-    //  subsidentificatorIndexAddr = subsidentificatorIndexAddrINPUT;
-    //  svcparams.subscription_identificator = subscription_identificator;
-        executeSubscriptionConstructor();
-  
-        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
+        platform_code = s.loadRef();
+
+        TvmSlice platform_params = s.loadRefAsSlice();
+        TvmCell indexes;
+        (owner_address, service_params, account_address, indexes) = platform_params.decode(address, TvmCell, address, TvmCell);
+        (
+            svcparams.to, 
+            svcparams.value, 
+            svcparams.period
+        ) = service_params.toSlice().decode(
+            address, 
+            uint128, 
+            uint32
+        );
+        TvmCell next_cell = service_params.toSlice().loadRef();
+        (
+            svcparams.name, 
+            svcparams.description, 
+            svcparams.image 
+        ) = next_cell.toSlice().decode(
+            string, 
+            string, 
+            string 
+        );
+        next_cell = service_params.toSlice().loadRef();
+        (svcparams.currency_root, svcparams.category) = next_cell.toSlice().decode(address, string);
+        uint32 _period = svcparams.period * 3600 * 24;
+        subscription = paymentStatus(_period, 0, STATUS_NONACTIVE);
+        (subscription_index_address,subscription_identificator_index_address,svcparams.subscription_identificator) = indexes.toSlice().decode(address, address, TvmCell);
+        ITokenRoot(svcparams.currency_root).deployWallet{
+            value: 0.2 ton, 
+            bounce: true, 
+            flag: 0,
+            callback: Subscription.onDeployWallet
+        }(
+            address(this),
+            0.1 ton
+        );
+         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
+
+    function onDeployWallet(address subscription_wallet_) external {
+        subscription_wallet = subscription_wallet_;
+        ITokenRoot(svcparams.currency_root).walletOf{
+             value: 0.1 ton, 
+             bounce: true,
+             flag: 0,
+             callback: Subscription.onWalletOf
+        }(account_address);
+    }
+
+    function onWalletOf(address account_wallet_) external {
+        account_wallet = account_wallet_;
+        executeSubscriptionInline();
+    }
+
     function cancel() public {
         require(msg.sender == owner_address, SubscriptionErrors.error_message_sender_is_not_index);
-        ISubscriptionIndexContract(subscriptionIndexAddress).cancel();
-        ISubscriptionIndexContract(subsidentificatorIndexAddr).cancel();
+        ISubscriptionIndexContract(subscription_index_address).cancel();
+        ISubscriptionIndexContract(subscription_identificator_index_address).cancel();
         selfdestruct(owner_address);
     }
 }
