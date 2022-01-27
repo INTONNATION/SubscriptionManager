@@ -26,6 +26,7 @@ contract Platform {
         builder.store(type_id);
         builder.store(platform_code);
         builder.store(params);
+        builder.store(code);
          // ref 3
              
 
