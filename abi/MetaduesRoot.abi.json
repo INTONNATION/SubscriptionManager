@@ -26,7 +26,23 @@
 			]
 		},
 		{
+			"name": "deploySubscription",
+			"inputs": [
+				{"name":"service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpdateAccountCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateSubscriptionCode",
 			"inputs": [
 				{"name":"code","type":"cell"}
 			],
@@ -56,6 +72,14 @@
 			"outputs": [
 				{"name":"account_code","type":"cell"}
 			]
+		},
+		{
+			"name": "subscription_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_code","type":"cell"}
+			]
 		}
 	],
 	"data": [
@@ -69,6 +93,8 @@
 		{"name":"platform_code","type":"cell"},
 		{"name":"has_platform_code","type":"bool"},
 		{"name":"account_code","type":"cell"},
-		{"name":"account_version","type":"uint32"}
+		{"name":"subscription_code","type":"cell"},
+		{"name":"account_version","type":"uint32"},
+		{"name":"subscription_version","type":"uint32"}
 	]
 }

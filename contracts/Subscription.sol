@@ -32,6 +32,8 @@ contract Subscription {
     address static user_wallet;
     
     TvmCell static subscription_indificator;
+    TvmCell public Tvm_code;
+    optional(TvmCell) public Tvm_code_salt;
     address static owner_address;
     uint8 constant STATUS_ACTIVE = 1;
     uint8 constant STATUS_NONACTIVE = 2;
@@ -70,15 +72,15 @@ contract Subscription {
                 tvm.accept();
                 cooldown = uint32(now);
                 subscription.status = STATUS_NONACTIVE;
-                IWallet(user_wallet).paySubscription{
-                    value: 0.2 ton, 
-                    bounce: true, 
-                    flag: 0
-                }(
-                    serviceOwner, 
-                    params, 
-                    subscription_indificator
-                );
+                // ITokenWallet(user_wallet).paySubscription{
+                //     value: 0.2 ton, 
+                //     bounce: true, 
+                //     flag: 0
+                // }(
+                //     serviceOwner, 
+                //     svcparams, 
+                //     subscription_indificator
+                // );
             }
         } else {
             require(subscription.status == STATUS_ACTIVE, SubscriptionErrors.error_subscription_status_already_active);
@@ -88,15 +90,15 @@ contract Subscription {
     function executeSubscriptionConstructor() private inline {        
         cooldown = uint32(now);
         subscription.status = STATUS_NONACTIVE;
-        IWallet(user_wallet).paySubscription{
-            value: 0.2 ton, 
-            bounce: true, 
-            flag: 0
-        }(
-            serviceOwner, 
-            params, 
-            subscription_indificator
-        );
+        // ITokenWallet(user_wallet).paySubscription{
+        //     value: 0.2 ton, 
+        //     bounce: true, 
+        //     flag: 0
+        // }(
+        //     serviceOwner, 
+        //     svcparams, 
+        //     subscription_indificator
+        // );
     }
 
     function onPaySubscription(uint8 status) external {
@@ -121,37 +123,40 @@ contract Subscription {
         platform_params = s.loadRef();   
         current_version = version;  
         type_id = type_id_;
-
-       optional(TvmCell) salt = tvm.codeSalt(tvm.code());
-       require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
-       (service_params) = salt.get().toSlice().decode(TvmCell);
-       TvmCell nextCell;
-        (
-            svcparams.to, 
-            svcparams.value, 
-            svcparams.period, 
-            nextCell
-        ) = service_params.toSlice().decode(
-            address, 
-            uint128, 
-            uint32, 
-            TvmCell
-        );
-        TvmCell nextCell2;
-        (
-            svcparams.name, 
-            svcparams.description, 
-            svcparams.image, 
-            nextCell2
-        ) = nextCell.toSlice().decode(
-            string, 
-            string, 
-            string, 
-            TvmCell
-        );
-        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
-        uint32 _period = svcparams.period * 3600 * 24;
-        subscription = Payment(svcparams.to, svcparams.value, _period, 0, STATUS_NONACTIVE);
+        TvmCell subscription_code = s.loadRef();
+        optional(TvmCell) salt = tvm.codeSalt(subscription_code);
+       
+       Tvm_code_salt = salt;
+       Tvm_code = subscription_code;
+    //    require(salt.hasValue(), SubscriptionErrors.error_salt_is_empty);
+    //    (service_params) = salt.get().toSlice().decode(TvmCell);
+    //    TvmCell nextCell;
+    //     (
+    //         svcparams.to, 
+    //         svcparams.value, 
+    //         svcparams.period, 
+    //         nextCell
+    //     ) = service_params.toSlice().decode(
+    //         address, 
+    //         uint128, 
+    //         uint32, 
+    //         TvmCell
+    //     );
+    //     TvmCell nextCell2;
+    //     (
+    //         svcparams.name, 
+    //         svcparams.description, 
+    //         svcparams.image, 
+    //         nextCell2
+    //     ) = nextCell.toSlice().decode(
+    //         string, 
+    //         string, 
+    //         string, 
+    //         TvmCell
+    //     );
+    //     (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
+    //     uint32 _period = svcparams.period * 3600 * 24;
+    //     subscription = Payment(svcparams.to, svcparams.value, _period, 0, STATUS_NONACTIVE);
     //  subscriptionIndexAddress = subsIndexAddr;
     //  subsIndificatorIndexAddr = subsIndificatorIndexAddrINPUT;
     //  svcparams.subscription_indificator = subscription_indificator;
