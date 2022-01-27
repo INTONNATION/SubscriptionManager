@@ -94,7 +94,7 @@ contract MetaduesRoot is Upgradable {
             service_params, 
             identificator
         );
-        TvmCell subsIndexidentificatorStateInit = buildSubscriptionIdentificatorIndex(
+        TvmCell subsIndexIdentificatorStateInit = buildSubscriptionIdentificatorIndex(
             service_params, 
             identificator
         );
@@ -111,18 +111,15 @@ contract MetaduesRoot is Upgradable {
                 msg.sender
             );
         
-        (string identificatorStr) = identificator.toSlice().decode(string);
-        if (identificatorStr != 'empty') {
             new SubscriptionidentificatorIndex{
                 value: 0.02 ton, 
                 flag: 0, 
                 bounce: true, 
-                stateInit: subsIndexidentificatorStateInit
+                stateInit: subsIndexIdentificatorStateInit
                 }(
                     address(platform),
                     msg.sender
                 );
-        }
     } 
 
     function buildSubscriptionIndex(
@@ -137,7 +134,7 @@ contract MetaduesRoot is Upgradable {
             address(this)
         );
         TvmCell code = tvm.setCodeSalt(
-            subscription_index_code.toSlice().loadRef(),
+            subscription_index_code,
             saltBuilder.toCell()
         );
         TvmCell stateInit = tvm.buildStateInit({
@@ -163,7 +160,7 @@ contract MetaduesRoot is Upgradable {
             address(this)
         );
         TvmCell code = tvm.setCodeSalt(
-            subscription_index_identificator_code.toSlice().loadRef(),
+            subscription_index_identificator_code,
             saltBuilder.toCell()
         );
         TvmCell stateInit = tvm.buildStateInit({
