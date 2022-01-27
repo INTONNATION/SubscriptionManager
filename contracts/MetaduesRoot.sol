@@ -107,7 +107,7 @@ contract MetaduesRoot is Upgradable {
             bounce: true, 
             stateInit: subsIndexStateInit
             }(
-                address(Platform),
+                address(platform),
                 msg.sender
             );
         
@@ -119,7 +119,7 @@ contract MetaduesRoot is Upgradable {
                 bounce: true, 
                 stateInit: subsIndexidentificatorStateInit
                 }(
-                    address(Platform),
+                    address(platform),
                     msg.sender
                 );
         }
