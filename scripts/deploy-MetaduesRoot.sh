@@ -15,6 +15,10 @@ tondev sol compile ../contracts/MetaduesRoot.sol -o ../abi;
 tondev sol compile ../contracts/MetaduesAccount.sol -o ../abi;
 tondev sol compile ../contracts/Platform.sol -o ../abi;
 tondev sol compile ../contracts/Subscription.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionIndex.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionIdentificatorIndex.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionService.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionServiceIndex.sol -o ../abi;
 tos=tonos-cli
 
 CONTRACT_NAME=MetaduesRoot
@@ -71,10 +75,19 @@ $tos --url $NETWORK deploy ../abi/$1.tvc "{}" --sign $1.keys.json --abi ../abi/$
 platform_code=$(tvm_linker decode --tvc ../abi/Platform.tvc |grep "code:"|awk '{print $2}')
 account_code=$(tvm_linker decode --tvc ../abi/MetaduesAccount.tvc |grep "code:"|awk '{print $2}')
 subscription_code=$(tvm_linker decode --tvc ../abi/Subscription.tvc |grep "code:"|awk '{print $2}')
+subscription_index_code=$(tvm_linker decode --tvc ../abi/SubscriptionIndex.tvc |grep "code:"|awk '{print $2}')
+subscription_identificator_index_code=$(tvm_linker decode --tvc ../abi/SubscriptionIdentificatorIndex.tvc |grep "code:"|awk '{print $2}')
+service_code=$(tvm_linker decode --tvc ../abi/SubscriptionService.tvc |grep "code:"|awk '{print $2}')
+service_index_code=$(tvm_linker decode --tvc ../abi/SubscriptionServiceIndex.tvc |grep "code:"|awk '{print $2}')
+
 
 $tos --url $NETWORK call $CONTRACT_ADDRESS installPlatformOnce "{\"code\":\"$platform_code\"}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateAccountCode "{\"code\":\"$account_code\"}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateSubscriptionCode "{\"code\":\"$subscription_code\"}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateSubscriptionIndexCode "{\"code\":\"$subscription_index_code\"}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateSubscriptionIndexIdentificatorCode "{\"code\":\"$subscription_identificator_index_code\"}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateServiceCode "{\"code\":\"$service_code\"}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateServiceIndexCode "{\"code\":\"$service_index_code\"}" --abi ../abi/$1.abi.json
 }
 
 

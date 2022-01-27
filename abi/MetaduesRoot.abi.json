@@ -51,6 +51,22 @@
 			]
 		},
 		{
+			"name": "installOrUpdateServiceCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateServiceIndexCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "deployAccount",
 			"inputs": [
 			],
@@ -62,6 +78,15 @@
 			"inputs": [
 				{"name":"service_params","type":"cell"},
 				{"name":"identificator","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployService",
+			"inputs": [
+				{"name":"service_params","type":"cell"},
+				{"name":"service_category","type":"string"}
 			],
 			"outputs": [
 			]
@@ -105,6 +130,22 @@
 			"outputs": [
 				{"name":"subscription_index_identificator_code","type":"cell"}
 			]
+		},
+		{
+			"name": "service_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_code","type":"cell"}
+			]
+		},
+		{
+			"name": "service_index_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_index_code","type":"cell"}
+			]
 		}
 	],
 	"data": [
@@ -116,11 +157,14 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"platform_code","type":"cell"},
-		{"name":"has_platform_code","type":"bool"},
 		{"name":"account_code","type":"cell"},
 		{"name":"subscription_code","type":"cell"},
 		{"name":"subscription_index_code","type":"cell"},
 		{"name":"subscription_index_identificator_code","type":"cell"},
+		{"name":"service_code","type":"cell"},
+		{"name":"service_index_code","type":"cell"},
+		{"name":"has_platform_code","type":"bool"},
+		{"name":"service_version","type":"uint32"},
 		{"name":"account_version","type":"uint32"},
 		{"name":"subscription_version","type":"uint32"}
 	]
