@@ -151,15 +151,20 @@ contract MetaduesRoot {
     }
 
     function deployService(
-          TvmCell service_params, 
-          string service_category
+          TvmCell service_params
     ) 
         public view 
     {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
         tvm.accept();
+        TvmCell next_cell;
+        string category;
+        (,,,next_cell) = service_params.toSlice().decode(address, uint128, uint32, TvmCell);
+        (,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
+        (,category) = next_cell.toSlice().decode(address, string);
+        TvmCell service_code_salt = _buildServiceCode(category);
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.Service, _buildServiceParams(msg.sender, service_params, service_category)),
+            stateInit: _buildInitData(PlatformTypes.Service, _buildServiceParams(msg.sender, service_params)),
             value: 1 ton,
             flag: 0
         }();
@@ -171,7 +176,7 @@ contract MetaduesRoot {
             service_version,
             msg.sender
         );
-        TvmCell serviceIndexStateInit = _buildServiceIndex(msg.sender, service_params, service_category);
+        TvmCell serviceIndexStateInit = _buildServiceIndex(msg.sender, service_params);
         new SubscriptionServiceIndex{
             value: 1 ton, 
             flag: 1, 
@@ -191,6 +196,19 @@ contract MetaduesRoot {
         ); // Max 4 items
         TvmCell code = tvm.setCodeSalt(
             subscription_code,
+            saltBuilder.toCell()
+        );
+        return code;
+    }
+
+    function _buildServiceCode(string category) private view returns (TvmCell) {
+        TvmBuilder saltBuilder;
+        saltBuilder.store(
+            category, 
+            address(this)
+        ); // Max 4 items
+        TvmCell code = tvm.setCodeSalt(
+            service_code,
             saltBuilder.toCell()
         );
         return code;
@@ -251,8 +269,7 @@ contract MetaduesRoot {
 
     function _buildServiceIndex(
         address serviceOwner, 
-        TvmCell params, 
-        string serviceCategory
+        TvmCell params
     ) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         saltBuilder.store(serviceOwner,address(this));
@@ -264,8 +281,7 @@ contract MetaduesRoot {
             code: code,
             pubkey: 0,
             varInit: { 
-                params: params,
-                serviceCategory: serviceCategory
+                params: params
             },
             contr: SubscriptionServiceIndex
         });
@@ -298,11 +314,10 @@ contract MetaduesRoot {
         return builder.toCell();
     }
 
-    function _buildServiceParams(address subscription_owner, TvmCell service_params, string category) private inline pure returns (TvmCell) {
+    function _buildServiceParams(address subscription_owner, TvmCell service_params) private inline pure returns (TvmCell) {
         TvmBuilder builder;
         builder.store(subscription_owner);
         builder.store(service_params);
-        builder.store(category);
         return builder.toCell();
     }
 }
