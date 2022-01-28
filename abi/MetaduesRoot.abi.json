@@ -85,8 +85,7 @@
 		{
 			"name": "deployService",
 			"inputs": [
-				{"name":"service_params","type":"cell"},
-				{"name":"service_category","type":"string"}
+				{"name":"service_params","type":"cell"}
 			],
 			"outputs": [
 			]

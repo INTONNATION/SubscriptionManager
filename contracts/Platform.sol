@@ -25,6 +25,7 @@ contract Platform {
         builder.store(type_id);
         builder.store(platform_code);
         builder.store(params);
+        builder.store(code);
 
         tvm.setcode(code);
         tvm.setCurrentCode(code);

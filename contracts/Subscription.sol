@@ -138,8 +138,7 @@ contract Subscription {
         platform_code = s.loadRef();
 
         TvmSlice platform_params = s.loadRefAsSlice();
-        TvmCell indexes;
-        (owner_address, service_params, account_address, indexes) = platform_params.decode(address, TvmCell, address, TvmCell);
+        (owner_address, service_params, account_address) = platform_params.decode(address, TvmCell, address);
         (
             svcparams.to, 
             svcparams.value, 
@@ -163,7 +162,7 @@ contract Subscription {
         (svcparams.currency_root, svcparams.category) = next_cell.toSlice().decode(address, string);
         uint32 _period = svcparams.period * 3600 * 24;
         subscription = paymentStatus(_period, 0, STATUS_NONACTIVE);
-        (subscription_index_address,subscription_identificator_index_address,svcparams.subscription_identificator) = indexes.toSlice().decode(address, address, TvmCell);
+        // (subscription_index_address,subscription_identificator_index_address,svcparams.subscription_identificator) = indexes.toSlice().decode(address, address, TvmCell);
         ITokenRoot(svcparams.currency_root).deployWallet{
             value: 0.2 ton, 
             bounce: true, 
