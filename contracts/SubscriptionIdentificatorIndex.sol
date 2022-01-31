@@ -15,7 +15,7 @@ contract SubscriptionidentificatorIndex {
         string description;
         TvmCell subscription_identificator;
         string image;
-        string currency;
+        address currency_root;
         string category;
     }
     TvmCell static params;
@@ -63,7 +63,7 @@ contract SubscriptionidentificatorIndex {
             string, 
             TvmCell
         );
-        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
+        (svcparams.currency_root, svcparams.category) = nextCell2.toSlice().decode(address, string);
     }
 
     function cancel() public onlyOwner {

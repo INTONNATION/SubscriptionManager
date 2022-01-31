@@ -5,7 +5,7 @@ LOCALNET=http://127.0.0.1
 DEVNET=https://net.ton.dev
 MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
-NETWORK=$FLD
+NETWORK=$DEVNET
 
 if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
@@ -24,16 +24,16 @@ tos=tonos-cli
 CONTRACT_NAME=MetaduesRoot
 
 # Giver FLD
-giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
-function giver {
-       $tos --url $NETWORK call --abi ../abi/local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
-}
+# giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
+# function giver {
+#        $tos --url $NETWORK call --abi ../abi/local_giver.abi.json $giver sendGrams "{\"dest\":\"$1\",\"amount\":20000000000}"
+# }
 
 # Giver DEVNET
-#giver=0:ece57bcc6c530283becbbd8a3b24d3c5987cdddc3c8b7b33be6e4a6312490415
-#function giver {
-#$tos --url $NETWORK call --sign ../abi/GiverV2.keys.json --abi ../abi/GiverV2.abi.json $giver sendTransaction "{\"dest\":\"$1\",\"value\":5000000000, \"bounce\":\"false\"}"
-#}
+giver=0:705e21688486a905a2f83f940dfbafcd4d319cff31d4189ebf4483e16553fa33
+function giver {
+$tos --url $NETWORK call --sign ../abi/GiverV2.keys.json --abi ../abi/GiverV2.abi.json $giver sendTransaction "{\"dest\":\"$1\",\"value\":5000000000, \"bounce\":\"false\"}"
+}
 
 function get_address {
 echo $(cat log.log | grep "Raw address:" | cut -d ' ' -f 3)

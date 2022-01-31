@@ -6,7 +6,7 @@ import "libraries/MsgFlag.sol";
 contract Platform {
     address static root;
     uint8 static type_id;
-    TvmCell static params;
+    TvmCell static platform_params;
     TvmCell platform_code;
 
     constructor() public onlyRoot {   
@@ -14,7 +14,7 @@ contract Platform {
         platform_code = tvm.code();
     }
 
-    function initialize(TvmCell code, uint32 version, address send_gas_to) external onlyRoot {
+    function initialize(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
 
         TvmBuilder builder;
 
@@ -24,7 +24,8 @@ contract Platform {
         builder.store(version);
         builder.store(type_id);
         builder.store(platform_code);
-        builder.store(params);
+        builder.store(platform_params);
+        builder.store(contract_params);
         builder.store(code);
 
         tvm.setcode(code);

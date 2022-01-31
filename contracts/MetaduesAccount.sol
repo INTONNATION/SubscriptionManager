@@ -33,7 +33,7 @@ contract MetaduesAccount {
             varInit: {
                      root: root,
                      type_id: type_id,
-                     params: platform_params
+                     platform_params: platform_params
             },
             contr: Platform
         });
