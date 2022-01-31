@@ -14,6 +14,7 @@
 			"name": "initialize",
 			"inputs": [
 				{"name":"code","type":"cell"},
+				{"name":"contract_params","type":"cell"},
 				{"name":"version","type":"uint32"},
 				{"name":"send_gas_to","type":"address"}
 			],
@@ -24,7 +25,7 @@
 	"data": [
 		{"key":1,"name":"root","type":"address"},
 		{"key":2,"name":"type_id","type":"uint8"},
-		{"key":3,"name":"params","type":"cell"}
+		{"key":3,"name":"platform_params","type":"cell"}
 	],
 	"events": [
 	],
@@ -34,7 +35,7 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"root","type":"address"},
 		{"name":"type_id","type":"uint8"},
-		{"name":"params","type":"cell"},
+		{"name":"platform_params","type":"cell"},
 		{"name":"platform_code","type":"cell"}
 	]
 }

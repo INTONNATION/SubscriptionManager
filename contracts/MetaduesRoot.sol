@@ -80,6 +80,7 @@ contract MetaduesRoot {
     // Deploy contracts
     function deployAccount() public view {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
+        TvmCell account_params;
         tvm.accept();
         Platform platform = new Platform {
             stateInit: _buildInitData(PlatformTypes.Account, _buildAccountParams(msg.sender)),
@@ -91,6 +92,7 @@ contract MetaduesRoot {
             flag: 0
         }(
             account_code,
+            account_params,
             account_version,
             msg.sender
         );
@@ -116,6 +118,7 @@ contract MetaduesRoot {
             flag: 0
         }(
             subscription_code_salt,
+            service_params,
             subscription_version,
             msg.sender
 
@@ -159,12 +162,13 @@ contract MetaduesRoot {
         tvm.accept();
         TvmCell next_cell;
         string category;
+        string service_name;
         (,,,next_cell) = service_params.toSlice().decode(address, uint128, uint32, TvmCell);
-        (,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
+        (service_name,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
         (,category) = next_cell.toSlice().decode(address, string);
         TvmCell service_code_salt = _buildServiceCode(category);
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.Service, _buildServiceParams(msg.sender, service_params)),
+            stateInit: _buildInitData(PlatformTypes.Service, _buildServiceParams(msg.sender, service_name)),
             value: 1 ton,
             flag: 0
         }();
@@ -172,7 +176,8 @@ contract MetaduesRoot {
             value: 1 ton,
             flag: 0
         }(
-            service_code,
+            service_code_salt,
+            service_params,
             service_version,
             msg.sender
         );
@@ -294,7 +299,7 @@ contract MetaduesRoot {
             varInit: {
                 root: address(this),
                 type_id: type_id,
-                params: params
+                platform_params: params
             },
             pubkey: 0,
             code: platform_code
@@ -314,10 +319,10 @@ contract MetaduesRoot {
         return builder.toCell();
     }
 
-    function _buildServiceParams(address subscription_owner, TvmCell service_params) private inline pure returns (TvmCell) {
+    function _buildServiceParams(address service_owner, string service_name) private inline pure returns (TvmCell) {
         TvmBuilder builder;
-        builder.store(subscription_owner);
-        builder.store(service_params);
+        builder.store(service_owner);
+        builder.store(service_name);
         return builder.toCell();
     }
 }

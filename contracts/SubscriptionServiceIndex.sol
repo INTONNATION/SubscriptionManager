@@ -21,7 +21,7 @@ contract SubscriptionServiceIndex is Upgradable {
         string name;
         string description;
         string image;
-        string currency;
+        address currency_root;
         string category;
     }
     ServiceParams public svcparams;
@@ -66,7 +66,7 @@ contract SubscriptionServiceIndex is Upgradable {
             string, 
             TvmCell
         );
-        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
+        (svcparams.currency_root, svcparams.category) = nextCell2.toSlice().decode(address, string);
         serviceAddress = serviceAddress_;
         serviceOwner = ownerAddress;
     }
