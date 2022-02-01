@@ -1,4 +1,4 @@
-pragma ton-solidity ^ 0.51.0;
+pragma ton-solidity ^ 0.56.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -12,6 +12,7 @@ import "TIP3/interfaces/ITokenWallet.sol";
 
 contract MetaduesAccount {
    
+    mapping(address => uint128) balance;
     address public root;
     TvmCell platform_code;
     TvmCell platform_params;
@@ -74,7 +75,24 @@ contract MetaduesAccount {
         return { value: 0, flag: 128, bounce: false } 0;
         }
 
-
+    function onAcceptTokensTransfer(
+        address tokenRoot,
+        uint128 amount,
+        address sender,
+        address senderWallet,
+        address remainingGasTo,
+        TvmCell payload
+    ) external
+    {
+        optional(uint128) current_balance = balance.fetch(tokenRoot);
+        if (current_balance.hasValue()) {
+            uint128 new_balance = current_balance.get() + amount;
+            balance[tokenRoot] = new_balance;
+        } else {
+            balance[tokenRoot] = amount;
+        }
+        
+    }
 
    
 
