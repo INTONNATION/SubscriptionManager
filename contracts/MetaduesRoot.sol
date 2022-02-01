@@ -100,16 +100,18 @@ contract MetaduesRoot {
     }
     
     function deploySubscription(
-        TvmCell service_params,
+        address service_address,
         TvmCell identificator
     ) 
         public view 
     {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
-        tvm.accept();
+        tvm.accept();  
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
+        TvmBuilder service_params;
+        service_params.store(service_address);
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.Subscription, _buildSubscriptionParams(msg.sender, service_params)),
+            stateInit: _buildInitData(PlatformTypes.Subscription, _buildSubscriptionParams(msg.sender, service_address)),
             value: 1 ton,
             flag: 0
         }();
@@ -118,18 +120,16 @@ contract MetaduesRoot {
             flag: 0
         }(
             subscription_code_salt,
-            service_params,
+            service_params.toCell(),
             subscription_version,
             msg.sender
 
         );
         TvmCell subsIndexStateInit = _buildSubscriptionIndex(
-            msg.sender, 
-            service_params, 
-            identificator
+            service_address
         );
         TvmCell subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
-            service_params, 
+            service_address, 
             identificator
         );
         new SubscriptionIndex{
@@ -220,12 +220,13 @@ contract MetaduesRoot {
     }
 
     function _buildSubscriptionIdentificatorIndex(
-        TvmCell params, 
+        address service_address, 
         TvmCell identificator
     ) private view returns (TvmCell) 
     {
         TvmBuilder saltBuilder;
         saltBuilder.store(
+            service_address,
             identificator,
             address(this)
         );
@@ -237,8 +238,6 @@ contract MetaduesRoot {
             code: code,
             pubkey: 0,
             varInit: { 
-                params: params,
-                subscription_identificator: identificator
             },
             contr: SubscriptionidentificatorIndex
         });
@@ -246,14 +245,12 @@ contract MetaduesRoot {
     }
 
     function _buildSubscriptionIndex(
-        address serviceOwner, 
-        TvmCell params, 
-        TvmCell identificator
+        address service_address
     ) private view returns (TvmCell) 
     {
         TvmBuilder saltBuilder;
         saltBuilder.store(
-            serviceOwner,
+            service_address,
             address(this)
         );
         TvmCell code = tvm.setCodeSalt(
@@ -264,8 +261,6 @@ contract MetaduesRoot {
             code: code,
             pubkey: 0,
             varInit: { 
-                params: params,
-                subscription_identificator: identificator
             },
             contr: SubscriptionIndex
         });
@@ -310,10 +305,10 @@ contract MetaduesRoot {
         return builder.toCell();
     }
 
-    function _buildSubscriptionParams(address subscription_owner, TvmCell service_params) private inline pure returns (TvmCell) {
+    function _buildSubscriptionParams(address subscription_owner, address service_address) private inline pure returns (TvmCell) {
         TvmBuilder builder;
         builder.store(subscription_owner);
-        builder.store(service_params);
+        builder.store(service_address);
         return builder.toCell();
     }
 

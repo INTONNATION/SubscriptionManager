@@ -76,7 +76,7 @@
 		{
 			"name": "deploySubscription",
 			"inputs": [
-				{"name":"service_params","type":"cell"},
+				{"name":"service_address","type":"address"},
 				{"name":"identificator","type":"cell"}
 			],
 			"outputs": [
