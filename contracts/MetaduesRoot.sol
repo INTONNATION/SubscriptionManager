@@ -181,7 +181,7 @@ contract MetaduesRoot {
             service_version,
             msg.sender
         );
-        TvmCell serviceIndexStateInit = _buildServiceIndex(msg.sender, service_params);
+        TvmCell serviceIndexStateInit = _buildServiceIndex(msg.sender);
         new SubscriptionServiceIndex{
             value: 1 ton, 
             flag: 1, 
@@ -273,8 +273,7 @@ contract MetaduesRoot {
     }
 
     function _buildServiceIndex(
-        address serviceOwner, 
-        TvmCell params
+        address serviceOwner
     ) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         saltBuilder.store(serviceOwner,address(this));
@@ -286,7 +285,6 @@ contract MetaduesRoot {
             code: code,
             pubkey: 0,
             varInit: { 
-                params: params
             },
             contr: SubscriptionServiceIndex
         });

@@ -28,30 +28,6 @@
 			]
 		},
 		{
-			"name": "svcparams",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
-			]
-		},
-		{
-			"name": "params",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"params","type":"cell"}
-			]
-		},
-		{
-			"name": "serviceCategory",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"serviceCategory","type":"string"}
-			]
-		},
-		{
 			"name": "serviceAddress",
 			"inputs": [
 			],
@@ -69,8 +45,6 @@
 		}
 	],
 	"data": [
-		{"key":1,"name":"params","type":"cell"},
-		{"key":2,"name":"serviceCategory","type":"string"}
 	],
 	"events": [
 	],
@@ -78,9 +52,6 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
-		{"name":"params","type":"cell"},
-		{"name":"serviceCategory","type":"string"},
 		{"name":"serviceAddress","type":"address"},
 		{"name":"serviceOwner","type":"address"}
 	]
