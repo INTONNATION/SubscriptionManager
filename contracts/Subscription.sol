@@ -16,6 +16,12 @@ interface IMetaduesAccount  {
     function paySubscription (TvmCell params, address account_wallet, address subscription_wallet) external responsible returns (uint8);
 }
 
+interface ISubscriptionService  {
+    function getParams() external view responsible returns (TvmCell);
+}
+
+
+
 interface ISubscriptionIndexContract {
     function cancel () external;
 }
@@ -34,8 +40,9 @@ contract Subscription {
     uint8 constant STATUS_ACTIVE = 1;
     uint8 constant STATUS_NONACTIVE = 2;
     uint8 constant STATUS_PROCESSING = 3;
+    address service_address;
     address subscription_index_address;
-    address subscription_identificator_index_address;
+    address subscription_index_identificator_address;
     uint32 cooldown = 0;
 
     struct serviceParams {
@@ -105,14 +112,17 @@ contract Subscription {
         address remainingGasTo,
         TvmCell payload
     ) public {
-        ITokenWallet(msg.sender).transferToWallet{value: 0.5 ton}(
+        if (subscription.status == STATUS_PROCESSING){
+          ITokenWallet(msg.sender).transferToWallet{value: 0.5 ton}(
+            //add fee for proxy TIP-3
             svcparams.value,
             svcparams.to, // can be service owner TIP3 Wallet
             address(this),
             true,
             payload
-        );
-        subscription.status = STATUS_ACTIVE;
+            );
+            subscription.status = STATUS_ACTIVE;
+            }
     }
     
     function onPaySubscription(uint8 status) external {
@@ -138,7 +148,31 @@ contract Subscription {
         platform_code = s.loadRef();
 
         TvmSlice platform_params = s.loadRefAsSlice();
-        (owner_address, service_params, account_address) = platform_params.decode(address, TvmCell, address);
+        TvmSlice contract_params = s.loadRefAsSlice();
+        (service_address,subscription_index_address,subscription_index_identificator_address, account_address) = contract_params.decode(address,address,address,address);
+        ISubscriptionService(service_address).getParams{
+            value: 0.2 ton, 
+            bounce: true, 
+            flag: 0,
+            callback: Subscription.onGetParams
+        }(
+        );
+         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
+    }
+
+    function onDeployWallet(address subscription_wallet_) external {
+        subscription_wallet = subscription_wallet_;
+        ITokenRoot(svcparams.currency_root).walletOf{
+             value: 0.1 ton, 
+             bounce: true,
+             flag: 0,
+             callback: Subscription.onWalletOf
+        }(account_address);
+    }
+
+
+    function onGetParams(TvmCell service_params_) external {
+        service_params=service_params_;
         (
             svcparams.to, 
             svcparams.value, 
@@ -162,7 +196,6 @@ contract Subscription {
         (svcparams.currency_root, svcparams.category) = next_cell.toSlice().decode(address, string);
         uint32 _period = svcparams.period * 3600 * 24;
         subscription = paymentStatus(_period, 0, STATUS_NONACTIVE);
-        // (subscription_index_address,subscription_identificator_index_address,svcparams.subscription_identificator) = indexes.toSlice().decode(address, address, TvmCell);
         ITokenRoot(svcparams.currency_root).deployWallet{
             value: 0.2 ton, 
             bounce: true, 
@@ -172,17 +205,7 @@ contract Subscription {
             address(this),
             0.1 ton
         );
-         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
-    }
-
-    function onDeployWallet(address subscription_wallet_) external {
-        subscription_wallet = subscription_wallet_;
-        ITokenRoot(svcparams.currency_root).walletOf{
-             value: 0.1 ton, 
-             bounce: true,
-             flag: 0,
-             callback: Subscription.onWalletOf
-        }(account_address);
+        
     }
 
     function onWalletOf(address account_wallet_) external {
@@ -193,7 +216,7 @@ contract Subscription {
     function cancel() public {
         require(msg.sender == owner_address, SubscriptionErrors.error_message_sender_is_not_index);
         ISubscriptionIndexContract(subscription_index_address).cancel();
-        ISubscriptionIndexContract(subscription_identificator_index_address).cancel();
+        ISubscriptionIndexContract(subscription_index_identificator_address).cancel();
         selfdestruct(owner_address);
     }
 }

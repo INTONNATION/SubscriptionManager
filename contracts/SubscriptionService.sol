@@ -36,11 +36,11 @@ contract SubscriptionService {
     }
 
     
-    function getParams() public view responsible returns (TvmCell) {
+    function getParams() external view responsible returns (TvmCell) {
         return{value: 0, bounce: false, flag: 64} service_params;
     }
 
-    function getStatus() public view responsible returns (uint8){
+    function getStatus() external view responsible returns (uint8){
         return{value: 0, bounce: false, flag: 64} 0;  
     }
 

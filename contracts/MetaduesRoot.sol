@@ -107,9 +107,17 @@ contract MetaduesRoot {
     {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
         tvm.accept();  
+        TvmCell subsIndexStateInit = _buildSubscriptionIndex(
+            service_address
+        );
+        TvmCell subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
+            service_address, 
+            identificator
+        );
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         TvmBuilder service_params;
-        service_params.store(service_address);
+        address owner_account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildAccountParams(msg.sender))));
+        service_params.store(service_address, address(tvm.hash(subsIndexStateInit)), address(tvm.hash(subsIndexIdentificatorStateInit)),owner_account_address);
         Platform platform = new Platform {
             stateInit: _buildInitData(PlatformTypes.Subscription, _buildSubscriptionParams(msg.sender, service_address)),
             value: 1 ton,
@@ -125,13 +133,7 @@ contract MetaduesRoot {
             msg.sender
 
         );
-        TvmCell subsIndexStateInit = _buildSubscriptionIndex(
-            service_address
-        );
-        TvmCell subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
-            service_address, 
-            identificator
-        );
+
         new SubscriptionIndex{
             value: 0.02 ton, 
             flag: 0,
