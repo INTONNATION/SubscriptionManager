@@ -47,6 +47,14 @@
 			]
 		},
 		{
+			"name": "onGetParams",
+			"inputs": [
+				{"name":"service_params_","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "onWalletOf",
 			"inputs": [
 				{"name":"account_wallet_","type":"address"}
@@ -119,8 +127,9 @@
 		{"name":"subscription_wallet","type":"address"},
 		{"name":"account_wallet","type":"address"},
 		{"name":"account_address","type":"address"},
+		{"name":"service_address","type":"address"},
 		{"name":"subscription_index_address","type":"address"},
-		{"name":"subscription_identificator_index_address","type":"address"},
+		{"name":"subscription_index_identificator_address","type":"address"},
 		{"name":"cooldown","type":"uint32"},
 		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
 		{"components":[{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}

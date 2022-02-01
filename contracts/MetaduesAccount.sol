@@ -12,7 +12,7 @@ import "TIP3/interfaces/ITokenWallet.sol";
 
 contract MetaduesAccount {
    
-    mapping(address => uint128) balance;
+    mapping(address => uint128) balance_map;
     address public root;
     TvmCell platform_code;
     TvmCell platform_params;
@@ -71,8 +71,26 @@ contract MetaduesAccount {
         require(subsciption_addr == msg.sender, 333);
         TvmCell payload;
         //check balance if enouph return 0 if not return 1
-        ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload);
-        return { value: 0, flag: 128, bounce: false } 0;
+        address currency_root;
+        uint128 value;
+        TvmCell next_cell;
+        (,value,,next_cell) = params.toSlice().decode(address, uint128, uint32, TvmCell);
+        (,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
+        (currency_root,) = next_cell.toSlice().decode(address, string);
+        
+        optional(uint128) current_balance_key_value = balance_map.fetch(currency_root);
+        if (current_balance_key_value.hasValue()){
+            uint128 current_balance = current_balance_key_value.get();
+            
+            if (value > current_balance){
+                return { value: 0, flag: 128, bounce: false } 1;
+            }
+            else{
+                ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload);
+                return { value: 0, flag: 128, bounce: false } 0;
+            }
+        }
+        else {return { value: 0, flag: 128, bounce: false } 1;}
         }
 
     function onAcceptTokensTransfer(
@@ -84,12 +102,12 @@ contract MetaduesAccount {
         TvmCell payload
     ) external
     {
-        optional(uint128) current_balance = balance.fetch(tokenRoot);
+        optional(uint128) current_balance = balance_map.fetch(tokenRoot);
         if (current_balance.hasValue()) {
             uint128 new_balance = current_balance.get() + amount;
-            balance[tokenRoot] = new_balance;
+            balance_map[tokenRoot] = new_balance;
         } else {
-            balance[tokenRoot] = amount;
+            balance_map[tokenRoot] = amount;
         }
         
     }

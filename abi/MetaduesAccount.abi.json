@@ -32,6 +32,19 @@
 			]
 		},
 		{
+			"name": "onAcceptTokensTransfer",
+			"inputs": [
+				{"name":"tokenRoot","type":"address"},
+				{"name":"amount","type":"uint128"},
+				{"name":"sender","type":"address"},
+				{"name":"senderWallet","type":"address"},
+				{"name":"remainingGasTo","type":"address"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "root",
 			"inputs": [
 			],
@@ -48,6 +61,7 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
+		{"name":"balance_map","type":"map(address,uint128)"},
 		{"name":"root","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
