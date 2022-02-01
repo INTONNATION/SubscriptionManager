@@ -36,6 +36,14 @@
 			]
 		},
 		{
+			"name": "updateServiceParams",
+			"inputs": [
+				{"name":"new_service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "root",
 			"inputs": [
 			],

@@ -57,11 +57,12 @@ contract SubscriptionService {
         root = root_;
         current_version = version;  
         type_id = type_id_;
+        TvmCell nextCell;
+        address service_owner;
         platform_code = s.loadRef();
         platform_params = s.loadRef();
+        (service_owner, svcparams.name) = platform_params.toSlice().decode(address, string);
         service_params = s.loadRef();
-        
-        TvmCell nextCell;
         (
             svcparams.to, 
             svcparams.value, 
@@ -75,7 +76,7 @@ contract SubscriptionService {
         );
         TvmCell nextCell2;
         (
-            svcparams.name, 
+            , 
             svcparams.description, 
             svcparams.image, 
             nextCell2
@@ -88,5 +89,40 @@ contract SubscriptionService {
         (svcparams.currency_root, svcparams.category) = nextCell2.toSlice().decode(address, string);
       //  subscriptionServiceIndexAddress = subscriptionServiceIndexAddress_;
     }
-    
+     
+     function updateServiceParams(TvmCell new_service_params) public onlyOwner{
+        TvmCell nextCell;
+        (
+            svcparams.to, 
+            svcparams.value, 
+            svcparams.period, 
+            nextCell
+        ) = new_service_params.toSlice().decode(
+            address,
+            uint128,
+            uint32,
+            TvmCell
+        );
+        TvmCell nextCell2;
+        (
+            , 
+            svcparams.description, 
+            svcparams.image, 
+            nextCell2
+        ) = nextCell.toSlice().decode(
+            string, 
+            string, 
+            string, 
+            TvmCell
+        );
+        (svcparams.currency_root, svcparams.category) = nextCell2.toSlice().decode(address, string);           
+
+
+     }
+
+     modifier onlyOwner() {
+        tvm.accept();
+        _;
+    }
+
 }
