@@ -14,19 +14,6 @@ interface ISubscriptionServiceContract {
 
 contract SubscriptionServiceIndex is Upgradable {
 
-    struct ServiceParams {
-        address to;
-        uint128 value;
-        uint32 period;
-        string name;
-        string description;
-        string image;
-        address currency_root;
-        string category;
-    }
-    ServiceParams public svcparams;
-    TvmCell static public params;
-    string static public serviceCategory;
     address public serviceAddress;
     address public serviceOwner;
 
@@ -42,31 +29,6 @@ contract SubscriptionServiceIndex is Upgradable {
         (address ownerAddress, address subsmanAddr) = salt.get().toSlice().decode(address, address);
         require(msg.sender == subsmanAddr, SubscriptionServiceErrors.error_message_sender_is_not_subsman);
         require(ownerAddress == senderAddress, SubscriptionServiceErrors.error_define_owner_in_salt);
-        TvmCell nextCell;
-        (
-            svcparams.to, 
-            svcparams.value, 
-            svcparams.period, 
-            nextCell
-        ) = params.toSlice().decode(
-            address, 
-            uint128, 
-            uint32, 
-            TvmCell
-        );
-        TvmCell nextCell2;
-        (
-            svcparams.name, 
-            svcparams.description, 
-            svcparams.image, 
-            nextCell2
-        ) = nextCell.toSlice().decode(
-            string, 
-            string, 
-            string, 
-            TvmCell
-        );
-        (svcparams.currency_root, svcparams.category) = nextCell2.toSlice().decode(address, string);
         serviceAddress = serviceAddress_;
         serviceOwner = ownerAddress;
     }
