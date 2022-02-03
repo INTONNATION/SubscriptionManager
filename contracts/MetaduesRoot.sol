@@ -116,8 +116,14 @@ contract MetaduesRoot {
         );
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         TvmBuilder service_params;
+        TvmBuilder index_addreses;
         address owner_account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildAccountParams(msg.sender))));
-        service_params.store(service_address, address(tvm.hash(subsIndexStateInit)), address(tvm.hash(subsIndexIdentificatorStateInit)),owner_account_address);
+        address subs_index = address(tvm.hash(subsIndexStateInit));
+        address subs_index_identificator = address(tvm.hash(subsIndexIdentificatorStateInit));
+        index_addreses.store(subs_index, subs_index_identificator);
+        service_params.store(service_address,owner_account_address,index_addreses.toCell());
+
+        // service_params.store(owner_account_address);
         Platform platform = new Platform {
             stateInit: _buildInitData(PlatformTypes.Subscription, _buildSubscriptionParams(msg.sender, service_address)),
             value: 1 ton,
@@ -144,15 +150,15 @@ contract MetaduesRoot {
                 msg.sender
             );
         
-            new SubscriptionidentificatorIndex{
-                value: 0.02 ton, 
-                flag: 0, 
-                bounce: true, 
-                stateInit: subsIndexIdentificatorStateInit
-                }(
-                    address(platform),
-                    msg.sender
-                );
+        new SubscriptionidentificatorIndex{
+            value: 0.02 ton, 
+            flag: 0, 
+            bounce: true, 
+            stateInit: subsIndexIdentificatorStateInit
+            }(
+                address(platform),
+                msg.sender
+            );
     }
 
     function deployService(
