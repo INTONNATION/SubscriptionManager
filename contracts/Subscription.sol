@@ -149,7 +149,9 @@ contract Subscription {
 
         TvmSlice platform_params = s.loadRefAsSlice();
         TvmSlice contract_params = s.loadRefAsSlice();
-        (service_address,subscription_index_address,subscription_index_identificator_address, account_address) = contract_params.decode(address,address,address,address);
+        TvmCell nextCell;
+        (service_address, account_address, nextCell) = contract_params.decode(address,address,TvmCell);
+        (subscription_index_address,subscription_index_identificator_address) = nextCell.toSlice().decode(address,address);
         ISubscriptionService(service_address).getParams{
             value: 0.2 ton, 
             bounce: true, 
