@@ -2,7 +2,7 @@
 set -xe
 
 LOCALNET=http://127.0.0.1
-DEVNET=https://net.ton.dev
+DEVNET=https://net1.ton.dev
 MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$DEVNET

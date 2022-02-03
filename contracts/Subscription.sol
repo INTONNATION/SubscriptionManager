@@ -174,27 +174,31 @@ contract Subscription {
 
 
     function onGetParams(TvmCell service_params_) external {
+        TvmCell next_cell;
         service_params=service_params_;
         (
             svcparams.to, 
             svcparams.value, 
-            svcparams.period
+            svcparams.period,
+            next_cell
         ) = service_params.toSlice().decode(
             address, 
             uint128, 
-            uint32
+            uint32,
+            TvmCell
         );
-        TvmCell next_cell = service_params.toSlice().loadRef();
+ 
         (
             svcparams.name, 
             svcparams.description, 
-            svcparams.image 
+            svcparams.image,
+            next_cell
         ) = next_cell.toSlice().decode(
             string, 
             string, 
-            string 
+            string,
+            TvmCell
         );
-        next_cell = service_params.toSlice().loadRef();
         (svcparams.currency_root, svcparams.category) = next_cell.toSlice().decode(address, string);
         uint32 _period = svcparams.period * 3600 * 24;
         subscription = paymentStatus(_period, 0, STATUS_NONACTIVE);
