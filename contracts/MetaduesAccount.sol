@@ -7,7 +7,7 @@ pragma AbiHeader pubkey;
 import "libraries/MetaduesRootErrors.sol";
 import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
-import "TIP3/interfaces/ITokenWallet.sol";
+import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 
 
 contract MetaduesAccount {

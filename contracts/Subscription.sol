@@ -8,8 +8,8 @@ import "libraries/SubscriptionErrors.sol";
 
 import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
-import "TIP3/interfaces/ITokenWallet.sol";
-import "TIP3/interfaces/ITokenRoot.sol";
+import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
+import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
 
 interface IMetaduesAccount  {
