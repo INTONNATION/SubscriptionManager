@@ -78,10 +78,9 @@ contract MetaduesRoot {
     }
 
     // Deploy contracts
-    function deployAccount() public view {
+    function deployAccount() external view {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
         TvmCell account_params;
-        tvm.accept();
         Platform platform = new Platform {
             stateInit: _buildInitData(PlatformTypes.Account, _buildAccountParams(msg.sender)),
             value: 1 ton,

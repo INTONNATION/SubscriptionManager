@@ -12,34 +12,15 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol"
 
 contract MetaduesAccount {
    
-    mapping(address => uint128) balance_map;
+    mapping(address => uint128) public balance_map;
     address public root;
     TvmCell platform_code;
     TvmCell platform_params;
     uint32 current_version;
     uint8 type_id;
+    address account_owner;
 
     constructor() public { revert(); }
-    
-    function buildPlatformState(TvmCell params) public returns (TvmCell){
-        TvmBuilder saltBuilder;
-        saltBuilder.store(params);
-        TvmCell codeSalt = tvm.setCodeSalt(
-            platform_code,
-            saltBuilder.toCell()
-        );
-        TvmCell newImage = tvm.buildStateInit({
-            code: codeSalt,
-            pubkey: 0,
-            varInit: {
-                     root: root,
-                     type_id: type_id,
-                     platform_params: platform_params
-            },
-            contr: Platform
-        });
-        return newImage;
-    }
 
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
@@ -55,20 +36,19 @@ contract MetaduesAccount {
         platform_params = s.loadRef();   
         current_version = version;  
         type_id = type_id_;
+        account_owner = platform_params.toSlice().decode(address);
   
         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
 
-    function paySubscription(TvmCell params, address account_wallet, address subscription_wallet) 
+    function paySubscription(TvmCell params, address account_wallet, address subscription_wallet, address service_address) 
         external
         responsible
         returns (uint8) {
         ( , uint128 tokens) = params.toSlice().decode(address, uint128);
-        address subsciption_addr = address(tvm.hash(buildPlatformState(
-            params
-            )));
-        require(subsciption_addr == msg.sender, 333);
+        address subsciption_addr = address(tvm.hash(_buildInitData(PlatformTypes.Subscription, _buildSubscriptionParams(account_owner, service_address)))); 
+//        require(subsciption_addr == msg.sender, 333);
         TvmCell payload;
         //check balance if enouph return 0 if not return 1
         address currency_root;
@@ -112,7 +92,25 @@ contract MetaduesAccount {
         
     }
 
-   
-
+    function _buildSubscriptionParams(address subscription_owner, address service_address) private inline pure returns (TvmCell) {
+        TvmBuilder builder;
+        builder.store(subscription_owner);
+        builder.store(service_address);
+        return builder.toCell();
+    }
+  
+    
+    function _buildInitData(uint8 type_id, TvmCell params) private inline view returns (TvmCell) {
+        return tvm.buildStateInit({
+            contr: Platform,
+            varInit: {
+                root: address(this),
+                type_id: type_id,
+                platform_params: params
+            },
+            pubkey: 0,
+            code: platform_code
+        });
+    }
 
 }
