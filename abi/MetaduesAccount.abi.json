@@ -11,21 +11,13 @@
 			]
 		},
 		{
-			"name": "buildPlatformState",
-			"inputs": [
-				{"name":"params","type":"cell"}
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
 			"name": "paySubscription",
 			"inputs": [
 				{"name":"answerId","type":"uint32"},
 				{"name":"params","type":"cell"},
 				{"name":"account_wallet","type":"address"},
-				{"name":"subscription_wallet","type":"address"}
+				{"name":"subscription_wallet","type":"address"},
+				{"name":"service_address","type":"address"}
 			],
 			"outputs": [
 				{"name":"value0","type":"uint8"}
@@ -42,6 +34,14 @@
 				{"name":"payload","type":"cell"}
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "balance_map",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"balance_map","type":"map(address,uint128)"}
 			]
 		},
 		{
@@ -66,6 +66,7 @@
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"current_version","type":"uint32"},
-		{"name":"type_id","type":"uint8"}
+		{"name":"type_id","type":"uint8"},
+		{"name":"account_owner","type":"address"}
 	]
 }

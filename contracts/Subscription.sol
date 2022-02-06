@@ -13,7 +13,7 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
 
 interface IMetaduesAccount  {
-    function paySubscription (TvmCell params, address account_wallet, address subscription_wallet) external responsible returns (uint8);
+    function paySubscription (TvmCell params, address account_wallet, address subscription_wallet, address service_address) external responsible returns (uint8);
 }
 
 interface ISubscriptionService  {
@@ -81,7 +81,8 @@ contract Subscription {
                 }(
                     service_params,
                     account_wallet,
-                    subscription_wallet
+                    subscription_wallet,
+                    service_address
                 );
             }
         } else {
@@ -100,7 +101,8 @@ contract Subscription {
         }(
             service_params, 
             account_wallet, 
-            subscription_wallet
+            subscription_wallet,
+            service_address
         );
     }
 
@@ -113,10 +115,11 @@ contract Subscription {
         TvmCell payload
     ) public {
         if (subscription.status == STATUS_PROCESSING){
-          ITokenWallet(msg.sender).transferToWallet{value: 0.5 ton}(
+          ITokenWallet(msg.sender).transfer{value: 0.5 ton}(
             //add fee for proxy TIP-3
             svcparams.value,
             svcparams.to, // can be service owner TIP3 Wallet
+            0,
             address(this),
             true,
             payload
