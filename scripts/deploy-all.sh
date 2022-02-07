@@ -9,9 +9,5 @@ set -xe
 # configs
 ./deploy-configVersions.sh
 
-# Deploy Subscription Manager
-./deploy-SubsMan.sh 
+./deploy-MetaduesRoot.sh
 
-# Convert system (mTIP-3 and TIP-3 convert system wallets and mTIP-3 root) with configs
-./deploy-Convert.sh USDT
-#./deploy-Convert.sh EUPI
