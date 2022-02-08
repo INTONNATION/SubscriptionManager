@@ -188,7 +188,7 @@ contract MetaduesRoot {
             service_version,
             msg.sender
         );
-        TvmCell serviceIndexStateInit = _buildServiceIndex(msg.sender);
+        TvmCell serviceIndexStateInit = _buildServiceIndex(msg.sender, service_name);
         new SubscriptionServiceIndex{
             value: 1 ton, 
             flag: 1, 
@@ -275,10 +275,11 @@ contract MetaduesRoot {
     }
 
     function _buildServiceIndex(
-        address serviceOwner
+        address serviceOwner,
+        string service_name
     ) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        saltBuilder.store(serviceOwner,address(this));
+        saltBuilder.store(serviceOwner,service_name,address(this));
         TvmCell code = tvm.setCodeSalt(
             service_index_code,
             saltBuilder.toCell()
