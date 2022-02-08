@@ -149,7 +149,7 @@ contract MetaduesRoot {
                 msg.sender
             );
         
-        new SubscriptionidentificatorIndex{
+        new SubscriptionIdentificatorIndex{
             value: 0.02 ton, 
             flag: 0, 
             bounce: true, 
@@ -246,7 +246,7 @@ contract MetaduesRoot {
             pubkey: 0,
             varInit: { 
             },
-            contr: SubscriptionidentificatorIndex
+            contr: SubscriptionIdentificatorIndex
         });
         return stateInit;             
     }

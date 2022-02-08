@@ -14,7 +14,7 @@
 		{
 			"name": "setTVCs",
 			"inputs": [
-				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionidentificatorIndex","type":"cell"}],"name":"tvcs","type":"tuple"}
+				{"components":[{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"tvcs","type":"tuple"}
 			],
 			"outputs": [
 			]
