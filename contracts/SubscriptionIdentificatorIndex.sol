@@ -5,7 +5,7 @@ pragma AbiHeader pubkey;
 
 import "libraries/SubscriptionErrors.sol";
 
-contract SubscriptionidentificatorIndex {
+contract SubscriptionIdentificatorIndex {
     
 
     address public ownerAddress;

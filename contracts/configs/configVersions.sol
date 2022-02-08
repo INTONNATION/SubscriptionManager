@@ -15,15 +15,15 @@ contract configVersions {
 	TvmCell tvcSubscription;
 	TvmCell tvcSubscriptionServiceIndex;
 	TvmCell tvcSubscriptionIndex;
-	TvmCell tvcSubscriptionidentificatorIndex;
+	TvmCell tvcSubscriptionIdentificatorIndex;
 
 	string abiMetaduesRootContract;
 	string abiTIP3RootContract;
 	string abiServiceContract;
-	//string abiServiceIndexContract;
+	string abiServiceIndexContract;
 	string abiSubscriptionContract;
-	//string abiSubscriptionIndexContract;
-	//string abiSubscriptionidentificatorIndexContract;
+	string abiSubscriptionIndexContract;
+	string abiSubscriptionIdentificatorIndexContract;
 
 	struct VersionsTvcParams {
 		TvmCell tvcMetaduesAccount;
@@ -31,16 +31,16 @@ contract configVersions {
 		TvmCell tvcSubscription;
 		TvmCell tvcSubscriptionServiceIndex;
 		TvmCell tvcSubscriptionIndex;
-		TvmCell tvcSubscriptionidentificatorIndex;
+		TvmCell tvcSubscriptionIdentificatorIndex;
 	}
 	struct VersionsAbiParams {
 		string abiMetaduesRootContract;
 		string abiTIP3RootContract;
 		string abiServiceContract;
-		//string abiServiceIndexContract;
+		string abiServiceIndexContract;
 		string abiSubscriptionContract;
-		//string abiSubscriptionIndexContract;
-		//string abiSubscriptionidentificatorIndexContract;
+		string abiSubscriptionIndexContract;
+		string abiSubscriptionIdentificatorIndexContract;
 	}
 
 	mapping (uint8 => VersionsTvcParams) public vrsparamsTvc;
@@ -141,12 +141,12 @@ contract configVersions {
 		tvcSubscriptionIndex = tvcSubscriptionIndexInput;
     }
 
-	function setTvcSubscriptionidentificatorIndex(
-		TvmCell tvcSubscriptionidentificatorIndexInput
+	function setTvcSubscriptionIdentificatorIndex(
+		TvmCell tvcSubscriptionIdentificatorIndexInput
 	)  
 	public onlyOwner 
 	{
-		tvcSubscriptionidentificatorIndex = tvcSubscriptionidentificatorIndexInput;
+		tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndexInput;
     }
 
     function setTvc() public onlyOwner {
@@ -157,7 +157,7 @@ contract configVersions {
 		params.tvcSubscription = tvcSubscription;
 		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex;
 		params.tvcSubscriptionIndex = tvcSubscriptionIndex;
-		params.tvcSubscriptionidentificatorIndex = tvcSubscriptionidentificatorIndex;
+		params.tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
 		vrsparamsTvc.add(versionTvc, params);
     }
 
@@ -184,12 +184,12 @@ contract configVersions {
 		abiServiceContract = abiServiceContractInput;
     }
 
-	/*function setAbiServiceIndexContract(
+	function setAbiServiceIndexContract(
 		string abiServiceIndexContractInput
 	) public onlyOwner 
 	{
 		abiServiceIndexContract = abiServiceIndexContractInput;
-    }*/
+    }
 
 	function setAbiSubscriptionContract(
 		string abiSubscriptionContractInput
@@ -198,19 +198,19 @@ contract configVersions {
 		abiSubscriptionContract = abiSubscriptionContractInput;
     }
 
-	/*function setAbiSubscriptionIndexContract(
+	function setAbiSubscriptionIndexContract(
 		string abiSubscriptionIndexContractInput
 	) public onlyOwner 
 	{
 		abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
-    }*/
+    }
 
-	/*function setAbiSubscriptionidentificatorIndexContract(
-		string abiSubscriptionidentificatorIndexContractInput
+	function setAbiSubscriptionIdentificatorIndexContract(
+		string abiSubscriptionIdentificatorIndexContractInput
 	) public onlyOwner 
 	{
-		abiSubscriptionidentificatorIndexContract = abiSubscriptionidentificatorIndexContractInput;
-    }*/
+		abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContractInput;
+    }
 
     function setAbi() public onlyOwner {
 		versionAbi++;
@@ -218,10 +218,10 @@ contract configVersions {
 		params.abiMetaduesRootContract = abiMetaduesRootContract;
 		params.abiTIP3RootContract = abiTIP3RootContract;
 		params.abiServiceContract = abiServiceContract;
-		//params.abiServiceIndexContract = abiServiceIndexContract;
+		params.abiServiceIndexContract = abiServiceIndexContract;
 		params.abiSubscriptionContract = abiSubscriptionContract;
-		//params.abiSubscriptionIndexContract = abiSubscriptionIndexContract;
-		//params.abiSubscriptionidentificatorIndexContract = abiSubscriptionidentificatorIndexContract;
+		params.abiSubscriptionIndexContract = abiSubscriptionIndexContract;
+		params.abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContract;
 		vrsparamsAbi.add(versionAbi, params);
     }
 
