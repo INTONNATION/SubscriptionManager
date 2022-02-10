@@ -10,6 +10,7 @@ contract configVersions {
 	uint8 public versionAbi;
 	string[] public categories;
 
+	TvmCell tvcPlatform;
 	TvmCell tvcMetaduesAccount;
 	TvmCell tvcSubscriptionService;
 	TvmCell tvcSubscription;
@@ -17,6 +18,8 @@ contract configVersions {
 	TvmCell tvcSubscriptionIndex;
 	TvmCell tvcSubscriptionIdentificatorIndex;
 
+	string abiPlatformContract;
+	string abiMetaduesAccountContract;
 	string abiMetaduesRootContract;
 	string abiTIP3RootContract;
 	string abiServiceContract;
@@ -26,6 +29,7 @@ contract configVersions {
 	string abiSubscriptionIdentificatorIndexContract;
 
 	struct VersionsTvcParams {
+		TvmCell tvcPlatform;
 		TvmCell tvcMetaduesAccount;
 		TvmCell tvcSubscriptionService;
 		TvmCell tvcSubscription;
@@ -34,6 +38,8 @@ contract configVersions {
 		TvmCell tvcSubscriptionIdentificatorIndex;
 	}
 	struct VersionsAbiParams {
+		string abiPlatformContract;
+		string abiMetaduesAccountContract;
 		string abiMetaduesRootContract;
 		string abiTIP3RootContract;
 		string abiServiceContract;
@@ -101,6 +107,14 @@ contract configVersions {
     }
 
 	// Set TVCs
+	function setTvcPlatform(
+		TvmCell tvcPlatformInput
+	)  
+	public onlyOwner 
+	{
+		tvcPlatform = tvcPlatformInput;
+    }
+
     function setTvcMetaduesAccount(
 		TvmCell tvcMetaduesAccountInput
 	)  
@@ -152,6 +166,7 @@ contract configVersions {
     function setTvc() public onlyOwner {
 		versionTvc++;
 		VersionsTvcParams params;
+		params.tvcPlatform = tvcPlatform;
 		params.tvcMetaduesAccount = tvcMetaduesAccount;
 		params.tvcSubscriptionService = tvcSubscriptionService;
 		params.tvcSubscription = tvcSubscription;
@@ -162,6 +177,20 @@ contract configVersions {
     }
 
 	// Set ABIs
+
+	function setAbiPlatformContract(
+		string abiPlatformContractInput
+	) public onlyOwner 
+	{
+		abiPlatformContract = abiPlatformContractInput;
+    }
+
+	function setAbiMetaduesAccountContract(
+		string abiMetaduesAccountContractInput
+	) public onlyOwner 
+	{
+		abiMetaduesAccountContract = abiMetaduesAccountContractInput;
+    }
 
 	function setAbiMetaduesRootContract(
 		string abiMetaduesRootContractInput
@@ -215,6 +244,8 @@ contract configVersions {
     function setAbi() public onlyOwner {
 		versionAbi++;
 		VersionsAbiParams params;
+		params.abiPlatformContract = abiPlatformContract;
+		params.abiMetaduesAccountContract = abiMetaduesAccountContract;
 		params.abiMetaduesRootContract = abiMetaduesRootContract;
 		params.abiTIP3RootContract = abiTIP3RootContract;
 		params.abiServiceContract = abiServiceContract;
