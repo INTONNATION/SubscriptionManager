@@ -14,16 +14,25 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.s
 
 contract MetaduesAccount {
    
-    mapping(address => uint128) public balance_map;
+    mapping(address => balance_wallet_struct) public balance_map;
     address public root;
     TvmCell platform_code;
     TvmCell platform_params;
     uint32 current_version;
     uint8 type_id;
     address account_owner;
+    uint128 withdraw_value;
 
     constructor() public { revert(); }
 
+    struct balance_wallet_struct {
+        address wallet;
+        uint128 balance;
+
+    }
+    
+    
+    
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
         (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =
@@ -60,36 +69,32 @@ contract MetaduesAccount {
         (,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
         (currency_root,) = next_cell.toSlice().decode(address, string);
         
-        optional(uint128) current_balance_key_value = balance_map.fetch(currency_root);
-        if (current_balance_key_value.hasValue()){
-            uint128 current_balance = current_balance_key_value.get();
-            
+        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(currency_root);
+        
+        if (current_balance_struct.hasValue()){         
+            balance_wallet_struct current_balance_key_value = current_balance_struct.get();
+            uint128 current_balance = current_balance_key_value.balance;
             if (value > current_balance){
                 return { value: 0, flag: 128, bounce: false } 1;
             }
             else{
                 ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload);
                 uint128 balance_after_pay = current_balance - value;
-                balance_map[currency_root] = balance_after_pay;
+                current_balance_key_value.balance = balance_after_pay;
+                balance_map[currency_root] = current_balance_key_value;
                 return { value: 0, flag: 128, bounce: false } 0;
             }
         }
         else {return { value: 0, flag: 128, bounce: false } 1;}
         }
 
-    
-     function syncBalance(address currency_root) external{
-        ITokenRoot(currency_root).walletOf{
-             value: 0.1 ton, 
-             bounce: true,
-             flag: 0,
-             callback: MetaduesAccount.onWalletOf
-        }(address(this));
-    }        
+          
 
 
-     function onWalletOf(address account_wallet_) external {
-        address account_wallet = account_wallet_;
+     function syncBalance(address currency_root) external {
+        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(currency_root);
+        balance_wallet_struct current_balance_key  = current_balance_struct.get();
+        address account_wallet = current_balance_key.wallet;
         TIP3TokenWallet(account_wallet).balance{
              value: 0.1 ton, 
              bounce: true,
@@ -100,38 +105,59 @@ contract MetaduesAccount {
 
      function onBalanceOf(uint128 balance_) external {
         uint128 balance_wallet = balance_;
-        balance_map[msg.sender] = balance_wallet;
+        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(msg.sender);
+        balance_wallet_struct current_balance_key  = current_balance_struct.get();
+        current_balance_key.balance = balance_wallet;
+        balance_map[msg.sender] = current_balance_key;
+    }
+
+    function withdrawFunds(uint128 currency_root, uint128 withdraw_value_) external onlyOwner { 
+        withdraw_value = withdraw_value_;
+        ITokenRoot(currency_root).walletOf{
+             value: 0.1 ton, 
+             bounce: true,
+             flag: 0,
+             callback: MetaduesAccount.onWalleOfWithdraw
+        }(account_owner);
+    }        
+
+    function onWalleOfWithdraw(address withdraw_owner_wallet) external {
+        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(msg.sender);
+        balance_wallet_struct current_balance_key  = current_balance_struct.get();
+        address account_wallet = current_balance_key.wallet;
+        TvmCell payload;
+        ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(withdraw_value,withdraw_owner_wallet,withdraw_owner_wallet, true, payload);
+        withdraw_value = 0;
     }
 
 
 
+    // function destroyAccount(
+    //     address dest, //remove Account owner
+    //     address currency_root //add loop for mapping
+    // )
+    //     public
+    //     responsible
+    //     onlyOwner
+    //     returns (uint8)
+    // {
+    //     optional(uint128) current_balance_key_value = balance_map.fetch(currency_root);
+    //     if (current_balance_key_value.hasValue()){
+    //         uint128 current_balance = current_balance_key_value.get();
+    //         if (current_balance == 0)
+    //         {    
+    //             selfdestruct(dest);
+    //             return { value: 0, flag: 128, bounce: false } 0;
 
-    function destroyAccount(
-        address dest, //remove Account owner
-        address currency_root //add loop for mapping
-    )
-        public
-        responsible
-        onlyOwner
-        returns (uint8)
-    {
-        optional(uint128) current_balance_key_value = balance_map.fetch(currency_root);
-        if (current_balance_key_value.hasValue()){
-            uint128 current_balance = current_balance_key_value.get();
-            if (current_balance == 0)
-            {    
-                selfdestruct(dest);
-                return { value: 0, flag: 128, bounce: false } 0;
+    //         }
+    //         else {return { value: 0, flag: 128, bounce: false } 1;}
+    //     }
 
-            }
-            else {return { value: 0, flag: 128, bounce: false } 1;}
-        }
-
-        else 
-        {   selfdestruct(dest);
-            return { value: 0, flag: 128, bounce: false } 0;
-            }
-    }
+    //     else 
+    //     {   selfdestruct(dest);
+    //         return { value: 0, flag: 128, bounce: false } 0;
+    //         }
+    // }
     
 
     
@@ -144,12 +170,16 @@ contract MetaduesAccount {
         TvmCell payload
     ) external
     {
-        optional(uint128) current_balance = balance_map.fetch(tokenRoot);
-        if (current_balance.hasValue()) {
-            uint128 new_balance = current_balance.get() + amount;
-            balance_map[tokenRoot] = new_balance;
+        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(tokenRoot);
+        if (current_balance_struct.hasValue()) {   
+            balance_wallet_struct current_balance_key  = current_balance_struct.get();
+            current_balance_key.balance += amount;    
+            balance_map[tokenRoot] = current_balance_key;
         } else {
-            balance_map[tokenRoot] = amount;
+            balance_wallet_struct current_balance_struct;
+            current_balance_struct.wallet = senderWallet;
+            current_balance_struct.balance = amount;  
+            balance_map[tokenRoot] = current_balance_struct;
         }
         
     }
