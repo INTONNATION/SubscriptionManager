@@ -39,17 +39,17 @@
 			]
 		},
 		{
-			"name": "onDeployWallet",
+			"name": "onGetParams",
 			"inputs": [
-				{"name":"subscription_wallet_","type":"address"}
+				{"name":"service_params_","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "onGetParams",
+			"name": "onDeployWallet",
 			"inputs": [
-				{"name":"service_params_","type":"cell"}
+				{"name":"subscription_wallet_","type":"address"}
 			],
 			"outputs": [
 			]
