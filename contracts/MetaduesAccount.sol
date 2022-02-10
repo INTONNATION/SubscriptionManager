@@ -8,6 +8,8 @@ import "libraries/MetaduesRootErrors.sol";
 import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
+import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
+import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
 
 contract MetaduesAccount {
@@ -67,15 +69,46 @@ contract MetaduesAccount {
             }
             else{
                 ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload);
+                uint128 balance_after_pay = current_balance - value;
+                balance_map[currency_root] = balance_after_pay;
                 return { value: 0, flag: 128, bounce: false } 0;
             }
         }
         else {return { value: 0, flag: 128, bounce: false } 1;}
         }
 
-    function onDestroyAndWithdraw(
-        address dest,
-        address currency_root
+    
+     function syncBalance(address currency_root) external{
+        ITokenRoot(currency_root).walletOf{
+             value: 0.1 ton, 
+             bounce: true,
+             flag: 0,
+             callback: MetaduesAccount.onWalletOf
+        }(address(this));
+    }        
+
+
+     function onWalletOf(address account_wallet_) external {
+        address account_wallet = account_wallet_;
+        TIP3TokenWallet(account_wallet).balance{
+             value: 0.1 ton, 
+             bounce: true,
+             flag: 0,
+             callback: MetaduesAccount.onBalanceOf
+        }();
+    }
+
+     function onBalanceOf(uint128 balance_) external {
+        uint128 balance_wallet = balance_;
+        balance_map[msg.sender] = balance_wallet;
+    }
+
+
+
+
+    function destroyAccount(
+        address dest, //remove Account owner
+        address currency_root //add loop for mapping
     )
         public
         responsible

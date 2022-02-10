@@ -42,9 +42,18 @@
 			"outputs": [
 				{"name":"serviceOwner","type":"address"}
 			]
+		},
+		{
+			"name": "serviceName",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"serviceName","type":"string"}
+			]
 		}
 	],
 	"data": [
+		{"key":1,"name":"serviceName","type":"string"}
 	],
 	"events": [
 	],
@@ -53,6 +62,7 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"serviceAddress","type":"address"},
-		{"name":"serviceOwner","type":"address"}
+		{"name":"serviceOwner","type":"address"},
+		{"name":"serviceName","type":"string"}
 	]
 }
