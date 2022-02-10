@@ -132,32 +132,12 @@ contract MetaduesAccount {
 
 
 
-    // function destroyAccount(
-    //     address dest, //remove Account owner
-    //     address currency_root //add loop for mapping
-    // )
-    //     public
-    //     responsible
-    //     onlyOwner
-    //     returns (uint8)
-    // {
-    //     optional(uint128) current_balance_key_value = balance_map.fetch(currency_root);
-    //     if (current_balance_key_value.hasValue()){
-    //         uint128 current_balance = current_balance_key_value.get();
-    //         if (current_balance == 0)
-    //         {    
-    //             selfdestruct(dest);
-    //             return { value: 0, flag: 128, bounce: false } 0;
-
-    //         }
-    //         else {return { value: 0, flag: 128, bounce: false } 1;}
-    //     }
-
-    //     else 
-    //     {   selfdestruct(dest);
-    //         return { value: 0, flag: 128, bounce: false } 0;
-    //         }
-    // }
+    function destroyAccount()
+        public
+        onlyOwner
+    {
+     selfdestruct(msg.sender);    
+    }
     
 
     
