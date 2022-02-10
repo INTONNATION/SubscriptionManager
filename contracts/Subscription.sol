@@ -165,17 +165,6 @@ contract Subscription {
          //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
-    function onDeployWallet(address subscription_wallet_) external {
-        subscription_wallet = subscription_wallet_;
-        ITokenRoot(svcparams.currency_root).walletOf{
-             value: 0.1 ton, 
-             bounce: true,
-             flag: 0,
-             callback: Subscription.onWalletOf
-        }(account_address);
-    }
-
-
     function onGetParams(TvmCell service_params_) external {
         TvmCell next_cell;
         service_params=service_params_;
@@ -214,7 +203,16 @@ contract Subscription {
             address(this),
             0.1 ton
         );
-        
+    }
+
+    function onDeployWallet(address subscription_wallet_) external {
+        subscription_wallet = subscription_wallet_;
+        ITokenRoot(svcparams.currency_root).walletOf{
+             value: 0.1 ton, 
+             bounce: true,
+             flag: 0,
+             callback: Subscription.onWalletOf
+        }(account_address);
     }
 
     function onWalletOf(address account_wallet_) external {

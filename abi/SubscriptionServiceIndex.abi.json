@@ -28,6 +28,14 @@
 			]
 		},
 		{
+			"name": "service_name",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_name","type":"string"}
+			]
+		},
+		{
 			"name": "serviceAddress",
 			"inputs": [
 			],
@@ -45,6 +53,7 @@
 		}
 	],
 	"data": [
+		{"key":1,"name":"service_name","type":"string"}
 	],
 	"events": [
 	],
@@ -52,6 +61,7 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
+		{"name":"service_name","type":"string"},
 		{"name":"serviceAddress","type":"address"},
 		{"name":"serviceOwner","type":"address"}
 	]

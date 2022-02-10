@@ -24,6 +24,17 @@
 			]
 		},
 		{
+			"name": "onDestroyAndWithdraw",
+			"inputs": [
+				{"name":"answerId","type":"uint32"},
+				{"name":"dest","type":"address"},
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"}
+			]
+		},
+		{
 			"name": "onAcceptTokensTransfer",
 			"inputs": [
 				{"name":"tokenRoot","type":"address"},
