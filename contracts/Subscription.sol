@@ -170,7 +170,7 @@ contract Subscription {
         service_params=service_params_;
         (
             svcparams.to, 
-            svcparams.value, 
+            svcparams.value, //add percentage for user fee
             svcparams.period,
             next_cell
         ) = service_params.toSlice().decode(
