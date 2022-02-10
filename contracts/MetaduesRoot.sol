@@ -279,7 +279,7 @@ contract MetaduesRoot {
         string service_name
     ) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
-        saltBuilder.store(serviceOwner,service_name,address(this));
+        saltBuilder.store(serviceOwner,address(this));
         TvmCell code = tvm.setCodeSalt(
             service_index_code,
             saltBuilder.toCell()
@@ -288,6 +288,7 @@ contract MetaduesRoot {
             code: code,
             pubkey: 0,
             varInit: { 
+                serviceName: service_name
             },
             contr: SubscriptionServiceIndex
         });

@@ -16,6 +16,7 @@ contract SubscriptionServiceIndex is Upgradable {
 
     address public serviceAddress;
     address public serviceOwner;
+    string  static public serviceName;
 
     modifier onlyOwner {
 		require(msg.sender == serviceOwner, SubscriptionServiceErrors.error_message_sender_is_not_service_owner);

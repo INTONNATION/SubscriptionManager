@@ -24,6 +24,41 @@
 			]
 		},
 		{
+			"name": "syncBalance",
+			"inputs": [
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWalletOf",
+			"inputs": [
+				{"name":"account_wallet_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onBalanceOf",
+			"inputs": [
+				{"name":"balance_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "destroyAccount",
+			"inputs": [
+				{"name":"answerId","type":"uint32"},
+				{"name":"dest","type":"address"},
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"}
+			]
+		},
+		{
 			"name": "onAcceptTokensTransfer",
 			"inputs": [
 				{"name":"tokenRoot","type":"address"},
