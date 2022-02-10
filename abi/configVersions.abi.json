@@ -15,7 +15,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -24,7 +24,7 @@
 				{"name":"answerId","type":"uint32"}
 			],
 			"outputs": [
-				{"components":[{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"value0","type":"tuple"}
+				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"value0","type":"tuple"}
 			]
 		},
 		{
@@ -32,7 +32,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -57,7 +57,7 @@
 				{"name":"tvcVersion","type":"uint8"}
 			],
 			"outputs": [
-				{"components":[{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -66,7 +66,15 @@
 				{"name":"AbiVersion","type":"uint8"}
 			],
 			"outputs": [
-				{"components":[{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
+			]
+		},
+		{
+			"name": "setTvcPlatform",
+			"inputs": [
+				{"name":"tvcPlatformInput","type":"cell"}
+			],
+			"outputs": [
 			]
 		},
 		{
@@ -120,6 +128,22 @@
 		{
 			"name": "setTvc",
 			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiPlatformContract",
+			"inputs": [
+				{"name":"abiPlatformContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiMetaduesAccountContract",
+			"inputs": [
+				{"name":"abiMetaduesAccountContractInput","type":"string"}
 			],
 			"outputs": [
 			]
@@ -224,7 +248,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"}
+				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"}
 			]
 		},
 		{
@@ -232,7 +256,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 			]
 		}
 	],
@@ -247,12 +271,15 @@
 		{"name":"versionTvc","type":"uint8"},
 		{"name":"versionAbi","type":"uint8"},
 		{"name":"categories","type":"string[]"},
+		{"name":"tvcPlatform","type":"cell"},
 		{"name":"tvcMetaduesAccount","type":"cell"},
 		{"name":"tvcSubscriptionService","type":"cell"},
 		{"name":"tvcSubscription","type":"cell"},
 		{"name":"tvcSubscriptionServiceIndex","type":"cell"},
 		{"name":"tvcSubscriptionIndex","type":"cell"},
 		{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},
+		{"name":"abiPlatformContract","type":"string"},
+		{"name":"abiMetaduesAccountContract","type":"string"},
 		{"name":"abiMetaduesRootContract","type":"string"},
 		{"name":"abiTIP3RootContract","type":"string"},
 		{"name":"abiServiceContract","type":"string"},
@@ -260,7 +287,7 @@
 		{"name":"abiSubscriptionContract","type":"string"},
 		{"name":"abiSubscriptionIndexContract","type":"string"},
 		{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},
-		{"components":[{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
-		{"components":[{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+		{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
+		{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 	]
 }
