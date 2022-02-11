@@ -21,7 +21,8 @@ contract MetaduesAccount {
     uint32 current_version;
     uint8 type_id;
     address account_owner;
-    uint128 withdraw_value;
+    uint128 public withdraw_value;
+    address public sync_balance_currency_root;
 
     constructor() public { revert(); }
 
@@ -91,7 +92,9 @@ contract MetaduesAccount {
           
 
 
-     function syncBalance(address currency_root) external {
+     function syncBalance(address currency_root) external onlyOwner {
+        require(sync_balance_currency_root == address(0), 335);
+        sync_balance_currency_root = currency_root;
         optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(currency_root);
         balance_wallet_struct current_balance_key  = current_balance_struct.get();
         address account_wallet = current_balance_key.wallet;
@@ -105,13 +108,15 @@ contract MetaduesAccount {
 
      function onBalanceOf(uint128 balance_) external {
         uint128 balance_wallet = balance_;
-        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(msg.sender);
+        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(sync_balance_currency_root);
         balance_wallet_struct current_balance_key  = current_balance_struct.get();
         current_balance_key.balance = balance_wallet;
-        balance_map[msg.sender] = current_balance_key;
+        balance_map[sync_balance_currency_root] = current_balance_key;
+        sync_balance_currency_root = address(0);
     }
 
-    function withdrawFunds(uint128 currency_root, uint128 withdraw_value_) external onlyOwner { 
+    function withdrawFunds(address currency_root, uint128 withdraw_value_) external onlyOwner { 
+        require(withdraw_value == 0, 332);
         withdraw_value = withdraw_value_;
         ITokenRoot(currency_root).walletOf{
              value: 0.1 ton, 
@@ -127,6 +132,8 @@ contract MetaduesAccount {
         address account_wallet = current_balance_key.wallet;
         TvmCell payload;
         ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(withdraw_value,withdraw_owner_wallet,withdraw_owner_wallet, true, payload);
+        current_balance_key.balance = current_balance_key.balance - withdraw_value;
+        balance_map[msg.sender] = current_balance_key;
         withdraw_value = 0;
     }
 
@@ -157,7 +164,7 @@ contract MetaduesAccount {
             balance_map[tokenRoot] = current_balance_key;
         } else {
             balance_wallet_struct current_balance_struct;
-            current_balance_struct.wallet = senderWallet;
+            current_balance_struct.wallet = msg.sender;
             current_balance_struct.balance = amount;  
             balance_map[tokenRoot] = current_balance_struct;
         }
