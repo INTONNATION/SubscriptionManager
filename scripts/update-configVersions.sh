@@ -22,6 +22,7 @@ abiPlatformContract=$(cat ../abi/Platform.abi.json | jq -c .| base64 $prefix)
 abiMetaduesAccountContract=$(cat ../abi/MetaduesAccount.abi.json | jq -c .| base64 $prefix)
 abiMetaduesRootContract=$(cat ../abi/MetaduesRoot.abi.json | jq -c .| base64 $prefix)
 abiTIP3RootContract=$(cat ../ton-eth-bridge-token-contracts/build/TokenRoot.abi.json | jq -c .| base64 $prefix)
+abiTIP3TokenWalletContract=$(cat ../ton-eth-bridge-token-contracts/build/TokenWallet.abi.json | jq -c .| base64 $prefix)
 abiServiceContract=$(cat ../abi/SubscriptionService.abi.json | jq -c .| base64 $prefix)
 abiServiceIndexContract=$(cat ../abi/SubscriptionServiceIndex.abi.json | jq -c .| base64 $prefix)
 abiSubscriptionContract=$(cat ../abi/Subscription.abi.json | jq -c .| base64 $prefix)
@@ -57,6 +58,7 @@ tonos-cli --url $NETWORK call $configAddr setAbiPlatformContract "{\"abiPlatform
 tonos-cli --url $NETWORK call $configAddr setAbiMetaduesAccountContract "{\"abiMetaduesAccountContractInput\":\"$abiMetaduesAccountContract\"}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbiMetaduesRootContract "{\"abiMetaduesRootContractInput\":\"$abiMetaduesRootContract\"}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbiTIP3RootContract "{\"abiTIP3RootContractInput\":\"$abiTIP3RootContract\"}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
+tonos-cli --url $NETWORK call $configAddr setAbiTIP3TokenWalletContract "{\"abiTIP3TokenWalletContractInput\":\"$abiTIP3TokenWalletContract\"}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbiServiceContract "{\"abiServiceContractInput\":\"$abiServiceContract\"}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbiServiceIndexContract "{\"abiServiceIndexContractInput\":\"$abiServiceIndexContract\"}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json
 tonos-cli --url $NETWORK call $configAddr setAbiSubscriptionContract "{\"abiSubscriptionContractInput\":\"$abiSubscriptionContract\"}" --abi ../abi/configVersions.abi.json --sign configVersions.keys.json

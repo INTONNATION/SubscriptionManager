@@ -32,14 +32,6 @@
 			]
 		},
 		{
-			"name": "onWalletOf",
-			"inputs": [
-				{"name":"account_wallet_","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "onBalanceOf",
 			"inputs": [
 				{"name":"balance_","type":"uint128"}
@@ -48,14 +40,27 @@
 			]
 		},
 		{
-			"name": "destroyAccount",
+			"name": "withdrawFunds",
 			"inputs": [
-				{"name":"answerId","type":"uint32"},
-				{"name":"dest","type":"address"},
-				{"name":"currency_root","type":"address"}
+				{"name":"currency_root","type":"address"},
+				{"name":"withdraw_value_","type":"uint128"}
 			],
 			"outputs": [
-				{"name":"value0","type":"uint8"}
+			]
+		},
+		{
+			"name": "onWalleOfWithdraw",
+			"inputs": [
+				{"name":"withdraw_owner_wallet","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "destroyAccount",
+			"inputs": [
+			],
+			"outputs": [
 			]
 		},
 		{
@@ -76,7 +81,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"balance_map","type":"map(address,uint128)"}
+				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"balance_map","type":"map(address,tuple)"}
 			]
 		},
 		{
@@ -85,6 +90,22 @@
 			],
 			"outputs": [
 				{"name":"root","type":"address"}
+			]
+		},
+		{
+			"name": "withdraw_value",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"withdraw_value","type":"uint128"}
+			]
+		},
+		{
+			"name": "sync_balance_currency_root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"sync_balance_currency_root","type":"address"}
 			]
 		}
 	],
@@ -96,12 +117,14 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"balance_map","type":"map(address,uint128)"},
+		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"balance_map","type":"map(address,tuple)"},
 		{"name":"root","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
-		{"name":"account_owner","type":"address"}
+		{"name":"account_owner","type":"address"},
+		{"name":"withdraw_value","type":"uint128"},
+		{"name":"sync_balance_currency_root","type":"address"}
 	]
 }
