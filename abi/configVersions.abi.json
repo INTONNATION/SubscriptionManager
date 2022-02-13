@@ -32,7 +32,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -66,7 +66,7 @@
 				{"name":"AbiVersion","type":"uint8"}
 			],
 			"outputs": [
-				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
@@ -165,6 +165,14 @@
 			]
 		},
 		{
+			"name": "setAbiTIP3TokenWalletContract",
+			"inputs": [
+				{"name":"abiTIP3TokenWalletContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setAbiServiceContract",
 			"inputs": [
 				{"name":"abiServiceContractInput","type":"string"}
@@ -256,7 +264,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 			]
 		}
 	],
@@ -282,12 +290,13 @@
 		{"name":"abiMetaduesAccountContract","type":"string"},
 		{"name":"abiMetaduesRootContract","type":"string"},
 		{"name":"abiTIP3RootContract","type":"string"},
+		{"name":"abiTIP3TokenWalletContract","type":"string"},
 		{"name":"abiServiceContract","type":"string"},
 		{"name":"abiServiceIndexContract","type":"string"},
 		{"name":"abiSubscriptionContract","type":"string"},
 		{"name":"abiSubscriptionIndexContract","type":"string"},
 		{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},
 		{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
-		{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+		{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 	]
 }

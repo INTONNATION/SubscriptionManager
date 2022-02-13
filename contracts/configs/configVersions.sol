@@ -22,6 +22,7 @@ contract configVersions {
 	string abiMetaduesAccountContract;
 	string abiMetaduesRootContract;
 	string abiTIP3RootContract;
+	string abiTIP3TokenWalletContract;
 	string abiServiceContract;
 	string abiServiceIndexContract;
 	string abiSubscriptionContract;
@@ -42,6 +43,7 @@ contract configVersions {
 		string abiMetaduesAccountContract;
 		string abiMetaduesRootContract;
 		string abiTIP3RootContract;
+		string abiTIP3TokenWalletContract;
 		string abiServiceContract;
 		string abiServiceIndexContract;
 		string abiSubscriptionContract;
@@ -206,6 +208,13 @@ contract configVersions {
 		abiTIP3RootContract = abiTIP3RootContractInput;
     }
 
+	function setAbiTIP3TokenWalletContract(
+		string abiTIP3TokenWalletContractInput
+	) public onlyOwner 
+	{
+		abiTIP3TokenWalletContract = abiTIP3TokenWalletContractInput;
+    }
+
 	function setAbiServiceContract(
 		string abiServiceContractInput
 	) public onlyOwner 
@@ -248,6 +257,7 @@ contract configVersions {
 		params.abiMetaduesAccountContract = abiMetaduesAccountContract;
 		params.abiMetaduesRootContract = abiMetaduesRootContract;
 		params.abiTIP3RootContract = abiTIP3RootContract;
+		params.abiTIP3TokenWalletContract = abiTIP3TokenWalletContract;
 		params.abiServiceContract = abiServiceContract;
 		params.abiServiceIndexContract = abiServiceIndexContract;
 		params.abiSubscriptionContract = abiSubscriptionContract;
