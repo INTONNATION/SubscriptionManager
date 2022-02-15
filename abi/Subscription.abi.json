@@ -94,6 +94,30 @@
 			]
 		},
 		{
+			"name": "service_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_fee","type":"uint128"}
+			]
+		},
+		{
+			"name": "subscription_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_fee","type":"uint128"}
+			]
+		},
+		{
+			"name": "address_fee_proxy",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"address_fee_proxy","type":"address"}
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
@@ -131,6 +155,9 @@
 		{"name":"subscription_index_address","type":"address"},
 		{"name":"subscription_index_identificator_address","type":"address"},
 		{"name":"cooldown","type":"uint32"},
+		{"name":"service_fee","type":"uint128"},
+		{"name":"subscription_fee","type":"uint128"},
+		{"name":"address_fee_proxy","type":"address"},
 		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
 		{"components":[{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
