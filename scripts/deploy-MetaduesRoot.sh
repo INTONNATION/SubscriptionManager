@@ -19,6 +19,7 @@ tondev sol compile ../contracts/SubscriptionIndex.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionIdentificatorIndex.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionService.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionServiceIndex.sol -o ../abi;
+tondev sol compile ../contracts/MetaduesFeeProxy.sol -o ../abi;
 tos=tonos-cli
 
 CONTRACT_NAME=MetaduesRoot
@@ -79,6 +80,7 @@ subscription_index_code=$(tvm_linker decode --tvc ../abi/SubscriptionIndex.tvc |
 subscription_identificator_index_code=$(tvm_linker decode --tvc ../abi/SubscriptionIdentificatorIndex.tvc |grep "code:"|awk '{print $2}')
 service_code=$(tvm_linker decode --tvc ../abi/SubscriptionService.tvc |grep "code:"|awk '{print $2}')
 service_index_code=$(tvm_linker decode --tvc ../abi/SubscriptionServiceIndex.tvc |grep "code:"|awk '{print $2}')
+fee_proxy_code=$(tvm_linker decode --tvc ../abi/MetaduesFeeProxy.tvc |grep "code:"|awk '{print $2}')
 
 
 $tos --url $NETWORK call $CONTRACT_ADDRESS installPlatformOnce "{\"code\":\"$platform_code\"}" --abi ../abi/$1.abi.json
@@ -88,9 +90,10 @@ $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateSubscriptionIndexCode 
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateSubscriptionIndexIdentificatorCode "{\"code\":\"$subscription_identificator_index_code\"}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateServiceCode "{\"code\":\"$service_code\"}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateServiceIndexCode "{\"code\":\"$service_index_code\"}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateFeeProxyCode "{\"code\":\"$fee_proxy_code\"}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateFeeProxyParams "{\"currencies\":[\"0:d554d113d085ec6eebaaf06922620978a52d169445350c3b0a68b1aeff77b29d\"]}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS deployFeeProxy "{}" --abi ../abi/$1.abi.json
 }
-
-
 
 deploy $CONTRACT_NAME
 CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)

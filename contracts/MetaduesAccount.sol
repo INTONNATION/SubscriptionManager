@@ -189,6 +189,7 @@ contract MetaduesAccount {
             code: platform_code
         });
     }
+
    modifier onlyOwner() {
         tvm.accept();
         _;

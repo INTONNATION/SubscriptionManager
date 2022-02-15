@@ -10,7 +10,7 @@ import "libraries/PlatformTypes.sol";
 import "../contracts/SubscriptionIndex.sol";
 import "../contracts/SubscriptionIdentificatorIndex.sol";
 import "../contracts/SubscriptionServiceIndex.sol";
-
+import "../contracts/MetaduesFeeProxy.sol";
 
 
 contract MetaduesRoot {
@@ -22,10 +22,14 @@ contract MetaduesRoot {
     TvmCell public subscription_index_identificator_code;
     TvmCell public service_code;
     TvmCell public service_index_code;
+    TvmCell public fee_proxy_code;
     bool has_platform_code;
     uint32 service_version;
     uint32 account_version;
     uint32 subscription_version;
+    uint32 fee_proxy_version;
+    address fee_proxy_address;
+    TvmCell fee_proxy_contract_params; // root addresses of supported currencies
 
 	onBounce(TvmSlice slice) external {
         // revert change to initial msg.sender in case of failure during deploy
@@ -73,12 +77,54 @@ contract MetaduesRoot {
         service_version++;
     }  
 
+    function installOrUpdateFeeProxyCode(TvmCell code) external onlyOwner {
+        fee_proxy_code = code;
+        fee_proxy_version++;
+    }  
+
+    function installOrUpdateFeeProxyParams(address[] currencies) external onlyOwner {
+        TvmBuilder currencies_cell;
+        mapping (address=>address) currencies_mapping;
+        currencies_cell.store(currencies,currencies_mapping);
+        fee_proxy_contract_params = currencies_cell.toCell();
+    }  
+
     function installOrUpdateServiceIndexCode(TvmCell code) external onlyOwner {
         service_index_code = code;
     }
 
+    // Upgrade contracts
+    function upgradeFeeProxy() external view onlyOwner {
+        MetaduesFeeProxy(fee_proxy_address).upgrade(
+            fee_proxy_code,
+            fee_proxy_contract_params,
+            fee_proxy_version,
+            msg.sender
+        );
+    }
+
     // Deploy contracts
-    function deployAccount() external view {
+    function deployFeeProxy() external onlyOwner {
+        require(fee_proxy_contract_params.toSlice().empty() != true);
+        TvmCell platform_params;
+        Platform platform = new Platform {
+            stateInit: _buildInitData(PlatformTypes.FeeProxy, platform_params),
+            value: 1 ton,
+            flag: 0
+        }();
+        platform.initialize{
+            value: 1 ton,
+            flag: 0
+        }(
+            fee_proxy_code,
+            fee_proxy_contract_params,
+            fee_proxy_version,
+            msg.sender
+        );
+        fee_proxy_address = address(platform);
+    }
+
+    function deployAccount() external {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
         TvmCell account_params;
         Platform platform = new Platform {
@@ -86,6 +132,7 @@ contract MetaduesRoot {
             value: 1 ton,
             flag: 0
         }();
+        fee_proxy_address = address(platform);
         platform.initialize{
             value: 1 ton,
             flag: 0
@@ -95,7 +142,6 @@ contract MetaduesRoot {
             account_version,
             msg.sender
         );
-
     }
     
     function deploySubscription(
@@ -105,6 +151,7 @@ contract MetaduesRoot {
         public view 
     {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
+        require(fee_proxy_address != address(0), 555);
         tvm.accept();  
         TvmCell subsIndexStateInit = _buildSubscriptionIndex(
             service_address

@@ -59,9 +59,39 @@
 			]
 		},
 		{
+			"name": "installOrUpdateFeeProxyCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateFeeProxyParams",
+			"inputs": [
+				{"name":"currencies","type":"address[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpdateServiceIndexCode",
 			"inputs": [
 				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeFeeProxy",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployFeeProxy",
+			"inputs": [
 			],
 			"outputs": [
 			]
@@ -145,6 +175,14 @@
 			"outputs": [
 				{"name":"service_index_code","type":"cell"}
 			]
+		},
+		{
+			"name": "fee_proxy_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"fee_proxy_code","type":"cell"}
+			]
 		}
 	],
 	"data": [
@@ -162,9 +200,13 @@
 		{"name":"subscription_index_identificator_code","type":"cell"},
 		{"name":"service_code","type":"cell"},
 		{"name":"service_index_code","type":"cell"},
+		{"name":"fee_proxy_code","type":"cell"},
 		{"name":"has_platform_code","type":"bool"},
 		{"name":"service_version","type":"uint32"},
 		{"name":"account_version","type":"uint32"},
-		{"name":"subscription_version","type":"uint32"}
+		{"name":"subscription_version","type":"uint32"},
+		{"name":"fee_proxy_version","type":"uint32"},
+		{"name":"fee_proxy_address","type":"address"},
+		{"name":"fee_proxy_contract_params","type":"cell"}
 	]
 }
