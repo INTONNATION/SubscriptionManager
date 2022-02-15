@@ -44,6 +44,9 @@ contract Subscription {
     address subscription_index_address;
     address subscription_index_identificator_address;
     uint32 cooldown = 0;
+    uint128 public service_fee;
+    uint128 public subscription_fee;
+    address public address_fee_proxy;
 
     struct serviceParams {
         address to;
@@ -115,9 +118,18 @@ contract Subscription {
         TvmCell payload
     ) public {
         if (subscription.status == STATUS_PROCESSING){
+          uint128 protocol_fee = service_fee + subscription_fee;
+          ITokenWallet(msg.sender).transferToWallet{value: 0.5 ton}(
+            protocol_fee,
+            address_fee_proxy,
+            address_fee_proxy,  
+            true, 
+            payload
+            );   
+          uint128 pay_value = svcparams.value - protocol_fee;
           ITokenWallet(msg.sender).transfer{value: 0.5 ton}(
             //add fee for proxy TIP-3
-            svcparams.value,
+            pay_value,
             svcparams.to, // can be service owner TIP3 Wallet
             0,
             address(this),
@@ -193,6 +205,7 @@ contract Subscription {
             TvmCell
         );
         (svcparams.currency_root, svcparams.category) = next_cell.toSlice().decode(address, string);
+        svcparams.value = svcparams.value + subscription_fee;
         uint32 _period = svcparams.period * 3600 * 24;
         subscription = paymentStatus(_period, 0, STATUS_NONACTIVE);
         ITokenRoot(svcparams.currency_root).deployWallet{
