@@ -11,13 +11,6 @@
 			]
 		},
 		{
-			"name": "selfdelete",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "getParams",
 			"inputs": [
 				{"name":"answerId","type":"uint32"}
@@ -39,6 +32,13 @@
 			"name": "updateServiceParams",
 			"inputs": [
 				{"name":"new_service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "selfdelete",
+			"inputs": [
 			],
 			"outputs": [
 			]

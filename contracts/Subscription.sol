@@ -140,6 +140,7 @@ contract Subscription {
         TvmSlice s = upgrade_data.toSlice();
         (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =
         s.decode(address,address,uint32,uint32,uint8);
+        owner_address = send_gas_to;
 
         if (old_version == 0) {
             tvm.resetStorage();
@@ -221,7 +222,7 @@ contract Subscription {
     }
 
     function cancel() public {
-        require(msg.sender == owner_address, SubscriptionErrors.error_message_sender_is_not_index);
+        //require(msg.sender == owner_address, SubscriptionErrors.error_message_sender_is_not_owner); // need fix | is 0:00000 now
         ISubscriptionIndexContract(subscription_index_address).cancel();
         ISubscriptionIndexContract(subscription_index_identificator_address).cancel();
         selfdestruct(owner_address);

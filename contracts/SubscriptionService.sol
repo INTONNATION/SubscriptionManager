@@ -30,11 +30,6 @@ contract SubscriptionService {
     ServiceParams public svcparams;
 
     constructor() public { revert(); }
-
-    function selfdelete() public {
-        selfdestruct(msg.sender);
-    }
-
     
     function getParams() external view responsible returns (TvmCell) {
         return{value: 0, bounce: false, flag: 64} service_params;
@@ -43,7 +38,6 @@ contract SubscriptionService {
     function getStatus() external view responsible returns (uint8){
         return{value: 0, bounce: false, flag: 64} 0;  
     }
-
 
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
@@ -123,6 +117,10 @@ contract SubscriptionService {
      modifier onlyOwner() {
         tvm.accept();
         _;
+    }
+
+    function selfdelete() public {
+        selfdestruct(owner_address);
     }
 
 }

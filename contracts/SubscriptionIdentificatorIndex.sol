@@ -12,7 +12,7 @@ contract SubscriptionIdentificatorIndex {
     address public subscription_addr;
 
     modifier onlyOwner {
-		require(msg.sender == subscription_addr, SubscriptionErrors.error_message_sender_is_not_index);
+		require(msg.sender == subscription_addr, SubscriptionErrors.error_message_sender_is_not_owner);
 		_;
     }
 
