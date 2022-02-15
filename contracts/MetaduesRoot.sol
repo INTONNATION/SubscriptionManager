@@ -84,8 +84,7 @@ contract MetaduesRoot {
 
     function installOrUpdateFeeProxyParams(address[] currencies) external onlyOwner {
         TvmBuilder currencies_cell;
-        mapping (address=>address) currencies_mapping;
-        currencies_cell.store(currencies,currencies_mapping);
+        currencies_cell.store(currencies);
         fee_proxy_contract_params = currencies_cell.toCell();
     }  
 
@@ -95,7 +94,12 @@ contract MetaduesRoot {
 
     // Upgrade contracts
     function upgradeFeeProxy() external view onlyOwner {
-        MetaduesFeeProxy(fee_proxy_address).upgrade(
+        require(fee_proxy_address != address(0), 555);
+        MetaduesFeeProxy(fee_proxy_address).upgrade{
+            value: 1 ton, 
+            bounce: false,
+            flag: 0
+        }(
             fee_proxy_code,
             fee_proxy_contract_params,
             fee_proxy_version,

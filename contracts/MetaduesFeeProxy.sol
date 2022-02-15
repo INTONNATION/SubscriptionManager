@@ -41,11 +41,16 @@ contract MetaduesFeeProxy {
         root = root_;
         platform_code = s.loadRef();
         platform_params = s.loadRef();
-        TvmSlice contract_params = s.loadRefAsSlice();   
+        TvmSlice contract_params = s.loadRefAsSlice();  
+        TvmCell current_code = s.loadRef();
         current_version = version;  
         type_id = type_id_;
-        (address[] supportedCurrencies, mapping(address => address) wallets_mapping_) = contract_params.decode(address[],mapping(address => address));
-        wallets_mapping = wallets_mapping_;
+        (address[] supportedCurrencies) = contract_params.decode(address[]);
+        if (old_version != 0) {
+            TvmSlice old_data = s.loadRefAsSlice();
+            mapping(address => address) wallets_mapping_ = old_data.decode(mapping(address => address));
+            wallets_mapping = wallets_mapping_;
+        }
         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
         updateSupportedCurrencies(supportedCurrencies);
     }
@@ -53,7 +58,7 @@ contract MetaduesFeeProxy {
     function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
 
         TvmBuilder builder;
-        TvmBuilder contract_params_;
+        TvmBuilder upgrade_params;
         builder.store(root);
         builder.store(send_gas_to);
         builder.store(current_version); 
@@ -61,11 +66,9 @@ contract MetaduesFeeProxy {
         builder.store(type_id);
         builder.store(platform_code);
         builder.store(platform_params);
-        address[] currencies = contract_params.toSlice().decode(address[]);
-        contract_params_.store(currencies,wallets_mapping);
-        builder.store(contract_params_);
         builder.store(code);
-
+        upgrade_params.store(wallets_mapping);
+        builder.store(upgrade_params.toCell());
         tvm.setcode(code);
         tvm.setCurrentCode(code);
 
