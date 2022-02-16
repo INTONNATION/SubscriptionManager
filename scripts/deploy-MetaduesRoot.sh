@@ -93,6 +93,7 @@ $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateServiceIndexCode "{\"c
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateFeeProxyCode "{\"code\":\"$fee_proxy_code\"}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateFeeProxyParams "{\"currencies\":[\"0:d554d113d085ec6eebaaf06922620978a52d169445350c3b0a68b1aeff77b29d\"]}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS deployFeeProxy "{}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS setFees "{\"service_fee_\":\"5\",\"subscription_fee_\":\"5\"}" --abi ../abi/$1.abi.json
 }
 
 deploy $CONTRACT_NAME

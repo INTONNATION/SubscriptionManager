@@ -118,7 +118,7 @@ contract Subscription {
         TvmCell payload
     ) public {
         if (subscription.status == STATUS_PROCESSING){
-          uint128 protocol_fee = service_fee + subscription_fee;
+          uint128 protocol_fee = svcparams.value * (service_fee + subscription_fee) / 100;
           ITokenWallet(msg.sender).transferToWallet{value: 0.5 ton}(
             protocol_fee,
             address_fee_proxy,
@@ -167,7 +167,8 @@ contract Subscription {
         TvmSlice contract_params = s.loadRefAsSlice();
         TvmCell nextCell;
         (service_address, account_address, nextCell) = contract_params.decode(address,address,TvmCell);
-        (subscription_index_address,subscription_index_identificator_address) = nextCell.toSlice().decode(address,address);
+        (subscription_index_address,subscription_index_identificator_address, nextCell) = nextCell.toSlice().decode(address,address,TvmCell);
+        (address_fee_proxy,service_fee,subscription_fee ) = nextCell.toSlice().decode(address,uint128,uint128);
         ISubscriptionService(service_address).getParams{
             value: 0.2 ton, 
             bounce: true, 

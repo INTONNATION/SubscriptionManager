@@ -29,6 +29,8 @@ contract MetaduesRoot {
     uint32 subscription_version;
     uint32 fee_proxy_version;
     address fee_proxy_address;
+    uint128 public service_fee;
+    uint128 public subscription_fee;
     TvmCell fee_proxy_contract_params; // root addresses of supported currencies
 
 	onBounce(TvmSlice slice) external {
@@ -90,6 +92,11 @@ contract MetaduesRoot {
 
     function installOrUpdateServiceIndexCode(TvmCell code) external onlyOwner {
         service_index_code = code;
+    }
+
+    function setFees(uint128 service_fee_, uint128 subscription_fee_) external onlyOwner {
+        service_fee = service_fee_;
+        subscription_fee =subscription_fee_;
     }
 
     // Upgrade contracts
@@ -167,10 +174,12 @@ contract MetaduesRoot {
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         TvmBuilder service_params;
         TvmBuilder index_addreses;
+        TvmBuilder fees_params;
         address owner_account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildAccountParams(msg.sender))));
         address subs_index = address(tvm.hash(subsIndexStateInit));
         address subs_index_identificator = address(tvm.hash(subsIndexIdentificatorStateInit));
-        index_addreses.store(subs_index, subs_index_identificator);
+        fees_params.store(fee_proxy_address, service_fee, subscription_fee);
+        index_addreses.store(subs_index, subs_index_identificator,fees_params.toCell());
         service_params.store(service_address,owner_account_address,index_addreses.toCell());
 
         // service_params.store(owner_account_address);
