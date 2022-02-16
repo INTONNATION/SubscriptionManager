@@ -83,6 +83,15 @@
 			]
 		},
 		{
+			"name": "setFees",
+			"inputs": [
+				{"name":"service_fee_","type":"uint128"},
+				{"name":"subscription_fee_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgradeFeeProxy",
 			"inputs": [
 			],
@@ -183,6 +192,30 @@
 			"outputs": [
 				{"name":"fee_proxy_code","type":"cell"}
 			]
+		},
+		{
+			"name": "fee_proxy_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"fee_proxy_address","type":"address"}
+			]
+		},
+		{
+			"name": "service_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_fee","type":"uint128"}
+			]
+		},
+		{
+			"name": "subscription_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_fee","type":"uint128"}
+			]
 		}
 	],
 	"data": [
@@ -207,6 +240,8 @@
 		{"name":"subscription_version","type":"uint32"},
 		{"name":"fee_proxy_version","type":"uint32"},
 		{"name":"fee_proxy_address","type":"address"},
+		{"name":"service_fee","type":"uint128"},
+		{"name":"subscription_fee","type":"uint128"},
 		{"name":"fee_proxy_contract_params","type":"cell"}
 	]
 }

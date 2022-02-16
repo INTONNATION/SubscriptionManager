@@ -28,7 +28,7 @@ contract MetaduesRoot {
     uint32 account_version;
     uint32 subscription_version;
     uint32 fee_proxy_version;
-    address fee_proxy_address;
+    address public fee_proxy_address;
     uint128 public service_fee;
     uint128 public subscription_fee;
     TvmCell fee_proxy_contract_params; // root addresses of supported currencies
@@ -143,7 +143,6 @@ contract MetaduesRoot {
             value: 1 ton,
             flag: 0
         }();
-        fee_proxy_address = address(platform);
         platform.initialize{
             value: 1 ton,
             flag: 0
