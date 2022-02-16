@@ -14,7 +14,7 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.s
 
 contract MetaduesAccount {
    
-    mapping(address => balance_wallet_struct) public balance_map;
+    mapping(address => balance_wallet_struct) public wallets_mapping;
     address public root;
     TvmCell platform_code;
     TvmCell platform_params;
@@ -29,7 +29,6 @@ contract MetaduesAccount {
     struct balance_wallet_struct {
         address wallet;
         uint128 balance;
-
     }
     
     function onCodeUpgrade(TvmCell upgrade_data) private {
@@ -68,7 +67,7 @@ contract MetaduesAccount {
         (,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
         (currency_root,) = next_cell.toSlice().decode(address, string);
         
-        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(currency_root);
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(currency_root);
         
         if (current_balance_struct.hasValue()){         
             balance_wallet_struct current_balance_key_value = current_balance_struct.get();
@@ -80,7 +79,7 @@ contract MetaduesAccount {
                 ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload);
                 uint128 balance_after_pay = current_balance - value;
                 current_balance_key_value.balance = balance_after_pay;
-                balance_map[currency_root] = current_balance_key_value;
+                wallets_mapping[currency_root] = current_balance_key_value;
                 return { value: 0, flag: 128, bounce: false } 0;
             }
         }
@@ -93,7 +92,7 @@ contract MetaduesAccount {
      function syncBalance(address currency_root) external onlyOwner {
         require(sync_balance_currency_root == address(0), 335);
         sync_balance_currency_root = currency_root;
-        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(currency_root);
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(currency_root);
         balance_wallet_struct current_balance_key  = current_balance_struct.get();
         address account_wallet = current_balance_key.wallet;
         TIP3TokenWallet(account_wallet).balance{
@@ -106,10 +105,10 @@ contract MetaduesAccount {
 
      function onBalanceOf(uint128 balance_) external {
         uint128 balance_wallet = balance_;
-        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(sync_balance_currency_root);
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(sync_balance_currency_root);
         balance_wallet_struct current_balance_key  = current_balance_struct.get();
         current_balance_key.balance = balance_wallet;
-        balance_map[sync_balance_currency_root] = current_balance_key;
+        wallets_mapping[sync_balance_currency_root] = current_balance_key;
         sync_balance_currency_root = address(0);
     }
 
@@ -125,13 +124,13 @@ contract MetaduesAccount {
     }        
 
     function onWalleOfWithdraw(address withdraw_owner_wallet) external {
-        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(msg.sender);
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(msg.sender);
         balance_wallet_struct current_balance_key  = current_balance_struct.get();
         address account_wallet = current_balance_key.wallet;
         TvmCell payload;
         ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(withdraw_value,withdraw_owner_wallet,withdraw_owner_wallet, true, payload);
         current_balance_key.balance = current_balance_key.balance - withdraw_value;
-        balance_map[msg.sender] = current_balance_key;
+        wallets_mapping[msg.sender] = current_balance_key;
         withdraw_value = 0;
     }
 
@@ -155,16 +154,16 @@ contract MetaduesAccount {
         TvmCell payload
     ) external
     {
-        optional(balance_wallet_struct) current_balance_struct = balance_map.fetch(tokenRoot);
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(tokenRoot);
         if (current_balance_struct.hasValue()) {   
             balance_wallet_struct current_balance_key  = current_balance_struct.get();
             current_balance_key.balance += amount;    
-            balance_map[tokenRoot] = current_balance_key;
+            wallets_mapping[tokenRoot] = current_balance_key;
         } else {
             balance_wallet_struct current_balance_struct;
             current_balance_struct.wallet = msg.sender;
             current_balance_struct.balance = amount;  
-            balance_map[tokenRoot] = current_balance_struct;
+            wallets_mapping[tokenRoot] = current_balance_struct;
         }
         
     }

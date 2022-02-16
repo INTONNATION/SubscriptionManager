@@ -75,6 +75,22 @@
 			]
 		},
 		{
+			"name": "installOrUpgradeMTDSRootAddress",
+			"inputs": [
+				{"name":"mtds_root_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
+			"inputs": [
+				{"name":"revenue_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpdateServiceIndexCode",
 			"inputs": [
 				{"name":"code","type":"cell"}
@@ -87,6 +103,13 @@
 			"inputs": [
 				{"name":"service_fee_","type":"uint128"},
 				{"name":"subscription_fee_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transferRevenueFromFeeProxy",
+			"inputs": [
 			],
 			"outputs": [
 			]
@@ -242,6 +265,8 @@
 		{"name":"fee_proxy_address","type":"address"},
 		{"name":"service_fee","type":"uint128"},
 		{"name":"subscription_fee","type":"uint128"},
-		{"name":"fee_proxy_contract_params","type":"cell"}
+		{"name":"fee_proxy_contract_params","type":"cell"},
+		{"name":"mtds_root_address","type":"address"},
+		{"name":"mtds_revenue_delegation_address","type":"address"}
 	]
 }
