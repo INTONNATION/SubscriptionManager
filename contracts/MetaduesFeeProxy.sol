@@ -19,8 +19,15 @@ contract MetaduesFeeProxy {
     TvmCell platform_params;
     uint32 current_version;
     uint8 type_id;
-    
-    mapping(address => address) public wallets_mapping;
+    address mtds_root_address;
+    address sync_balance_currency_root; // mutex
+
+    mapping(address => balance_wallet_struct) public wallets_mapping;
+
+    struct balance_wallet_struct {
+        address wallet;
+        uint128 balance;
+    }
 
     constructor() public { revert(); }
 
@@ -29,18 +36,73 @@ contract MetaduesFeeProxy {
         _;
     }
 
+    function onAcceptTokensTransfer(
+        address tokenRoot,
+        uint128 amount,
+        address sender,
+        address senderWallet,
+        address remainingGasTo,
+        TvmCell payload
+    ) external
+    {
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(tokenRoot);
+        if (current_balance_struct.hasValue()) {   
+            balance_wallet_struct current_balance_key  = current_balance_struct.get();
+            current_balance_key.balance += amount;    
+            wallets_mapping[tokenRoot] = current_balance_key;
+        }
+    }
+
+    function syncBalance(address currency_root) external onlyRoot {
+        require(sync_balance_currency_root == address(0), 335); // mutex
+        sync_balance_currency_root = currency_root; // critical area
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(currency_root);
+        balance_wallet_struct current_balance_key  = current_balance_struct.get();
+        address account_wallet = current_balance_key.wallet;
+        TIP3TokenWallet(account_wallet).balance{
+             value: 0.1 ton, 
+             bounce: true,
+             flag: 0,
+             callback: MetaduesFeeProxy.onBalanceOf
+        }();
+    }
+
+    function onBalanceOf(uint128 balance_) external {
+        uint128 balance_wallet = balance_;
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(sync_balance_currency_root);
+        balance_wallet_struct current_balance_key  = current_balance_struct.get();
+        current_balance_key.balance = balance_wallet;
+        wallets_mapping[sync_balance_currency_root] = current_balance_key;
+        sync_balance_currency_root = address(0); // free mutex
+    }
+
+    function transferRevenue(address revenue_to) external onlyRoot {
+        optional(balance_wallet_struct) currency_root_wallet_opt = wallets_mapping.fetch(mtds_root_address);
+        if (!currency_root_wallet_opt.hasValue()){
+            balance_wallet_struct currency_root_wallet_struct = currency_root_wallet_opt.get();
+            TvmCell payload;
+            ITokenWallet(currency_root_wallet_struct.wallet).transfer{value: 0.5 ton}(
+                currency_root_wallet_struct.balance,
+                revenue_to,
+                0,
+                root,
+                true,
+                payload
+            );
+        }
+    }
+
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
         (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =
         s.decode(address,address,uint32,uint32,uint8);
-
         if (old_version == 0) {
             tvm.resetStorage();
         }
-
         root = root_;
         platform_code = s.loadRef();
         platform_params = s.loadRef();
+        mtds_root_address = platform_params.toSlice().decode(address);
         TvmSlice contract_params = s.loadRefAsSlice();  
         TvmCell current_code = s.loadRef();
         current_version = version;  
@@ -48,7 +110,7 @@ contract MetaduesFeeProxy {
         (address[] supportedCurrencies) = contract_params.decode(address[]);
         if (old_version != 0) {
             TvmSlice old_data = s.loadRefAsSlice();
-            mapping(address => address) wallets_mapping_ = old_data.decode(mapping(address => address));
+            mapping(address => balance_wallet_struct) wallets_mapping_ = old_data.decode(mapping(address => balance_wallet_struct));
             wallets_mapping = wallets_mapping_;
         }
         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
@@ -56,7 +118,6 @@ contract MetaduesFeeProxy {
     }
 
     function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
-
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -71,13 +132,12 @@ contract MetaduesFeeProxy {
         builder.store(upgrade_params.toCell());
         tvm.setcode(code);
         tvm.setCurrentCode(code);
-
         onCodeUpgrade(builder.toCell());
     }
 
     function updateSupportedCurrencies(address[] currencies) private {
         for (address currency_root : currencies) { // iteration over the array
-            optional(address) currency_root_wallet_opt = wallets_mapping.fetch(currency_root);
+            optional(balance_wallet_struct) currency_root_wallet_opt = wallets_mapping.fetch(currency_root);
             if (!currency_root_wallet_opt.hasValue()){
                 ITokenRoot(currency_root).deployWallet{
                     value: 0.2 ton,
@@ -94,6 +154,7 @@ contract MetaduesFeeProxy {
 
     function onDeployWallet(address wallet_address) external {
         //require only from root
-        wallets_mapping[msg.sender] = wallet_address;
+        wallets_mapping[msg.sender].wallet = wallet_address;
+        wallets_mapping[msg.sender].balance = 0;
     }
 }

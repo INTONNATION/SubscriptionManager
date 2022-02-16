@@ -11,6 +11,43 @@
 			]
 		},
 		{
+			"name": "onAcceptTokensTransfer",
+			"inputs": [
+				{"name":"tokenRoot","type":"address"},
+				{"name":"amount","type":"uint128"},
+				{"name":"sender","type":"address"},
+				{"name":"senderWallet","type":"address"},
+				{"name":"remainingGasTo","type":"address"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "syncBalance",
+			"inputs": [
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onBalanceOf",
+			"inputs": [
+				{"name":"balance_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transferRevenue",
+			"inputs": [
+				{"name":"revenue_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgrade",
 			"inputs": [
 				{"name":"code","type":"cell"},
@@ -42,7 +79,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"wallets_mapping","type":"map(address,address)"}
+				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 			]
 		}
 	],
@@ -59,6 +96,8 @@
 		{"name":"platform_params","type":"cell"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
-		{"name":"wallets_mapping","type":"map(address,address)"}
+		{"name":"mtds_root_address","type":"address"},
+		{"name":"sync_balance_currency_root","type":"address"},
+		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 	]
 }

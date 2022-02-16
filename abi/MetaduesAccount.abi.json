@@ -77,11 +77,11 @@
 			]
 		},
 		{
-			"name": "balance_map",
+			"name": "wallets_mapping",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"balance_map","type":"map(address,tuple)"}
+				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 			]
 		},
 		{
@@ -117,7 +117,7 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"balance_map","type":"map(address,tuple)"},
+		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"root","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},

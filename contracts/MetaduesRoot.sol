@@ -32,6 +32,8 @@ contract MetaduesRoot {
     uint128 public service_fee;
     uint128 public subscription_fee;
     TvmCell fee_proxy_contract_params; // root addresses of supported currencies
+    address mtds_root_address;
+    address mtds_revenue_delegation_address;
 
 	onBounce(TvmSlice slice) external {
         // revert change to initial msg.sender in case of failure during deploy
@@ -90,6 +92,14 @@ contract MetaduesRoot {
         fee_proxy_contract_params = currencies_cell.toCell();
     }  
 
+    function installOrUpgradeMTDSRootAddress(address mtds_root_) external onlyOwner {
+        mtds_root_address = mtds_root_;
+    }
+
+    function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to) external onlyOwner {
+        mtds_revenue_delegation_address = revenue_to;
+    }
+
     function installOrUpdateServiceIndexCode(TvmCell code) external onlyOwner {
         service_index_code = code;
     }
@@ -97,6 +107,29 @@ contract MetaduesRoot {
     function setFees(uint128 service_fee_, uint128 subscription_fee_) external onlyOwner {
         service_fee = service_fee_;
         subscription_fee =subscription_fee_;
+    }
+
+    // Managment
+    function transferRevenueFromFeeProxy() external view onlyOwner {
+        require(fee_proxy_address != address(0), 555);
+         MetaduesFeeProxy(fee_proxy_address).transferRevenue{
+            value: 1 ton, 
+            bounce: false,
+            flag: 0
+        }(
+            mtds_revenue_delegation_address
+        );
+    }
+
+    function syncFeeProxyBalance(address currency_root) external view onlyOwner {
+        require(fee_proxy_address != address(0), 555);
+         MetaduesFeeProxy(fee_proxy_address).syncBalance{
+            value: 1 ton, 
+            bounce: false,
+            flag: 0
+        }(
+            currency_root
+        );
     }
 
     // Upgrade contracts
@@ -117,9 +150,8 @@ contract MetaduesRoot {
     // Deploy contracts
     function deployFeeProxy() external onlyOwner {
         require(fee_proxy_contract_params.toSlice().empty() != true);
-        TvmCell platform_params;
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.FeeProxy, platform_params),
+            stateInit: _buildInitData(PlatformTypes.FeeProxy, _buildPlatformParams(mtds_root_address)),
             value: 1 ton,
             flag: 0
         }();
@@ -139,7 +171,7 @@ contract MetaduesRoot {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
         TvmCell account_params;
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.Account, _buildAccountParams(msg.sender)),
+            stateInit: _buildInitData(PlatformTypes.Account, _buildPlatformParams(msg.sender)),
             value: 1 ton,
             flag: 0
         }();
@@ -174,7 +206,7 @@ contract MetaduesRoot {
         TvmBuilder service_params;
         TvmBuilder index_addreses;
         TvmBuilder fees_params;
-        address owner_account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildAccountParams(msg.sender))));
+        address owner_account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildPlatformParams(msg.sender))));
         address subs_index = address(tvm.hash(subsIndexStateInit));
         address subs_index_identificator = address(tvm.hash(subsIndexIdentificatorStateInit));
         fees_params.store(fee_proxy_address, service_fee, subscription_fee);
@@ -183,7 +215,7 @@ contract MetaduesRoot {
 
         // service_params.store(owner_account_address);
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.Subscription, _buildSubscriptionParams(msg.sender, service_address)),
+            stateInit: _buildInitData(PlatformTypes.Subscription, _buildSubscriptionPlatformParams(msg.sender, service_address)),
             value: 1 ton,
             flag: 0
         }();
@@ -234,7 +266,7 @@ contract MetaduesRoot {
         (,category) = next_cell.toSlice().decode(address, string);
         TvmCell service_code_salt = _buildServiceCode(category);
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.Service, _buildServiceParams(msg.sender, service_name)),
+            stateInit: _buildInitData(PlatformTypes.Service, _buildServicePlatformParams(msg.sender, service_name)),
             value: 1 ton,
             flag: 0
         }();
@@ -367,20 +399,20 @@ contract MetaduesRoot {
         });
     }
 
-    function _buildAccountParams(address account_owner) private inline pure returns (TvmCell) {
+    function _buildPlatformParams(address account_owner) private inline pure returns (TvmCell) {
         TvmBuilder builder;
         builder.store(account_owner);
         return builder.toCell();
     }
 
-    function _buildSubscriptionParams(address subscription_owner, address service_address) private inline pure returns (TvmCell) {
+    function _buildSubscriptionPlatformParams(address subscription_owner, address service_address) private inline pure returns (TvmCell) {
         TvmBuilder builder;
         builder.store(subscription_owner);
         builder.store(service_address);
         return builder.toCell();
     }
 
-    function _buildServiceParams(address service_owner, string service_name) private inline pure returns (TvmCell) {
+    function _buildServicePlatformParams(address service_owner, string service_name) private inline pure returns (TvmCell) {
         TvmBuilder builder;
         builder.store(service_owner);
         builder.store(service_name);
