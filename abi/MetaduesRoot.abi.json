@@ -115,6 +115,14 @@
 			]
 		},
 		{
+			"name": "syncFeeProxyBalance",
+			"inputs": [
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgradeFeeProxy",
 			"inputs": [
 			],
@@ -148,6 +156,15 @@
 			"name": "deployService",
 			"inputs": [
 				{"name":"service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -267,6 +284,6 @@
 		{"name":"subscription_fee","type":"uint128"},
 		{"name":"fee_proxy_contract_params","type":"cell"},
 		{"name":"mtds_root_address","type":"address"},
-		{"name":"mtds_revenue_delegation_address","type":"address"}
+		{"name":"mtds_revenue_accumulator_address","type":"address"}
 	]
 }

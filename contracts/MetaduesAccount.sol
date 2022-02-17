@@ -3,10 +3,9 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-
 import "libraries/MetaduesRootErrors.sol";
-import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
+import "./Platform.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
@@ -85,8 +84,6 @@ contract MetaduesAccount {
         }
         else {return { value: 0, flag: 128, bounce: false } 1;}
         }
-
-          
 
 
      function syncBalance(address currency_root) external onlyOwner {

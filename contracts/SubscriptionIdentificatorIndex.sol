@@ -7,22 +7,28 @@ import "libraries/SubscriptionErrors.sol";
 
 contract SubscriptionIdentificatorIndex {
     
-
+    address static subscription_owner;
     address public ownerAddress;
-    address public subscription_addr;
+    address public subscription_address;
+    address public root;
+    TvmCell public identificator;
+
 
     modifier onlyOwner {
-		require(msg.sender == subscription_addr, SubscriptionErrors.error_message_sender_is_not_owner);
+		require(msg.sender == subscription_address, SubscriptionErrors.error_message_sender_is_not_owner);
 		_;
     }
 
-    constructor(address subsAddr, address senderAddress) public {
+    constructor(address subsAddr) public {
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
-        (TvmCell identificator, address root) = salt.get().toSlice().decode(TvmCell, address);
-        subscription_addr = subsAddr;
+        (TvmCell identificator_, address root_) = salt.get().toSlice().decode(TvmCell, address);
+        require(msg.sender == root_, SubscriptionErrors.error_message_sender_is_not_root);
+        root = root_;
+        identificator = identificator_;
+        subscription_address = subsAddr;
     }
 
     function cancel() public onlyOwner {
-        selfdestruct(subscription_addr);
+        selfdestruct(subscription_address);
     }
 }
