@@ -3,10 +3,9 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-
 import "libraries/MetaduesRootErrors.sol";
-import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
+import "./Platform.sol";
 import "../contracts/SubscriptionIndex.sol";
 import "../contracts/SubscriptionIdentificatorIndex.sol";
 import "../contracts/SubscriptionServiceIndex.sol";
@@ -198,11 +197,13 @@ contract MetaduesRoot {
         require(fee_proxy_address != address(0), 555);
         tvm.accept();  
         TvmCell subsIndexStateInit = _buildSubscriptionIndex(
-            service_address
+            service_address,
+            msg.sender
         );
         TvmCell subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
             service_address, 
-            identificator
+            identificator,
+            msg.sender
         );
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         TvmBuilder service_params;
@@ -238,8 +239,7 @@ contract MetaduesRoot {
             bounce: true, 
             stateInit: subsIndexStateInit
             }(
-                address(platform),
-                msg.sender
+                address(platform)
             );
         
         new SubscriptionIdentificatorIndex{
@@ -248,8 +248,7 @@ contract MetaduesRoot {
             bounce: true, 
             stateInit: subsIndexIdentificatorStateInit
             }(
-                address(platform),
-                msg.sender
+                address(platform)
             );
     }
 
@@ -321,7 +320,8 @@ contract MetaduesRoot {
 
     function _buildSubscriptionIdentificatorIndex(
         address service_address, 
-        TvmCell identificator
+        TvmCell identificator,
+        address subscription_owner
     ) private view returns (TvmCell) 
     {
         TvmBuilder saltBuilder;
@@ -337,7 +337,8 @@ contract MetaduesRoot {
         TvmCell stateInit = tvm.buildStateInit({
             code: code,
             pubkey: 0,
-            varInit: { 
+            varInit: {
+                subscription_owner: subscription_owner
             },
             contr: SubscriptionIdentificatorIndex
         });
@@ -345,7 +346,8 @@ contract MetaduesRoot {
     }
 
     function _buildSubscriptionIndex(
-        address service_address
+        address service_address,
+        address subscription_owner
     ) private view returns (TvmCell) 
     {
         TvmBuilder saltBuilder;
@@ -360,7 +362,8 @@ contract MetaduesRoot {
         TvmCell stateInit = tvm.buildStateInit({
             code: code,
             pubkey: 0,
-            varInit: { 
+            varInit: {
+                subscription_owner: subscription_owner
             },
             contr: SubscriptionIndex
         });
