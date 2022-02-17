@@ -33,7 +33,7 @@ contract MetaduesRoot {
     uint128 public subscription_fee;
     TvmCell fee_proxy_contract_params; // root addresses of supported currencies
     address mtds_root_address;
-    address mtds_revenue_delegation_address;
+    address mtds_revenue_accumulator_address;
 
 	onBounce(TvmSlice slice) external {
         // revert change to initial msg.sender in case of failure during deploy
@@ -99,7 +99,7 @@ contract MetaduesRoot {
     }
 
     function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to) external onlyOwner {
-        mtds_revenue_delegation_address = revenue_to;
+        mtds_revenue_accumulator_address = revenue_to;
     }
 
     function installOrUpdateServiceIndexCode(TvmCell code) external onlyOwner {
@@ -119,7 +119,7 @@ contract MetaduesRoot {
             bounce: false,
             flag: 0
         }(
-            mtds_revenue_delegation_address
+            mtds_revenue_accumulator_address
         );
     }
 
@@ -420,4 +420,22 @@ contract MetaduesRoot {
         builder.store(service_name);
         return builder.toCell();
     }
+
+    function upgrade(TvmCell code, address send_gas_to) external onlyOwner {
+        TvmBuilder builder;
+        TvmBuilder upgrade_params;
+        builder.store(account_version);
+        builder.store(send_gas_to);
+        builder.store(service_version);
+        builder.store(fee_proxy_version);
+        builder.store(subscription_version);
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade(builder.toCell());
+    }
+
+    function onCodeUpgrade(TvmCell upgrade_data) private {
+
+    }
+
 }
