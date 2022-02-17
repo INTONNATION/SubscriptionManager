@@ -3,10 +3,9 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-
 import "libraries/MetaduesRootErrors.sol";
-import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
+import "./Platform.sol";
 import "../contracts/SubscriptionIndex.sol";
 import "../contracts/SubscriptionIdentificatorIndex.sol";
 import "../contracts/SubscriptionServiceIndex.sol";
@@ -33,7 +32,7 @@ contract MetaduesRoot {
     uint128 public subscription_fee;
     TvmCell fee_proxy_contract_params; // root addresses of supported currencies
     address mtds_root_address;
-    address mtds_revenue_delegation_address;
+    address mtds_revenue_accumulator_address;
 
 	onBounce(TvmSlice slice) external {
         // revert change to initial msg.sender in case of failure during deploy
@@ -93,11 +92,13 @@ contract MetaduesRoot {
     }  
 
     function installOrUpgradeMTDSRootAddress(address mtds_root_) external onlyOwner {
+        require(fee_proxy_address != address(0), 555);
         mtds_root_address = mtds_root_;
+        MetaduesFeeProxy(fee_proxy_address).setMTDSRootAddress(mtds_root_address);
     }
 
     function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to) external onlyOwner {
-        mtds_revenue_delegation_address = revenue_to;
+        mtds_revenue_accumulator_address = revenue_to;
     }
 
     function installOrUpdateServiceIndexCode(TvmCell code) external onlyOwner {
@@ -117,7 +118,7 @@ contract MetaduesRoot {
             bounce: false,
             flag: 0
         }(
-            mtds_revenue_delegation_address
+            mtds_revenue_accumulator_address
         );
     }
 
@@ -151,7 +152,7 @@ contract MetaduesRoot {
     function deployFeeProxy() external onlyOwner {
         require(fee_proxy_contract_params.toSlice().empty() != true);
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.FeeProxy, _buildPlatformParams(mtds_root_address)),
+            stateInit: _buildInitData(PlatformTypes.FeeProxy, _buildPlatformParams(address(this))),
             value: 1 ton,
             flag: 0
         }();
@@ -196,11 +197,13 @@ contract MetaduesRoot {
         require(fee_proxy_address != address(0), 555);
         tvm.accept();  
         TvmCell subsIndexStateInit = _buildSubscriptionIndex(
-            service_address
+            service_address,
+            msg.sender
         );
         TvmCell subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
             service_address, 
-            identificator
+            identificator,
+            msg.sender
         );
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         TvmBuilder service_params;
@@ -236,8 +239,7 @@ contract MetaduesRoot {
             bounce: true, 
             stateInit: subsIndexStateInit
             }(
-                address(platform),
-                msg.sender
+                address(platform)
             );
         
         new SubscriptionIdentificatorIndex{
@@ -246,8 +248,7 @@ contract MetaduesRoot {
             bounce: true, 
             stateInit: subsIndexIdentificatorStateInit
             }(
-                address(platform),
-                msg.sender
+                address(platform)
             );
     }
 
@@ -319,7 +320,8 @@ contract MetaduesRoot {
 
     function _buildSubscriptionIdentificatorIndex(
         address service_address, 
-        TvmCell identificator
+        TvmCell identificator,
+        address subscription_owner
     ) private view returns (TvmCell) 
     {
         TvmBuilder saltBuilder;
@@ -335,7 +337,8 @@ contract MetaduesRoot {
         TvmCell stateInit = tvm.buildStateInit({
             code: code,
             pubkey: 0,
-            varInit: { 
+            varInit: {
+                subscription_owner: subscription_owner
             },
             contr: SubscriptionIdentificatorIndex
         });
@@ -343,7 +346,8 @@ contract MetaduesRoot {
     }
 
     function _buildSubscriptionIndex(
-        address service_address
+        address service_address,
+        address subscription_owner
     ) private view returns (TvmCell) 
     {
         TvmBuilder saltBuilder;
@@ -358,7 +362,8 @@ contract MetaduesRoot {
         TvmCell stateInit = tvm.buildStateInit({
             code: code,
             pubkey: 0,
-            varInit: { 
+            varInit: {
+                subscription_owner: subscription_owner
             },
             contr: SubscriptionIndex
         });
@@ -418,4 +423,22 @@ contract MetaduesRoot {
         builder.store(service_name);
         return builder.toCell();
     }
+
+    function upgrade(TvmCell code, address send_gas_to) external onlyOwner {
+        TvmBuilder builder;
+        TvmBuilder upgrade_params;
+        builder.store(account_version);
+        builder.store(send_gas_to);
+        builder.store(service_version);
+        builder.store(fee_proxy_version);
+        builder.store(subscription_version);
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade(builder.toCell());
+    }
+
+    function onCodeUpgrade(TvmCell upgrade_data) private {
+
+    }
+
 }
