@@ -6,8 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"subsAddr","type":"address"},
-				{"name":"senderAddress","type":"address"}
+				{"name":"subsAddr","type":"address"}
 			],
 			"outputs": [
 			]
@@ -28,15 +27,32 @@
 			]
 		},
 		{
-			"name": "subscription_addr",
+			"name": "subscription_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"subscription_addr","type":"address"}
+				{"name":"subscription_address","type":"address"}
+			]
+		},
+		{
+			"name": "root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root","type":"address"}
+			]
+		},
+		{
+			"name": "identificator",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"identificator","type":"cell"}
 			]
 		}
 	],
 	"data": [
+		{"key":1,"name":"subscription_owner","type":"address"}
 	],
 	"events": [
 	],
@@ -44,7 +60,10 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
+		{"name":"subscription_owner","type":"address"},
 		{"name":"ownerAddress","type":"address"},
-		{"name":"subscription_addr","type":"address"}
+		{"name":"subscription_address","type":"address"},
+		{"name":"root","type":"address"},
+		{"name":"identificator","type":"cell"}
 	]
 }

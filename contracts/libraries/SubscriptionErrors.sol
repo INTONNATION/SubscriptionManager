@@ -2,7 +2,7 @@ pragma ton-solidity >= 0.39.0;
 
 library SubscriptionErrors {
     uint8 constant error_salt_is_empty                           = 100;
-    uint8 constant error_message_sender_is_not_subsman           = 101;
+    uint8 constant error_message_sender_is_not_root              = 101;
     uint8 constant error_define_owner_address_in_static_vars     = 102;
     uint8 constant error_define_wallet_hash_in_salt              = 103;
     uint8 constant error_define_wallet_address_in_static_vars    = 104;

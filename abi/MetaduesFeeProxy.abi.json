@@ -32,6 +32,14 @@
 			]
 		},
 		{
+			"name": "setMTDSRootAddress",
+			"inputs": [
+				{"name":"mtds_root","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "onBalanceOf",
 			"inputs": [
 				{"name":"balance_","type":"uint128"}
