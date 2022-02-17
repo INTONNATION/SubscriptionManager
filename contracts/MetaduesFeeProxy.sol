@@ -67,6 +67,10 @@ contract MetaduesFeeProxy {
         }();
     }
 
+    function setMTDSRootAddress(address mtds_root) external onlyRoot {
+        mtds_root_address = mtds_root;
+    }
+
     function onBalanceOf(uint128 balance_) external {
         uint128 balance_wallet = balance_;
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(sync_balance_currency_root);
@@ -102,7 +106,6 @@ contract MetaduesFeeProxy {
         root = root_;
         platform_code = s.loadRef();
         platform_params = s.loadRef();
-        mtds_root_address = platform_params.toSlice().decode(address);
         TvmSlice contract_params = s.loadRefAsSlice();  
         TvmCell current_code = s.loadRef();
         current_version = version;  

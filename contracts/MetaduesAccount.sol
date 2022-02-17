@@ -86,8 +86,6 @@ contract MetaduesAccount {
         else {return { value: 0, flag: 128, bounce: false } 1;}
         }
 
-          
-
 
      function syncBalance(address currency_root) external onlyOwner {
         require(sync_balance_currency_root == address(0), 335);
