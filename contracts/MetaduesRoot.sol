@@ -93,7 +93,9 @@ contract MetaduesRoot {
     }  
 
     function installOrUpgradeMTDSRootAddress(address mtds_root_) external onlyOwner {
+        require(fee_proxy_address != address(0), 555);
         mtds_root_address = mtds_root_;
+        MetaduesFeeProxy(fee_proxy_address).setMTDSRootAddress(mtds_root_address);
     }
 
     function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to) external onlyOwner {
@@ -151,7 +153,7 @@ contract MetaduesRoot {
     function deployFeeProxy() external onlyOwner {
         require(fee_proxy_contract_params.toSlice().empty() != true);
         Platform platform = new Platform {
-            stateInit: _buildInitData(PlatformTypes.FeeProxy, _buildPlatformParams(mtds_root_address)),
+            stateInit: _buildInitData(PlatformTypes.FeeProxy, _buildPlatformParams(address(this))),
             value: 1 ton,
             flag: 0
         }();
