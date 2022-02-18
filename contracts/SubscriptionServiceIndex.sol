@@ -1,4 +1,4 @@
-pragma ton-solidity ^ 0.51.0;
+pragma ton-solidity >= 0.56.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
@@ -14,19 +14,7 @@ interface ISubscriptionServiceContract {
 
 contract SubscriptionServiceIndex is Upgradable {
 
-    struct ServiceParams {
-        address to;
-        uint128 value;
-        uint32 period;
-        string name;
-        string description;
-        string image;
-        string currency;
-        string category;
-    }
-    ServiceParams public svcparams;
-    TvmCell static public params;
-    string static public serviceCategory;
+    string public static service_name;
     address public serviceAddress;
     address public serviceOwner;
 
@@ -39,34 +27,9 @@ contract SubscriptionServiceIndex is Upgradable {
         require(msg.value >= 0.02 ton, SubscriptionServiceErrors.error_low_message_value);
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), SubscriptionServiceErrors.error_salt_is_empty);
-        (address ownerAddress, address subsmanAddr) = salt.get().toSlice().decode(address, address);
-        require(msg.sender == subsmanAddr, SubscriptionServiceErrors.error_message_sender_is_not_subsman);
+        (address ownerAddress, address metaduesRootAddr) = salt.get().toSlice().decode(address, address);
+        require(msg.sender == metaduesRootAddr, SubscriptionServiceErrors.error_message_sender_is_not_metadues_root);
         require(ownerAddress == senderAddress, SubscriptionServiceErrors.error_define_owner_in_salt);
-        TvmCell nextCell;
-        (
-            svcparams.to, 
-            svcparams.value, 
-            svcparams.period, 
-            nextCell
-        ) = params.toSlice().decode(
-            address, 
-            uint128, 
-            uint32, 
-            TvmCell
-        );
-        TvmCell nextCell2;
-        (
-            svcparams.name, 
-            svcparams.description, 
-            svcparams.image, 
-            nextCell2
-        ) = nextCell.toSlice().decode(
-            string, 
-            string, 
-            string, 
-            TvmCell
-        );
-        (svcparams.currency, svcparams.category) = nextCell2.toSlice().decode(string, string);
         serviceAddress = serviceAddress_;
         serviceOwner = ownerAddress;
     }

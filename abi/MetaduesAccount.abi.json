@@ -1,0 +1,141 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"contract_params","type":"cell"},
+				{"name":"version","type":"uint32"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "paySubscription",
+			"inputs": [
+				{"name":"answerId","type":"uint32"},
+				{"name":"params","type":"cell"},
+				{"name":"account_wallet","type":"address"},
+				{"name":"subscription_wallet","type":"address"},
+				{"name":"service_address","type":"address"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"}
+			]
+		},
+		{
+			"name": "syncBalance",
+			"inputs": [
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onBalanceOf",
+			"inputs": [
+				{"name":"balance_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "withdrawFunds",
+			"inputs": [
+				{"name":"currency_root","type":"address"},
+				{"name":"withdraw_value_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWalleOfWithdraw",
+			"inputs": [
+				{"name":"withdraw_owner_wallet","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "destroyAccount",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onAcceptTokensTransfer",
+			"inputs": [
+				{"name":"tokenRoot","type":"address"},
+				{"name":"amount","type":"uint128"},
+				{"name":"sender","type":"address"},
+				{"name":"senderWallet","type":"address"},
+				{"name":"remainingGasTo","type":"address"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "wallets_mapping",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
+			]
+		},
+		{
+			"name": "root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root","type":"address"}
+			]
+		},
+		{
+			"name": "withdraw_value",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"withdraw_value","type":"uint128"}
+			]
+		},
+		{
+			"name": "sync_balance_currency_root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"sync_balance_currency_root","type":"address"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
+		{"name":"root","type":"address"},
+		{"name":"platform_code","type":"cell"},
+		{"name":"platform_params","type":"cell"},
+		{"name":"current_version","type":"uint32"},
+		{"name":"type_id","type":"uint8"},
+		{"name":"account_owner","type":"address"},
+		{"name":"withdraw_value","type":"uint128"},
+		{"name":"sync_balance_currency_root","type":"address"}
+	]
+}

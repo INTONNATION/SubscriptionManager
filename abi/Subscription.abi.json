@@ -6,11 +6,17 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"senderAddress","type":"address"},
-				{"name":"walletCode","type":"cell"},
-				{"name":"rootAddress","type":"address"},
-				{"name":"subsIndexAddr","type":"address"},
-				{"name":"subsIndificatorIndexAddrINPUT","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"contract_params","type":"cell"},
+				{"name":"version","type":"uint32"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -18,6 +24,19 @@
 		{
 			"name": "executeSubscription",
 			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onAcceptTokensTransfer",
+			"inputs": [
+				{"name":"tokenRoot","type":"address"},
+				{"name":"amount","type":"uint128"},
+				{"name":"sender","type":"address"},
+				{"name":"senderWallet","type":"address"},
+				{"name":"remainingGasTo","type":"address"},
+				{"name":"payload","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -31,6 +50,30 @@
 			]
 		},
 		{
+			"name": "onGetParams",
+			"inputs": [
+				{"name":"service_params_","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onDeployWallet",
+			"inputs": [
+				{"name":"subscription_wallet_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWalletOf",
+			"inputs": [
+				{"name":"account_wallet_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "cancel",
 			"inputs": [
 			],
@@ -38,11 +81,59 @@
 			]
 		},
 		{
+			"name": "root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root","type":"address"}
+			]
+		},
+		{
+			"name": "owner_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"owner_address","type":"address"}
+			]
+		},
+		{
+			"name": "service_params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_params","type":"cell"}
+			]
+		},
+		{
+			"name": "service_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_fee","type":"uint128"}
+			]
+		},
+		{
+			"name": "subscription_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_fee","type":"uint128"}
+			]
+		},
+		{
+			"name": "address_fee_proxy",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"address_fee_proxy","type":"address"}
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 			]
 		},
 		{
@@ -50,16 +141,11 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
+				{"components":[{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 			]
 		}
 	],
 	"data": [
-		{"key":1,"name":"serviceOwner","type":"address"},
-		{"key":2,"name":"user_wallet","type":"address"},
-		{"key":3,"name":"params","type":"cell"},
-		{"key":4,"name":"subscription_indificator","type":"cell"},
-		{"key":5,"name":"owner_address","type":"address"}
 	],
 	"events": [
 	],
@@ -67,15 +153,24 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"serviceOwner","type":"address"},
-		{"name":"user_wallet","type":"address"},
-		{"name":"params","type":"cell"},
-		{"name":"subscription_indificator","type":"cell"},
+		{"name":"root","type":"address"},
 		{"name":"owner_address","type":"address"},
-		{"name":"subscriptionIndexAddress","type":"address"},
-		{"name":"subsIndificatorIndexAddr","type":"address"},
+		{"name":"platform_code","type":"cell"},
+		{"name":"platform_params","type":"cell"},
+		{"name":"current_version","type":"uint32"},
+		{"name":"type_id","type":"uint8"},
+		{"name":"service_params","type":"cell"},
+		{"name":"subscription_wallet","type":"address"},
+		{"name":"account_wallet","type":"address"},
+		{"name":"account_address","type":"address"},
+		{"name":"service_address","type":"address"},
+		{"name":"subscription_index_address","type":"address"},
+		{"name":"subscription_index_identificator_address","type":"address"},
 		{"name":"cooldown","type":"uint32"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
+		{"name":"service_fee","type":"uint128"},
+		{"name":"subscription_fee","type":"uint128"},
+		{"name":"address_fee_proxy","type":"address"},
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
+		{"components":[{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
 }

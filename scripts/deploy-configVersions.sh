@@ -10,11 +10,15 @@ NETWORK=$FLD
 giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
 
 # Compile code to load tvc and abi into versions config contract
-for i in ../contracts/SubsMan ../contracts/SubscriptionIndificatorIndex ../contracts/Subscription ../contracts/SubscriptionServiceIndex ../contracts/SubscriptionService ../contracts/SubscriptionIndex; do
-       tondev sol compile $i.sol -o ../abi;
-done
+tondev sol compile ../contracts/MetaduesRoot.sol -o ../abi;
+tondev sol compile ../contracts/MetaduesAccount.sol -o ../abi;
+tondev sol compile ../contracts/Platform.sol -o ../abi;
+tondev sol compile ../contracts/Subscription.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionIndex.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionIdentificatorIndex.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionService.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionServiceIndex.sol -o ../abi;
 
-SafeMultisigWalletABI="../abi/SafeMultisigWallet.abi.json"
 contract_name="configVersions"
 contract_abi="../abi/$contract_name.abi.json"
 

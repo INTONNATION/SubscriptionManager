@@ -1,4 +1,4 @@
-pragma ton-solidity ^ 0.51.0;
+pragma ton-solidity >= 0.56.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 
@@ -10,20 +10,45 @@ contract configVersions {
 	uint8 public versionAbi;
 	string[] public categories;
 
+	TvmCell tvcPlatform;
+	TvmCell tvcMetaduesAccount;
+	TvmCell tvcSubscriptionService;
+	TvmCell tvcSubscription;
+	TvmCell tvcSubscriptionServiceIndex;
+	TvmCell tvcSubscriptionIndex;
+	TvmCell tvcSubscriptionIdentificatorIndex;
+
+	string abiPlatformContract;
+	string abiMetaduesAccountContract;
+	string abiMetaduesRootContract;
+	string abiTIP3RootContract;
+	string abiTIP3TokenWalletContract;
+	string abiServiceContract;
+	string abiServiceIndexContract;
+	string abiSubscriptionContract;
+	string abiSubscriptionIndexContract;
+	string abiSubscriptionIdentificatorIndexContract;
+
 	struct VersionsTvcParams {
+		TvmCell tvcPlatform;
+		TvmCell tvcMetaduesAccount;
 		TvmCell tvcSubscriptionService;
 		TvmCell tvcSubscription;
 		TvmCell tvcSubscriptionServiceIndex;
 		TvmCell tvcSubscriptionIndex;
-		TvmCell tvcSubscriptionIndificatorIndex;
+		TvmCell tvcSubscriptionIdentificatorIndex;
 	}
 	struct VersionsAbiParams {
+		string abiPlatformContract;
+		string abiMetaduesAccountContract;
+		string abiMetaduesRootContract;
+		string abiTIP3RootContract;
+		string abiTIP3TokenWalletContract;
 		string abiServiceContract;
 		string abiServiceIndexContract;
 		string abiSubscriptionContract;
 		string abiSubscriptionIndexContract;
-		string abiSubscriptionIndificatorIndexContract;
-		string abiSubsManDebot;
+		string abiSubscriptionIdentificatorIndexContract;
 	}
 
 	mapping (uint8 => VersionsTvcParams) public vrsparamsTvc;
@@ -83,42 +108,161 @@ contract configVersions {
 		return value;
     }
 
-    function setTvc(
-		TvmCell tvcSubscriptionServiceInput, 
-		TvmCell tvcSubscriptionInput, 
-		TvmCell tvcSubscriptionServiceIndexInput,
-		TvmCell tvcSubscriptionIndexInput,
-		TvmCell tvcSubscriptionIndificatorIndexInput
+	// Set TVCs
+	function setTvcPlatform(
+		TvmCell tvcPlatformInput
 	)  
 	public onlyOwner 
 	{
+		tvcPlatform = tvcPlatformInput;
+    }
+
+    function setTvcMetaduesAccount(
+		TvmCell tvcMetaduesAccountInput
+	)  
+	public onlyOwner 
+	{
+		tvcMetaduesAccount = tvcMetaduesAccountInput;
+    }
+
+	function setTvcSubscriptionService(
+		TvmCell tvcSubscriptionServiceInput
+	)  
+	public onlyOwner 
+	{
+		tvcSubscriptionService = tvcSubscriptionServiceInput;
+    }
+	
+	function setTvcSubscription(
+		TvmCell tvcSubscriptionInput
+	)  
+	public onlyOwner 
+	{
+		tvcSubscription = tvcSubscriptionInput;
+    }
+
+	function setTvcSubscriptionServiceIndex(
+		TvmCell tvcSubscriptionServiceIndexInput
+	)  
+	public onlyOwner 
+	{
+		tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
+    }
+
+	function setTvcSubscriptionIndex(
+		TvmCell tvcSubscriptionIndexInput
+	)  
+	public onlyOwner 
+	{
+		tvcSubscriptionIndex = tvcSubscriptionIndexInput;
+    }
+
+	function setTvcSubscriptionIdentificatorIndex(
+		TvmCell tvcSubscriptionIdentificatorIndexInput
+	)  
+	public onlyOwner 
+	{
+		tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndexInput;
+    }
+
+    function setTvc() public onlyOwner {
 		versionTvc++;
 		VersionsTvcParams params;
-		params.tvcSubscriptionService = tvcSubscriptionServiceInput;
-		params.tvcSubscription = tvcSubscriptionInput;
-		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
-		params.tvcSubscriptionIndex = tvcSubscriptionIndexInput;
-		params.tvcSubscriptionIndificatorIndex = tvcSubscriptionIndificatorIndexInput;
+		params.tvcPlatform = tvcPlatform;
+		params.tvcMetaduesAccount = tvcMetaduesAccount;
+		params.tvcSubscriptionService = tvcSubscriptionService;
+		params.tvcSubscription = tvcSubscription;
+		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex;
+		params.tvcSubscriptionIndex = tvcSubscriptionIndex;
+		params.tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
 		vrsparamsTvc.add(versionTvc, params);
     }
 
-    function setAbi(
-		string abiServiceContractInput, 
-		string abiServiceIndexContractInput, 
-		string abiSubscriptionContractInput, 
-		string abiSubscriptionIndexContractInput, 
-		string abiSubscriptionIndificatorIndexContractInput,
-		string abiSubsManDebotInput
+	// Set ABIs
+
+	function setAbiPlatformContract(
+		string abiPlatformContractInput
 	) public onlyOwner 
 	{
+		abiPlatformContract = abiPlatformContractInput;
+    }
+
+	function setAbiMetaduesAccountContract(
+		string abiMetaduesAccountContractInput
+	) public onlyOwner 
+	{
+		abiMetaduesAccountContract = abiMetaduesAccountContractInput;
+    }
+
+	function setAbiMetaduesRootContract(
+		string abiMetaduesRootContractInput
+	) public onlyOwner 
+	{
+		abiMetaduesRootContract = abiMetaduesRootContractInput;
+    }
+
+	function setAbiTIP3RootContract(
+		string abiTIP3RootContractInput
+	) public onlyOwner 
+	{
+		abiTIP3RootContract = abiTIP3RootContractInput;
+    }
+
+	function setAbiTIP3TokenWalletContract(
+		string abiTIP3TokenWalletContractInput
+	) public onlyOwner 
+	{
+		abiTIP3TokenWalletContract = abiTIP3TokenWalletContractInput;
+    }
+
+	function setAbiServiceContract(
+		string abiServiceContractInput
+	) public onlyOwner 
+	{
+		abiServiceContract = abiServiceContractInput;
+    }
+
+	function setAbiServiceIndexContract(
+		string abiServiceIndexContractInput
+	) public onlyOwner 
+	{
+		abiServiceIndexContract = abiServiceIndexContractInput;
+    }
+
+	function setAbiSubscriptionContract(
+		string abiSubscriptionContractInput
+	) public onlyOwner 
+	{
+		abiSubscriptionContract = abiSubscriptionContractInput;
+    }
+
+	function setAbiSubscriptionIndexContract(
+		string abiSubscriptionIndexContractInput
+	) public onlyOwner 
+	{
+		abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
+    }
+
+	function setAbiSubscriptionIdentificatorIndexContract(
+		string abiSubscriptionIdentificatorIndexContractInput
+	) public onlyOwner 
+	{
+		abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContractInput;
+    }
+
+    function setAbi() public onlyOwner {
 		versionAbi++;
 		VersionsAbiParams params;
-		params.abiServiceContract = abiServiceContractInput;
-		params.abiServiceIndexContract = abiServiceIndexContractInput;
-		params.abiSubscriptionContract = abiSubscriptionContractInput;
-		params.abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
-		params.abiSubscriptionIndificatorIndexContract = abiSubscriptionIndificatorIndexContractInput;
-		params.abiSubsManDebot = abiSubsManDebotInput;
+		params.abiPlatformContract = abiPlatformContract;
+		params.abiMetaduesAccountContract = abiMetaduesAccountContract;
+		params.abiMetaduesRootContract = abiMetaduesRootContract;
+		params.abiTIP3RootContract = abiTIP3RootContract;
+		params.abiTIP3TokenWalletContract = abiTIP3TokenWalletContract;
+		params.abiServiceContract = abiServiceContract;
+		params.abiServiceIndexContract = abiServiceIndexContract;
+		params.abiSubscriptionContract = abiSubscriptionContract;
+		params.abiSubscriptionIndexContract = abiSubscriptionIndexContract;
+		params.abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContract;
 		vrsparamsAbi.add(versionAbi, params);
     }
 

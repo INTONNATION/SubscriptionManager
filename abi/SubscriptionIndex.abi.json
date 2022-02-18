@@ -6,8 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"subsAddr","type":"address"},
-				{"name":"senderAddress","type":"address"}
+				{"name":"subscription_address_","type":"address"}
 			],
 			"outputs": [
 			]
@@ -20,25 +19,32 @@
 			]
 		},
 		{
-			"name": "subscription_addr",
+			"name": "subscription_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"subscription_addr","type":"address"}
+				{"name":"subscription_address","type":"address"}
 			]
 		},
 		{
-			"name": "svcparams",
+			"name": "root",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"name":"root","type":"address"}
+			]
+		},
+		{
+			"name": "service_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_address","type":"address"}
 			]
 		}
 	],
 	"data": [
-		{"key":1,"name":"params","type":"cell"},
-		{"key":2,"name":"subscription_indificator","type":"cell"}
+		{"key":1,"name":"subscription_owner","type":"address"}
 	],
 	"events": [
 	],
@@ -46,9 +52,9 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"params","type":"cell"},
-		{"name":"subscription_indificator","type":"cell"},
-		{"name":"subscription_addr","type":"address"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+		{"name":"subscription_owner","type":"address"},
+		{"name":"subscription_address","type":"address"},
+		{"name":"root","type":"address"},
+		{"name":"service_address","type":"address"}
 	]
 }
