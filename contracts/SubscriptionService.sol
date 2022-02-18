@@ -38,7 +38,31 @@ contract SubscriptionService {
     function getStatus() external view responsible returns (uint8){
         return{value: 0, bounce: false, flag: 64} 0;  
     }
+    
+    modifier onlyRoot() {
+        require(msg.sender == root, 111);
+        _;
+    }
 
+    function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
+        TvmBuilder builder;
+        TvmBuilder upgrade_params;
+        builder.store(root);
+        builder.store(send_gas_to);
+        builder.store(current_version); 
+        builder.store(version);
+        builder.store(type_id);
+        builder.store(platform_code);
+        builder.store(platform_params);
+        builder.store(code);
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade(builder.toCell());
+    } 
+    
+    
+    
+    
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
         (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =

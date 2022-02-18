@@ -31,6 +31,7 @@ contract Subscription {
     address public root;
     address public owner_address;
     TvmCell platform_code;
+    TvmCell platform_params;
     uint32 current_version;
     uint8 type_id;
     TvmCell public service_params;
@@ -70,6 +71,30 @@ contract Subscription {
 
     constructor() public { revert(); }
 
+    modifier onlyRoot() {
+        require(msg.sender == root, 111);
+        _;
+    }
+
+    function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
+        TvmBuilder builder;
+        TvmBuilder upgrade_params;
+        builder.store(root);
+        builder.store(send_gas_to);
+        builder.store(current_version); 
+        builder.store(version);
+        builder.store(type_id);
+        builder.store(platform_code);
+        builder.store(platform_params);
+        builder.store(code);
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade(builder.toCell());
+    } 
+    
+    
+    
+    
     function executeSubscription() external {        
         if (now > (subscription.start + svcparams.period)) {
             if ( now > (cooldown + 3600)) {

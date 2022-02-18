@@ -10,7 +10,9 @@ import "../contracts/SubscriptionIndex.sol";
 import "../contracts/SubscriptionIdentificatorIndex.sol";
 import "../contracts/SubscriptionServiceIndex.sol";
 import "../contracts/MetaduesFeeProxy.sol";
-
+import "../contracts/MetaduesAccount.sol";
+import "../contracts/Subscription.sol";
+import "../contracts/SubscriptionService.sol";
 
 contract MetaduesRoot {
    
@@ -144,6 +146,89 @@ contract MetaduesRoot {
             fee_proxy_code,
             fee_proxy_contract_params,
             fee_proxy_version,
+            msg.sender
+        );
+    }
+
+    function upgradeAccount() external view onlyOwner {
+        require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
+        TvmCell account_params;
+        address account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildPlatformParams(msg.sender))));
+        MetaduesAccount(account_address).upgrade{
+            value: 1 ton, 
+            bounce: false,
+            flag: 0
+        }(
+            account_code,
+            account_params,
+            account_version,
+            msg.sender
+        );
+    }
+        
+
+    function upgradeSubscription(
+        address service_address,
+        TvmCell identificator
+    ) 
+        public view onlyOwner
+    {
+        require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
+        require(fee_proxy_address != address(0), 555);
+        TvmCell subsIndexStateInit = _buildSubscriptionIndex(
+            service_address,
+            msg.sender
+        );
+        TvmCell subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
+            service_address, 
+            identificator,
+            msg.sender
+        );
+        TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
+        TvmBuilder service_params;
+        TvmBuilder index_addreses;
+        TvmBuilder fees_params;
+        address owner_account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildPlatformParams(msg.sender))));
+        address subs_index = address(tvm.hash(subsIndexStateInit));
+        address subs_index_identificator = address(tvm.hash(subsIndexIdentificatorStateInit));
+        fees_params.store(fee_proxy_address, service_fee, subscription_fee);
+        index_addreses.store(subs_index, subs_index_identificator,fees_params.toCell());
+        service_params.store(service_address,owner_account_address,index_addreses.toCell());
+        address subscription_address = address(tvm.hash(_buildInitData(PlatformTypes.Subscription, _buildSubscriptionPlatformParams(msg.sender, service_address))));
+        Subscription(subscription_address).upgrade{
+            value: 1 ton, 
+            bounce: false,
+            flag: 0
+        }(
+            subscription_code_salt,
+            service_params.toCell(),
+            subscription_version,
+            msg.sender
+        );
+    }
+
+    function upgradeService(
+          TvmCell service_params
+    ) 
+        public view onlyOwner
+    {
+        require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
+        TvmCell next_cell;
+        string category;
+        string service_name;
+        (,,,next_cell) = service_params.toSlice().decode(address, uint128, uint32, TvmCell);
+        (service_name,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
+        (,category) = next_cell.toSlice().decode(address, string);
+        TvmCell service_code_salt = _buildServiceCode(category);
+        address service_address = address(tvm.hash(_buildInitData(PlatformTypes.Service, _buildServicePlatformParams(msg.sender, service_name))));
+        SubscriptionService(service_address).upgrade{
+            value: 1 ton, 
+            bounce: false,
+            flag: 0
+        }(
+            service_code_salt,
+            service_params,
+            service_version,
             msg.sender
         );
     }
