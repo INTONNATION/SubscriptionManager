@@ -6,8 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"serviceAddress_","type":"address"},
-				{"name":"senderAddress","type":"address"}
+				{"name":"subsAddr","type":"address"}
 			],
 			"outputs": [
 			]
@@ -20,40 +19,40 @@
 			]
 		},
 		{
-			"name": "upgrade",
+			"name": "ownerAddress",
 			"inputs": [
-				{"name":"state","type":"cell"}
 			],
 			"outputs": [
+				{"name":"ownerAddress","type":"address"}
 			]
 		},
 		{
-			"name": "service_name",
+			"name": "subscription_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"service_name","type":"string"}
+				{"name":"subscription_address","type":"address"}
 			]
 		},
 		{
-			"name": "serviceAddress",
+			"name": "root",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"serviceAddress","type":"address"}
+				{"name":"root","type":"address"}
 			]
 		},
 		{
-			"name": "serviceOwner",
+			"name": "identificator",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"serviceOwner","type":"address"}
+				{"name":"identificator","type":"cell"}
 			]
 		}
 	],
 	"data": [
-		{"key":1,"name":"service_name","type":"string"}
+		{"key":1,"name":"subscription_owner","type":"address"}
 	],
 	"events": [
 	],
@@ -61,8 +60,10 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"service_name","type":"string"},
-		{"name":"serviceAddress","type":"address"},
-		{"name":"serviceOwner","type":"address"}
+		{"name":"subscription_owner","type":"address"},
+		{"name":"ownerAddress","type":"address"},
+		{"name":"subscription_address","type":"address"},
+		{"name":"root","type":"address"},
+		{"name":"identificator","type":"cell"}
 	]
 }

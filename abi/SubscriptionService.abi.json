@@ -6,8 +6,43 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"subscriptionServiceIndexAddress_","type":"address"},
-				{"name":"senderAddress","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getParams",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "getStatus",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"}
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"contract_params","type":"cell"},
+				{"name":"version","type":"uint32"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateServiceParams",
+			"inputs": [
+				{"name":"new_service_params","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -20,19 +55,27 @@
 			]
 		},
 		{
-			"name": "upgrade",
+			"name": "root",
 			"inputs": [
-				{"name":"state","type":"cell"}
 			],
 			"outputs": [
+				{"name":"root","type":"address"}
 			]
 		},
 		{
-			"name": "serviceCategory",
+			"name": "owner_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"serviceCategory","type":"string"}
+				{"name":"owner_address","type":"address"}
+			]
+		},
+		{
+			"name": "service_params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_params","type":"cell"}
 			]
 		},
 		{
@@ -40,22 +83,11 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
-			]
-		},
-		{
-			"name": "subscriptionServiceIndexAddress",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"subscriptionServiceIndexAddress","type":"address"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 			]
 		}
 	],
 	"data": [
-		{"key":1,"name":"params","type":"cell"},
-		{"key":2,"name":"serviceOwner","type":"address"},
-		{"key":3,"name":"serviceCategory","type":"string"}
 	],
 	"events": [
 	],
@@ -63,10 +95,14 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"params","type":"cell"},
-		{"name":"serviceOwner","type":"address"},
-		{"name":"serviceCategory","type":"string"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
-		{"name":"subscriptionServiceIndexAddress","type":"address"}
+		{"name":"root","type":"address"},
+		{"name":"owner_address","type":"address"},
+		{"name":"platform_code","type":"cell"},
+		{"name":"platform_params","type":"cell"},
+		{"name":"code","type":"cell"},
+		{"name":"current_version","type":"uint32"},
+		{"name":"type_id","type":"uint8"},
+		{"name":"service_params","type":"cell"},
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 	]
 }

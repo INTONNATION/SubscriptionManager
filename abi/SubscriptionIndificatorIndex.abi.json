@@ -40,13 +40,13 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 			]
 		}
 	],
 	"data": [
 		{"key":1,"name":"params","type":"cell"},
-		{"key":2,"name":"subscription_indificator","type":"cell"}
+		{"key":2,"name":"subscription_identificator","type":"cell"}
 	],
 	"events": [
 	],
@@ -55,9 +55,9 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"params","type":"cell"},
-		{"name":"subscription_indificator","type":"cell"},
+		{"name":"subscription_identificator","type":"cell"},
 		{"name":"ownerAddress","type":"address"},
 		{"name":"subscription_addr","type":"address"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_indificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency","type":"string"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 	]
 }

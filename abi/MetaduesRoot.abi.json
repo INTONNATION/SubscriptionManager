@@ -1,0 +1,313 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installPlatformOnce",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateAccountCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateSubscriptionCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateSubscriptionIndexCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateSubscriptionIndexIdentificatorCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateServiceCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateFeeProxyCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateFeeProxyParams",
+			"inputs": [
+				{"name":"currencies","type":"address[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpgradeMTDSRootAddress",
+			"inputs": [
+				{"name":"mtds_root_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
+			"inputs": [
+				{"name":"revenue_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateServiceIndexCode",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setFees",
+			"inputs": [
+				{"name":"service_fee_","type":"uint128"},
+				{"name":"subscription_fee_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transferRevenueFromFeeProxy",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "syncFeeProxyBalance",
+			"inputs": [
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeFeeProxy",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeAccount",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeSubscription",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"identificator","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeService",
+			"inputs": [
+				{"name":"service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployFeeProxy",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployAccount",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deploySubscription",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"identificator","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployService",
+			"inputs": [
+				{"name":"service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "platform_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"platform_code","type":"cell"}
+			]
+		},
+		{
+			"name": "account_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"account_code","type":"cell"}
+			]
+		},
+		{
+			"name": "subscription_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_code","type":"cell"}
+			]
+		},
+		{
+			"name": "subscription_index_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_index_code","type":"cell"}
+			]
+		},
+		{
+			"name": "subscription_index_identificator_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_index_identificator_code","type":"cell"}
+			]
+		},
+		{
+			"name": "service_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_code","type":"cell"}
+			]
+		},
+		{
+			"name": "service_index_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_index_code","type":"cell"}
+			]
+		},
+		{
+			"name": "fee_proxy_code",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"fee_proxy_code","type":"cell"}
+			]
+		},
+		{
+			"name": "fee_proxy_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"fee_proxy_address","type":"address"}
+			]
+		},
+		{
+			"name": "service_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_fee","type":"uint128"}
+			]
+		},
+		{
+			"name": "subscription_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_fee","type":"uint128"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"platform_code","type":"cell"},
+		{"name":"account_code","type":"cell"},
+		{"name":"subscription_code","type":"cell"},
+		{"name":"subscription_index_code","type":"cell"},
+		{"name":"subscription_index_identificator_code","type":"cell"},
+		{"name":"service_code","type":"cell"},
+		{"name":"service_index_code","type":"cell"},
+		{"name":"fee_proxy_code","type":"cell"},
+		{"name":"has_platform_code","type":"bool"},
+		{"name":"service_version","type":"uint32"},
+		{"name":"account_version","type":"uint32"},
+		{"name":"subscription_version","type":"uint32"},
+		{"name":"fee_proxy_version","type":"uint32"},
+		{"name":"fee_proxy_address","type":"address"},
+		{"name":"service_fee","type":"uint128"},
+		{"name":"subscription_fee","type":"uint128"},
+		{"name":"fee_proxy_contract_params","type":"cell"},
+		{"name":"mtds_root_address","type":"address"},
+		{"name":"mtds_revenue_accumulator_address","type":"address"}
+	]
+}

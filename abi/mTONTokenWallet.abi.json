@@ -186,7 +186,7 @@
 				{"name":"answerId","type":"uint32"},
 				{"name":"serviceOwner","type":"address"},
 				{"name":"params","type":"cell"},
-				{"name":"indificator","type":"cell"}
+				{"name":"identificator","type":"cell"}
 			],
 			"outputs": [
 				{"name":"value0","type":"uint8"}
