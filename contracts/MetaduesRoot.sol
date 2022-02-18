@@ -32,7 +32,6 @@ contract MetaduesRoot {
     address public fee_proxy_address;
     uint128 public service_fee;
     uint128 public subscription_fee;
-    TvmCell fee_proxy_contract_params; // root addresses of supported currencies
     address mtds_root_address;
     address mtds_revenue_accumulator_address;
 
@@ -87,12 +86,16 @@ contract MetaduesRoot {
         fee_proxy_version++;
     }  
 
-    function installOrUpdateFeeProxyParams(address[] currencies) external onlyOwner {
-        TvmBuilder currencies_cell;
-        currencies_cell.store(currencies);
-        fee_proxy_contract_params = currencies_cell.toCell();
-    }  
 
+    function installOrUpdateFeeProxyParams(address[] currencies) external onlyOwner {
+        require(fee_proxy_address != address(0), 555);
+        TvmBuilder currencies_cell;  
+        currencies_cell.store(currencies);
+        TvmCell fee_proxy_contract_params = currencies_cell.toCell();
+        MetaduesFeeProxy(fee_proxy_address).setSupportedCurrencies(fee_proxy_contract_params);
+    }      
+
+  
     function installOrUpgradeMTDSRootAddress(address mtds_root_) external onlyOwner {
         require(fee_proxy_address != address(0), 555);
         mtds_root_address = mtds_root_;
@@ -144,7 +147,6 @@ contract MetaduesRoot {
             flag: 0
         }(
             fee_proxy_code,
-            fee_proxy_contract_params,
             fee_proxy_version,
             msg.sender
         );
@@ -152,7 +154,6 @@ contract MetaduesRoot {
 
     function upgradeAccount() external view onlyOwner {
         require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
-        TvmCell account_params;
         address account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildPlatformParams(msg.sender))));
         MetaduesAccount(account_address).upgrade{
             value: 1 ton, 
@@ -160,7 +161,6 @@ contract MetaduesRoot {
             flag: 0
         }(
             account_code,
-            account_params,
             account_version,
             msg.sender
         );
@@ -171,29 +171,11 @@ contract MetaduesRoot {
         address service_address,
         TvmCell identificator
     ) 
-        public view onlyOwner
+        public view 
     {
         require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
-        require(fee_proxy_address != address(0), 555);
-        TvmCell subsIndexStateInit = _buildSubscriptionIndex(
-            service_address,
-            msg.sender
-        );
-        TvmCell subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
-            service_address, 
-            identificator,
-            msg.sender
-        );
+        require(service_address != address(0), 556);
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
-        TvmBuilder service_params;
-        TvmBuilder index_addreses;
-        TvmBuilder fees_params;
-        address owner_account_address = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildPlatformParams(msg.sender))));
-        address subs_index = address(tvm.hash(subsIndexStateInit));
-        address subs_index_identificator = address(tvm.hash(subsIndexIdentificatorStateInit));
-        fees_params.store(fee_proxy_address, service_fee, subscription_fee);
-        index_addreses.store(subs_index, subs_index_identificator,fees_params.toCell());
-        service_params.store(service_address,owner_account_address,index_addreses.toCell());
         address subscription_address = address(tvm.hash(_buildInitData(PlatformTypes.Subscription, _buildSubscriptionPlatformParams(msg.sender, service_address))));
         Subscription(subscription_address).upgrade{
             value: 1 ton, 
@@ -201,24 +183,17 @@ contract MetaduesRoot {
             flag: 0
         }(
             subscription_code_salt,
-            service_params.toCell(),
             subscription_version,
             msg.sender
         );
     }
 
     function upgradeService(
-          TvmCell service_params
+          string service_name,
+          string category
     ) 
-        public view onlyOwner
+        public view
     {
-        require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
-        TvmCell next_cell;
-        string category;
-        string service_name;
-        (,,,next_cell) = service_params.toSlice().decode(address, uint128, uint32, TvmCell);
-        (service_name,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
-        (,category) = next_cell.toSlice().decode(address, string);
         TvmCell service_code_salt = _buildServiceCode(category);
         address service_address = address(tvm.hash(_buildInitData(PlatformTypes.Service, _buildServicePlatformParams(msg.sender, service_name))));
         SubscriptionService(service_address).upgrade{
@@ -227,15 +202,16 @@ contract MetaduesRoot {
             flag: 0
         }(
             service_code_salt,
-            service_params,
             service_version,
             msg.sender
         );
     }
 
     // Deploy contracts
-    function deployFeeProxy() external onlyOwner {
-        require(fee_proxy_contract_params.toSlice().empty() != true);
+    function deployFeeProxy(address[] currencies) external onlyOwner {
+        TvmBuilder currencies_cell;
+        currencies_cell.store(currencies);
+        TvmCell fee_proxy_contract_params = currencies_cell.toCell();
         Platform platform = new Platform {
             stateInit: _buildInitData(PlatformTypes.FeeProxy, _buildPlatformParams(address(this))),
             value: 1 ton,

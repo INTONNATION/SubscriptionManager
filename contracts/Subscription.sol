@@ -48,6 +48,7 @@ contract Subscription {
     uint128 public service_fee;
     uint128 public subscription_fee;
     address public address_fee_proxy;
+    TvmCell contract_params;
 
     struct serviceParams {
         address to;
@@ -76,7 +77,7 @@ contract Subscription {
         _;
     }
 
-    function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
+    function upgrade(TvmCell code, uint32 version, address send_gas_to) external onlyRoot {
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -87,6 +88,10 @@ contract Subscription {
         builder.store(platform_code);
         builder.store(platform_params);
         builder.store(code);
+        upgrade_params.store(contract_params);
+        upgrade_params.store(subscription);
+        builder.store(upgrade_params.toCell());
+        
         tvm.setcode(code);
         tvm.setCurrentCode(code);
         onCodeUpgrade(builder.toCell());
@@ -189,9 +194,9 @@ contract Subscription {
         platform_code = s.loadRef();
 
         TvmSlice platform_params = s.loadRefAsSlice();
-        TvmSlice contract_params = s.loadRefAsSlice();
+        contract_params = s.loadRef();
         TvmCell nextCell;
-        (service_address, account_address, nextCell) = contract_params.decode(address,address,TvmCell);
+        (service_address, account_address, nextCell) = contract_params.toSlice().decode(address,address,TvmCell);
         (subscription_index_address,subscription_index_identificator_address, nextCell) = nextCell.toSlice().decode(address,address,TvmCell);
         (address_fee_proxy,service_fee,subscription_fee ) = nextCell.toSlice().decode(address,uint128,uint128);
         ISubscriptionService(service_address).getParams{

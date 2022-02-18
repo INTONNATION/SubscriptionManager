@@ -37,7 +37,7 @@ contract MetaduesAccount {
     }
 
 
-    function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
+    function upgrade(TvmCell code, uint32 version, address send_gas_to) external onlyRoot {
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);

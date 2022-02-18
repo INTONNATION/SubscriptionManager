@@ -109,17 +109,17 @@ contract MetaduesFeeProxy {
         TvmCell current_code = s.loadRef();
         current_version = version;  
         type_id = type_id_;
-        (address[] supportedCurrencies) = contract_params.decode(address[]);
+        (address[] supportedCurrencies) = contract_params.decode(address[]); 
         if (old_version != 0) {
             TvmSlice old_data = s.loadRefAsSlice();
             mapping(address => balance_wallet_struct) wallets_mapping_ = old_data.decode(mapping(address => balance_wallet_struct));
             wallets_mapping = wallets_mapping_;
         }
         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
-        updateSupportedCurrencies(supportedCurrencies);
+       updateSupportedCurrencies(supportedCurrencies);
     }
 
-    function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
+    function upgrade(TvmCell code,  uint32 version, address send_gas_to) external onlyRoot {
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -153,6 +153,27 @@ contract MetaduesFeeProxy {
             }
         }
     }
+
+    
+    function setSupportedCurrencies(TvmCell fee_proxy_contract_params) external onlyRoot {
+        (address[] currencies) = fee_proxy_contract_params.toSlice().decode(address[]);
+        for (address currency_root : currencies) { // iteration over the array
+            optional(balance_wallet_struct) currency_root_wallet_opt = wallets_mapping.fetch(currency_root);
+            if (!currency_root_wallet_opt.hasValue()){
+                ITokenRoot(currency_root).deployWallet{
+                    value: 0.2 ton,
+                    bounce: true,
+                    flag: 0,
+                    callback: MetaduesFeeProxy.onDeployWallet
+                }(
+                    address(this),
+                    0.1 ton
+                );
+            }
+        }
+    }
+
+
 
     function onDeployWallet(address wallet_address) external {
         //require only from root
