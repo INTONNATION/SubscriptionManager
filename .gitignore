@@ -9,8 +9,9 @@
 *.conf.json
 *.swp
 *solc_imports
-
 debots/tests/*.log
 debots/tests/*.conf.json
 *.name
 .vscode
+.DS_Store
+abi/*.abi.json

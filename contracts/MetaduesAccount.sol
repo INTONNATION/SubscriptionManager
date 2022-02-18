@@ -29,6 +29,34 @@ contract MetaduesAccount {
         address wallet;
         uint128 balance;
     }
+
+
+    modifier onlyRoot() {
+        require(msg.sender == root, 111);
+        _;
+    }
+
+
+    function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
+        TvmBuilder builder;
+        TvmBuilder upgrade_params;
+        builder.store(root);
+        builder.store(send_gas_to);
+        builder.store(current_version); 
+        builder.store(version);
+        builder.store(type_id);
+        builder.store(platform_code);
+        builder.store(platform_params);
+        builder.store(code);
+        upgrade_params.store(wallets_mapping);
+        builder.store(upgrade_params.toCell());
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade(builder.toCell());
+    } 
+
+
+
     
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
