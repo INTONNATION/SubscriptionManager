@@ -44,7 +44,7 @@ contract SubscriptionService {
         _;
     }
 
-    function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
+    function upgrade(TvmCell code, uint32 version, address send_gas_to) external onlyRoot {
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -54,6 +54,7 @@ contract SubscriptionService {
         builder.store(type_id);
         builder.store(platform_code);
         builder.store(platform_params);
+        builder.store(service_params);
         builder.store(code);
         tvm.setcode(code);
         tvm.setCurrentCode(code);

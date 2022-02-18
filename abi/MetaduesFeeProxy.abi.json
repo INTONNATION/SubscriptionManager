@@ -59,9 +59,16 @@
 			"name": "upgrade",
 			"inputs": [
 				{"name":"code","type":"cell"},
-				{"name":"contract_params","type":"cell"},
 				{"name":"version","type":"uint32"},
 				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setSupportedCurrencies",
+			"inputs": [
+				{"name":"fee_proxy_contract_params","type":"cell"}
 			],
 			"outputs": [
 			]
