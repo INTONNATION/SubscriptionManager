@@ -130,6 +130,30 @@
 			]
 		},
 		{
+			"name": "upgradeAccount",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeSubscription",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"identificator","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeService",
+			"inputs": [
+				{"name":"service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "deployFeeProxy",
 			"inputs": [
 			],
