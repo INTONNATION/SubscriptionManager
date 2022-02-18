@@ -22,6 +22,8 @@ contract MetaduesAccount {
     address account_owner;
     uint128 public withdraw_value;
     address public sync_balance_currency_root;
+    address owner;
+    address pending_owner;
 
     constructor() public { revert(); }
 
@@ -37,7 +39,7 @@ contract MetaduesAccount {
     }
 
 
-    function upgrade(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
+    function upgrade(TvmCell code, uint32 version, address send_gas_to) external onlyRoot {
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -218,5 +220,25 @@ contract MetaduesAccount {
         tvm.accept();
         _;
     }
+   function getOwner() external view responsible returns (address wner) {
+        return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } owner;
+    }
+
+   function getPendingOwner() external view responsible returns (address pending_owner) {
+        return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } pending_owner;
+    }
+
+   function transferOwner(address new_owner) external onlyOwner {
+        pending_owner = new_owner;
+    }
+
+   function acceptOwner() external {
+        require(msg.sender == pending_owner && msg.sender.value != 0, 559);
+        owner = pending_owner;
+        pending_owner = address.makeAddrStd(0, 0);
+    }
+
+
+
 
 }
