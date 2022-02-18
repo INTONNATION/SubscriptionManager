@@ -29,6 +29,17 @@
 			]
 		},
 		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"contract_params","type":"cell"},
+				{"name":"version","type":"uint32"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "updateServiceParams",
 			"inputs": [
 				{"name":"new_service_params","type":"cell"}

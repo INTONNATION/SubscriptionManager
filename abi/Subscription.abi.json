@@ -11,6 +11,17 @@
 			]
 		},
 		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"contract_params","type":"cell"},
+				{"name":"version","type":"uint32"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "executeSubscription",
 			"inputs": [
 			],
@@ -145,6 +156,7 @@
 		{"name":"root","type":"address"},
 		{"name":"owner_address","type":"address"},
 		{"name":"platform_code","type":"cell"},
+		{"name":"platform_params","type":"cell"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
 		{"name":"service_params","type":"cell"},
