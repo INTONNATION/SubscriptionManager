@@ -38,6 +38,8 @@ contract MetaduesAccount {
         _;
     }
 
+    event Deposit(address walletAddress, uint128 amount);
+    event Withdraw(address walletAddress, uint128 amount);
 
     function upgrade(TvmCell code, uint32 version, address send_gas_to) external onlyRoot {
         TvmBuilder builder;
@@ -58,8 +60,6 @@ contract MetaduesAccount {
     } 
 
 
-
-    
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
         (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =
@@ -158,6 +158,7 @@ contract MetaduesAccount {
         ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(withdraw_value,withdraw_owner_wallet,withdraw_owner_wallet, true, payload);
         current_balance_key.balance = current_balance_key.balance - withdraw_value;
         wallets_mapping[msg.sender] = current_balance_key;
+        emit Withdraw(msg.sender, withdraw_value);
         withdraw_value = 0;
     }
 
@@ -192,7 +193,7 @@ contract MetaduesAccount {
             current_balance_struct.balance = amount;  
             wallets_mapping[tokenRoot] = current_balance_struct;
         }
-        
+        emit Deposit(msg.sender, amount);
     }
 
     function _buildSubscriptionParams(address subscription_owner, address service_address) private inline pure returns (TvmCell) {
