@@ -155,6 +155,24 @@
 	"data": [
 	],
 	"events": [
+		{
+			"name": "Deposit",
+			"inputs": [
+				{"name":"walletAddress","type":"address"},
+				{"name":"amount","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "Withdraw",
+			"inputs": [
+				{"name":"walletAddress","type":"address"},
+				{"name":"amount","type":"uint128"}
+			],
+			"outputs": [
+			]
+		}
 	],
 	"fields": [
 		{"name":"_pubkey","type":"uint256"},
