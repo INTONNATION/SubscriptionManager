@@ -72,6 +72,8 @@ contract Subscription {
 
     constructor() public { revert(); }
 
+    event paramsRecieved(TvmCell service_params_);
+
     modifier onlyRoot() {
         require(msg.sender == root, 111);
         _;
@@ -238,6 +240,7 @@ contract Subscription {
         (svcparams.currency_root, svcparams.category) = next_cell.toSlice().decode(address, string);
         svcparams.value = svcparams.value + subscription_fee;
         uint32 _period = svcparams.period * 3600 * 24;
+        emit paramsRecieved(service_params_);
         subscription = paymentStatus(_period, 0, STATUS_NONACTIVE);
         ITokenRoot(svcparams.currency_root).deployWallet{
             value: 0.2 ton, 
