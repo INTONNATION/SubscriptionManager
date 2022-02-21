@@ -83,6 +83,14 @@
 			]
 		},
 		{
+			"name": "installOrUpgradeDexRootAddress",
+			"inputs": [
+				{"name":"dex_root","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
 			"inputs": [
 				{"name":"revenue_to","type":"address"}
@@ -110,6 +118,14 @@
 		{
 			"name": "transferRevenueFromFeeProxy",
 			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "swapRevenue",
+			"inputs": [
+				{"name":"currency_root","type":"address"}
 			],
 			"outputs": [
 			]
@@ -282,6 +298,30 @@
 			"outputs": [
 				{"name":"subscription_fee","type":"uint128"}
 			]
+		},
+		{
+			"name": "mtds_root_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"mtds_root_address","type":"address"}
+			]
+		},
+		{
+			"name": "mtds_revenue_accumulator_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"mtds_revenue_accumulator_address","type":"address"}
+			]
+		},
+		{
+			"name": "dex_root_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"dex_root_address","type":"address"}
+			]
 		}
 	],
 	"data": [
@@ -309,6 +349,7 @@
 		{"name":"service_fee","type":"uint128"},
 		{"name":"subscription_fee","type":"uint128"},
 		{"name":"mtds_root_address","type":"address"},
-		{"name":"mtds_revenue_accumulator_address","type":"address"}
+		{"name":"mtds_revenue_accumulator_address","type":"address"},
+		{"name":"dex_root_address","type":"address"}
 	]
 }

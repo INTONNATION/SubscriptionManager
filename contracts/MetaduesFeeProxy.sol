@@ -99,6 +99,8 @@ contract MetaduesFeeProxy {
             true,                        // notify
             builder.toCell()             // payload
         );
+        current_balance_key.balance = 0;
+        wallets_mapping[sync_balance_currency_root] = current_balance_key;
         sync_balance_currency_root = address(0); // free mutex
     }
 

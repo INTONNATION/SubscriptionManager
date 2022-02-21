@@ -91,11 +91,11 @@ $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateSubscriptionIndexIdent
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateServiceCode "{\"code\":\"$service_code\"}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateServiceIndexCode "{\"code\":\"$service_index_code\"}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpdateFeeProxyCode "{\"code\":\"$fee_proxy_code\"}" --abi ../abi/$1.abi.json
-$tos --url $NETWORK call $CONTRACT_ADDRESS deployFeeProxy "{\"currencies\":[\"0:d554d113d085ec6eebaaf06922620978a52d169445350c3b0a68b1aeff77b29d\",\"0:e7697246f34678e64a5f670ed74ccd9fc18959e9ced41dc2c0da0d7b057cb009\"]}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS deployFeeProxy "{\"currencies\":[\"0:5b65a97c28a40ecd8713113e08a8e8317ee4455b53fce495a363e41adf6282dc\",\"0:2306fe44aca48701039ab7cbad96bf60dc2c51f2250f052d24c3a110e3fada8b\"]}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS setFees "{\"service_fee_\":\"5\",\"subscription_fee_\":\"5\"}" --abi ../abi/$1.abi.json
 $tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRevenueDelegationAddress "{\"revenue_to\":\"0:81ef55e449aab0ec7c419081b924e012fd7e8628c8274de7baa5e6b2b15e0a8f\"}" --abi ../abi/$1.abi.json
-$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRootAddress "{\"mtds_root_\":\"0:e7697246f34678e64a5f670ed74ccd9fc18959e9ced41dc2c0da0d7b057cb009\"}" --abi ../abi/$1.abi.json
-
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRootAddress "{\"mtds_root_\":\"0:2306fe44aca48701039ab7cbad96bf60dc2c51f2250f052d24c3a110e3fada8b\"}" --abi ../abi/$1.abi.json
+$tos --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeDexRootAddress "{\"dex_root\":\"0:a2004013ca1247051dd887d6c9976f76a7b11f9bb537bf4bf392dd1990f6815f\"}" --abi ../abi/$1.abi.json
 
 }
 

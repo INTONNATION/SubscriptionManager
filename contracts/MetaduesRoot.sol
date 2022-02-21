@@ -32,8 +32,9 @@ contract MetaduesRoot {
     address public fee_proxy_address;
     uint128 public service_fee;
     uint128 public subscription_fee;
-    address mtds_root_address;
-    address mtds_revenue_accumulator_address;
+    address public mtds_root_address;
+    address public mtds_revenue_accumulator_address;
+    address public dex_root_address;
 
 	onBounce(TvmSlice slice) external {
         // revert change to initial msg.sender in case of failure during deploy
@@ -102,6 +103,12 @@ contract MetaduesRoot {
         MetaduesFeeProxy(fee_proxy_address).setMTDSRootAddress(mtds_root_address);
     }
 
+    function installOrUpgradeDexRootAddress(address dex_root) external onlyOwner {
+        require(fee_proxy_address != address(0), 555);
+        dex_root_address = dex_root;
+        MetaduesFeeProxy(fee_proxy_address).setDexRootAddress(dex_root_address);
+    }
+
     function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to) external onlyOwner {
         mtds_revenue_accumulator_address = revenue_to;
     }
@@ -118,7 +125,7 @@ contract MetaduesRoot {
     // Managment
     function transferRevenueFromFeeProxy() external view onlyOwner {
         require(fee_proxy_address != address(0), 555);
-         MetaduesFeeProxy(fee_proxy_address).transferRevenue{
+        MetaduesFeeProxy(fee_proxy_address).transferRevenue{
             value: 1 ton, 
             bounce: false,
             flag: 0
@@ -127,9 +134,14 @@ contract MetaduesRoot {
         );
     }
 
+    function swapRevenue(address currency_root) external view onlyOwner {
+        require(fee_proxy_address != address(0), 555);
+        MetaduesFeeProxy(fee_proxy_address).swapRevenueToMTDS(currency_root);
+    }
+
     function syncFeeProxyBalance(address currency_root) external view onlyOwner {
         require(fee_proxy_address != address(0), 555);
-         MetaduesFeeProxy(fee_proxy_address).syncBalance{
+        MetaduesFeeProxy(fee_proxy_address).syncBalance{
             value: 1 ton, 
             bounce: false,
             flag: 0
