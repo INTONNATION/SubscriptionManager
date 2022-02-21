@@ -9,6 +9,8 @@ import "libraries/PlatformTypes.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
+import "./interfaces/IDexRoot.sol";
+import "./libraries/DexOperationTypes.sol";
 
 
 contract MetaduesFeeProxy {
@@ -20,6 +22,7 @@ contract MetaduesFeeProxy {
     uint8 type_id;
     address mtds_root_address;
     address sync_balance_currency_root; // mutex
+    address dex_root_address;
 
     mapping(address => balance_wallet_struct) public wallets_mapping;
 
@@ -32,6 +35,11 @@ contract MetaduesFeeProxy {
 
     modifier onlyRoot() {
         require(msg.sender == root, 111);
+        _;
+    }
+    
+    modifier onlyDexRoot() {
+        require(msg.sender == dex_root_address, 222);
         _;
     }
 
@@ -52,6 +60,48 @@ contract MetaduesFeeProxy {
         }
     }
 
+    function swapRevenueToMTDS(address currency_root) external onlyRoot {
+        require(sync_balance_currency_root == address(0), 335); // mutex
+        sync_balance_currency_root = currency_root; // critical area
+        optional(balance_wallet_struct) current_balance_struct_opt = wallets_mapping.fetch(currency_root); 
+        if (current_balance_struct_opt.hasValue()){
+            balance_wallet_struct current_balance_struct  = current_balance_struct_opt.get();
+            if (current_balance_struct.balance > 0) {
+                IDexRoot(dex_root_address).getExpectedPairAddress{
+                    value: 0.1 ton, 
+                    bounce: true,
+                    flag: 0,
+                    callback: MetaduesFeeProxy.onGetExpectedPairAddress
+                }(mtds_root_address,currency_root);
+            }
+        } else {
+            tvm.exit1();
+        }
+    }
+    
+    function onGetExpectedPairAddress(address dex_pair_address) external onlyDexRoot {
+        TvmBuilder builder;
+        builder.store(DexOperationTypes.EXCHANGE);
+        builder.store(uint64(0));
+        builder.store(uint128(0));
+        builder.store(uint128(0));
+
+        optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(sync_balance_currency_root);
+        balance_wallet_struct current_balance_key = current_balance_struct.get();
+        ITokenWallet(current_balance_key.wallet).transfer{
+            value:  2.5 ton,
+            flag: 0
+        }(
+            current_balance_key.balance, // amount
+            dex_pair_address,            // recipient
+            0,                           // deployWalletValue
+            root,                        // remainingGasTo
+            true,                        // notify
+            builder.toCell()             // payload
+        );
+        sync_balance_currency_root = address(0); // free mutex
+    }
+
     function syncBalance(address currency_root) external onlyRoot {
         require(sync_balance_currency_root == address(0), 335); // mutex
         sync_balance_currency_root = currency_root; // critical area
@@ -68,6 +118,10 @@ contract MetaduesFeeProxy {
 
     function setMTDSRootAddress(address mtds_root) external onlyRoot {
         mtds_root_address = mtds_root;
+    }
+
+    function setDexRootAddress(address dex_root) external onlyRoot {
+        dex_root_address = dex_root;
     }
 
     function onBalanceOf(uint128 balance_) external {
