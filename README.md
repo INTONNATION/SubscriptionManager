@@ -12,7 +12,7 @@
 
 If you have problems with Solidity compiler, tvm_linker or stdlib versions(after installation higher versions were installed) use the following command to install the optimal versions:
 
-`$tondev sol set --compiler 0.51.0 --linker 0.14.9 --stdlib 0.53.0`
+`$tondev sol set --compiler 0.57.3 --linker 0.14.37 --stdlib 0.57.3`
 
 ### Installation:
 
