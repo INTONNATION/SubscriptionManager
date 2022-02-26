@@ -11,57 +11,200 @@
 			]
 		},
 		{
-			"name": "installPlatformOnce",
+			"name": "getTvcsLatest",
 			"inputs": [
-				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+			]
+		},
+		{
+			"name": "getTvcsLatestResponsible",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"value0","type":"tuple"}
+			]
+		},
+		{
+			"name": "getAbisLatest",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
+			]
+		},
+		{
+			"name": "setTvcPlatform",
+			"inputs": [
+				{"name":"tvcPlatformInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "installOrUpdateAccountCode",
+			"name": "setTvcMetaduesAccount",
 			"inputs": [
-				{"name":"code","type":"cell"}
+				{"name":"tvcMetaduesAccountInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "installOrUpdateSubscriptionCode",
+			"name": "setTvcSubscriptionService",
 			"inputs": [
-				{"name":"code","type":"cell"}
+				{"name":"tvcSubscriptionServiceInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "installOrUpdateSubscriptionIndexCode",
+			"name": "setTvcSubscription",
 			"inputs": [
-				{"name":"code","type":"cell"}
+				{"name":"tvcSubscriptionInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "installOrUpdateSubscriptionIndexIdentificatorCode",
+			"name": "setTvcSubscriptionServiceIndex",
 			"inputs": [
-				{"name":"code","type":"cell"}
+				{"name":"tvcSubscriptionServiceIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "installOrUpdateServiceCode",
+			"name": "setTvcSubscriptionIndex",
 			"inputs": [
-				{"name":"code","type":"cell"}
+				{"name":"tvcSubscriptionIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "installOrUpdateFeeProxyCode",
+			"name": "setTvcSubscriptionIdentificatorIndex",
 			"inputs": [
-				{"name":"code","type":"cell"}
+				{"name":"tvcSubscriptionIdentificatorIndexInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setTvcFeeProxy",
+			"inputs": [
+				{"name":"tvcFeeProxyInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setTvc",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiPlatformContract",
+			"inputs": [
+				{"name":"abiPlatformContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiMetaduesAccountContract",
+			"inputs": [
+				{"name":"abiMetaduesAccountContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiMetaduesRootContract",
+			"inputs": [
+				{"name":"abiMetaduesRootContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiTIP3RootContract",
+			"inputs": [
+				{"name":"abiTIP3RootContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiTIP3TokenWalletContract",
+			"inputs": [
+				{"name":"abiTIP3TokenWalletContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiServiceContract",
+			"inputs": [
+				{"name":"abiServiceContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiServiceIndexContract",
+			"inputs": [
+				{"name":"abiServiceIndexContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiSubscriptionContract",
+			"inputs": [
+				{"name":"abiSubscriptionContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiSubscriptionIndexContract",
+			"inputs": [
+				{"name":"abiSubscriptionIndexContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiSubscriptionIdentificatorIndexContract",
+			"inputs": [
+				{"name":"abiSubscriptionIdentificatorIndexContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiFeeProxyContract",
+			"inputs": [
+				{"name":"abiFeeProxyContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbi",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setCategories",
+			"inputs": [
+				{"name":"categoriesInput","type":"string[]"}
 			],
 			"outputs": [
 			]
@@ -94,14 +237,6 @@
 			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
 			"inputs": [
 				{"name":"revenue_to","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "installOrUpdateServiceIndexCode",
-			"inputs": [
-				{"name":"code","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -212,67 +347,43 @@
 			]
 		},
 		{
-			"name": "platform_code",
+			"name": "versionTvc",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"platform_code","type":"cell"}
+				{"name":"versionTvc","type":"uint8"}
 			]
 		},
 		{
-			"name": "account_code",
+			"name": "versionAbi",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"account_code","type":"cell"}
+				{"name":"versionAbi","type":"uint8"}
 			]
 		},
 		{
-			"name": "subscription_code",
+			"name": "categories",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"subscription_code","type":"cell"}
+				{"name":"categories","type":"string[]"}
 			]
 		},
 		{
-			"name": "subscription_index_code",
+			"name": "vrsparamsTvc",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"subscription_index_code","type":"cell"}
+				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"}
 			]
 		},
 		{
-			"name": "subscription_index_identificator_code",
+			"name": "vrsparamsAbi",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"subscription_index_identificator_code","type":"cell"}
-			]
-		},
-		{
-			"name": "service_code",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"service_code","type":"cell"}
-			]
-		},
-		{
-			"name": "service_index_code",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"service_index_code","type":"cell"}
-			]
-		},
-		{
-			"name": "fee_proxy_code",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"fee_proxy_code","type":"cell"}
+				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
 			]
 		},
 		{
@@ -332,14 +443,30 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"platform_code","type":"cell"},
-		{"name":"account_code","type":"cell"},
-		{"name":"subscription_code","type":"cell"},
-		{"name":"subscription_index_code","type":"cell"},
-		{"name":"subscription_index_identificator_code","type":"cell"},
-		{"name":"service_code","type":"cell"},
-		{"name":"service_index_code","type":"cell"},
-		{"name":"fee_proxy_code","type":"cell"},
+		{"name":"versionTvc","type":"uint8"},
+		{"name":"versionAbi","type":"uint8"},
+		{"name":"categories","type":"string[]"},
+		{"name":"tvcPlatform","type":"cell"},
+		{"name":"tvcMetaduesAccount","type":"cell"},
+		{"name":"tvcSubscriptionService","type":"cell"},
+		{"name":"tvcSubscription","type":"cell"},
+		{"name":"tvcSubscriptionServiceIndex","type":"cell"},
+		{"name":"tvcSubscriptionIndex","type":"cell"},
+		{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},
+		{"name":"tvcFeeProxy","type":"cell"},
+		{"name":"abiPlatformContract","type":"string"},
+		{"name":"abiMetaduesAccountContract","type":"string"},
+		{"name":"abiMetaduesRootContract","type":"string"},
+		{"name":"abiTIP3RootContract","type":"string"},
+		{"name":"abiTIP3TokenWalletContract","type":"string"},
+		{"name":"abiServiceContract","type":"string"},
+		{"name":"abiServiceIndexContract","type":"string"},
+		{"name":"abiSubscriptionContract","type":"string"},
+		{"name":"abiSubscriptionIndexContract","type":"string"},
+		{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},
+		{"name":"abiFeeProxyContract","type":"string"},
+		{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcMetaduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
+		{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"},
 		{"name":"has_platform_code","type":"bool"},
 		{"name":"service_version","type":"uint32"},
 		{"name":"account_version","type":"uint32"},
