@@ -15,15 +15,59 @@ import "../contracts/Subscription.sol";
 import "../contracts/SubscriptionService.sol";
 
 contract MetaduesRoot {
-   
-    TvmCell public platform_code;
-    TvmCell public account_code;
-    TvmCell public subscription_code;
-    TvmCell public subscription_index_code;
-    TvmCell public subscription_index_identificator_code;
-    TvmCell public service_code;
-    TvmCell public service_index_code;
-    TvmCell public fee_proxy_code;
+
+    uint8 public versionTvc;
+	uint8 public versionAbi;
+	string[] public categories;
+
+	TvmCell tvcPlatform;
+	TvmCell tvcMetaduesAccount;
+	TvmCell tvcSubscriptionService;
+	TvmCell tvcSubscription;
+	TvmCell tvcSubscriptionServiceIndex;
+	TvmCell tvcSubscriptionIndex;
+	TvmCell tvcSubscriptionIdentificatorIndex;
+    TvmCell tvcFeeProxy;
+
+	string abiPlatformContract;
+	string abiMetaduesAccountContract;
+	string abiMetaduesRootContract;
+	string abiTIP3RootContract;
+	string abiTIP3TokenWalletContract;
+	string abiServiceContract;
+	string abiServiceIndexContract;
+	string abiSubscriptionContract;
+	string abiSubscriptionIndexContract;
+	string abiSubscriptionIdentificatorIndexContract;
+    string abiFeeProxyContract;
+
+	struct VersionsTvcParams {
+		TvmCell tvcPlatform;
+		TvmCell tvcMetaduesAccount;
+		TvmCell tvcSubscriptionService;
+		TvmCell tvcSubscription;
+		TvmCell tvcSubscriptionServiceIndex;
+		TvmCell tvcSubscriptionIndex;
+		TvmCell tvcSubscriptionIdentificatorIndex;
+        TvmCell tvcFeeProxy;
+	}
+	struct VersionsAbiParams {
+		string abiPlatformContract;
+		string abiMetaduesAccountContract;
+		string abiMetaduesRootContract;
+		string abiTIP3RootContract;
+		string abiTIP3TokenWalletContract;
+		string abiServiceContract;
+		string abiServiceIndexContract;
+		string abiSubscriptionContract;
+		string abiSubscriptionIndexContract;
+		string abiSubscriptionIdentificatorIndexContract;
+        string abiFeeProxyContract;
+	}
+
+	mapping (uint8 => VersionsTvcParams) public vrsparamsTvc;
+    mapping (uint8 => VersionsAbiParams) public vrsparamsAbi;
+
     bool has_platform_code;
     uint32 service_version;
     uint32 account_version;
@@ -52,40 +96,143 @@ contract MetaduesRoot {
         _;
     }
 
-    function installPlatformOnce(TvmCell code) external onlyOwner {
-        // can be installed only once
+	// Get all latest TVCs
+    function getTvcsLatest() public view returns(optional(VersionsTvcParams)){
+        optional(VersionsTvcParams) value = vrsparamsTvc.fetch(versionTvc);
+		return value;
+    }
+
+	// Get all latest TVCs
+    function getTvcsLatestResponsible() external view responsible returns(VersionsTvcParams){
+        VersionsTvcParams value = vrsparamsTvc[versionTvc];
+		return{value: 0, flag: 64}(value);
+    }
+
+	// Get all latest ABIs
+	function getAbisLatest() public view returns(optional(VersionsAbiParams)){
+        optional(VersionsAbiParams) value = vrsparamsAbi.fetch(versionAbi);
+		return value;
+    }
+
+	// Set TVCs
+	function setTvcPlatform(TvmCell tvcPlatformInput) public onlyOwner {
         require(!has_platform_code, 222);
-        platform_code = code;
+		tvcPlatform = tvcPlatformInput;
         has_platform_code = true;
     }
 
-    function installOrUpdateAccountCode(TvmCell code) external onlyOwner {
-        account_code = code;
+    function setTvcMetaduesAccount(TvmCell tvcMetaduesAccountInput) public onlyOwner {
+		tvcMetaduesAccount = tvcMetaduesAccountInput;
         account_version++;
     }
 
-    function installOrUpdateSubscriptionCode(TvmCell code) external onlyOwner {
-        subscription_code = code;
-        subscription_version++;
-    }  
-
-    function installOrUpdateSubscriptionIndexCode(TvmCell code) external onlyOwner {
-        subscription_index_code = code;
-    }  
-    
-    function installOrUpdateSubscriptionIndexIdentificatorCode(TvmCell code) external onlyOwner {
-        subscription_index_identificator_code = code;
-    }  
-
-    function installOrUpdateServiceCode(TvmCell code) external onlyOwner {
-        service_code = code;
+	function setTvcSubscriptionService(TvmCell tvcSubscriptionServiceInput) public onlyOwner {
+		tvcSubscriptionService = tvcSubscriptionServiceInput;
         service_version++;
-    }  
+    }
+	
+	function setTvcSubscription(TvmCell tvcSubscriptionInput) public onlyOwner {
+		tvcSubscription = tvcSubscriptionInput;
+        subscription_version++;
+    }
 
-    function installOrUpdateFeeProxyCode(TvmCell code) external onlyOwner {
-        fee_proxy_code = code;
+	function setTvcSubscriptionServiceIndex(TvmCell tvcSubscriptionServiceIndexInput) public onlyOwner {
+		tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
+    }
+
+	function setTvcSubscriptionIndex(TvmCell tvcSubscriptionIndexInput) public onlyOwner {
+		tvcSubscriptionIndex = tvcSubscriptionIndexInput;
+    }
+
+	function setTvcSubscriptionIdentificatorIndex(TvmCell tvcSubscriptionIdentificatorIndexInput) public onlyOwner {
+		tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndexInput;
+    }
+
+    function setTvcFeeProxy(TvmCell tvcFeeProxyInput) public onlyOwner {
+		tvcFeeProxy = tvcFeeProxyInput;
         fee_proxy_version++;
-    }  
+    }
+
+    function setTvc() public onlyOwner {
+		versionTvc++;
+		VersionsTvcParams params;
+		params.tvcPlatform = tvcPlatform;
+		params.tvcMetaduesAccount = tvcMetaduesAccount;
+		params.tvcSubscriptionService = tvcSubscriptionService;
+		params.tvcSubscription = tvcSubscription;
+		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex;
+		params.tvcSubscriptionIndex = tvcSubscriptionIndex;
+		params.tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
+        params.tvcFeeProxy = tvcFeeProxy;
+		vrsparamsTvc.add(versionTvc, params);
+    }
+
+	// Set ABIs
+
+	function setAbiPlatformContract(string abiPlatformContractInput) public onlyOwner {
+        abiPlatformContract = abiPlatformContractInput;
+    }
+
+	function setAbiMetaduesAccountContract(string abiMetaduesAccountContractInput) public onlyOwner {
+		abiMetaduesAccountContract = abiMetaduesAccountContractInput;
+    }
+
+	function setAbiMetaduesRootContract(string abiMetaduesRootContractInput) public onlyOwner {
+		abiMetaduesRootContract = abiMetaduesRootContractInput;
+    }
+
+	function setAbiTIP3RootContract(string abiTIP3RootContractInput) public onlyOwner {
+		abiTIP3RootContract = abiTIP3RootContractInput;
+    }
+
+	function setAbiTIP3TokenWalletContract(string abiTIP3TokenWalletContractInput) public onlyOwner {
+		abiTIP3TokenWalletContract = abiTIP3TokenWalletContractInput;
+    }
+
+	function setAbiServiceContract(string abiServiceContractInput) public onlyOwner {
+		abiServiceContract = abiServiceContractInput;
+    }
+
+	function setAbiServiceIndexContract(string abiServiceIndexContractInput) public onlyOwner {
+		abiServiceIndexContract = abiServiceIndexContractInput;
+    }
+
+	function setAbiSubscriptionContract(string abiSubscriptionContractInput) public onlyOwner {
+		abiSubscriptionContract = abiSubscriptionContractInput;
+    }
+
+	function setAbiSubscriptionIndexContract(string abiSubscriptionIndexContractInput) public onlyOwner {
+		abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
+    }
+
+	function setAbiSubscriptionIdentificatorIndexContract(string abiSubscriptionIdentificatorIndexContractInput) public onlyOwner {
+		abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContractInput;
+    }
+
+    function setAbiFeeProxyContract(string abiFeeProxyContractInput) public onlyOwner {
+		abiFeeProxyContract = abiFeeProxyContractInput;
+    }
+
+    function setAbi() public onlyOwner {
+		versionAbi++;
+		VersionsAbiParams params;
+		params.abiPlatformContract = abiPlatformContract;
+		params.abiMetaduesAccountContract = abiMetaduesAccountContract;
+		params.abiMetaduesRootContract = abiMetaduesRootContract;
+		params.abiTIP3RootContract = abiTIP3RootContract;
+		params.abiTIP3TokenWalletContract = abiTIP3TokenWalletContract;
+		params.abiServiceContract = abiServiceContract;
+		params.abiServiceIndexContract = abiServiceIndexContract;
+		params.abiSubscriptionContract = abiSubscriptionContract;
+		params.abiSubscriptionIndexContract = abiSubscriptionIndexContract;
+		params.abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContract;
+        params.abiFeeProxyContract = abiFeeProxyContract;
+		vrsparamsAbi.add(versionAbi, params);
+    }
+
+	function setCategories(string[] categoriesInput) public onlyOwner {
+		categories = categoriesInput;
+	}
 
 
     function installOrUpdateFeeProxyParams(address[] currencies) external onlyOwner {
@@ -111,10 +258,6 @@ contract MetaduesRoot {
 
     function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to) external onlyOwner {
         mtds_revenue_accumulator_address = revenue_to;
-    }
-
-    function installOrUpdateServiceIndexCode(TvmCell code) external onlyOwner {
-        service_index_code = code;
     }
 
     function setFees(uint128 service_fee_, uint128 subscription_fee_) external onlyOwner {
@@ -158,7 +301,7 @@ contract MetaduesRoot {
             bounce: false,
             flag: 0
         }(
-            fee_proxy_code,
+            tvcFeeProxy.toSlice().loadRef(),
             fee_proxy_version,
             msg.sender
         );
@@ -172,7 +315,7 @@ contract MetaduesRoot {
             bounce: false,
             flag: 0
         }(
-            account_code,
+            tvcMetaduesAccount.toSlice().loadRef(),
             account_version,
             msg.sender
         );
@@ -233,7 +376,7 @@ contract MetaduesRoot {
             value: 1 ton,
             flag: 0
         }(
-            fee_proxy_code,
+            tvcFeeProxy.toSlice().loadRef(),
             fee_proxy_contract_params,
             fee_proxy_version,
             msg.sender
@@ -253,7 +396,7 @@ contract MetaduesRoot {
             value: 1 ton,
             flag: 0
         }(
-            account_code,
+            tvcMetaduesAccount.toSlice().loadRef(),
             account_params,
             account_version,
             msg.sender
@@ -372,7 +515,7 @@ contract MetaduesRoot {
             address(this)
         ); // Max 4 items
         TvmCell code = tvm.setCodeSalt(
-            subscription_code,
+            tvcSubscription.toSlice().loadRef(),
             saltBuilder.toCell()
         );
         return code;
@@ -385,7 +528,7 @@ contract MetaduesRoot {
             address(this)
         ); // Max 4 items
         TvmCell code = tvm.setCodeSalt(
-            service_code,
+            tvcSubscriptionService.toSlice().loadRef(),
             saltBuilder.toCell()
         );
         return code;
@@ -404,7 +547,7 @@ contract MetaduesRoot {
             address(this)
         );
         TvmCell code = tvm.setCodeSalt(
-            subscription_index_identificator_code,
+            tvcSubscriptionIdentificatorIndex.toSlice().loadRef(),
             saltBuilder.toCell()
         );
         TvmCell stateInit = tvm.buildStateInit({
@@ -429,7 +572,7 @@ contract MetaduesRoot {
             address(this)
         );
         TvmCell code = tvm.setCodeSalt(
-            subscription_index_code,
+            tvcSubscriptionIndex.toSlice().loadRef(),
             saltBuilder.toCell()
         );
         TvmCell stateInit = tvm.buildStateInit({
@@ -450,7 +593,7 @@ contract MetaduesRoot {
         TvmBuilder saltBuilder;
         saltBuilder.store(serviceOwner, address(this));
         TvmCell code = tvm.setCodeSalt(
-            service_index_code,
+            tvcSubscriptionServiceIndex.toSlice().loadRef(),
             saltBuilder.toCell()
         );
         TvmCell state = tvm.buildStateInit({
@@ -473,7 +616,7 @@ contract MetaduesRoot {
                 platform_params: params
             },
             pubkey: 0,
-            code: platform_code
+            code: tvcPlatform.toSlice().loadRef()
         });
     }
 
