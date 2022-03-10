@@ -11,3 +11,9 @@ set -xe
 
 ./deploy-MetaduesRoot.sh
 
+
+
+
+
+
+
