@@ -32,9 +32,13 @@ contract MetaduesAccount {
         uint128 balance;
     }
 
-
     modifier onlyRoot() {
         require(msg.sender == root, 111);
+        _;
+    }
+
+    modifier onlyOwner() {
+        tvm.accept();
         _;
     }
 
@@ -59,7 +63,6 @@ contract MetaduesAccount {
         onCodeUpgrade(builder.toCell());
     } 
 
-
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
         (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =
@@ -78,7 +81,6 @@ contract MetaduesAccount {
   
         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
-
 
     function paySubscription(TvmCell params, address account_wallet, address subscription_wallet, address service_address) 
         external
@@ -113,10 +115,9 @@ contract MetaduesAccount {
             }
         }
         else {return { value: 0, flag: 128, bounce: false } 1;}
-        }
+    }
 
-
-     function syncBalance(address currency_root) external onlyOwner {
+    function syncBalance(address currency_root) external onlyOwner {
         require(sync_balance_currency_root == address(0), 335);
         sync_balance_currency_root = currency_root;
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(currency_root);
@@ -130,7 +131,7 @@ contract MetaduesAccount {
         }();
     }
 
-     function onBalanceOf(uint128 balance_) external {
+    function onBalanceOf(uint128 balance_) external {
         uint128 balance_wallet = balance_;
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(sync_balance_currency_root);
         balance_wallet_struct current_balance_key  = current_balance_struct.get();
@@ -162,16 +163,12 @@ contract MetaduesAccount {
         withdraw_value = 0;
     }
 
-
-
     function destroyAccount()
         public
         onlyOwner
     {
      selfdestruct(msg.sender);    
     }
-    
-
     
     function onAcceptTokensTransfer(
         address tokenRoot,
@@ -202,8 +199,7 @@ contract MetaduesAccount {
         builder.store(service_address);
         return builder.toCell();
     }
-  
-    
+
     function _buildInitData(uint8 type_id, TvmCell params) private inline view returns (TvmCell) {
         return tvm.buildStateInit({
             contr: Platform,
@@ -217,29 +213,21 @@ contract MetaduesAccount {
         });
     }
 
-   modifier onlyOwner() {
-        tvm.accept();
-        _;
-    }
-   function getOwner() external view responsible returns (address wner) {
+    function getOwner() external view responsible returns (address wner) {
         return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } owner;
     }
 
-   function getPendingOwner() external view responsible returns (address pending_owner) {
+    function getPendingOwner() external view responsible returns (address pending_owner) {
         return { value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS } pending_owner;
     }
 
-   function transferOwner(address new_owner) external onlyOwner {
+    function transferOwner(address new_owner) external onlyOwner {
         pending_owner = new_owner;
     }
 
-   function acceptOwner() external {
+    function acceptOwner() external {
         require(msg.sender == pending_owner && msg.sender.value != 0, 559);
         owner = pending_owner;
         pending_owner = address.makeAddrStd(0, 0);
     }
-
-
-
-
 }
