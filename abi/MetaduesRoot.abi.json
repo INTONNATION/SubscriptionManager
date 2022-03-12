@@ -338,6 +338,35 @@
 			]
 		},
 		{
+			"name": "accountOf",
+			"inputs": [
+				{"name":"owner_address_","type":"address"}
+			],
+			"outputs": [
+				{"name":"account","type":"address"}
+			]
+		},
+		{
+			"name": "serviceOf",
+			"inputs": [
+				{"name":"owner_address_","type":"address"},
+				{"name":"service_name_","type":"string"}
+			],
+			"outputs": [
+				{"name":"service","type":"address"}
+			]
+		},
+		{
+			"name": "subscriptionOf",
+			"inputs": [
+				{"name":"owner_address_","type":"address"},
+				{"name":"service_address_","type":"address"}
+			],
+			"outputs": [
+				{"name":"subscription","type":"address"}
+			]
+		},
+		{
 			"name": "upgrade",
 			"inputs": [
 				{"name":"code","type":"cell"},
