@@ -33,7 +33,7 @@ CONTRACT_NAME=MetaduesRoot
 giver=0:705e21688486a905a2f83f940dfbafcd4d319cff31d4189ebf4483e16553fa33
 
 function giver {
-tonos-cli --url $NETWORK call --sign ../abi/GiverV2.keys.json --abi ../abi/GiverV2.abi.json $giver sendTransaction "{\"dest\":\"$1\",\"value\":60000000000, \"bounce\":\"false\"}"
+tonos-cli --url $NETWORK call --sign ../abi/GiverV2.keys.json --abi ../abi/GiverV2.abi.json $giver sendTransaction "{\"dest\":\"$1\",\"value\":6000000000, \"bounce\":\"false\"}"
 }
 
 function get_address {

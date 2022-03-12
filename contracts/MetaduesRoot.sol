@@ -626,6 +626,18 @@ contract MetaduesRoot {
         return builder.toCell();
     }
 
+    function accountOf(address owner_address_) public view returns (address account){
+        account = address(tvm.hash(_buildInitData(PlatformTypes.Account, _buildPlatformParams(owner_address_))));
+    }
+
+    function serviceOf(address owner_address_, string service_name_) public view returns (address service){
+        service = address(tvm.hash(_buildInitData(PlatformTypes.Service, _buildServicePlatformParams(owner_address_, service_name_))));
+    }
+
+    function subscriptionOf(address owner_address_, address service_address_) public view returns (address subscription){
+        subscription = address(tvm.hash(_buildInitData(PlatformTypes.Subscription, _buildSubscriptionPlatformParams(owner_address_, service_address_))));
+    }
+
     function _buildSubscriptionPlatformParams(address subscription_owner, address service_address) private inline pure returns (TvmCell) {
         TvmBuilder builder;
         builder.store(subscription_owner);
