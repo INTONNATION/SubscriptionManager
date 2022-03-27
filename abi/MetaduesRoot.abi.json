@@ -244,8 +244,8 @@
 		{
 			"name": "setFees",
 			"inputs": [
-				{"name":"service_fee_","type":"uint128"},
-				{"name":"subscription_fee_","type":"uint128"}
+				{"name":"service_fee_","type":"uint8"},
+				{"name":"subscription_fee_","type":"uint8"}
 			],
 			"outputs": [
 			]
@@ -428,7 +428,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"service_fee","type":"uint128"}
+				{"name":"service_fee","type":"uint8"}
 			]
 		},
 		{
@@ -436,7 +436,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"subscription_fee","type":"uint128"}
+				{"name":"subscription_fee","type":"uint8"}
 			]
 		},
 		{
@@ -502,8 +502,8 @@
 		{"name":"subscription_version","type":"uint32"},
 		{"name":"fee_proxy_version","type":"uint32"},
 		{"name":"fee_proxy_address","type":"address"},
-		{"name":"service_fee","type":"uint128"},
-		{"name":"subscription_fee","type":"uint128"},
+		{"name":"service_fee","type":"uint8"},
+		{"name":"subscription_fee","type":"uint8"},
 		{"name":"mtds_root_address","type":"address"},
 		{"name":"mtds_revenue_accumulator_address","type":"address"},
 		{"name":"dex_root_address","type":"address"}

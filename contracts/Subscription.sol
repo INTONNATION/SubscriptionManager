@@ -12,18 +12,16 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol"
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
 
-interface IMetaduesAccount  {
-    function paySubscription (TvmCell params, address account_wallet, address subscription_wallet, address service_address) external responsible returns (uint8);
+interface IMetaduesAccount {
+    function paySubscription(uint128 value, address currency_root, address account_wallet, address subscription_wallet, address service_address) external responsible returns (uint8);
 }
 
-interface ISubscriptionService  {
+interface ISubscriptionService {
     function getParams() external view responsible returns (TvmCell);
 }
 
-
-
 interface ISubscriptionIndexContract {
-    function cancel () external;
+    function cancel() external;
 }
 
 contract Subscription {
@@ -44,15 +42,17 @@ contract Subscription {
     address service_address;
     address subscription_index_address;
     address subscription_index_identificator_address;
-    uint32 cooldown = 0;
-    uint128 public service_fee;
-    uint128 public subscription_fee;
+    uint32 cooldown = 3600;
+    uint8 public service_fee;
+    uint8 public subscription_fee;
     address public address_fee_proxy;
     TvmCell contract_params;
+    uint32 preprocessing_window;
 
     struct serviceParams {
         address to;
-        uint128 value;
+        uint128 subscription_value;
+        uint128 service_value;
         uint32 period;
         string name;
         string description;
@@ -61,11 +61,13 @@ contract Subscription {
         address currency_root;
         string category;
     }
+    
     serviceParams public svcparams;
 
     struct paymentStatus {
         uint32 period;
-        uint32 start;
+        uint32 payment_timestamp;
+        uint32 execution_timestamp;
         uint8 status;
     }
     paymentStatus public subscription;
@@ -99,26 +101,36 @@ contract Subscription {
         onCodeUpgrade(builder.toCell());
     } 
     
-    
-    
-    
+    function subscriptionStatus() public returns(uint8){
+        if ((subscription.status == STATUS_ACTIVE) && (now < (subscription.payment_timestamp + svcparams.period))) {
+            return STATUS_ACTIVE;
+        } else if ((now > (subscription.payment_timestamp + svcparams.period)) && (subscription.status != STATUS_PROCESSING)) {
+            return STATUS_NONACTIVE;
+        } else {
+            return STATUS_PROCESSING;
+        }
+    }
+
     function executeSubscription() external {        
-        if (now > (subscription.start + svcparams.period)) {
-            if ( now > (cooldown + 3600)) {
+        if (now > (subscription.payment_timestamp + svcparams.period - preprocessing_window)) {
+            if ((now > (subscription.execution_timestamp + cooldown)) || (subscription.status != STATUS_PROCESSING)) {
                 tvm.accept();
-                cooldown = uint32(now);
-                subscription.status = STATUS_NONACTIVE;
+                subscription.execution_timestamp = uint32(now);
+                subscription.status = STATUS_PROCESSING;
                 IMetaduesAccount(account_address).paySubscription{
                     value: 0.2 ton, 
                     bounce: true,
                     flag: 0,
                     callback: Subscription.onPaySubscription
                 }(
-                    service_params,
+                    svcparams.subscription_value,
+                    svcparams.currency_root,
                     account_wallet,
                     subscription_wallet,
                     service_address
                 );
+            } else {
+                revert(1000);
             }
         } else {
             require(subscription.status == STATUS_ACTIVE, SubscriptionErrors.error_subscription_status_already_active);
@@ -126,16 +138,17 @@ contract Subscription {
     }
 
     function executeSubscriptionInline() private inline {        
-        cooldown = uint32(now);
-        subscription.status = STATUS_NONACTIVE;
+        subscription.execution_timestamp = uint32(now);
+        subscription.status = STATUS_PROCESSING;
         IMetaduesAccount(account_address).paySubscription{
             value: 0.2 ton, 
             bounce: true, 
             flag: 0,
             callback: Subscription.onPaySubscription
         }(
-            service_params, 
-            account_wallet, 
+            svcparams.subscription_value,
+            svcparams.currency_root,
+            account_wallet,
             subscription_wallet,
             service_address
         );
@@ -149,33 +162,39 @@ contract Subscription {
         address remainingGasTo,
         TvmCell payload
     ) public {
-        if (subscription.status == STATUS_PROCESSING){
-          uint128 protocol_fee = svcparams.value * (service_fee + subscription_fee) / 100;
-          ITokenWallet(msg.sender).transferToWallet{value: 0.5 ton}(
-            protocol_fee,
-            address_fee_proxy,
-            address_fee_proxy,  
-            true, 
-            payload
+        if (subscription.status == STATUS_PROCESSING) {
+            //require(amount >= svcparams.value, 111);
+            uint128 service_value_percentage = svcparams.service_value / 100;
+            uint128 service_fee_value = service_value_percentage * service_fee;
+            uint128 protocol_fee = (svcparams.subscription_value - svcparams.service_value + service_fee_value);
+            ITokenWallet(msg.sender).transfer{value: 0.15 ton}(
+                protocol_fee,
+                address_fee_proxy,
+                0,
+                address(this),  
+                true, 
+                payload
             );   
-          uint128 pay_value = svcparams.value - protocol_fee;
-          ITokenWallet(msg.sender).transfer{value: 0.5 ton}(
-            //add fee for proxy TIP-3
-            pay_value,
-            svcparams.to, // can be service owner TIP3 Wallet
-            0,
-            address(this),
-            true,
-            payload
+            uint128 pay_value = svcparams.subscription_value - protocol_fee;
+            ITokenWallet(msg.sender).transfer{value: 0.2 ton}(
+                pay_value,
+                svcparams.to,
+                0,
+                address(this),
+                true,
+                payload
             );
-            subscription.status = STATUS_ACTIVE;
+            if (subscription.payment_timestamp != 0) {
+                subscription.payment_timestamp = subscription.payment_timestamp + subscription.period;
+            } else {
+                subscription.payment_timestamp = uint32(now);
             }
+            subscription.status = STATUS_ACTIVE;
+        }
     }
     
     function onPaySubscription(uint8 status) external {
-        if (status == 0) {
-            subscription.status = STATUS_PROCESSING;
-        } else if (status == 1) {
+        if (status == 1) {
             subscription.status = STATUS_NONACTIVE;
         }
     }
@@ -200,7 +219,7 @@ contract Subscription {
         TvmCell nextCell;
         (service_address, account_address, nextCell) = contract_params.toSlice().decode(address,address,TvmCell);
         (subscription_index_address,subscription_index_identificator_address, nextCell) = nextCell.toSlice().decode(address,address,TvmCell);
-        (address_fee_proxy,service_fee,subscription_fee ) = nextCell.toSlice().decode(address,uint128,uint128);
+        (address_fee_proxy,service_fee,subscription_fee) = nextCell.toSlice().decode(address,uint8,uint8);
         ISubscriptionService(service_address).getParams{
             value: 0.2 ton, 
             bounce: true, 
@@ -216,7 +235,7 @@ contract Subscription {
         service_params=service_params_;
         (
             svcparams.to, 
-            svcparams.value, //add percentage for user fee
+            svcparams.service_value,
             svcparams.period,
             next_cell
         ) = service_params.toSlice().decode(
@@ -225,7 +244,6 @@ contract Subscription {
             uint32,
             TvmCell
         );
- 
         (
             svcparams.name, 
             svcparams.description, 
@@ -238,10 +256,12 @@ contract Subscription {
             TvmCell
         );
         (svcparams.currency_root, svcparams.category) = next_cell.toSlice().decode(address, string);
-        svcparams.value = svcparams.value + subscription_fee;
-        uint32 _period = svcparams.period * 3600 * 24;
+        uint128 service_value_percentage = svcparams.service_value / 100;
+        uint128 subscription_fee_value = service_value_percentage * subscription_fee;
+        svcparams.subscription_value = svcparams.service_value + subscription_fee_value;
+        preprocessing_window = (svcparams.period / 100) * 30;
         emit paramsRecieved(service_params_);
-        subscription = paymentStatus(_period, 0, STATUS_NONACTIVE);
+        subscription = paymentStatus(svcparams.period, 0, 0, STATUS_NONACTIVE);
         ITokenRoot(svcparams.currency_root).deployWallet{
             value: 0.2 ton, 
             bounce: true, 

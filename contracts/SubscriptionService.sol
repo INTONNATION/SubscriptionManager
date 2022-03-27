@@ -61,9 +61,6 @@ contract SubscriptionService {
         onCodeUpgrade(builder.toCell());
     } 
     
-    
-    
-    
     function onCodeUpgrade(TvmCell upgrade_data) private {
         TvmSlice s = upgrade_data.toSlice();
         (address root_, address send_gas_to, uint32 old_version, uint32 version, uint8 type_id_ ) =
@@ -134,9 +131,7 @@ contract SubscriptionService {
             string, 
             TvmCell
         );
-        (svcparams.currency_root, svcparams.category) = nextCell2.toSlice().decode(address, string);           
-
-
+        (svcparams.currency_root, svcparams.category) = nextCell2.toSlice().decode(address, string);
      }
 
      modifier onlyOwner() {

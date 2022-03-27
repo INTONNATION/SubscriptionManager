@@ -74,8 +74,8 @@ contract MetaduesRoot {
     uint32 subscription_version;
     uint32 fee_proxy_version;
     address public fee_proxy_address;
-    uint128 public service_fee;
-    uint128 public subscription_fee;
+    uint8 public service_fee;
+    uint8 public subscription_fee;
     address public mtds_root_address;
     address public mtds_revenue_accumulator_address;
     address public dex_root_address;
@@ -260,9 +260,9 @@ contract MetaduesRoot {
         mtds_revenue_accumulator_address = revenue_to;
     }
 
-    function setFees(uint128 service_fee_, uint128 subscription_fee_) external onlyOwner {
+    function setFees(uint8 service_fee_, uint8 subscription_fee_) external onlyOwner {
         service_fee = service_fee_;
-        subscription_fee =subscription_fee_;
+        subscription_fee = subscription_fee_;
     }
 
     // Managment

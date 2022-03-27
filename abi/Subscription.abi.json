@@ -21,6 +21,14 @@
 			]
 		},
 		{
+			"name": "subscriptionStatus",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"}
+			]
+		},
+		{
 			"name": "executeSubscription",
 			"inputs": [
 			],
@@ -108,7 +116,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"service_fee","type":"uint128"}
+				{"name":"service_fee","type":"uint8"}
 			]
 		},
 		{
@@ -116,7 +124,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"subscription_fee","type":"uint128"}
+				{"name":"subscription_fee","type":"uint8"}
 			]
 		},
 		{
@@ -132,7 +140,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"components":[{"name":"to","type":"address"},{"name":"subscription_value","type":"uint128"},{"name":"service_value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
 			]
 		},
 		{
@@ -140,7 +148,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
+				{"components":[{"name":"period","type":"uint32"},{"name":"payment_timestamp","type":"uint32"},{"name":"execution_timestamp","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 			]
 		}
 	],
@@ -174,11 +182,12 @@
 		{"name":"subscription_index_address","type":"address"},
 		{"name":"subscription_index_identificator_address","type":"address"},
 		{"name":"cooldown","type":"uint32"},
-		{"name":"service_fee","type":"uint128"},
-		{"name":"subscription_fee","type":"uint128"},
+		{"name":"service_fee","type":"uint8"},
+		{"name":"subscription_fee","type":"uint8"},
 		{"name":"address_fee_proxy","type":"address"},
 		{"name":"contract_params","type":"cell"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
-		{"components":[{"name":"period","type":"uint32"},{"name":"start","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
+		{"name":"preprocessing_window","type":"uint32"},
+		{"components":[{"name":"to","type":"address"},{"name":"subscription_value","type":"uint128"},{"name":"service_value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"subscription_identificator","type":"cell"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
+		{"components":[{"name":"period","type":"uint32"},{"name":"payment_timestamp","type":"uint32"},{"name":"execution_timestamp","type":"uint32"},{"name":"status","type":"uint8"}],"name":"subscription","type":"tuple"}
 	]
 }

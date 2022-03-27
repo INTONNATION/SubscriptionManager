@@ -24,7 +24,8 @@
 			"name": "paySubscription",
 			"inputs": [
 				{"name":"answerId","type":"uint32"},
-				{"name":"params","type":"cell"},
+				{"name":"value","type":"uint128"},
+				{"name":"currency_root","type":"address"},
 				{"name":"account_wallet","type":"address"},
 				{"name":"subscription_wallet","type":"address"},
 				{"name":"service_address","type":"address"}

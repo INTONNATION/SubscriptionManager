@@ -82,39 +82,31 @@ contract MetaduesAccount {
         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
-    function paySubscription(TvmCell params, address account_wallet, address subscription_wallet, address service_address) 
+    function paySubscription(uint128 value,address currency_root, address account_wallet, address subscription_wallet, address service_address) 
         external
         responsible
         returns (uint8) {
-        ( , uint128 tokens) = params.toSlice().decode(address, uint128);
         address subsciption_addr = address(tvm.hash(_buildInitData(PlatformTypes.Subscription, _buildSubscriptionParams(account_owner, service_address)))); 
 //        require(subsciption_addr == msg.sender, 333);
         TvmCell payload;
-        //check balance if enouph return 0 if not return 1
-        address currency_root;
-        uint128 value;
-        TvmCell next_cell;
-        (,value,,next_cell) = params.toSlice().decode(address, uint128, uint32, TvmCell);
-        (,,,next_cell) = next_cell.toSlice().decode(string, string, string,TvmCell);
-        (currency_root,) = next_cell.toSlice().decode(address, string);
-        
+        //tvm.rawReserve(_reserve(), 0);
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(currency_root);
         
         if (current_balance_struct.hasValue()){         
             balance_wallet_struct current_balance_key_value = current_balance_struct.get();
             uint128 current_balance = current_balance_key_value.balance;
             if (value > current_balance){
-                return { value: 0, flag: 128, bounce: false } 1;
+                return { value: 0.06 ton, flag: 1, bounce: false } 1;
             }
             else{
-                ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(tokens,subscription_wallet, subscription_wallet, true, payload);
+                ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(value,subscription_wallet, subscription_wallet, true, payload);
                 uint128 balance_after_pay = current_balance - value;
                 current_balance_key_value.balance = balance_after_pay;
                 wallets_mapping[currency_root] = current_balance_key_value;
-                return { value: 0, flag: 128, bounce: false } 0;
+                return { value: 0.06 ton, flag: 1, bounce: false } 0;
             }
         }
-        else {return { value: 0, flag: 128, bounce: false } 1;}
+        else {return { value: 0.06 ton, flag: 1, bounce: false } 1;}
     }
 
     function syncBalance(address currency_root) external onlyOwner {
@@ -229,5 +221,9 @@ contract MetaduesAccount {
         require(msg.sender == pending_owner && msg.sender.value != 0, 559);
         owner = pending_owner;
         pending_owner = address.makeAddrStd(0, 0);
+    }
+
+    function _reserve() internal pure returns (uint128) {
+        return math.max(address(this).balance - msg.value, 0.1 ton);
     }
 }
