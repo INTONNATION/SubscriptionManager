@@ -2,7 +2,7 @@
 set -xe
 
 LOCALNET=http://127.0.0.1
-DEVNET=https://net1.ton.dev
+DEVNET=net.ton.dev
 MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$DEVNET
@@ -127,11 +127,11 @@ tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiSubscriptionIdentificatorI
 tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiFeeProxyContract "{\"abiFeeProxyContractInput\":\"$abiFeeProxyContract\"}" --abi ../abi/$1.abi.json 
 tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbi "{}"  --abi ../abi/$1.abi.json 
 
-tonos-cli --url $NETWORK call $CONTRACT_ADDRESS deployFeeProxy "{\"currencies\":[\"0:5b65a97c28a40ecd8713113e08a8e8317ee4455b53fce495a363e41adf6282dc\",\"0:2306fe44aca48701039ab7cbad96bf60dc2c51f2250f052d24c3a110e3fada8b\"]}" --abi ../abi/$1.abi.json
+tonos-cli --url $NETWORK call $CONTRACT_ADDRESS deployFeeProxy "{\"currencies\":[\"0:2b7e864d66cad45257ed47a39f85b9fb7814afaf79bd23863cb4b191a9cdc2a8\",\"0:2306fe44aca48701039ab7cbad96bf60dc2c51f2250f052d24c3a110e3fada8b\"]}" --abi ../abi/$1.abi.json
 tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setFees "{\"service_fee_\":\"5\",\"subscription_fee_\":\"5\"}" --abi ../abi/$1.abi.json
-tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRevenueDelegationAddress "{\"revenue_to\":\"0:81ef55e449aab0ec7c419081b924e012fd7e8628c8274de7baa5e6b2b15e0a8f\"}" --abi ../abi/$1.abi.json
-tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRootAddress "{\"mtds_root_\":\"0:2306fe44aca48701039ab7cbad96bf60dc2c51f2250f052d24c3a110e3fada8b\"}" --abi ../abi/$1.abi.json
-tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeDexRootAddress "{\"dex_root\":\"0:a2004013ca1247051dd887d6c9976f76a7b11f9bb537bf4bf392dd1990f6815f\"}" --abi ../abi/$1.abi.json
+tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRevenueDelegationAddress "{\"revenue_to\":\"0:d4aa3dbbe0df676d39e255c16767ad16b7be3ca74ff84bd736999b9da6942b8b\"}" --abi ../abi/$1.abi.json
+tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRootAddress "{\"mtds_root_\":\"0:d4aa3dbbe0df676d39e255c16767ad16b7be3ca74ff84bd736999b9da6942b8b\"}" --abi ../abi/$1.abi.json
+tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeDexRootAddress "{\"dex_root\":\"0:a6b47dcdcf062fb2cec3b3ebae5ba28ac0edc7672ff203c6b6b6ae96f16d5f35\"}" --abi ../abi/$1.abi.json
 }
 
 deploy $CONTRACT_NAME
