@@ -12,18 +12,19 @@
 			]
 		},
 		{
-			"name": "cancel",
+			"name": "upgrade",
 			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "ownerAddress",
+			"name": "cancel",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"ownerAddress","type":"address"}
 			]
 		},
 		{
@@ -61,7 +62,6 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"subscription_owner","type":"address"},
-		{"name":"ownerAddress","type":"address"},
 		{"name":"subscription_address","type":"address"},
 		{"name":"root","type":"address"},
 		{"name":"identificator","type":"cell"}

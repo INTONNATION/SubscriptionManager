@@ -62,11 +62,27 @@
 			]
 		},
 		{
-			"name": "owner_address",
+			"name": "service_owner",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"owner_address","type":"address"}
+				{"name":"service_owner","type":"address"}
+			]
+		},
+		{
+			"name": "subscription_service_index_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_service_index_address","type":"address"}
+			]
+		},
+		{
+			"name": "subscription_service_index_identificator_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_service_index_identificator_address","type":"address"}
 			]
 		},
 		{
@@ -95,7 +111,9 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"root","type":"address"},
-		{"name":"owner_address","type":"address"},
+		{"name":"service_owner","type":"address"},
+		{"name":"subscription_service_index_address","type":"address"},
+		{"name":"subscription_service_index_identificator_address","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"code","type":"cell"},

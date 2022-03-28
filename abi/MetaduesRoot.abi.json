@@ -332,7 +332,8 @@
 		{
 			"name": "deployService",
 			"inputs": [
-				{"name":"service_params","type":"cell"}
+				{"name":"service_params","type":"cell"},
+				{"name":"identificator","type":"cell"}
 			],
 			"outputs": [
 			]
