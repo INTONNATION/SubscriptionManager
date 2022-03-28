@@ -6,8 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"serviceAddress_","type":"address"},
-				{"name":"senderAddress","type":"address"}
+				{"name":"serviceAddress_","type":"address"}
 			],
 			"outputs": [
 			]
@@ -15,14 +14,6 @@
 		{
 			"name": "cancel",
 			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "upgrade",
-			"inputs": [
-				{"name":"state","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -36,19 +27,19 @@
 			]
 		},
 		{
-			"name": "serviceAddress",
+			"name": "service_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"serviceAddress","type":"address"}
+				{"name":"service_address","type":"address"}
 			]
 		},
 		{
-			"name": "serviceOwner",
+			"name": "service_owner",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"serviceOwner","type":"address"}
+				{"name":"service_owner","type":"address"}
 			]
 		}
 	],
@@ -62,7 +53,7 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"service_name","type":"string"},
-		{"name":"serviceAddress","type":"address"},
-		{"name":"serviceOwner","type":"address"}
+		{"name":"service_address","type":"address"},
+		{"name":"service_owner","type":"address"}
 	]
 }

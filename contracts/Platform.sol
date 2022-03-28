@@ -1,7 +1,6 @@
-pragma ton-solidity >= 0.39.0;
+pragma ton-solidity >=0.39.0;
 
 import "libraries/MsgFlag.sol";
-
 
 contract Platform {
     address static root;
@@ -9,18 +8,22 @@ contract Platform {
     TvmCell static platform_params;
     TvmCell platform_code;
 
-    constructor() public onlyRoot {   
+    constructor() public onlyRoot {
         tvm.accept();
         platform_code = tvm.code();
     }
 
-    function initialize(TvmCell code, TvmCell contract_params, uint32 version, address send_gas_to) external onlyRoot {
-
+    function initialize(
+        TvmCell code,
+        TvmCell contract_params,
+        uint32 version,
+        address send_gas_to
+    ) external onlyRoot {
         TvmBuilder builder;
 
         builder.store(root);
         builder.store(send_gas_to);
-        builder.store(uint32(0)); 
+        builder.store(uint32(0));
         builder.store(version);
         builder.store(type_id);
         builder.store(platform_code);

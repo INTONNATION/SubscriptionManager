@@ -8,7 +8,6 @@ import "libraries/SubscriptionErrors.sol";
 contract SubscriptionIdentificatorIndex {
     
     address static subscription_owner;
-    address public ownerAddress;
     address public subscription_address;
     address public root;
     TvmCell public identificator;
@@ -28,7 +27,19 @@ contract SubscriptionIdentificatorIndex {
         subscription_address = subsAddr;
     }
 
+    function upgrade(TvmCell code, address send_gas_to) external onlyOwner {
+        TvmBuilder builder;
+        builder.store(send_gas_to);
+        builder.store(code);
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade(builder.toCell());
+    }
+
+    function onCodeUpgrade(TvmCell upgrade_data) private {
+    }
+
     function cancel() public onlyOwner {
-        selfdestruct(subscription_address);
+        selfdestruct(subscription_owner);
     }
 }
