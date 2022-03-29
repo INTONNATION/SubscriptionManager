@@ -9,6 +9,10 @@ interface ISubscriptionServiceIndexContract {
     function cancel() external;
 }
 
+interface IServiceIdentificatorIndexContract {
+    function upgrade(TvmCell code, address send_gas_to) external;
+}
+
 contract SubscriptionService {
     struct ServiceParams {
         address to;
@@ -35,6 +39,12 @@ contract SubscriptionService {
 
     constructor() public {
         revert();
+    }
+
+    modifier onlyOwner() {
+        // require service_owner
+        tvm.accept();
+        _;
     }
 
     function getParams() external view responsible returns (TvmCell) {
@@ -95,9 +105,7 @@ contract SubscriptionService {
             address,
             string
         );
-        TvmCell contract_params = s.loadRef();
-        TvmCell indexes;
-        (service_params, indexes) = contract_params.toSlice().decode(TvmCell, TvmCell);
+        TvmCell service_params = s.loadRef();
         (
             svcparams.to,
             svcparams.value,
@@ -111,7 +119,14 @@ contract SubscriptionService {
         (svcparams.currency_root, svcparams.category) = nextCell2
             .toSlice()
             .decode(address, string);
-        (subscription_service_index_address, subscription_service_index_identificator_address) = indexes.toSlice().decode(address, address);
+    }
+
+    function setIndexes(
+        address subscription_service_index_address_,
+        address subscription_service_index_identificator_address_
+    ) external onlyRoot {
+        subscription_service_index_address = subscription_service_index_address_;
+        subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
     }
 
     function updateServiceParams(TvmCell new_service_params) public onlyOwner {
@@ -136,15 +151,21 @@ contract SubscriptionService {
             .decode(address, string);
     }
 
-    modifier onlyOwner() {
-        // require service_owner
-        tvm.accept();
-        _;
+    function selfdelete() public onlyOwner {
+        ISubscriptionServiceIndexContract(subscription_service_index_address)
+            .cancel();
+        ISubscriptionServiceIndexContract(
+            subscription_service_index_identificator_address
+        ).cancel();
+        selfdestruct(service_owner);
     }
 
-    function selfdelete() public onlyOwner {
-        ISubscriptionServiceIndexContract(subscription_service_index_address).cancel();
-        ISubscriptionServiceIndexContract(subscription_service_index_identificator_address).cancel();
-        selfdestruct(service_owner);
+    function upgradeIdentificatorIndex(TvmCell code, address send_gas_to)
+        public
+        onlyOwner
+    {
+        IServiceIdentificatorIndexContract(
+            subscription_service_index_identificator_address
+        ).upgrade(code, send_gas_to);
     }
 }
