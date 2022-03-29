@@ -179,8 +179,7 @@ contract MetaduesRoot {
         params.tvcSubscription = tvcSubscription;
         params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex;
         params.tvcSubscriptionIndex = tvcSubscriptionIndex;
-        params
-            .tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
+        params.tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
         params.tvcFeeProxy = tvcFeeProxy;
         vrsparamsTvc.add(versionTvc, params);
     }
@@ -489,7 +488,7 @@ contract MetaduesRoot {
                 service_address,
                 identificator,
                 msg.sender
-            );
+        );
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         TvmBuilder service_params;
         TvmBuilder index_addresses;

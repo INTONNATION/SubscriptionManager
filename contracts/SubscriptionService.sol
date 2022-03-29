@@ -34,6 +34,7 @@ contract SubscriptionService {
     uint32 current_version;
     uint8 type_id;
     TvmCell public service_params;
+    uint8 public status = 0;
 
     ServiceParams public svcparams;
 
@@ -48,16 +49,26 @@ contract SubscriptionService {
     }
 
     function getParams() external view responsible returns (TvmCell) {
-        return service_params;
+        return{value: 0, flag: 128} service_params;
     }
 
-    function getStatus() external view responsible returns (uint8) {
-        return 0;
+    function getInfo() external view responsible returns (TvmCell) {
+        TvmBuilder info;
+        info.store(status);
+        return{value: 0, flag: 128} info.toCell();
     }
 
     modifier onlyRoot() {
         require(msg.sender == root, 111);
         _;
+    }
+
+    function pause() public onlyOwner {
+        status = 1;
+    }
+
+    function resume() public onlyOwner {
+        status = 0;
     }
 
     function upgrade(
