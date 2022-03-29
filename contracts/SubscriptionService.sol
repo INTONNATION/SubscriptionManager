@@ -163,7 +163,7 @@ contract SubscriptionService {
         service_params = new_service_params;
     }
 
-    function selfdelete() public onlyOwner {
+    function cancel() public onlyOwner {
         ISubscriptionServiceIndexContract(subscription_service_index_address)
             .cancel();
         ISubscriptionServiceIndexContract(
