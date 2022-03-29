@@ -105,7 +105,7 @@ contract SubscriptionService {
             address,
             string
         );
-        TvmCell service_params = s.loadRef();
+        service_params = s.loadRef();
         (
             svcparams.to,
             svcparams.value,
@@ -149,6 +149,7 @@ contract SubscriptionService {
         (svcparams.currency_root, svcparams.category) = nextCell2
             .toSlice()
             .decode(address, string);
+        service_params = new_service_params;
     }
 
     function selfdelete() public onlyOwner {
