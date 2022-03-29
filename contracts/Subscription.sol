@@ -23,6 +23,7 @@ interface IMetaduesAccount {
 
 interface ISubscriptionService {
     function getParams() external view responsible returns (TvmCell);
+    function getInfo() external view responsible returns (TvmCell);
 }
 
 interface ISubscriptionIndexContract {
@@ -95,6 +96,15 @@ contract Subscription {
         _;
     }
 
+    modifier onlyService() {
+        _;
+    }
+
+    modifier onlyCurrencyRoot() {
+        require(msg.sender == svcparams.currency_root, 111);
+        _;
+    }
+
     function upgrade(
         TvmCell code,
         uint32 version,
@@ -147,20 +157,14 @@ contract Subscription {
                 (subscription.status != STATUS_PROCESSING)
             ) {
                 tvm.accept();
+                ISubscriptionService(service_address).getInfo{
+                    value: 0.01 ton,
+                    bounce: true,
+                    flag: 0,        
+                    callback: Subscription.onGetInfo           
+                }();
                 subscription.execution_timestamp = uint32(now);
                 subscription.status = STATUS_PROCESSING;
-                IMetaduesAccount(account_address).paySubscription{
-                    value: 0.2 ton,
-                    bounce: true,
-                    flag: 0,
-                    callback: Subscription.onPaySubscription
-                }(
-                    svcparams.subscription_value,
-                    svcparams.currency_root,
-                    account_wallet,
-                    subscription_wallet,
-                    service_address
-                );
             } else {
                 revert(1000);
             }
@@ -169,6 +173,26 @@ contract Subscription {
                 subscription.status == STATUS_ACTIVE,
                 SubscriptionErrors.error_subscription_status_already_active
             );
+        }
+    }
+
+    function onGetInfo(TvmCell svc_info) external onlyService {
+        uint8 status = svc_info.toSlice().decode(uint8);
+        if (status == 0){
+            IMetaduesAccount(account_address).paySubscription{
+                value: 0.2 ton,
+                bounce: true,
+                flag: 0,
+                callback: Subscription.onPaySubscription
+            }(
+                svcparams.subscription_value,
+                svcparams.currency_root,
+                account_wallet,
+                subscription_wallet,
+                service_address
+            );
+        } else {
+            revert(1111);
         }
     }
 
@@ -281,7 +305,7 @@ contract Subscription {
         //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
-    function onGetParams(TvmCell service_params_) external {
+    function onGetParams(TvmCell service_params_) external onlyService {
         TvmCell next_cell;
         service_params = service_params_;
         (
@@ -316,7 +340,7 @@ contract Subscription {
         }(address(this), 0.1 ton);
     }
 
-    function onDeployWallet(address subscription_wallet_) external {
+    function onDeployWallet(address subscription_wallet_) external onlyCurrencyRoot {
         subscription_wallet = subscription_wallet_;
         ITokenRoot(svcparams.currency_root).walletOf{
             value: 0.1 ton,
@@ -326,7 +350,7 @@ contract Subscription {
         }(account_address);
     }
 
-    function onWalletOf(address account_wallet_) external {
+    function onWalletOf(address account_wallet_) external onlyCurrencyRoot {
         account_wallet = account_wallet_;
         executeSubscriptionInline();
     }

@@ -36,6 +36,14 @@
 			]
 		},
 		{
+			"name": "onGetInfo",
+			"inputs": [
+				{"name":"svc_info","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "onAcceptTokensTransfer",
 			"inputs": [
 				{"name":"tokenRoot","type":"address"},
