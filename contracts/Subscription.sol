@@ -278,7 +278,6 @@ contract Subscription {
             flag: 0,
             callback: Subscription.onGetParams
         }();
-        //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
     function onGetParams(TvmCell service_params_) external {
@@ -333,7 +332,8 @@ contract Subscription {
 
     function cancel() public onlyOwner {
         ISubscriptionIndexContract(subscription_index_address).cancel();
-        ISubscriptionIndexContract(subscription_index_identificator_address).cancel();
+        ISubscriptionIndexContract(subscription_index_identificator_address)
+            .cancel();
         selfdestruct(owner_address);
     }
 
