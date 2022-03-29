@@ -333,7 +333,8 @@ contract Subscription {
 
     function cancel() public onlyOwner {
         ISubscriptionIndexContract(subscription_index_address).cancel();
-        ISubscriptionIndexContract(subscription_index_identificator_address).cancel();
+        ISubscriptionIndexContract(subscription_index_identificator_address)
+            .cancel();
         selfdestruct(owner_address);
     }
 
