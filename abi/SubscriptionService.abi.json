@@ -39,6 +39,15 @@
 			]
 		},
 		{
+			"name": "setIndexes",
+			"inputs": [
+				{"name":"subscription_service_index_address_","type":"address"},
+				{"name":"subscription_service_index_identificator_address_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "updateServiceParams",
 			"inputs": [
 				{"name":"new_service_params","type":"cell"}
@@ -49,6 +58,15 @@
 		{
 			"name": "selfdelete",
 			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeIdentificatorIndex",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]

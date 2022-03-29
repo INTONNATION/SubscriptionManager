@@ -549,12 +549,16 @@ contract MetaduesRoot {
         }(address(platform));
     }
 
-    function deployService(TvmCell service_params, TvmCell identificator) public view {
+    function deployService(TvmCell service_params, TvmCell identificator)
+        public
+        view
+    {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
         tvm.accept();
         TvmCell next_cell;
         string category;
         string service_name;
+        address currency_root;
         (, , , next_cell) = service_params.toSlice().decode(
             address,
             uint128,
@@ -577,24 +581,26 @@ contract MetaduesRoot {
             value: 1 ton,
             flag: 0
         }();
-        TvmBuilder service_params_builder;
-        TvmBuilder indexes;
         TvmCell serviceIndexStateInit = _buildServiceIndex(
             msg.sender,
             service_name
         );
         TvmCell serviceIdentificatorIndexStateInit = _buildServiceIdentificatorIndex(
-            msg.sender,
-            identificator
-        );
-        indexes.store(address(tvm.hash(serviceIndexStateInit)),address(tvm.hash(serviceIdentificatorIndexStateInit)));
-        service_params_builder.store(service_params);
-        service_params_builder.store(indexes);
+                msg.sender,
+                identificator
+            );
         platform.initialize{value: 1 ton, flag: 0}(
             service_code_salt,
-            service_params_builder.toCell(),
+            service_params,
             service_version,
             msg.sender
+        );
+        SubscriptionService(address(platform)).setIndexes{
+            value: 0.11 ton,
+            flag: 0
+        }(
+            address(tvm.hash(serviceIndexStateInit)),
+            address(tvm.hash(serviceIdentificatorIndexStateInit))
         );
         new SubscriptionServiceIndex{
             value: 1 ton,
@@ -693,11 +699,10 @@ contract MetaduesRoot {
         return state;
     }
 
-    function _buildServiceIdentificatorIndex(address serviceOwner, TvmCell identificator_)
-        private
-        view
-        returns (TvmCell)
-    {
+    function _buildServiceIdentificatorIndex(
+        address serviceOwner,
+        TvmCell identificator_
+    ) private view returns (TvmCell) {
         TvmBuilder saltBuilder;
         saltBuilder.store(identificator_, address(this));
         TvmCell code = tvm.setCodeSalt(
