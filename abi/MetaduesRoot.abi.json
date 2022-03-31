@@ -6,8 +6,33 @@
 		{
 			"name": "constructor",
 			"inputs": [
+				{"name":"initial_owner","type":"address"}
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "transferOwner",
+			"inputs": [
+				{"name":"new_owner","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "acceptOwner",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getPendingOwner",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"dex_pending_owner","type":"address"}
 			]
 		},
 		{
@@ -33,6 +58,15 @@
 			],
 			"outputs": [
 				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiMetaduesAccountContract","type":"string"},{"name":"abiMetaduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
+			]
+		},
+		{
+			"name": "getOwner",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"dex_owner","type":"address"}
 			]
 		},
 		{
@@ -210,6 +244,23 @@
 			]
 		},
 		{
+			"name": "setFees",
+			"inputs": [
+				{"name":"service_fee_","type":"uint8"},
+				{"name":"subscription_fee_","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
+			"inputs": [
+				{"name":"revenue_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpdateFeeProxyParams",
 			"inputs": [
 				{"name":"currencies","type":"address[]"}
@@ -229,23 +280,6 @@
 			"name": "installOrUpgradeDexRootAddress",
 			"inputs": [
 				{"name":"dex_root","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
-			"inputs": [
-				{"name":"revenue_to","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setFees",
-			"inputs": [
-				{"name":"service_fee_","type":"uint8"},
-				{"name":"subscription_fee_","type":"uint8"}
 			],
 			"outputs": [
 			]
@@ -306,9 +340,19 @@
 			]
 		},
 		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "deployFeeProxy",
 			"inputs": [
-				{"name":"currencies","type":"address[]"}
+				{"name":"currencies","type":"address[]"},
+				{"name":"deploy_fee_proxy_grams","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -316,6 +360,7 @@
 		{
 			"name": "deployAccount",
 			"inputs": [
+				{"name":"deploy_account_grams","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -324,7 +369,9 @@
 			"name": "deploySubscription",
 			"inputs": [
 				{"name":"service_address","type":"address"},
-				{"name":"identificator","type":"cell"}
+				{"name":"identificator","type":"cell"},
+				{"name":"deploy_subs_grams","type":"uint128"},
+				{"name":"deploy_index_grams","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -333,7 +380,9 @@
 			"name": "deployService",
 			"inputs": [
 				{"name":"service_params","type":"cell"},
-				{"name":"identificator","type":"cell"}
+				{"name":"identificator","type":"cell"},
+				{"name":"deploy_service_grams","type":"uint128"},
+				{"name":"deploy_index_grams","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -365,15 +414,6 @@
 			],
 			"outputs": [
 				{"name":"subscription","type":"address"}
-			]
-		},
-		{
-			"name": "upgrade",
-			"inputs": [
-				{"name":"code","type":"cell"},
-				{"name":"send_gas_to","type":"address"}
-			],
-			"outputs": [
 			]
 		},
 		{
@@ -463,6 +503,14 @@
 			"outputs": [
 				{"name":"dex_root_address","type":"address"}
 			]
+		},
+		{
+			"name": "owner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"owner","type":"address"}
+			]
 		}
 	],
 	"data": [
@@ -507,6 +555,8 @@
 		{"name":"subscription_fee","type":"uint8"},
 		{"name":"mtds_root_address","type":"address"},
 		{"name":"mtds_revenue_accumulator_address","type":"address"},
-		{"name":"dex_root_address","type":"address"}
+		{"name":"dex_root_address","type":"address"},
+		{"name":"owner","type":"address"},
+		{"name":"pending_owner","type":"address"}
 	]
 }

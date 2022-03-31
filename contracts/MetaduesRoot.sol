@@ -5,6 +5,8 @@ pragma AbiHeader pubkey;
 
 import "libraries/MetaduesRootErrors.sol";
 import "libraries/PlatformTypes.sol";
+import "libraries/MsgFlag.sol";
+import "libraries/MetaduesGas.sol";
 import "./Platform.sol";
 import "../contracts/SubscriptionIndex.sol";
 import "../contracts/SubscriptionIdentificatorIndex.sol";
@@ -79,6 +81,8 @@ contract MetaduesRoot {
     address public mtds_root_address;
     address public mtds_revenue_accumulator_address;
     address public dex_root_address;
+    address public owner;
+    address pending_owner;
 
     onBounce(TvmSlice slice) external {
         // revert change to initial msg.sender in case of failure during deploy
@@ -86,16 +90,46 @@ contract MetaduesRoot {
         uint32 functionId = slice.decode(uint32);
     }
 
-    constructor() public {
+    constructor(address initial_owner) public {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvm.accept();
+        owner = initial_owner;
+        owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
     }
 
     modifier onlyOwner() {
+        require(msg.sender == owner, 111);
         tvm.accept();
         _;
     }
 
-    // Get all latest TVCs
+    function transferOwner(address new_owner) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+        pending_owner = new_owner;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+    }
+
+    function acceptOwner() external {
+        require(
+            msg.sender == pending_owner && msg.sender.value != 0,
+            1111
+        );
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+        owner = pending_owner;
+        pending_owner = address.makeAddrStd(0, 0);
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+    }
+
+    // Getters
+    function getPendingOwner()
+        external
+        view
+        responsible
+        returns (address dex_pending_owner)
+    {
+        return pending_owner;
+    }
+
     function getTvcsLatest() public view returns (optional(VersionsTvcParams)) {
         optional(VersionsTvcParams) value = vrsparamsTvc.fetch(versionTvc);
         return value;
@@ -118,59 +152,80 @@ contract MetaduesRoot {
         return value;
     }
 
-    // Set TVCs
+    function getOwner() external view responsible returns (address dex_owner) {
+        return owner;
+    }
+
+    // Settings
     function setTvcPlatform(TvmCell tvcPlatformInput) public onlyOwner {
-        require(!has_platform_code, 222);
+        require(!has_platform_code, 1111);
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcPlatform = tvcPlatformInput;
         has_platform_code = true;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setTvcMetaduesAccount(TvmCell tvcMetaduesAccountInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcMetaduesAccount = tvcMetaduesAccountInput;
         account_version++;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setTvcSubscriptionService(TvmCell tvcSubscriptionServiceInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionService = tvcSubscriptionServiceInput;
         service_version++;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
-    function setTvcSubscription(TvmCell tvcSubscriptionInput) public onlyOwner {
+    function setTvcSubscription(TvmCell tvcSubscriptionInput) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscription = tvcSubscriptionInput;
         subscription_version++;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setTvcSubscriptionServiceIndex(
         TvmCell tvcSubscriptionServiceIndexInput
-    ) public onlyOwner {
+    ) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setTvcSubscriptionIndex(TvmCell tvcSubscriptionIndexInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionIndex = tvcSubscriptionIndexInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setTvcSubscriptionIdentificatorIndex(
         TvmCell tvcSubscriptionIdentificatorIndexInput
-    ) public onlyOwner {
+    ) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndexInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
-    function setTvcFeeProxy(TvmCell tvcFeeProxyInput) public onlyOwner {
+    function setTvcFeeProxy(TvmCell tvcFeeProxyInput) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcFeeProxy = tvcFeeProxyInput;
         fee_proxy_version++;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
-    function setTvc() public onlyOwner {
+    function setTvc() external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         versionTvc++;
         VersionsTvcParams params;
         params.tvcPlatform = tvcPlatform;
@@ -179,87 +234,111 @@ contract MetaduesRoot {
         params.tvcSubscription = tvcSubscription;
         params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex;
         params.tvcSubscriptionIndex = tvcSubscriptionIndex;
-        params.tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
+        params
+            .tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
         params.tvcFeeProxy = tvcFeeProxy;
         vrsparamsTvc.add(versionTvc, params);
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     // Set ABIs
-
     function setAbiPlatformContract(string abiPlatformContractInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiPlatformContract = abiPlatformContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiMetaduesAccountContract(
         string abiMetaduesAccountContractInput
-    ) public onlyOwner {
+    ) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiMetaduesAccountContract = abiMetaduesAccountContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiMetaduesRootContract(string abiMetaduesRootContractInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiMetaduesRootContract = abiMetaduesRootContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiTIP3RootContract(string abiTIP3RootContractInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiTIP3RootContract = abiTIP3RootContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiTIP3TokenWalletContract(
         string abiTIP3TokenWalletContractInput
-    ) public onlyOwner {
+    ) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiTIP3TokenWalletContract = abiTIP3TokenWalletContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiServiceContract(string abiServiceContractInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiServiceContract = abiServiceContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiServiceIndexContract(string abiServiceIndexContractInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiServiceIndexContract = abiServiceIndexContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiSubscriptionContract(string abiSubscriptionContractInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiSubscriptionContract = abiSubscriptionContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiSubscriptionIndexContract(
         string abiSubscriptionIndexContractInput
-    ) public onlyOwner {
+    ) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiSubscriptionIdentificatorIndexContract(
         string abiSubscriptionIdentificatorIndexContractInput
-    ) public onlyOwner {
+    ) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setAbiFeeProxyContract(string abiFeeProxyContractInput)
-        public
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiFeeProxyContract = abiFeeProxyContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
-    function setAbi() public onlyOwner {
+    function setAbi() external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         versionAbi++;
         VersionsAbiParams params;
         params.abiPlatformContract = abiPlatformContract;
@@ -275,22 +354,56 @@ contract MetaduesRoot {
             .abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContract;
         params.abiFeeProxyContract = abiFeeProxyContract;
         vrsparamsAbi.add(versionAbi, params);
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
-    function setCategories(string[] categoriesInput) public onlyOwner {
+    function setCategories(string[] categoriesInput) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         categories = categoriesInput;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+    }
+
+    function setFees(uint8 service_fee_, uint8 subscription_fee_)
+        external
+        onlyOwner
+    {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+        service_fee = service_fee_;
+        subscription_fee = subscription_fee_;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+    }
+
+    function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to)
+        external
+        onlyOwner
+    {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+        mtds_revenue_accumulator_address = revenue_to;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function installOrUpdateFeeProxyParams(address[] currencies)
         external
         onlyOwner
     {
-        require(fee_proxy_address != address(0), 555);
+        require(fee_proxy_address != address(0), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         TvmBuilder currencies_cell;
         currencies_cell.store(currencies);
         TvmCell fee_proxy_contract_params = currencies_cell.toCell();
-        MetaduesFeeProxy(fee_proxy_address).setSupportedCurrencies(
-            fee_proxy_contract_params
+        MetaduesFeeProxy(fee_proxy_address).setSupportedCurrencies{
+            value: 0,
+            bounce: false,
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(
+            fee_proxy_contract_params,
+            owner
         );
     }
 
@@ -298,10 +411,22 @@ contract MetaduesRoot {
         external
         onlyOwner
     {
-        require(fee_proxy_address != address(0), 555);
+        require(fee_proxy_address != address(0), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         mtds_root_address = mtds_root_;
-        MetaduesFeeProxy(fee_proxy_address).setMTDSRootAddress(
-            mtds_root_address
+        MetaduesFeeProxy(fee_proxy_address).setMTDSRootAddress{
+            value: 0,
+            bounce: false,
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(
+            mtds_root_address,
+            owner
         );
     }
 
@@ -309,39 +434,53 @@ contract MetaduesRoot {
         external
         onlyOwner
     {
-        require(fee_proxy_address != address(0), 555);
+        require(fee_proxy_address != address(0), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         dex_root_address = dex_root;
-        MetaduesFeeProxy(fee_proxy_address).setDexRootAddress(dex_root_address);
-    }
-
-    function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to)
-        external
-        onlyOwner
-    {
-        mtds_revenue_accumulator_address = revenue_to;
-    }
-
-    function setFees(uint8 service_fee_, uint8 subscription_fee_)
-        external
-        onlyOwner
-    {
-        service_fee = service_fee_;
-        subscription_fee = subscription_fee_;
+        MetaduesFeeProxy(fee_proxy_address).setDexRootAddress{
+            value: 0,
+            bounce: false,
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(dex_root_address, owner);
     }
 
     // Managment
     function transferRevenueFromFeeProxy() external view onlyOwner {
-        require(fee_proxy_address != address(0), 555);
+        require(fee_proxy_address != address(0), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         MetaduesFeeProxy(fee_proxy_address).transferRevenue{
-            value: 1 ton,
+            value: 0,
             bounce: false,
-            flag: 0
-        }(mtds_revenue_accumulator_address);
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(mtds_revenue_accumulator_address, owner);
     }
 
     function swapRevenue(address currency_root) external view onlyOwner {
-        require(fee_proxy_address != address(0), 555);
-        MetaduesFeeProxy(fee_proxy_address).swapRevenueToMTDS(currency_root);
+        require(fee_proxy_address != address(0), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
+        MetaduesFeeProxy(fee_proxy_address).swapRevenueToMTDS{
+            value: 0,
+            bounce: false,
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(currency_root, owner);
     }
 
     function syncFeeProxyBalance(address currency_root)
@@ -349,28 +488,45 @@ contract MetaduesRoot {
         view
         onlyOwner
     {
-        require(fee_proxy_address != address(0), 555);
+        require(fee_proxy_address != address(0), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         MetaduesFeeProxy(fee_proxy_address).syncBalance{
-            value: 1 ton,
+            value: 0,
             bounce: false,
-            flag: 0
-        }(currency_root);
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(currency_root,owner);
     }
 
     // Upgrade contracts
     function upgradeFeeProxy() external view onlyOwner {
-        require(fee_proxy_address != address(0), 555);
+        require(fee_proxy_address != address(0), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         MetaduesFeeProxy(fee_proxy_address).upgrade{
-            value: 1 ton,
+            value: 0,
             bounce: false,
-            flag: 0
+            flag: MsgFlag.ALL_NOT_RESERVED
         }(tvcFeeProxy.toSlice().loadRef(), fee_proxy_version, msg.sender);
     }
 
     function upgradeAccount() external view onlyOwner {
-        require(
-            msg.sender != address(0),
-            MetaduesRootErrors.error_message_sender_address_not_specified
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
         );
         address account_address = address(
             tvm.hash(
@@ -381,9 +537,9 @@ contract MetaduesRoot {
             )
         );
         MetaduesAccount(account_address).upgrade{
-            value: 1 ton,
+            value: 0,
             bounce: false,
-            flag: 0
+            flag: MsgFlag.ALL_NOT_RESERVED
         }(tvcMetaduesAccount.toSlice().loadRef(), account_version, msg.sender);
     }
 
@@ -391,11 +547,14 @@ contract MetaduesRoot {
         public
         view
     {
-        require(
-            msg.sender != address(0),
-            MetaduesRootErrors.error_message_sender_address_not_specified
-        );
-        require(service_address != address(0), 556);
+        require(service_address != address(0), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );    
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         address subscription_address = address(
             tvm.hash(
@@ -409,13 +568,20 @@ contract MetaduesRoot {
             )
         );
         Subscription(subscription_address).upgrade{
-            value: 1 ton,
+            value: 0,
             bounce: false,
-            flag: 0
+            flag: MsgFlag.ALL_NOT_RESERVED
         }(subscription_code_salt, subscription_version, msg.sender);
     }
 
     function upgradeService(string service_name, string category) public view {
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         TvmCell service_code_salt = _buildServiceCode(category);
         address service_address = address(
             tvm.hash(
@@ -426,14 +592,37 @@ contract MetaduesRoot {
             )
         );
         SubscriptionService(service_address).upgrade{
-            value: 1 ton,
+            value: 0,
             bounce: false,
-            flag: 0
+            flag: MsgFlag.ALL_NOT_RESERVED
         }(service_code_salt, service_version, msg.sender);
     }
 
+    function upgrade(TvmCell code, address send_gas_to) external onlyOwner {
+        TvmBuilder builder;
+        TvmBuilder upgrade_params;
+        builder.store(account_version);
+        builder.store(send_gas_to);
+        builder.store(service_version);
+        builder.store(fee_proxy_version);
+        builder.store(subscription_version);
+        tvm.setcode(code);
+        tvm.setCurrentCode(code);
+        onCodeUpgrade(builder.toCell());
+    }
+
+    function onCodeUpgrade(TvmCell upgrade_data) private {}
+
     // Deploy contracts
-    function deployFeeProxy(address[] currencies) external onlyOwner {
+    function deployFeeProxy(address[] currencies, uint128 deploy_fee_proxy_grams) external onlyOwner {
+        require(msg.value >= (MetaduesGas.DEPLOY_FEE_PROXY_MIN_VALUE + deploy_fee_proxy_grams), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         TvmBuilder currencies_cell;
         currencies_cell.store(currencies);
         TvmCell fee_proxy_contract_params = currencies_cell.toCell();
@@ -442,10 +631,9 @@ contract MetaduesRoot {
                 PlatformTypes.FeeProxy,
                 _buildPlatformParams(address(this))
             ),
-            value: 1 ton,
-            flag: 0
-        }();
-        platform.initialize{value: 1 ton, flag: 0}(
+            value: 0,
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(
             tvcFeeProxy.toSlice().loadRef(),
             fee_proxy_contract_params,
             fee_proxy_version,
@@ -454,18 +642,27 @@ contract MetaduesRoot {
         fee_proxy_address = address(platform);
     }
 
-    function deployAccount() external {
+    function deployAccount(uint128 deploy_account_grams) external {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
+        require(msg.value >= (MetaduesGas.DEPLOY_ACCOUNT_MIN_VALUE + deploy_account_grams), 1111);
+
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
+
         TvmCell account_params;
         Platform platform = new Platform{
             stateInit: _buildInitData(
                 PlatformTypes.Account,
                 _buildPlatformParams(msg.sender)
             ),
-            value: 1 ton,
-            flag: 0
-        }();
-        platform.initialize{value: 1 ton, flag: 0}(
+            value: 0,
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(
             tvcMetaduesAccount.toSlice().loadRef(),
             account_params,
             account_version,
@@ -473,13 +670,30 @@ contract MetaduesRoot {
         );
     }
 
-    function deploySubscription(address service_address, TvmCell identificator)
-        public
-        view
-    {
-        //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
-        require(fee_proxy_address != address(0), 555);
-        tvm.accept();
+    function deploySubscription(
+        address service_address,
+        TvmCell identificator,
+        uint128 deploy_subs_grams,
+        uint128 deploy_index_grams
+    ) external view {
+        require(service_address != address(0), 1111);
+        require(fee_proxy_address != address(0), 1111);
+        require(
+            msg.value >=
+                (MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE +
+                    MetaduesGas.INDEX_INITIAL_BALANCE * 2 +
+                    deploy_subs_grams +
+                    deploy_index_grams * 2),
+            1111
+        );
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
+
         TvmCell subsIndexStateInit = _buildSubscriptionIndex(
             service_address,
             msg.sender
@@ -488,7 +702,7 @@ contract MetaduesRoot {
                 service_address,
                 identificator,
                 msg.sender
-        );
+            );
         TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
         TvmBuilder service_params;
         TvmBuilder index_addresses;
@@ -517,43 +731,57 @@ contract MetaduesRoot {
             index_addresses.toCell()
         );
 
-        // service_params.store(owner_account_address);
         Platform platform = new Platform{
             stateInit: _buildInitData(
                 PlatformTypes.Subscription,
                 _buildSubscriptionPlatformParams(msg.sender, service_address)
             ),
-            value: 1 ton,
-            flag: 0
-        }();
-        platform.initialize{value: 1 ton, flag: 0}(
+            value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE + deploy_subs_grams,
+            flag: MsgFlag.SENDER_PAYS_FEES
+        }(
             subscription_code_salt,
             service_params.toCell(),
             subscription_version,
             msg.sender
         );
-
         new SubscriptionIndex{
-            value: 0.02 ton,
-            flag: 0,
-            bounce: true,
+            value: MetaduesGas.INDEX_INITIAL_BALANCE + deploy_index_grams,
+            flag: MsgFlag.SENDER_PAYS_FEES,
+            bounce: false,
             stateInit: subsIndexStateInit
         }(address(platform));
-
         new SubscriptionIdentificatorIndex{
-            value: 0.02 ton,
-            flag: 0,
-            bounce: true,
+            value: MetaduesGas.INDEX_INITIAL_BALANCE + deploy_index_grams,
+            flag: MsgFlag.SENDER_PAYS_FEES,
+            bounce: false,
             stateInit: subsIndexIdentificatorStateInit
         }(address(platform));
+        msg.sender.transfer({
+            value: 0,
+            flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+        });
     }
 
-    function deployService(TvmCell service_params, TvmCell identificator)
-        public
+    function deployService(TvmCell service_params, TvmCell identificator, uint128 deploy_service_grams, uint128 deploy_index_grams)
+        external
         view
     {
-        //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
-        tvm.accept();
+        require(
+            msg.value >=
+                (MetaduesGas.SERVICE_INITIAL_BALANCE +
+                    MetaduesGas.INDEX_INITIAL_BALANCE * 2 +
+                    MetaduesGas.SET_SERVICE_INDEXES_VALUE +
+                    deploy_service_grams +
+                    deploy_index_grams * 3),
+            1111
+        );
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ROOT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         TvmCell next_cell;
         string category;
         string service_name;
@@ -577,9 +805,14 @@ contract MetaduesRoot {
                 PlatformTypes.Service,
                 _buildServicePlatformParams(msg.sender, service_name)
             ),
-            value: 1 ton,
-            flag: 0
-        }();
+            value: MetaduesGas.SERVICE_INITIAL_BALANCE + deploy_service_grams,
+            flag: MsgFlag.SENDER_PAYS_FEES
+        }(
+            service_code_salt,
+            service_params,
+            service_version,
+            msg.sender
+        );
         TvmCell serviceIndexStateInit = _buildServiceIndex(
             msg.sender,
             service_name
@@ -587,33 +820,29 @@ contract MetaduesRoot {
         TvmCell serviceIdentificatorIndexStateInit = _buildServiceIdentificatorIndex(
                 msg.sender,
                 identificator
-            );
-        platform.initialize{value: 1 ton, flag: 0}(
-            service_code_salt,
-            service_params,
-            service_version,
-            msg.sender
         );
         SubscriptionService(address(platform)).setIndexes{
-            value: 0.11 ton,
-            flag: 0
+            value: MetaduesGas.SET_SERVICE_INDEXES_VALUE + deploy_index_grams,
+            flag: MsgFlag.SENDER_PAYS_FEES
         }(
             address(tvm.hash(serviceIndexStateInit)),
             address(tvm.hash(serviceIdentificatorIndexStateInit))
         );
         new SubscriptionServiceIndex{
-            value: 1 ton,
-            flag: 1,
-            bounce: true,
+            value: MetaduesGas.INDEX_INITIAL_BALANCE + deploy_index_grams,
+            flag: MsgFlag.SENDER_PAYS_FEES,
+            bounce: false,
             stateInit: serviceIndexStateInit
         }(address(platform));
         new SubscriptionServiceIdentificatorIndex{
-            value: 1 ton,
-            flag: 1,
-            bounce: true,
+            value: MetaduesGas.INDEX_INITIAL_BALANCE + deploy_index_grams,
+            flag: MsgFlag.SENDER_PAYS_FEES,
+            bounce: false,
             stateInit: serviceIdentificatorIndexStateInit
         }(address(platform));
     }
+    
+    // Builders 
 
     function _buildSubscriptionCode(address subscription_owner)
         private
@@ -743,6 +972,28 @@ contract MetaduesRoot {
         return builder.toCell();
     }
 
+    function _buildSubscriptionPlatformParams(
+        address subscription_owner,
+        address service_address
+    ) private inline pure returns (TvmCell) {
+        TvmBuilder builder;
+        builder.store(subscription_owner);
+        builder.store(service_address);
+        return builder.toCell();
+    }
+
+    function _buildServicePlatformParams(
+        address service_owner,
+        string service_name
+    ) private inline pure returns (TvmCell) {
+        TvmBuilder builder;
+        builder.store(service_owner);
+        builder.store(service_name);
+        return builder.toCell();
+    }
+
+    // Addresses calculations
+
     function accountOf(address owner_address_)
         public
         view
@@ -790,39 +1041,4 @@ contract MetaduesRoot {
             )
         );
     }
-
-    function _buildSubscriptionPlatformParams(
-        address subscription_owner,
-        address service_address
-    ) private inline pure returns (TvmCell) {
-        TvmBuilder builder;
-        builder.store(subscription_owner);
-        builder.store(service_address);
-        return builder.toCell();
-    }
-
-    function _buildServicePlatformParams(
-        address service_owner,
-        string service_name
-    ) private inline pure returns (TvmCell) {
-        TvmBuilder builder;
-        builder.store(service_owner);
-        builder.store(service_name);
-        return builder.toCell();
-    }
-
-    function upgrade(TvmCell code, address send_gas_to) external onlyOwner {
-        TvmBuilder builder;
-        TvmBuilder upgrade_params;
-        builder.store(account_version);
-        builder.store(send_gas_to);
-        builder.store(service_version);
-        builder.store(fee_proxy_version);
-        builder.store(subscription_version);
-        tvm.setcode(code);
-        tvm.setCurrentCode(code);
-        onCodeUpgrade(builder.toCell());
-    }
-
-    function onCodeUpgrade(TvmCell upgrade_data) private {}
 }

@@ -4,13 +4,15 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/MetaduesFeeErrors.sol";
-import "./Platform.sol";
 import "libraries/PlatformTypes.sol";
+import "libraries/MsgFlag.sol";
+import "libraries/MetaduesGas.sol";
+import "libraries/DexOperationTypes.sol";
+import "./interfaces/IDexRoot.sol";
+import "./Platform.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
-import "./interfaces/IDexRoot.sol";
-import "./libraries/DexOperationTypes.sol";
 
 
 contract MetaduesFeeProxy {
@@ -60,7 +62,7 @@ contract MetaduesFeeProxy {
         }
     }
 
-    function swapRevenueToMTDS(address currency_root) external onlyRoot {
+    function swapRevenueToMTDS(address currency_root, address send_gas_to) external onlyRoot {
         require(sync_balance_currency_root == address(0), 335); // mutex
         sync_balance_currency_root = currency_root; // critical area
         optional(balance_wallet_struct) current_balance_struct_opt = wallets_mapping.fetch(currency_root); 
@@ -104,7 +106,7 @@ contract MetaduesFeeProxy {
         sync_balance_currency_root = address(0); // free mutex
     }
 
-    function syncBalance(address currency_root) external onlyRoot {
+    function syncBalance(address currency_root, address send_gas_to) external onlyRoot {
         require(sync_balance_currency_root == address(0), 335); // mutex
         sync_balance_currency_root = currency_root; // critical area
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(currency_root);
@@ -118,11 +120,11 @@ contract MetaduesFeeProxy {
         }();
     }
 
-    function setMTDSRootAddress(address mtds_root) external onlyRoot {
+    function setMTDSRootAddress(address mtds_root, address send_gas_to) external onlyRoot {
         mtds_root_address = mtds_root;
     }
 
-    function setDexRootAddress(address dex_root) external onlyRoot {
+    function setDexRootAddress(address dex_root, address send_gas_to) external onlyRoot {
         dex_root_address = dex_root;
     }
 
@@ -135,7 +137,7 @@ contract MetaduesFeeProxy {
         sync_balance_currency_root = address(0); // free mutex
     }
 
-    function transferRevenue(address revenue_to) external onlyRoot {
+    function transferRevenue(address revenue_to, address send_gas_to) external onlyRoot {
         optional(balance_wallet_struct) currency_root_wallet_opt = wallets_mapping.fetch(mtds_root_address);
         if (!currency_root_wallet_opt.hasValue()){
             balance_wallet_struct currency_root_wallet_struct = currency_root_wallet_opt.get();
@@ -211,7 +213,7 @@ contract MetaduesFeeProxy {
     }
 
     
-    function setSupportedCurrencies(TvmCell fee_proxy_contract_params) external onlyRoot {
+    function setSupportedCurrencies(TvmCell fee_proxy_contract_params, address send_gas_to) external onlyRoot {
         (address[] currencies) = fee_proxy_contract_params.toSlice().decode(address[]);
         for (address currency_root : currencies) { // iteration over the array
             optional(balance_wallet_struct) currency_root_wallet_opt = wallets_mapping.fetch(currency_root);
