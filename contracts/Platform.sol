@@ -6,19 +6,30 @@ contract Platform {
     address static root;
     uint8 static type_id;
     TvmCell static platform_params;
-    TvmCell platform_code;
 
-    constructor() public onlyRoot {
-        tvm.accept();
-        platform_code = tvm.code();
-    }
-
-    function initialize(
+    constructor(
         TvmCell code,
         TvmCell contract_params,
         uint32 version,
         address send_gas_to
-    ) external onlyRoot {
+    ) public {
+        if (msg.sender == root) {
+            _initialize(code, contract_params, version, send_gas_to);
+        } else {
+            send_gas_to.transfer({
+                value: 0,
+                flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.DESTROY_IF_ZERO,
+                bounce: false
+            });
+        }
+    }
+
+    function _initialize(
+        TvmCell code,
+        TvmCell contract_params,
+        uint32 version,
+        address send_gas_to
+    ) private {
         TvmBuilder builder;
 
         builder.store(root);
@@ -26,7 +37,7 @@ contract Platform {
         builder.store(uint32(0));
         builder.store(version);
         builder.store(type_id);
-        builder.store(platform_code);
+        builder.store(tvm.code());
         builder.store(platform_params);
         builder.store(contract_params);
         builder.store(code);
@@ -38,9 +49,4 @@ contract Platform {
     }
 
     function onCodeUpgrade(TvmCell data) private {}
-
-    modifier onlyRoot() {
-        require(msg.sender == root, 111);
-        _;
-    }
 }

@@ -26,7 +26,8 @@
 		{
 			"name": "swapRevenueToMTDS",
 			"inputs": [
-				{"name":"currency_root","type":"address"}
+				{"name":"currency_root","type":"address"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -42,7 +43,8 @@
 		{
 			"name": "syncBalance",
 			"inputs": [
-				{"name":"currency_root","type":"address"}
+				{"name":"currency_root","type":"address"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -50,7 +52,8 @@
 		{
 			"name": "setMTDSRootAddress",
 			"inputs": [
-				{"name":"mtds_root","type":"address"}
+				{"name":"mtds_root","type":"address"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -58,7 +61,8 @@
 		{
 			"name": "setDexRootAddress",
 			"inputs": [
-				{"name":"dex_root","type":"address"}
+				{"name":"dex_root","type":"address"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -74,7 +78,8 @@
 		{
 			"name": "transferRevenue",
 			"inputs": [
-				{"name":"revenue_to","type":"address"}
+				{"name":"revenue_to","type":"address"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -92,7 +97,8 @@
 		{
 			"name": "setSupportedCurrencies",
 			"inputs": [
-				{"name":"fee_proxy_contract_params","type":"cell"}
+				{"name":"fee_proxy_contract_params","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
