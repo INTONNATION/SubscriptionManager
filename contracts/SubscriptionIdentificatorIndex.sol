@@ -4,6 +4,8 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/SubscriptionErrors.sol";
+import "libraries/MetaduesGas.sol";
+import "libraries/MsgFlag.sol";
 
 contract SubscriptionIdentificatorIndex {
     address static subscription_owner;
@@ -29,15 +31,21 @@ contract SubscriptionIdentificatorIndex {
             msg.sender == root_,
             SubscriptionErrors.error_message_sender_is_not_root
         );
+        tvm.rawReserve(MetaduesGas.INDEX_INITIAL_BALANCE, 2);
         root = root_;
         identificator = identificator_;
         subscription_address = subsAddr;
+        subscription_owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
     }
 
-    function upgrade(TvmCell code, address send_gas_to) external onlyOwner {
+    function upgrade(TvmCell code) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.INDEX_INITIAL_BALANCE, 2);
         TvmBuilder builder;
-        builder.store(send_gas_to);
         builder.store(code);
+        builder.store(root);
+        builder.store(subscription_owner);
+        builder.store(subscription_address);
+        builder.store(identificator);
         tvm.setcode(code);
         tvm.setCurrentCode(code);
         onCodeUpgrade(builder.toCell());

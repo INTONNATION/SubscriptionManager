@@ -144,6 +144,7 @@
 		{"name":"mtds_root_address","type":"address"},
 		{"name":"sync_balance_currency_root","type":"address"},
 		{"name":"dex_root_address","type":"address"},
-		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
+		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
+		{"name":"_tmp_deploying_wallets","type":"map(address,address)"}
 	]
 }
