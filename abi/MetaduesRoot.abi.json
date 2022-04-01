@@ -110,6 +110,14 @@
 			]
 		},
 		{
+			"name": "setTvcSubscriptionServiceIdentificatorIndex",
+			"inputs": [
+				{"name":"tvcSubscriptionServiceIdentificatorIndexInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setTvcSubscriptionIndex",
 			"inputs": [
 				{"name":"tvcSubscriptionIndexInput","type":"cell"}
@@ -529,6 +537,7 @@
 		{"name":"tvcSubscriptionService","type":"cell"},
 		{"name":"tvcSubscription","type":"cell"},
 		{"name":"tvcSubscriptionServiceIndex","type":"cell"},
+		{"name":"tvcSubscriptionServiceIdentificatorIndex","type":"cell"},
 		{"name":"tvcSubscriptionIndex","type":"cell"},
 		{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},
 		{"name":"tvcFeeProxy","type":"cell"},

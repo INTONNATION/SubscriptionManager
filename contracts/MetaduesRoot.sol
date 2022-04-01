@@ -27,6 +27,7 @@ contract MetaduesRoot {
     TvmCell tvcSubscriptionService;
     TvmCell tvcSubscription;
     TvmCell tvcSubscriptionServiceIndex;
+    TvmCell tvcSubscriptionServiceIdentificatorIndex;
     TvmCell tvcSubscriptionIndex;
     TvmCell tvcSubscriptionIdentificatorIndex;
     TvmCell tvcFeeProxy;
@@ -197,6 +198,14 @@ contract MetaduesRoot {
     ) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
+    }
+
+    function setTvcSubscriptionServiceIdentificatorIndex(
+        TvmCell tvcSubscriptionServiceIdentificatorIndexInput
+    ) external onlyOwner {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+        tvcSubscriptionServiceIdentificatorIndex = tvcSubscriptionServiceIdentificatorIndexInput;
         owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
@@ -938,7 +947,7 @@ contract MetaduesRoot {
         TvmBuilder saltBuilder;
         saltBuilder.store(identificator_, address(this));
         TvmCell code = tvm.setCodeSalt(
-            tvcSubscriptionServiceIndex.toSlice().loadRef(),
+            tvcSubscriptionServiceIdentificatorIndex.toSlice().loadRef(),
             saltBuilder.toCell()
         );
         TvmCell state = tvm.buildStateInit({
