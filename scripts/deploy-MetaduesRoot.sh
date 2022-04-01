@@ -19,6 +19,7 @@ tondev sol compile ../contracts/SubscriptionIndex.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionIdentificatorIndex.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionService.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionServiceIndex.sol -o ../abi;
+tondev sol compile ../contracts/SubscriptionServiceIdentificatorIndex.sol -o ../abi;
 tondev sol compile ../contracts/MetaduesFeeProxy.sol -o ../abi;
 
 CONTRACT_NAME=MetaduesRoot
