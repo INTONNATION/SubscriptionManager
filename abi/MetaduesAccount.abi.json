@@ -60,14 +60,6 @@
 			]
 		},
 		{
-			"name": "onWalleOfWithdraw",
-			"inputs": [
-				{"name":"withdraw_owner_wallet","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "destroyAccount",
 			"inputs": [
 			],
@@ -94,30 +86,6 @@
 			],
 			"outputs": [
 				{"name":"wner","type":"address"}
-			]
-		},
-		{
-			"name": "getPendingOwner",
-			"inputs": [
-				{"name":"answerId","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"pending_owner","type":"address"}
-			]
-		},
-		{
-			"name": "transferOwner",
-			"inputs": [
-				{"name":"new_owner","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "acceptOwner",
-			"inputs": [
-			],
-			"outputs": [
 			]
 		},
 		{
@@ -188,7 +156,6 @@
 		{"name":"account_owner","type":"address"},
 		{"name":"withdraw_value","type":"uint128"},
 		{"name":"sync_balance_currency_root","type":"address"},
-		{"name":"owner","type":"address"},
-		{"name":"pending_owner","type":"address"}
+		{"name":"owner","type":"address"}
 	]
 }

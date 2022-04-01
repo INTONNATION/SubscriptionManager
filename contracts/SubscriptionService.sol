@@ -4,13 +4,16 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/SubscriptionServiceErrors.sol";
+import "libraries/MetaduesGas.sol";
+import "libraries/MsgFlag.sol";
+
 
 interface ISubscriptionServiceIndexContract {
     function cancel() external;
 }
 
 interface IServiceIdentificatorIndexContract {
-    function upgrade(TvmCell code, address send_gas_to) external;
+    function upgrade(TvmCell code) external;
 }
 
 contract SubscriptionService {
@@ -48,27 +51,33 @@ contract SubscriptionService {
         _;
     }
 
-    function getParams() external view responsible returns (TvmCell) {
-        return{value: 0, flag: 128} service_params;
-    }
-
-    function getInfo() external view responsible returns (TvmCell) {
-        TvmBuilder info;
-        info.store(status);
-        return{value: 0, flag: 128} info.toCell();
-    }
-
     modifier onlyRoot() {
         require(msg.sender == root, 111);
         _;
     }
 
+    function getParams() external view responsible returns (TvmCell) {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
+        return{value: 0, flag: MsgFlag.ALL_NOT_RESERVED} service_params;
+    }
+
+    function getInfo() external view responsible returns (TvmCell) {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
+        TvmBuilder info;
+        info.store(status);
+        return{value: 0, flag: MsgFlag.ALL_NOT_RESERVED} info.toCell();
+    }
+
     function pause() public onlyOwner {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
         status = 1;
+        service_owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function resume() public onlyOwner {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
         status = 0;
+        service_owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function upgrade(
@@ -76,6 +85,7 @@ contract SubscriptionService {
         uint32 version,
         address send_gas_to
     ) external onlyRoot {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -93,6 +103,7 @@ contract SubscriptionService {
     }
 
     function onCodeUpgrade(TvmCell upgrade_data) private {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
         TvmSlice s = upgrade_data.toSlice();
         (
             address root_,
@@ -130,17 +141,21 @@ contract SubscriptionService {
         (svcparams.currency_root, svcparams.category) = nextCell2
             .toSlice()
             .decode(address, string);
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
     function setIndexes(
         address subscription_service_index_address_,
         address subscription_service_index_identificator_address_
     ) external onlyRoot {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
         subscription_service_index_address = subscription_service_index_address_;
         subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
+        service_owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function updateServiceParams(TvmCell new_service_params) public onlyOwner {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
         TvmCell nextCell;
         (
             svcparams.to,
@@ -161,6 +176,7 @@ contract SubscriptionService {
             .toSlice()
             .decode(address, string);
         service_params = new_service_params;
+        service_owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function cancel() public onlyOwner {
@@ -172,12 +188,16 @@ contract SubscriptionService {
         selfdestruct(service_owner);
     }
 
-    function upgradeIdentificatorIndex(TvmCell code, address send_gas_to)
-        public
+    function upgradeIdentificatorIndex(TvmCell code)
+        external
         onlyOwner
     {
+        tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
         IServiceIdentificatorIndexContract(
             subscription_service_index_identificator_address
-        ).upgrade(code, send_gas_to);
+        ).upgrade{
+            value: 0, 
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(code);
     }
 }

@@ -4,9 +4,10 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "SubscriptionIndex.sol";
-import "libraries/SubscriptionErrors.sol";
-
 import "./Platform.sol";
+import "libraries/SubscriptionErrors.sol";
+import "libraries/MetaduesGas.sol";
+import "libraries/MsgFlag.sol";
 import "libraries/PlatformTypes.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
@@ -110,6 +111,9 @@ contract Subscription {
         uint32 version,
         address send_gas_to
     ) external onlyRoot {
+        require(msg.value > MetaduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE, 1111);
+
+        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 2);
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -145,7 +149,7 @@ contract Subscription {
         }
     }
 
-    function executeSubscription() external {
+    function executeSubscription(uint128) external {
         if (
             now >
             (subscription.payment_timestamp +
@@ -157,14 +161,15 @@ contract Subscription {
                 (subscription.status != STATUS_PROCESSING)
             ) {
                 tvm.accept();
-                ISubscriptionService(service_address).getInfo{
-                    value: 0.01 ton,
-                    bounce: true,
-                    flag: 0,        
-                    callback: Subscription.onGetInfo           
-                }();
+                tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 2);
                 subscription.execution_timestamp = uint32(now);
                 subscription.status = STATUS_PROCESSING;
+                ISubscriptionService(service_address).getInfo{
+                    value: 0,
+                    bounce: true,
+                    flag: MsgFlag.ALL_NOT_RESERVED,
+                    callback: Subscription.onGetInfo           
+                }();
             } else {
                 revert(1000);
             }
@@ -178,11 +183,12 @@ contract Subscription {
 
     function onGetInfo(TvmCell svc_info) external onlyService {
         uint8 status = svc_info.toSlice().decode(uint8);
+        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 2);
         if (status == 0){
             IMetaduesAccount(account_address).paySubscription{
-                value: 0.2 ton,
+                value: 0,
                 bounce: true,
-                flag: 0,
+                flag: MsgFlag.ALL_NOT_RESERVED,
                 callback: Subscription.onPaySubscription
             }(
                 svcparams.subscription_value,
@@ -200,9 +206,9 @@ contract Subscription {
         subscription.execution_timestamp = uint32(now);
         subscription.status = STATUS_PROCESSING;
         IMetaduesAccount(account_address).paySubscription{
-            value: 0.2 ton,
+            value: 0,
             bounce: true,
-            flag: 0,
+            flag: MsgFlag.ALL_NOT_RESERVED,
             callback: Subscription.onPaySubscription
         }(
             svcparams.subscription_value,
@@ -221,6 +227,7 @@ contract Subscription {
         address remainingGasTo,
         TvmCell payload
     ) public {
+        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
         if (subscription.status == STATUS_PROCESSING) {
             //require(amount >= svcparams.value, 111);
             uint128 service_value_percentage = svcparams.service_value / 100;
@@ -228,7 +235,10 @@ contract Subscription {
             uint128 protocol_fee = (svcparams.subscription_value -
                 svcparams.service_value +
                 service_fee_value);
-            ITokenWallet(msg.sender).transfer{value: 0.15 ton}(
+            ITokenWallet(msg.sender).transfer{
+                value: MetaduesGas.TRANSFER_MIN_VALUE,
+                flag: MsgFlag.SENDER_PAYS_FEES
+            }(
                 protocol_fee,
                 address_fee_proxy,
                 0,
@@ -237,7 +247,10 @@ contract Subscription {
                 payload
             );
             uint128 pay_value = svcparams.subscription_value - protocol_fee;
-            ITokenWallet(msg.sender).transfer{value: 0.2 ton}(
+            ITokenWallet(msg.sender).transfer{
+                value: MetaduesGas.TRANSFER_MIN_VALUE,
+                flag: MsgFlag.SENDER_PAYS_FEES
+            }(
                 pay_value,
                 svcparams.to,
                 0,
@@ -257,12 +270,16 @@ contract Subscription {
     }
 
     function onPaySubscription(uint8 status) external {
+        // allow onlylAccount
+        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
         if (status == 1) {
             subscription.status = STATUS_NONACTIVE;
         }
     }
 
     function onCodeUpgrade(TvmCell upgrade_data) private {
+        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
+        tvm.resetStorage();
         TvmSlice s = upgrade_data.toSlice();
         (
             address root_,
@@ -273,9 +290,6 @@ contract Subscription {
         ) = s.decode(address, address, uint32, uint32, uint8);
         owner_address = send_gas_to;
 
-        if (old_version == 0) {
-            tvm.resetStorage();
-        }
 
         root = root_;
         current_version = version;
@@ -297,15 +311,15 @@ contract Subscription {
             .toSlice()
             .decode(address, uint8, uint8);
         ISubscriptionService(service_address).getParams{
-            value: 0.2 ton,
+            value: 0,
             bounce: true,
-            flag: 0,
+            flag: MsgFlag.ALL_NOT_RESERVED,
             callback: Subscription.onGetParams
         }();
-        //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
     function onGetParams(TvmCell service_params_) external onlyService {
+        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
         TvmCell next_cell;
         service_params = service_params_;
         (
@@ -333,31 +347,43 @@ contract Subscription {
         emit paramsRecieved(service_params_);
         subscription = paymentStatus(svcparams.period, 0, 0, STATUS_NONACTIVE);
         ITokenRoot(svcparams.currency_root).deployWallet{
-            value: 0.2 ton,
-            bounce: true,
-            flag: 0,
+            value: 0,
+            bounce: false,
+            flag: MsgFlag.ALL_NOT_RESERVED,
             callback: Subscription.onDeployWallet
-        }(address(this), 0.1 ton);
+        }(address(this), MetaduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
     }
 
     function onDeployWallet(address subscription_wallet_) external onlyCurrencyRoot {
+        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
         subscription_wallet = subscription_wallet_;
         ITokenRoot(svcparams.currency_root).walletOf{
-            value: 0.1 ton,
-            bounce: true,
-            flag: 0,
+            value: 0,
+            bounce: false,
+            flag: MsgFlag.ALL_NOT_RESERVED,
             callback: Subscription.onWalletOf
         }(account_address);
     }
 
     function onWalletOf(address account_wallet_) external onlyCurrencyRoot {
+        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
         account_wallet = account_wallet_;
-        executeSubscriptionInline();
+        if (subscription.payment_timestamp == 0) {
+            executeSubscriptionInline();
+        } else {
+            owner_address.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
+        }
     }
 
-    function cancel() public onlyOwner {
-        ISubscriptionIndexContract(subscription_index_address).cancel();
-        ISubscriptionIndexContract(subscription_index_identificator_address).cancel();
+    function cancel(uint128 grams) public onlyOwner {
+        ISubscriptionIndexContract(subscription_index_address).cancel{
+            value: grams,
+            flag: MsgFlag.SENDER_PAYS_FEES
+        }();
+        ISubscriptionIndexContract(subscription_index_identificator_address).cancel{
+            value: grams,
+            flag: MsgFlag.SENDER_PAYS_FEES
+        }();
         selfdestruct(owner_address);
     }
 
@@ -365,8 +391,19 @@ contract Subscription {
         public
         onlyOwner
     {
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         ISubscriptionIdentificatorIndexContract(
             subscription_index_identificator_address
-        ).upgrade(code, send_gas_to);
+        ).upgrade{
+            value: 0,
+            bounce: true, // handle
+            flag: MsgFlag.ALL_NOT_RESERVED       
+        }(code, send_gas_to);
     }
 }

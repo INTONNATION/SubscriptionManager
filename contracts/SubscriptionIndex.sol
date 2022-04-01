@@ -4,6 +4,8 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/SubscriptionErrors.sol";
+import "libraries/MetaduesGas.sol";
+import "libraries/MsgFlag.sol";
 
 contract SubscriptionIndex {
     address static subscription_owner;
@@ -29,9 +31,11 @@ contract SubscriptionIndex {
             msg.sender == root_,
             SubscriptionErrors.error_message_sender_is_not_root
         );
+        tvm.rawReserve(MetaduesGas.INDEX_INITIAL_BALANCE, 2);
         root = root_;
         service_address = service_address_;
         subscription_address = subscription_address_;
+        subscription_owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
     }
 
     function cancel() public onlyOwner {

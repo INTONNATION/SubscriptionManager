@@ -106,7 +106,7 @@ contract MetaduesRoot {
     function transferOwner(address new_owner) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         pending_owner = new_owner;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function acceptOwner() external {
@@ -117,7 +117,7 @@ contract MetaduesRoot {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         owner = pending_owner;
         pending_owner = address.makeAddrStd(0, 0);
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     // Getters
@@ -162,7 +162,7 @@ contract MetaduesRoot {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcPlatform = tvcPlatformInput;
         has_platform_code = true;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setTvcMetaduesAccount(TvmCell tvcMetaduesAccountInput)
@@ -172,7 +172,7 @@ contract MetaduesRoot {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcMetaduesAccount = tvcMetaduesAccountInput;
         account_version++;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setTvcSubscriptionService(TvmCell tvcSubscriptionServiceInput)
@@ -182,14 +182,14 @@ contract MetaduesRoot {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionService = tvcSubscriptionServiceInput;
         service_version++;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setTvcSubscription(TvmCell tvcSubscriptionInput) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscription = tvcSubscriptionInput;
         subscription_version++;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setTvcSubscriptionServiceIndex(
@@ -197,7 +197,7 @@ contract MetaduesRoot {
     ) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setTvcSubscriptionIndex(TvmCell tvcSubscriptionIndexInput)
@@ -206,7 +206,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionIndex = tvcSubscriptionIndexInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setTvcSubscriptionIdentificatorIndex(
@@ -214,14 +214,14 @@ contract MetaduesRoot {
     ) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndexInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setTvcFeeProxy(TvmCell tvcFeeProxyInput) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcFeeProxy = tvcFeeProxyInput;
         fee_proxy_version++;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setTvc() external onlyOwner {
@@ -238,7 +238,7 @@ contract MetaduesRoot {
             .tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
         params.tvcFeeProxy = tvcFeeProxy;
         vrsparamsTvc.add(versionTvc, params);
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     // Set ABIs
@@ -248,7 +248,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiPlatformContract = abiPlatformContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiMetaduesAccountContract(
@@ -256,7 +256,7 @@ contract MetaduesRoot {
     ) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiMetaduesAccountContract = abiMetaduesAccountContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiMetaduesRootContract(string abiMetaduesRootContractInput)
@@ -265,7 +265,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiMetaduesRootContract = abiMetaduesRootContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiTIP3RootContract(string abiTIP3RootContractInput)
@@ -274,7 +274,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiTIP3RootContract = abiTIP3RootContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiTIP3TokenWalletContract(
@@ -282,7 +282,7 @@ contract MetaduesRoot {
     ) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiTIP3TokenWalletContract = abiTIP3TokenWalletContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiServiceContract(string abiServiceContractInput)
@@ -291,7 +291,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiServiceContract = abiServiceContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiServiceIndexContract(string abiServiceIndexContractInput)
@@ -300,7 +300,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiServiceIndexContract = abiServiceIndexContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiSubscriptionContract(string abiSubscriptionContractInput)
@@ -309,7 +309,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiSubscriptionContract = abiSubscriptionContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiSubscriptionIndexContract(
@@ -317,7 +317,7 @@ contract MetaduesRoot {
     ) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiSubscriptionIdentificatorIndexContract(
@@ -325,7 +325,7 @@ contract MetaduesRoot {
     ) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbiFeeProxyContract(string abiFeeProxyContractInput)
@@ -334,7 +334,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiFeeProxyContract = abiFeeProxyContractInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setAbi() external onlyOwner {
@@ -354,13 +354,13 @@ contract MetaduesRoot {
             .abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContract;
         params.abiFeeProxyContract = abiFeeProxyContract;
         vrsparamsAbi.add(versionAbi, params);
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setCategories(string[] categoriesInput) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         categories = categoriesInput;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function setFees(uint8 service_fee_, uint8 subscription_fee_)
@@ -370,7 +370,7 @@ contract MetaduesRoot {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         service_fee = service_fee_;
         subscription_fee = subscription_fee_;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to)
@@ -379,7 +379,7 @@ contract MetaduesRoot {
     {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         mtds_revenue_accumulator_address = revenue_to;
-        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function installOrUpdateFeeProxyParams(address[] currencies)
@@ -480,7 +480,7 @@ contract MetaduesRoot {
             value: 0,
             bounce: false,
             flag: MsgFlag.ALL_NOT_RESERVED
-        }(currency_root, owner);
+        }(currency_root,owner);
     }
 
     function syncFeeProxyBalance(address currency_root)
@@ -500,7 +500,7 @@ contract MetaduesRoot {
             value: 0,
             bounce: false,
             flag: MsgFlag.ALL_NOT_RESERVED
-        }(currency_root,owner);
+        }(currency_root, owner);
     }
 
     // Upgrade contracts
@@ -599,6 +599,10 @@ contract MetaduesRoot {
     }
 
     function upgrade(TvmCell code, address send_gas_to) external onlyOwner {
+        require(msg.value > MetaduesGas.UPGRADE_ROOT_MIN_VALUE, 1111);
+
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(account_version);

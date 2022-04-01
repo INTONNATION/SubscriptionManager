@@ -27,6 +27,8 @@ contract MetaduesFeeProxy {
     address dex_root_address;
 
     mapping(address => balance_wallet_struct) public wallets_mapping;
+    // token_root -> send_gas_to
+    mapping(address => address) _tmp_deploying_wallets;
 
     struct balance_wallet_struct {
         address wallet;
@@ -54,6 +56,7 @@ contract MetaduesFeeProxy {
         TvmCell payload
     ) external
     {
+        tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 0);
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(tokenRoot);
         if (current_balance_struct.hasValue()) {   
             balance_wallet_struct current_balance_key  = current_balance_struct.get();
@@ -63,25 +66,42 @@ contract MetaduesFeeProxy {
     }
 
     function swapRevenueToMTDS(address currency_root, address send_gas_to) external onlyRoot {
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         require(sync_balance_currency_root == address(0), 335); // mutex
         sync_balance_currency_root = currency_root; // critical area
+        _tmp_deploying_wallets[currency_root] = send_gas_to;
         optional(balance_wallet_struct) current_balance_struct_opt = wallets_mapping.fetch(currency_root); 
         if (current_balance_struct_opt.hasValue()){
             balance_wallet_struct current_balance_struct  = current_balance_struct_opt.get();
             if (current_balance_struct.balance > 0) {
                 IDexRoot(dex_root_address).getExpectedPairAddress{
-                    value: 0.1 ton, 
-                    bounce: true,
-                    flag: 0,
+                    value: 0,
+                    flag: MsgFlag.ALL_NOT_RESERVED,
+                    bounce: false,
                     callback: MetaduesFeeProxy.onGetExpectedPairAddress
                 }(mtds_root_address,currency_root);
             }
         } else {
-            tvm.exit1();
+            send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
         }
     }
     
     function onGetExpectedPairAddress(address dex_pair_address) external onlyDexRoot {
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
+        require(msg.value > MetaduesGas.TRANSFER_MIN_VALUE, 1111);
+        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), 1111);
         TvmBuilder builder;
         builder.store(DexOperationTypes.EXCHANGE);
         builder.store(uint64(0));
@@ -90,63 +110,92 @@ contract MetaduesFeeProxy {
 
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(sync_balance_currency_root);
         balance_wallet_struct current_balance_key = current_balance_struct.get();
+        address send_gas_to = _tmp_deploying_wallets[msg.sender];
         ITokenWallet(current_balance_key.wallet).transfer{
-            value:  2.5 ton,
-            flag: 0
+            value: MetaduesGas.TRANSFER_MIN_VALUE,
+            flag: MsgFlag.SENDER_PAYS_FEES
         }(
             current_balance_key.balance, // amount
             dex_pair_address,            // recipient
             0,                           // deployWalletValue
-            root,                        // remainingGasTo
+            send_gas_to,                 // remainingGasTo
             true,                        // notify
             builder.toCell()             // payload
         );
         current_balance_key.balance = 0;
         wallets_mapping[sync_balance_currency_root] = current_balance_key;
         sync_balance_currency_root = address(0); // free mutex
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function syncBalance(address currency_root, address send_gas_to) external onlyRoot {
         require(sync_balance_currency_root == address(0), 335); // mutex
+        _tmp_deploying_wallets[currency_root] = send_gas_to;
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         sync_balance_currency_root = currency_root; // critical area
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(currency_root);
         balance_wallet_struct current_balance_key  = current_balance_struct.get();
-        address account_wallet = current_balance_key.wallet;
-        TIP3TokenWallet(account_wallet).balance{
-             value: 0.1 ton, 
-             bounce: true,
-             flag: 0,
-             callback: MetaduesFeeProxy.onBalanceOf
+        address proxy_wallet = current_balance_key.wallet;
+        TIP3TokenWallet(proxy_wallet).balance{
+            value: MsgFlag.SENDER_PAYS_FEES,
+            flag: MsgFlag.ALL_NOT_RESERVED,
+            bounce: false,
+            callback: MetaduesFeeProxy.onBalanceOf
         }();
     }
 
     function setMTDSRootAddress(address mtds_root, address send_gas_to) external onlyRoot {
+        tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
         mtds_root_address = mtds_root;
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function setDexRootAddress(address dex_root, address send_gas_to) external onlyRoot {
+        tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
         dex_root_address = dex_root;
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
     function onBalanceOf(uint128 balance_) external {
+        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), 1111);
+        tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+        address send_gas_to = _tmp_deploying_wallets[msg.sender];
         uint128 balance_wallet = balance_;
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(sync_balance_currency_root);
         balance_wallet_struct current_balance_key  = current_balance_struct.get();
         current_balance_key.balance = balance_wallet;
         wallets_mapping[sync_balance_currency_root] = current_balance_key;
         sync_balance_currency_root = address(0); // free mutex
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
     function transferRevenue(address revenue_to, address send_gas_to) external onlyRoot {
+        require(msg.value >= (MetaduesGas.TRANSFER_MIN_VALUE), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         optional(balance_wallet_struct) currency_root_wallet_opt = wallets_mapping.fetch(mtds_root_address);
         if (!currency_root_wallet_opt.hasValue()){
             balance_wallet_struct currency_root_wallet_struct = currency_root_wallet_opt.get();
             TvmCell payload;
-            ITokenWallet(currency_root_wallet_struct.wallet).transfer{value: 0.5 ton}(
+            ITokenWallet(currency_root_wallet_struct.wallet).transfer{
+                value: 0, 
+                flag: MsgFlag.ALL_NOT_RESERVED 
+            }(
                 currency_root_wallet_struct.balance,
                 revenue_to,
                 0,
-                root,
+                send_gas_to,
                 true,
                 payload
             );
@@ -173,11 +222,14 @@ contract MetaduesFeeProxy {
             mapping(address => balance_wallet_struct) wallets_mapping_ = old_data.decode(mapping(address => balance_wallet_struct));
             wallets_mapping = wallets_mapping_;
         }
-        //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
-       updateSupportedCurrencies(supportedCurrencies);
+       updateSupportedCurrencies(supportedCurrencies, send_gas_to);
     }
 
     function upgrade(TvmCell code,  uint32 version, address send_gas_to) external onlyRoot {
+        require(msg.value > MetaduesGas.UPGRADE_FEE_PROXY_MIN_VALUE, 1111);
+
+        tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -195,47 +247,60 @@ contract MetaduesFeeProxy {
         onCodeUpgrade(builder.toCell());
     }
 
-    function updateSupportedCurrencies(address[] currencies) private {
+    function updateSupportedCurrencies(address[] currencies, address send_gas_to) private inline {
         for (address currency_root : currencies) { // iteration over the array
             optional(balance_wallet_struct) currency_root_wallet_opt = wallets_mapping.fetch(currency_root);
             if (!currency_root_wallet_opt.hasValue()){
+                _tmp_deploying_wallets[currency_root] = send_gas_to;
                 ITokenRoot(currency_root).deployWallet{
-                    value: 0.2 ton,
-                    bounce: true,
-                    flag: 0,
+                    value: MetaduesGas.DEPLOY_EMPTY_WALLET_VALUE,
+                    bounce: false,
+                    flag: MsgFlag.SENDER_PAYS_FEES,
                     callback: MetaduesFeeProxy.onDeployWallet
                 }(
                     address(this),
-                    0.1 ton
+                    MetaduesGas.DEPLOY_EMPTY_WALLET_GRAMS
                 );
             }
         }
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
     
     function setSupportedCurrencies(TvmCell fee_proxy_contract_params, address send_gas_to) external onlyRoot {
         (address[] currencies) = fee_proxy_contract_params.toSlice().decode(address[]);
+        require(msg.value > (MetaduesGas.DEPLOY_EMPTY_WALLET_VALUE * currencies.length), 1111);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         for (address currency_root : currencies) { // iteration over the array
             optional(balance_wallet_struct) currency_root_wallet_opt = wallets_mapping.fetch(currency_root);
             if (!currency_root_wallet_opt.hasValue()){
+                _tmp_deploying_wallets[currency_root] = send_gas_to;
                 ITokenRoot(currency_root).deployWallet{
-                    value: 0.2 ton,
-                    bounce: true,
-                    flag: 0,
+                    value: MetaduesGas.DEPLOY_EMPTY_WALLET_VALUE,
+                    bounce: false,
+                    flag: MsgFlag.SENDER_PAYS_FEES,
                     callback: MetaduesFeeProxy.onDeployWallet
                 }(
                     address(this),
-                    0.1 ton
+                    MetaduesGas.DEPLOY_EMPTY_WALLET_GRAMS
                 );
             }
         }
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
-
-
     function onDeployWallet(address wallet_address) external {
-        //require only from root
+        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), 1111);
+        tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+        address send_gas_to = _tmp_deploying_wallets[msg.sender];
         wallets_mapping[msg.sender].wallet = wallet_address;
         wallets_mapping[msg.sender].balance = 0;
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 }

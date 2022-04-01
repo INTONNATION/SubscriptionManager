@@ -5,6 +5,8 @@ pragma AbiHeader pubkey;
 
 import "libraries/MetaduesRootErrors.sol";
 import "libraries/PlatformTypes.sol";
+import "libraries/MetaduesGas.sol";
+import "libraries/MsgFlag.sol";
 import "./Platform.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
@@ -21,7 +23,6 @@ contract MetaduesAccount {
     uint128 public withdraw_value;
     address public sync_balance_currency_root;
     address owner;
-    address pending_owner;
 
     constructor() public {
         revert();
@@ -38,6 +39,7 @@ contract MetaduesAccount {
     }
 
     modifier onlyOwner() {
+        //account_owner
         tvm.accept();
         _;
     }
@@ -50,6 +52,8 @@ contract MetaduesAccount {
         uint32 version,
         address send_gas_to
     ) external onlyRoot {
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);
+
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
@@ -88,7 +92,7 @@ contract MetaduesAccount {
         type_id = type_id_;
         account_owner = platform_params.toSlice().decode(address);
 
-        //send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
+        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
     function paySubscription(
@@ -98,6 +102,8 @@ contract MetaduesAccount {
         address subscription_wallet,
         address service_address
     ) external responsible returns (uint8) {
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
+        // require > MetaduesGas.TRANSFER_MIN_VALUE + something
         address subsciption_addr = address(
             tvm.hash(
                 _buildInitData(
@@ -108,7 +114,6 @@ contract MetaduesAccount {
         );
         //        require(subsciption_addr == msg.sender, 333);
         TvmCell payload;
-        //tvm.rawReserve(_reserve(), 0);
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(currency_root);
 
@@ -117,27 +122,32 @@ contract MetaduesAccount {
                     .get();
             uint128 current_balance = current_balance_key_value.balance;
             if (value > current_balance) {
-                return 1;
+                return{value: 0, flag: MsgFlag.REMAINING_GAS} 1;
             } else {
-                ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(
+                ITokenWallet(account_wallet).transferToWallet{
+                    value: MetaduesGas.TRANSFER_MIN_VALUE,
+                    bounce: false,
+                    flag: MsgFlag.SENDER_PAYS_FEES
+                }(
                     value,
                     subscription_wallet,
-                    subscription_wallet,
+                    msg.sender,
                     true,
                     payload
                 );
                 uint128 balance_after_pay = current_balance - value;
                 current_balance_key_value.balance = balance_after_pay;
                 wallets_mapping[currency_root] = current_balance_key_value;
-                return 0;
+                return{value: 0, flag: MsgFlag.REMAINING_GAS} 0;
             }
         } else {
-            return 1;
+            return{value: 0, flag: MsgFlag.REMAINING_GAS} 1;
         }
     }
 
     function syncBalance(address currency_root) external onlyOwner {
         require(sync_balance_currency_root == address(0), 335);
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
         sync_balance_currency_root = currency_root;
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(currency_root);
@@ -145,14 +155,15 @@ contract MetaduesAccount {
             .get();
         address account_wallet = current_balance_key.wallet;
         TIP3TokenWallet(account_wallet).balance{
-            value: 0.1 ton,
-            bounce: true,
-            flag: 0,
+            value: 0,
+            bounce: false,
+            flag: MsgFlag.REMAINING_GAS,
             callback: MetaduesAccount.onBalanceOf
         }();
     }
 
     function onBalanceOf(uint128 balance_) external {
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
         uint128 balance_wallet = balance_;
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(sync_balance_currency_root);
@@ -161,46 +172,41 @@ contract MetaduesAccount {
         current_balance_key.balance = balance_wallet;
         wallets_mapping[sync_balance_currency_root] = current_balance_key;
         sync_balance_currency_root = address(0);
+        account_owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
 
     function withdrawFunds(address currency_root, uint128 withdraw_value_)
         external
         onlyOwner
     {
-        require(withdraw_value == 0, 332);
-        withdraw_value = withdraw_value_;
-        ITokenRoot(currency_root).walletOf{
-            value: 0.1 ton,
-            bounce: true,
-            flag: 0,
-            callback: MetaduesAccount.onWalleOfWithdraw
-        }(account_owner);
-    }
-
-    function onWalleOfWithdraw(address withdraw_owner_wallet) external {
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(msg.sender);
         balance_wallet_struct current_balance_key = current_balance_struct
             .get();
         address account_wallet = current_balance_key.wallet;
         TvmCell payload;
-        ITokenWallet(account_wallet).transferToWallet{value: 0.5 ton}(
-            withdraw_value,
-            withdraw_owner_wallet,
-            withdraw_owner_wallet,
+        current_balance_key.balance =
+            current_balance_key.balance -
+            withdraw_value_;
+        wallets_mapping[msg.sender] = current_balance_key;
+        emit Withdraw(msg.sender, withdraw_value_);
+        ITokenWallet(account_wallet).transfer{
+            value: 0,
+            bounce: false,
+            flag: MsgFlag.REMAINING_GAS
+        }(
+            withdraw_value_,
+            account_owner,
+            0,
+            account_owner,
             true,
             payload
         );
-        current_balance_key.balance =
-            current_balance_key.balance -
-            withdraw_value;
-        wallets_mapping[msg.sender] = current_balance_key;
-        emit Withdraw(msg.sender, withdraw_value);
-        withdraw_value = 0;
     }
 
     function destroyAccount() public onlyOwner {
-        selfdestruct(msg.sender);
+        selfdestruct(account_owner);
     }
 
     function onAcceptTokensTransfer(
@@ -211,6 +217,7 @@ contract MetaduesAccount {
         address remainingGasTo,
         TvmCell payload
     ) external {
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(tokenRoot);
         if (current_balance_struct.hasValue()) {
@@ -253,29 +260,6 @@ contract MetaduesAccount {
     }
 
     function getOwner() external view responsible returns (address wner) {
-        return owner;
-    }
-
-    function getPendingOwner()
-        external
-        view
-        responsible
-        returns (address pending_owner)
-    {
-        return pending_owner;
-    }
-
-    function transferOwner(address new_owner) external onlyOwner {
-        pending_owner = new_owner;
-    }
-
-    function acceptOwner() external {
-        require(msg.sender == pending_owner && msg.sender.value != 0, 559);
-        owner = pending_owner;
-        pending_owner = address.makeAddrStd(0, 0);
-    }
-
-    function _reserve() internal pure returns (uint128) {
-        return math.max(address(this).balance - msg.value, 0.1 ton);
+        return account_owner;
     }
 }

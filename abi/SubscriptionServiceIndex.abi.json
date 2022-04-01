@@ -41,6 +41,14 @@
 			"outputs": [
 				{"name":"service_owner","type":"address"}
 			]
+		},
+		{
+			"name": "root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root","type":"address"}
+			]
 		}
 	],
 	"data": [
@@ -54,6 +62,7 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"service_name","type":"string"},
 		{"name":"service_address","type":"address"},
-		{"name":"service_owner","type":"address"}
+		{"name":"service_owner","type":"address"},
+		{"name":"root","type":"address"}
 	]
 }
