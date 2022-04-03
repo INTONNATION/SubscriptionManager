@@ -228,45 +228,43 @@ contract Subscription {
         TvmCell payload
     ) public {
         tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
-        if (subscription.status == STATUS_PROCESSING) {
-            //require(amount >= svcparams.value, 111);
-            uint128 service_value_percentage = svcparams.service_value / 100;
-            uint128 service_fee_value = service_value_percentage * service_fee;
-            uint128 protocol_fee = (svcparams.subscription_value -
-                svcparams.service_value +
-                service_fee_value);
-            ITokenWallet(msg.sender).transfer{
-                value: MetaduesGas.TRANSFER_MIN_VALUE,
-                flag: MsgFlag.SENDER_PAYS_FEES
-            }(
-                protocol_fee,
-                address_fee_proxy,
-                0,
-                address(this),
-                true,
-                payload
-            );
-            uint128 pay_value = svcparams.subscription_value - protocol_fee;
-            ITokenWallet(msg.sender).transfer{
-                value: MetaduesGas.TRANSFER_MIN_VALUE,
-                flag: MsgFlag.SENDER_PAYS_FEES
-            }(
-                pay_value,
-                svcparams.to,
-                0,
-                address(this),
-                true,
-                payload
-            );
-            if (subscription.payment_timestamp != 0) {
-                subscription.payment_timestamp =
-                    subscription.payment_timestamp +
-                    subscription.period;
-            } else {
-                subscription.payment_timestamp = uint32(now);
-            }
-            subscription.status = STATUS_ACTIVE;
+        //require(amount >= svcparams.value, 111);
+        uint128 service_value_percentage = svcparams.service_value / 100;
+        uint128 service_fee_value = service_value_percentage * service_fee;
+        uint128 protocol_fee = (svcparams.subscription_value -
+            svcparams.service_value +
+            service_fee_value);
+        ITokenWallet(msg.sender).transfer{
+            value: MetaduesGas.TRANSFER_MIN_VALUE,
+            flag: MsgFlag.SENDER_PAYS_FEES
+        }(
+            protocol_fee,
+            address_fee_proxy,
+            0,
+            address(this),
+            true,
+            payload
+        );
+        uint128 pay_value = svcparams.subscription_value - protocol_fee;
+        ITokenWallet(msg.sender).transfer{
+            value: MetaduesGas.TRANSFER_MIN_VALUE,
+            flag: MsgFlag.SENDER_PAYS_FEES
+        }(
+            pay_value,
+            svcparams.to,
+            0,
+            address(this),
+            true,
+            payload
+        );
+        if (subscription.payment_timestamp != 0) {
+            subscription.payment_timestamp =
+                subscription.payment_timestamp +
+                subscription.period;
+        } else {
+            subscription.payment_timestamp = uint32(now);
         }
+        subscription.status = STATUS_ACTIVE;
     }
 
     function onPaySubscription(uint8 status) external {
