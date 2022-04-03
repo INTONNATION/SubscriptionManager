@@ -53,6 +53,7 @@ contract MetaduesRoot {
         TvmCell tvcSubscriptionIndex;
         TvmCell tvcSubscriptionIdentificatorIndex;
         TvmCell tvcFeeProxy;
+        TvmCell tvcSubscriptionServiceIdentificatorIndex;
     }
     struct VersionsAbiParams {
         string abiPlatformContract;
@@ -158,7 +159,7 @@ contract MetaduesRoot {
     }
 
     // Settings
-    function setTvcPlatform(TvmCell tvcPlatformInput) public onlyOwner {
+    function setTvcPlatform(TvmCell tvcPlatformInput) external onlyOwner {
         require(!has_platform_code, 1111);
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcPlatform = tvcPlatformInput;
@@ -246,6 +247,7 @@ contract MetaduesRoot {
         params
             .tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
         params.tvcFeeProxy = tvcFeeProxy;
+        params.tvcSubscriptionServiceIdentificatorIndex = tvcSubscriptionServiceIdentificatorIndex;
         vrsparamsTvc.add(versionTvc, params);
         owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
     }
