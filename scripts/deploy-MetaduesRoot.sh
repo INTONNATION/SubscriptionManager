@@ -11,7 +11,7 @@ if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
-tondev sol compile ../contracts/MetaduesRoot.sol -o ../abi;
+#tondev sol compile ../contracts/MetaduesRoot.sol -o ../abi;
 tondev sol compile ../contracts/MetaduesAccount.sol -o ../abi;
 tondev sol compile ../contracts/Platform.sol -o ../abi;
 tondev sol compile ../contracts/Subscription.sol -o ../abi;
@@ -126,24 +126,42 @@ message=`tonos-cli -j body setTvc "{}"  --abi ../abi/$1.abi.json | jq -r .Messag
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
 #
 ## SET ABIs
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiPlatformContract "{\"abiPlatformContractInput\":\"$abiPlatformContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiMetaduesAccountContract "{\"abiMetaduesAccountContractInput\":\"$abiMetaduesAccountContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiMetaduesRootContract "{\"abiMetaduesRootContractInput\":\"$abiMetaduesRootContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiTIP3RootContract "{\"abiTIP3RootContractInput\":\"$abiTIP3RootContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiTIP3TokenWalletContract "{\"abiTIP3TokenWalletContractInput\":\"$abiTIP3TokenWalletContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiServiceContract "{\"abiServiceContractInput\":\"$abiServiceContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiServiceIndexContract "{\"abiServiceIndexContractInput\":\"$abiServiceIndexContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiSubscriptionContract "{\"abiSubscriptionContractInput\":\"$abiSubscriptionContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiSubscriptionIndexContract "{\"abiSubscriptionIndexContractInput\":\"$abiSubscriptionIndexContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiSubscriptionIdentificatorIndexContract "{\"abiSubscriptionIdentificatorIndexContractInput\":\"$abiSubscriptionIdentificatorIndexContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbiFeeProxyContract "{\"abiFeeProxyContractInput\":\"$abiFeeProxyContract\"}" --abi ../abi/$1.abi.json 
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setAbi "{}"  --abi ../abi/$1.abi.json 
+message=`tonos-cli -j body setAbiPlatformContract "{\"abiPlatformContractInput\":\"$abiPlatformContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiMetaduesAccountContract "{\"abiMetaduesAccountContractInput\":\"$abiMetaduesAccountContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiMetaduesRootContract "{\"abiMetaduesRootContractInput\":\"$abiMetaduesRootContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiTIP3RootContract "{\"abiTIP3RootContractInput\":\"$abiTIP3RootContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiTIP3TokenWalletContract "{\"abiTIP3TokenWalletContractInput\":\"$abiTIP3TokenWalletContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiServiceContract "{\"abiServiceContractInput\":\"$abiServiceContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiServiceIndexContract "{\"abiServiceIndexContractInput\":\"$abiServiceIndexContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiSubscriptionContract "{\"abiSubscriptionContractInput\":\"$abiSubscriptionContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiSubscriptionIndexContract "{\"abiSubscriptionIndexContractInput\":\"$abiSubscriptionIndexContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiSubscriptionIdentificatorIndexContract "{\"abiSubscriptionIdentificatorIndexContractInput\":\"$abiSubscriptionIdentificatorIndexContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiFeeProxyContract "{\"abiFeeProxyContractInput\":\"$abiFeeProxyContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbiServiceIdentificatorIndexContract "{\"abiServiceIdentificatorIndexContractInput\":\"$abiServiceIdentificator\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setAbi "{}"  --abi ../abi/$1.abi.json | jq -r .Message`
 #
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS deployFeeProxy "{\"currencies\":[\"0:2b7e864d66cad45257ed47a39f85b9fb7814afaf79bd23863cb4b191a9cdc2a8\",\"0:2306fe44aca48701039ab7cbad96bf60dc2c51f2250f052d24c3a110e3fada8b\"]}" --abi ../abi/$1.abi.json
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS setFees "{\"service_fee_\":\"5\",\"subscription_fee_\":\"5\"}" --abi ../abi/$1.abi.json
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRevenueDelegationAddress "{\"revenue_to\":\"0:d4aa3dbbe0df676d39e255c16767ad16b7be3ca74ff84bd736999b9da6942b8b\"}" --abi ../abi/$1.abi.json
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeMTDSRootAddress "{\"mtds_root_\":\"0:d4aa3dbbe0df676d39e255c16767ad16b7be3ca74ff84bd736999b9da6942b8b\"}" --abi ../abi/$1.abi.json
-#tonos-cli --url $NETWORK call $CONTRACT_ADDRESS installOrUpgradeDexRootAddress "{\"dex_root\":\"0:a6b47dcdcf062fb2cec3b3ebae5ba28ac0edc7672ff203c6b6b6ae96f16d5f35\"}" --abi ../abi/$1.abi.json
+message=`tonos-cli -j body deployFeeProxy "{\"currencies\":[\"0:2b7e864d66cad45257ed47a39f85b9fb7814afaf79bd23863cb4b191a9cdc2a8\",\"0:2306fe44aca48701039ab7cbad96bf60dc2c51f2250f052d24c3a110e3fada8b\"]}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body setFees "{\"service_fee_\":\"5\",\"subscription_fee_\":\"5\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body installOrUpgradeMTDSRevenueDelegationAddress "{\"revenue_to\":\"0:d4aa3dbbe0df676d39e255c16767ad16b7be3ca74ff84bd736999b9da6942b8b\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body installOrUpgradeMTDSRootAddress "{\"mtds_root_\":\"0:d4aa3dbbe0df676d39e255c16767ad16b7be3ca74ff84bd736999b9da6942b8b\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+message=`tonos-cli -j body installOrUpgradeDexRootAddress "{\"dex_root\":\"0:a6b47dcdcf062fb2cec3b3ebae5ba28ac0edc7672ff203c6b6b6ae96f16d5f35\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
 # Set categories
 message=`tonos-cli -j body setCategories "{\"categoriesInput\": $categories}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
