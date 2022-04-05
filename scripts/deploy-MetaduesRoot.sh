@@ -11,7 +11,7 @@ if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
-#tondev sol compile ../contracts/MetaduesRoot.sol -o ../abi;
+tondev sol compile ../contracts/MetaduesRoot.sol -o ../abi;
 tondev sol compile ../contracts/MetaduesAccount.sol -o ../abi;
 tondev sol compile ../contracts/Platform.sol -o ../abi;
 tondev sol compile ../contracts/Subscription.sol -o ../abi;
@@ -92,7 +92,7 @@ serviceIdentificator=$(cat ../abi/SubscriptionServiceIdentificatorIndex.tvc | ba
 #ABI
 abiPlatformContract=$(cat ../abi/Platform.abi.json | jq -c .| base64 $prefix)
 abiMetaduesAccountContract=$(cat ../abi/MetaduesAccount.abi.json | jq -c .| base64 $prefix)
-abiMetaduesRootContract=$(cat ../abi/MetaduesRoot.abi.json | jq -c .| base64 $prefix)
+abiMetaduesRootContract=$(cat ../abi/MetaduesRoot.abi.json  | jq 'del(.fields)' | jq -c .| base64 $prefix)
 abiTIP3RootContract=$(cat ../ton-eth-bridge-token-contracts/build/TokenRoot.abi.json | jq -c .| base64 $prefix)
 abiTIP3TokenWalletContract=$(cat ../ton-eth-bridge-token-contracts/build/TokenWallet.abi.json | jq -c .| base64 $prefix)
 abiServiceContract=$(cat ../abi/SubscriptionService.abi.json | jq -c .| base64 $prefix)

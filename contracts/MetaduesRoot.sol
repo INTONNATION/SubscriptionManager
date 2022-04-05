@@ -43,6 +43,7 @@ contract MetaduesRoot {
     string abiSubscriptionIndexContract;
     string abiSubscriptionIdentificatorIndexContract;
     string abiFeeProxyContract;
+    string abiServiceIdentificatorIndexContract;
 
     struct VersionsTvcParams {
         TvmCell tvcPlatform;
@@ -63,6 +64,7 @@ contract MetaduesRoot {
         string abiTIP3TokenWalletContract;
         string abiServiceContract;
         string abiServiceIndexContract;
+        string abiServiceIdentificatorIndexContract;
         string abiSubscriptionContract;
         string abiSubscriptionIndexContract;
         string abiSubscriptionIdentificatorIndexContract;
@@ -312,6 +314,15 @@ contract MetaduesRoot {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         abiServiceIndexContract = abiServiceIndexContractInput;
         owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
+    }
+
+    function setAbiServiceIdentificatorIndexContract(string abiServiceIdentificatorIndexContractInput) 
+        external
+        onlyOwner
+    {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+        abiServiceIdentificatorIndexContract = abiServiceIdentificatorIndexContractInput;
+        owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });        
     }
 
     function setAbiSubscriptionContract(string abiSubscriptionContractInput)
@@ -629,8 +640,7 @@ contract MetaduesRoot {
     function onCodeUpgrade(TvmCell upgrade_data) private {}
 
     // Deploy contracts
-    function deployFeeProxy(address[] currencies, uint128 deploy_fee_proxy_grams) external onlyOwner {
-        require(msg.value >= (MetaduesGas.DEPLOY_FEE_PROXY_MIN_VALUE + deploy_fee_proxy_grams), 1111);
+    function deployFeeProxy(address[] currencies) external onlyOwner {
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
