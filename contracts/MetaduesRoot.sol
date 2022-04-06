@@ -668,9 +668,8 @@ contract MetaduesRoot {
         fee_proxy_address = address(platform);
     }
 
-    function deployAccount(uint128 deploy_account_grams) external {
+    function deployAccount() external {
         //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
-        require(msg.value >= (MetaduesGas.DEPLOY_ACCOUNT_MIN_VALUE + deploy_account_grams), 1111);
 
         tvm.rawReserve(
             math.max(
@@ -866,6 +865,7 @@ contract MetaduesRoot {
             bounce: false,
             stateInit: serviceIdentificatorIndexStateInit
         }(address(platform));
+        msg.sender.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS });
     }
     
     // Builders 
