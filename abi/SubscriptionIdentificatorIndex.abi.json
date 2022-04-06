@@ -49,6 +49,14 @@
 			"outputs": [
 				{"name":"identificator","type":"cell"}
 			]
+		},
+		{
+			"name": "service_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_address","type":"address"}
+			]
 		}
 	],
 	"data": [
@@ -63,6 +71,7 @@
 		{"name":"subscription_owner","type":"address"},
 		{"name":"subscription_address","type":"address"},
 		{"name":"root","type":"address"},
-		{"name":"identificator","type":"cell"}
+		{"name":"identificator","type":"cell"},
+		{"name":"service_address","type":"address"}
 	]
 }

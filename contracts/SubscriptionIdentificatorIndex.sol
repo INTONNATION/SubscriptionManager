@@ -12,6 +12,7 @@ contract SubscriptionIdentificatorIndex {
     address public subscription_address;
     address public root;
     TvmCell public identificator;
+    address public service_address;
 
     modifier onlyOwner() {
         require(
@@ -23,7 +24,8 @@ contract SubscriptionIdentificatorIndex {
 
     constructor(address subsAddr) public {
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
-        (TvmCell identificator_, address root_) = salt.get().toSlice().decode(
+        (address service_, TvmCell identificator_, address root_) = salt.get().toSlice().decode(
+            address,
             TvmCell,
             address
         );
@@ -32,6 +34,7 @@ contract SubscriptionIdentificatorIndex {
             SubscriptionErrors.error_message_sender_is_not_root
         );
         tvm.rawReserve(MetaduesGas.INDEX_INITIAL_BALANCE, 2);
+        service_address = service_;
         root = root_;
         identificator = identificator_;
         subscription_address = subsAddr;
