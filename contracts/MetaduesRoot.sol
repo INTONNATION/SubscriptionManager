@@ -49,12 +49,12 @@ contract MetaduesRoot {
         TvmCell tvcPlatform;
         TvmCell tvcMetaduesAccount;
         TvmCell tvcSubscriptionService;
-        TvmCell tvcSubscription;
         TvmCell tvcSubscriptionServiceIndex;
+        TvmCell tvcSubscriptionServiceIdentificatorIndex;
+        TvmCell tvcSubscription;
         TvmCell tvcSubscriptionIndex;
         TvmCell tvcSubscriptionIdentificatorIndex;
         TvmCell tvcFeeProxy;
-        TvmCell tvcSubscriptionServiceIdentificatorIndex;
     }
     struct VersionsAbiParams {
         string abiPlatformContract;
@@ -370,6 +370,7 @@ contract MetaduesRoot {
         params.abiTIP3TokenWalletContract = abiTIP3TokenWalletContract;
         params.abiServiceContract = abiServiceContract;
         params.abiServiceIndexContract = abiServiceIndexContract;
+        params.abiServiceIdentificatorIndexContract = abiServiceIdentificatorIndexContract;
         params.abiSubscriptionContract = abiSubscriptionContract;
         params.abiSubscriptionIndexContract = abiSubscriptionIndexContract;
         params

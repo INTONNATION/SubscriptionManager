@@ -151,7 +151,8 @@ tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json dev
 message=`tonos-cli -j body setAbiServiceIdentificatorIndexContract "{\"abiServiceIdentificatorIndexContractInput\":\"$abiServiceIdentificator\"}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
 message=`tonos-cli -j body setAbi "{}"  --abi ../abi/$1.abi.json | jq -r .Message`
-#
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
+# set settings
 message=`tonos-cli -j body deployFeeProxy "{\"currencies\":[\"0:2b7e864d66cad45257ed47a39f85b9fb7814afaf79bd23863cb4b191a9cdc2a8\",\"0:2306fe44aca48701039ab7cbad96bf60dc2c51f2250f052d24c3a110e3fada8b\"]}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce false --allBalance false --payload "$message"
 message=`tonos-cli -j body setFees "{\"service_fee_\":\"5\",\"subscription_fee_\":\"5\"}" --abi ../abi/$1.abi.json | jq -r .Message`
