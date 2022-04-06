@@ -775,12 +775,14 @@ contract MetaduesRoot {
             bounce: false,
             stateInit: subsIndexStateInit
         }(address(platform));
-        new SubscriptionIdentificatorIndex{
-            value: MetaduesGas.INDEX_INITIAL_BALANCE + deploy_index_grams,
-            flag: MsgFlag.SENDER_PAYS_FEES,
-            bounce: false,
-            stateInit: subsIndexIdentificatorStateInit
-        }(address(platform));
+        if (!identificator.toSlice().empty()) {
+            new SubscriptionIdentificatorIndex{
+                value: MetaduesGas.INDEX_INITIAL_BALANCE + deploy_index_grams,
+                flag: MsgFlag.SENDER_PAYS_FEES,
+                bounce: false,
+                stateInit: subsIndexIdentificatorStateInit
+            }(address(platform));
+        }
         msg.sender.transfer({
             value: 0,
             flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS

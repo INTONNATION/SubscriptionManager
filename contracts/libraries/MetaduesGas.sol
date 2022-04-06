@@ -6,7 +6,7 @@ library MetaduesGas {
     uint128 constant ACCOUNT_INITIAL_BALANCE                = 1 ton;
     uint128 constant SUBSCRIPTION_INITIAL_BALANCE           = 1 ton;
     uint128 constant SERVICE_INITIAL_BALANCE                = 1 ton;
-    uint128 constant INDEX_INITIAL_BALANCE                  = 1 ton;
+    uint128 constant INDEX_INITIAL_BALANCE                  = 0.1 ton;
     uint128 constant FEE_PROXY_INITIAL_BALANCE              = 1 ton;
 
     uint128 constant DEPLOY_ACCOUNT_MIN_VALUE               = 2 ton;
