@@ -72,6 +72,7 @@ contract MetaduesAccount {
     }
 
     function onCodeUpgrade(TvmCell upgrade_data) private {
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);
         TvmSlice s = upgrade_data.toSlice();
         (
             address root_,
@@ -232,6 +233,8 @@ contract MetaduesAccount {
             wallets_mapping[tokenRoot] = current_balance_struct;
         }
         emit Deposit(msg.sender, amount);
+        remainingGasTo.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS });
+
     }
 
     function _buildSubscriptionParams(
