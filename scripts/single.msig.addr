@@ -1,0 +1,16 @@
+Config: /home/ubuntu/SubscriptionManager/scripts/tonos-cli.conf.json
+Input arguments:
+     tvc: ../../ton-labs-contracts/solidity/bridgemultisig/BridgeMultisigWallet.tvc
+      wc: 0
+    keys: single.msig.keys.json
+init_data: None
+is_update_tvc: None
+
+Raw address: 0:aba04121a9e69a0140e072ce770ddb012aa828279b1a7c2e6d6f1dbe38e4ceb0
+testnet:
+Non-bounceable address (for init): 0QCroEEhqeaaAUDgcs53DdsBKqgoJ5safC5tbx2-OOTOsGl1
+Bounceable address (for later access): kQCroEEhqeaaAUDgcs53DdsBKqgoJ5safC5tbx2-OOTOsDSw
+mainnet:
+Non-bounceable address (for init): UQCroEEhqeaaAUDgcs53DdsBKqgoJ5safC5tbx2-OOTOsNL_
+Bounceable address (for later access): EQCroEEhqeaaAUDgcs53DdsBKqgoJ5safC5tbx2-OOTOsI86
+Succeeded
