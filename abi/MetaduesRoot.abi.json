@@ -66,7 +66,7 @@
 				{"name":"answerId","type":"uint32"}
 			],
 			"outputs": [
-				{"name":"dex_owner","type":"address"}
+				{"name":"owner","type":"address"}
 			]
 		},
 		{
@@ -358,8 +358,7 @@
 		{
 			"name": "upgrade",
 			"inputs": [
-				{"name":"code","type":"cell"},
-				{"name":"send_gas_to","type":"address"}
+				{"name":"code","type":"cell"}
 			],
 			"outputs": [
 			]
