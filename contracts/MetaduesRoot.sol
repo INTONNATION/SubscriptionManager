@@ -156,7 +156,7 @@ contract MetaduesRoot {
         return value;
     }
 
-    function getOwner() external view responsible returns (address dex_owner) {
+    function getOwner() external view responsible returns (address owner) {
         return owner;
     }
 
@@ -621,15 +621,15 @@ contract MetaduesRoot {
         }(service_code_salt, service_version, msg.sender);
     }
 
-    function upgrade(TvmCell code, address send_gas_to) external onlyOwner {
-        require(msg.value > MetaduesGas.UPGRADE_ROOT_MIN_VALUE, 1111);
+    function upgrade(TvmCell code) external onlyOwner {
+        require(msg.value >= MetaduesGas.UPGRADE_ROOT_MIN_VALUE, 1111);
 
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
 
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(account_version);
-        builder.store(send_gas_to);
+        builder.store(owner);
         builder.store(service_version);
         builder.store(fee_proxy_version);
         builder.store(subscription_version);
@@ -638,7 +638,17 @@ contract MetaduesRoot {
         onCodeUpgrade(builder.toCell());
     }
 
-    function onCodeUpgrade(TvmCell upgrade_data) private {}
+    function onCodeUpgrade(TvmCell upgrade_data) private {
+        tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+        tvm.resetStorage();
+        (uint32 account_version_, address owner_, uint32 service_version_, uint32 fee_proxy_version_, uint32 subscription_version_) = upgrade_data.toSlice().decode(uint32, address, uint32, uint32, uint32);
+        account_version = account_version_;
+        service_version = service_version_;
+        fee_proxy_version = fee_proxy_version_;
+        subscription_version = subscription_version_;
+        owner = owner_;
+        owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
+    }
 
     // Deploy contracts
     function deployFeeProxy(address[] currencies) external onlyOwner {
