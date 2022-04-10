@@ -182,7 +182,7 @@ contract MetaduesAccount {
     {
         tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
-            .fetch(msg.sender);
+            .fetch(currency_root);
         balance_wallet_struct current_balance_key = current_balance_struct
             .get();
         address account_wallet = current_balance_key.wallet;
@@ -190,7 +190,7 @@ contract MetaduesAccount {
         current_balance_key.balance =
             current_balance_key.balance -
             withdraw_value_;
-        wallets_mapping[msg.sender] = current_balance_key;
+        wallets_mapping[currency_root] = current_balance_key;
         emit Withdraw(msg.sender, withdraw_value_);
         ITokenWallet(account_wallet).transfer{
             value: 0,
