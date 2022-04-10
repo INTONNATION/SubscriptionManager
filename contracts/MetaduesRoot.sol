@@ -422,7 +422,7 @@ contract MetaduesRoot {
         TvmCell fee_proxy_contract_params = currencies_cell.toCell();
         MetaduesFeeProxy(fee_proxy_address).setSupportedCurrencies{
             value: 0,
-            bounce: false,
+            bounce: true, // need to handle
             flag: MsgFlag.ALL_NOT_RESERVED
         }(
             fee_proxy_contract_params,
