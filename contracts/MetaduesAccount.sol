@@ -180,7 +180,13 @@ contract MetaduesAccount {
         external
         onlyOwner
     {
-        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.ACCOUNT_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(currency_root);
         balance_wallet_struct current_balance_key = current_balance_struct

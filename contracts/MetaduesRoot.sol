@@ -633,6 +633,7 @@ contract MetaduesRoot {
         builder.store(service_version);
         builder.store(fee_proxy_version);
         builder.store(subscription_version);
+        //safe tvc and abi
         tvm.setcode(code);
         tvm.setCurrentCode(code);
         onCodeUpgrade(builder.toCell());
@@ -871,13 +872,18 @@ contract MetaduesRoot {
             bounce: false,
             stateInit: serviceIndexStateInit
         }(address(platform));
-        new SubscriptionServiceIdentificatorIndex{
-            value: MetaduesGas.INDEX_INITIAL_BALANCE + deploy_index_grams,
-            flag: MsgFlag.SENDER_PAYS_FEES,
-            bounce: false,
-            stateInit: serviceIdentificatorIndexStateInit
-        }(address(platform));
-        msg.sender.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS });
+        if (!identificator.toSlice().empty()) {
+            new SubscriptionServiceIdentificatorIndex{
+                value: MetaduesGas.INDEX_INITIAL_BALANCE + deploy_index_grams,
+                flag: MsgFlag.SENDER_PAYS_FEES,
+                bounce: false,
+                stateInit: serviceIdentificatorIndexStateInit
+            }(address(platform));
+        }
+        msg.sender.transfer({
+            value: 0,
+            flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+        });    
     }
     
     // Builders 
