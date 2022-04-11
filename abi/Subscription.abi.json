@@ -131,6 +131,22 @@
 			]
 		},
 		{
+			"name": "subscription_index_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_index_address","type":"address"}
+			]
+		},
+		{
+			"name": "subscription_index_identificator_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_index_identificator_address","type":"address"}
+			]
+		},
+		{
 			"name": "service_fee",
 			"inputs": [
 			],
