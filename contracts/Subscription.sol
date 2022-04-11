@@ -50,8 +50,8 @@ contract Subscription {
     uint8 constant STATUS_NONACTIVE = 2;
     uint8 constant STATUS_PROCESSING = 3;
     address service_address;
-    address subscription_index_address;
-    address subscription_index_identificator_address;
+    address public subscription_index_address;
+    address public subscription_index_identificator_address;
     uint32 cooldown = 3600;
     uint8 public service_fee;
     uint8 public subscription_fee;
