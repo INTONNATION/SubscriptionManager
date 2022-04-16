@@ -18,7 +18,8 @@ interface IMetaduesAccount {
         address currency_root,
         address account_wallet,
         address subscription_wallet,
-        address service_address
+        address service_address,
+        uint128 pay_subscription_gas
     ) external responsible returns (uint8);
 }
 
@@ -78,6 +79,7 @@ contract Subscription {
         uint32 payment_timestamp;
         uint32 execution_timestamp;
         uint8 status;
+        uint128 gas;
     }
     paymentStatus public subscription;
 
@@ -149,7 +151,7 @@ contract Subscription {
         }
     }
 
-    function executeSubscription() public {
+    function executeSubscription(uint128 paySubscriptionGas) public {
         if (
             now >
             (subscription.payment_timestamp +
@@ -161,13 +163,12 @@ contract Subscription {
                 (subscription.status != STATUS_PROCESSING)
             ) {
                 tvm.accept();
-                tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 2);
+                subscription.gas = paySubscriptionGas;
                 subscription.execution_timestamp = uint32(now);
-                subscription.status = STATUS_PROCESSING;
                 ISubscriptionService(service_address).getInfo{
-                    value: 0,
-                    bounce: true,
-                    flag: MsgFlag.ALL_NOT_RESERVED,
+                    value: MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE,
+                    bounce: true, // need to handle
+                    flag: 0,
                     callback: Subscription.onGetInfo           
                 }();
             } else {
@@ -182,8 +183,14 @@ contract Subscription {
     }
 
     function onGetInfo(TvmCell svc_info) external onlyService {
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         uint8 status = svc_info.toSlice().decode(uint8);
-        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 2);
         if (status == 0){
             IMetaduesAccount(account_address).paySubscription{
                 value: 0,
@@ -195,7 +202,8 @@ contract Subscription {
                 svcparams.currency_root,
                 account_wallet,
                 subscription_wallet,
-                service_address
+                service_address,
+                subscription.gas
             );
         } else {
             revert(1111);
@@ -215,7 +223,8 @@ contract Subscription {
             svcparams.currency_root,
             account_wallet,
             subscription_wallet,
-            service_address
+            service_address,
+            subscription.gas
         );
     }
 
@@ -227,36 +236,20 @@ contract Subscription {
         address remainingGasTo,
         TvmCell payload
     ) public {
-        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         //require(amount >= svcparams.value, 111);
         uint128 service_value_percentage = svcparams.service_value / 100;
         uint128 service_fee_value = service_value_percentage * service_fee;
         uint128 protocol_fee = (svcparams.subscription_value -
             svcparams.service_value +
             service_fee_value);
-        ITokenWallet(msg.sender).transfer{
-            value: MetaduesGas.TRANSFER_MIN_VALUE,
-            flag: MsgFlag.SENDER_PAYS_FEES
-        }(
-            protocol_fee,
-            address_fee_proxy,
-            0,
-            address(this),
-            true,
-            payload
-        );
         uint128 pay_value = svcparams.subscription_value - protocol_fee;
-        ITokenWallet(msg.sender).transfer{
-            value: MetaduesGas.TRANSFER_MIN_VALUE,
-            flag: MsgFlag.SENDER_PAYS_FEES
-        }(
-            pay_value,
-            svcparams.to,
-            0,
-            address(this),
-            true,
-            payload
-        );
         if (subscription.payment_timestamp != 0) {
             subscription.payment_timestamp =
                 subscription.payment_timestamp +
@@ -265,13 +258,36 @@ contract Subscription {
             subscription.payment_timestamp = uint32(now);
         }
         subscription.status = STATUS_ACTIVE;
+        ITokenWallet(msg.sender).transfer{
+            value: MetaduesGas.TRANSFER_MIN_VALUE,
+            flag: MsgFlag.SENDER_PAYS_FEES
+        }(
+            protocol_fee,
+            address_fee_proxy,
+            0,
+            account_address,
+            true,
+            payload
+        );
+        ITokenWallet(msg.sender).transfer{
+            value: 0,
+            flag: MsgFlag.ALL_NOT_RESERVED
+        }(
+            pay_value,
+            svcparams.to,
+            0,
+            account_address,
+            false,
+            payload
+        );
     }
 
     function onPaySubscription(uint8 status) external {
         // allow onlylAccount
-        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
         if (status == 1) {
             subscription.status = STATUS_NONACTIVE;
+        } else if (status == 0) {
+            subscription.status = STATUS_PROCESSING;
         }
     }
 
