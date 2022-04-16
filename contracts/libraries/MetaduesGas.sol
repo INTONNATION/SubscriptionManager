@@ -16,6 +16,8 @@ library MetaduesGas {
     uint128 constant SET_SERVICE_INDEXES_VALUE              = 0.5 ton;
     uint128 constant TRANSFER_ROOT_OWNERSHIP_VALUE          = 0.5 ton;
     uint128 constant GET_TOKEN_DETAILS_VALUE                = 0.5 ton;
+    uint128 constant EXECUTE_SUBSCRIPTION_VALUE             = 1 ton;
+
 
     uint128 constant PLATFORM_DEPLOY_VALUE                  = 0.1 ton;
     uint128 constant SET_PLATFORM_CODE_VALUE                = 0.1 ton;

@@ -63,6 +63,7 @@ contract MetaduesFeeProxy {
             current_balance_key.balance += amount;    
             wallets_mapping[tokenRoot] = current_balance_key;
         }
+        remainingGasTo.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS });
     }
 
     function swapRevenueToMTDS(address currency_root, address send_gas_to) external onlyRoot {

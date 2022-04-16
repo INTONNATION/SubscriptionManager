@@ -543,7 +543,7 @@ contract MetaduesRoot {
         }(tvcFeeProxy.toSlice().loadRef(), fee_proxy_version, msg.sender);
     }
 
-    function upgradeAccount() external view onlyOwner {
+    function upgradeAccount() external view {
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -567,7 +567,7 @@ contract MetaduesRoot {
     }
 
     function upgradeSubscription(address service_address, TvmCell identificator)
-        public
+        external
         view
     {
         require(service_address != address(0), 1111);
@@ -597,7 +597,7 @@ contract MetaduesRoot {
         }(subscription_code_salt, subscription_version, msg.sender);
     }
 
-    function upgradeService(string service_name, string category) public view {
+    function upgradeService(string service_name, string category) external view {
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -632,7 +632,8 @@ contract MetaduesRoot {
         builder.store(service_version);
         builder.store(fee_proxy_version);
         builder.store(subscription_version);
-        //safe tvc and abi
+        builder.store(vrsparamsTvc);
+        builder.store(vrsparamsAbi);
         tvm.setcode(code);
         tvm.setCurrentCode(code);
         onCodeUpgrade(builder.toCell());
@@ -641,11 +642,12 @@ contract MetaduesRoot {
     function onCodeUpgrade(TvmCell upgrade_data) private {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvm.resetStorage();
-        (uint32 account_version_, address owner_, uint32 service_version_, uint32 fee_proxy_version_, uint32 subscription_version_) = upgrade_data.toSlice().decode(uint32, address, uint32, uint32, uint32);
+        (uint32 account_version_, address owner_, uint32 service_version_, uint32 fee_proxy_version_, uint32 subscription_version_,mapping(uint8 => VersionsTvcParams) vrsparamsTvc_,mapping(uint8 => VersionsAbiParams) vrsparamsAbi_) = upgrade_data.toSlice().decode(uint32, address, uint32, uint32, uint32,mapping(uint8 => VersionsTvcParams),mapping(uint8 => VersionsAbiParams));
         account_version = account_version_;
         service_version = service_version_;
         fee_proxy_version = fee_proxy_version_;
         subscription_version = subscription_version_;
+        
         owner = owner_;
         owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
