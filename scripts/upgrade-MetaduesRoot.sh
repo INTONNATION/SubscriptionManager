@@ -58,7 +58,7 @@ CONTRACT_ADDRESS=`cat MetaduesRoot.addr`
 #echo DEPLOY $1 -----------------------------------------------
 owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
 code=`tvm_linker decode --tvc ../abi/MetaduesRoot.tvc | grep code: | awk '{ print $2 }'`
-message=`tonos-cli -j body upgrade "{\"code\":\"$code\",\"send_gas_to\":\"$owner\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+message=`tonos-cli -j body upgrade "{\"code\":\"$code\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 5T --bounce true --allBalance false --payload "$message"
 # Categories
 categories=[\"DeFi\",\"Games\",\"NFTs\",\"Telegram\",\"Exchanges\",\"Media\",\"Books\",\"Food\",\"Insurance\",\"Health\",\"Other\"]

@@ -627,7 +627,6 @@ contract MetaduesRoot {
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
 
         TvmBuilder builder;
-        TvmBuilder upgrade_params;
         builder.store(account_version);
         builder.store(owner);
         builder.store(service_version);

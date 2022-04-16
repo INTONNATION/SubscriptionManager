@@ -122,7 +122,7 @@ contract MetaduesAccount {
             balance_wallet_struct current_balance_key_value = current_balance_struct
                     .get();
             uint128 current_balance = current_balance_key_value.balance;
-            if (value > current_balance) {
+            if (value >= current_balance) {
                 return{value: 0, flag: MsgFlag.REMAINING_GAS} 1;
             } else {
                 ITokenWallet(account_wallet).transferToWallet{
