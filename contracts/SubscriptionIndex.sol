@@ -38,7 +38,7 @@ contract SubscriptionIndex {
         subscription_owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
     }
 
-    function cancel() public onlyOwner {
-        selfdestruct(subscription_address);
+    function cancel() external onlyOwner {
+        selfdestruct(subscription_owner);
     }
 }

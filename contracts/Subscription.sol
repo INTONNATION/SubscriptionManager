@@ -149,7 +149,7 @@ contract Subscription {
         }
     }
 
-    function executeSubscription(uint128) external {
+    function executeSubscription() public {
         if (
             now >
             (subscription.payment_timestamp +
@@ -373,7 +373,7 @@ contract Subscription {
         }
     }
 
-    function cancel(uint128 grams) public onlyOwner {
+    function cancel(uint128 grams) external onlyOwner {
         ISubscriptionIndexContract(subscription_index_address).cancel{
             value: grams,
             flag: MsgFlag.SENDER_PAYS_FEES

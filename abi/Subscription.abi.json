@@ -31,7 +31,6 @@
 		{
 			"name": "executeSubscription",
 			"inputs": [
-				{"name":"value0","type":"uint128"}
 			],
 			"outputs": [
 			]
