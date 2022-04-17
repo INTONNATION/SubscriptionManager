@@ -359,7 +359,7 @@ contract Subscription {
             subscription_fee_value;
         preprocessing_window = (svcparams.period / 100) * 30;
         emit paramsRecieved(service_params_);
-        subscription = paymentStatus(svcparams.period, 0, 0, STATUS_NONACTIVE);
+        subscription = paymentStatus(svcparams.period, 0, 0, STATUS_NONACTIVE, 0);
         ITokenRoot(svcparams.currency_root).deployWallet{
             value: 0,
             bounce: false,
