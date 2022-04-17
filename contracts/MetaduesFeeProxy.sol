@@ -56,14 +56,20 @@ contract MetaduesFeeProxy {
         TvmCell payload
     ) external
     {
-        tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 0);
+        tvm.rawReserve(
+            math.max(
+                MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+                address(this).balance - msg.value
+            ),
+            2
+        );
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping.fetch(tokenRoot);
         if (current_balance_struct.hasValue()) {   
             balance_wallet_struct current_balance_key  = current_balance_struct.get();
             current_balance_key.balance += amount;    
             wallets_mapping[tokenRoot] = current_balance_key;
         }
-        remainingGasTo.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS });
+        remainingGasTo.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
     function swapRevenueToMTDS(address currency_root, address send_gas_to) external onlyRoot {

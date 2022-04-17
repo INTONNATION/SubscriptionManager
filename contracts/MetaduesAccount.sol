@@ -215,7 +215,7 @@ contract MetaduesAccount {
         ITokenWallet(account_wallet).transfer{
             value: 0,
             bounce: false,
-            flag: MsgFlag.REMAINING_GAS
+            flag: MsgFlag.ALL_NOT_RESERVED
         }(
             withdraw_value_,
             account_owner,
