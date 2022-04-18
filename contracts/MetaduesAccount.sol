@@ -104,7 +104,6 @@ contract MetaduesAccount {
         address service_address,
         uint128 pay_subscription_gas
     ) external responsible returns (uint8) {
-        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
         uint128 gas_ = (MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE + pay_subscription_gas);
         // require > MetaduesGas.TRANSFER_MIN_VALUE + something
         address subsciption_addr = address(
@@ -125,26 +124,26 @@ contract MetaduesAccount {
                     .get();
             uint128 current_balance = current_balance_key_value.balance;
             if (value >= current_balance) {
-                return{value: gas_, flag: 0} 1;
+                return{value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 1;
             } else {
                 ITokenWallet(account_wallet).transferToWallet{
                     value: MetaduesGas.TRANSFER_MIN_VALUE * 2 + pay_subscription_gas,
                     bounce: false,
-                    flag: 0
+                    flag: MsgFlag.SENDER_PAYS_FEES
                 }(
                     value,
                     subscription_wallet,
-                    msg.sender,
+                    address(this),
                     true,
                     payload
                 );
                 uint128 balance_after_pay = current_balance - value;
                 current_balance_key_value.balance = balance_after_pay;
                 wallets_mapping[currency_root] = current_balance_key_value;
-                return{value: gas_, flag: 0} 0;
+                return{value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 0;
             }
         } else {
-            return{value: gas_, flag: 0} 1;
+            return{value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 1;
         }
     }
 
