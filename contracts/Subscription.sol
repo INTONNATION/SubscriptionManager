@@ -166,7 +166,7 @@ contract Subscription {
                 subscription.gas = paySubscriptionGas;
                 subscription.execution_timestamp = uint32(now);
                 ISubscriptionService(service_address).getInfo{
-                    value: MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE,
+                    value: MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE + subscription.gas,
                     bounce: true, // need to handle
                     flag: 0,
                     callback: Subscription.onGetInfo           
