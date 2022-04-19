@@ -1,6 +1,7 @@
 pragma ton-solidity >=0.39.0;
 
 import "libraries/MsgFlag.sol";
+import "libraries/MetaduesErrors.sol";
 
 contract Platform {
     address static root;
@@ -13,6 +14,7 @@ contract Platform {
         uint32 version,
         address send_gas_to
     ) public {
+        require(msg.sender == root, MetaduesErrors.error_message_sender_is_not_metadues_root);
         if (msg.sender == root) {
             _initialize(code, contract_params, version, send_gas_to);
         } else {

@@ -3,7 +3,7 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/MetaduesRootErrors.sol";
+import "libraries/MetaduesErrors.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/MsgFlag.sol";
 import "libraries/MetaduesGas.sol";
@@ -102,12 +102,13 @@ contract MetaduesRoot {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, 111);
+        require(msg.sender == owner, MetaduesErrors.error_message_sender_is_not_my_owner);
         tvm.accept();
         _;
     }
 
     function transferOwner(address new_owner) external onlyOwner {
+        require(owner != new_owner, MetaduesErrors.error_message_sender_is_equal_owner);
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         pending_owner = new_owner;
         owner.transfer({ value: 0, flag: MsgFlag.REMAINING_GAS });
@@ -115,8 +116,12 @@ contract MetaduesRoot {
 
     function acceptOwner() external {
         require(
-            msg.sender == pending_owner && msg.sender.value != 0,
-            1111
+            msg.sender.value != 0,
+            MetaduesErrors.error_address_is_empty
+        );
+        require(
+            msg.sender == pending_owner,
+            MetaduesErrors.error_message_sender_is_not_pending_owner
         );
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         owner = pending_owner;
@@ -162,7 +167,7 @@ contract MetaduesRoot {
 
     // Settings
     function setTvcPlatform(TvmCell tvcPlatformInput) external onlyOwner {
-        require(!has_platform_code, 1111);
+        require(!has_platform_code, MetaduesErrors.error_platform_code_is_not_empty);
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
         tvcPlatform = tvcPlatformInput;
         has_platform_code = true;
@@ -409,7 +414,7 @@ contract MetaduesRoot {
         external
         onlyOwner
     {
-        require(fee_proxy_address != address(0), 1111);
+        require(fee_proxy_address != address(0), MetaduesErrors.error_address_is_empty);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -434,7 +439,7 @@ contract MetaduesRoot {
         external
         onlyOwner
     {
-        require(fee_proxy_address != address(0), 1111);
+        require(fee_proxy_address != address(0), MetaduesErrors.error_address_is_empty);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -457,7 +462,7 @@ contract MetaduesRoot {
         external
         onlyOwner
     {
-        require(fee_proxy_address != address(0), 1111);
+        require(fee_proxy_address != address(0), MetaduesErrors.error_address_is_empty);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -475,7 +480,7 @@ contract MetaduesRoot {
 
     // Managment
     function transferRevenueFromFeeProxy() external view onlyOwner {
-        require(fee_proxy_address != address(0), 1111);
+        require(fee_proxy_address != address(0), MetaduesErrors.error_address_is_empty);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -491,7 +496,7 @@ contract MetaduesRoot {
     }
 
     function swapRevenue(address currency_root) external view onlyOwner {
-        require(fee_proxy_address != address(0), 1111);
+        require(fee_proxy_address != address(0), MetaduesErrors.error_address_is_empty);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -511,7 +516,7 @@ contract MetaduesRoot {
         view
         onlyOwner
     {
-        require(fee_proxy_address != address(0), 1111);
+        require(fee_proxy_address != address(0), MetaduesErrors.error_address_is_empty);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -528,7 +533,7 @@ contract MetaduesRoot {
 
     // Upgrade contracts
     function upgradeFeeProxy() external view onlyOwner {
-        require(fee_proxy_address != address(0), 1111);
+        require(fee_proxy_address != address(0), MetaduesErrors.error_address_is_empty);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -570,7 +575,7 @@ contract MetaduesRoot {
         external
         view
     {
-        require(service_address != address(0), 1111);
+        require(service_address != address(0), MetaduesErrors.error_address_is_empty);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -622,7 +627,7 @@ contract MetaduesRoot {
     }
 
     function upgrade(TvmCell code) external onlyOwner {
-        require(msg.value >= MetaduesGas.UPGRADE_ROOT_MIN_VALUE, 1111);
+        require(msg.value >= MetaduesGas.UPGRADE_ROOT_MIN_VALUE, MetaduesErrors.error_message_low_value);
 
         tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
 
@@ -681,8 +686,7 @@ contract MetaduesRoot {
     }
 
     function deployAccount() external {
-        //require(msg.sender != address(0), MetaduesRootErrors.error_message_sender_address_not_specified);
-
+        require(msg.sender != address(0), MetaduesErrors.error_message_sender_address_not_specified);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -713,15 +717,15 @@ contract MetaduesRoot {
         uint128 deploy_subs_grams,
         uint128 deploy_index_grams
     ) external view {
-        require(service_address != address(0), 1111);
-        require(fee_proxy_address != address(0), 1111);
+        require(service_address != address(0), MetaduesErrors.error_address_is_empty);
+        require(fee_proxy_address != address(0), MetaduesErrors.error_address_is_empty);
         require(
             msg.value >=
                 (MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE +
                     MetaduesGas.INDEX_INITIAL_BALANCE * 2 +
                     deploy_subs_grams +
                     deploy_index_grams * 2),
-            1111
+            MetaduesErrors.error_message_low_value
         );
         tvm.rawReserve(
             math.max(
@@ -812,7 +816,7 @@ contract MetaduesRoot {
                     MetaduesGas.SET_SERVICE_INDEXES_VALUE +
                     deploy_service_grams +
                     deploy_index_grams * 3),
-            1111
+            MetaduesErrors.error_message_low_value
         );
         tvm.rawReserve(
             math.max(

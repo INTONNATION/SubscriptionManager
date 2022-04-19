@@ -5,7 +5,7 @@ pragma AbiHeader pubkey;
 
 import "SubscriptionIndex.sol";
 import "./Platform.sol";
-import "libraries/SubscriptionErrors.sol";
+import "libraries/MetaduesErrors.sol";
 import "libraries/MetaduesGas.sol";
 import "libraries/MsgFlag.sol";
 import "libraries/PlatformTypes.sol";
@@ -90,12 +90,12 @@ contract Subscription {
     event paramsRecieved(TvmCell service_params_);
 
     modifier onlyRoot() {
-        require(msg.sender == root, 111);
+        require(msg.sender == root, MetaduesErrors.error_message_sender_is_not_metadues_root);
         _;
     }
 
     modifier onlyOwner() {
-        //require(msg.sender == owner_address, SubscriptionErrors.error_message_sender_is_not_owner); // need fix | is 0:00000 now
+        //require(msg.sender == owner_address, MetaduesErrors.error_message_sender_is_not_owner); // need fix | is 0:00000 now
         _;
     }
 
@@ -104,7 +104,7 @@ contract Subscription {
     }
 
     modifier onlyCurrencyRoot() {
-        require(msg.sender == svcparams.currency_root, 111);
+        require(msg.sender == svcparams.currency_root, MetaduesErrors.error_message_sender_is_not_currency_root);
         _;
     }
 
@@ -177,7 +177,7 @@ contract Subscription {
         } else {
             require(
                 subscription.status == STATUS_ACTIVE,
-                SubscriptionErrors.error_subscription_status_already_active
+                MetaduesErrors.error_subscription_status_already_active
             );
         }
     }
@@ -206,7 +206,7 @@ contract Subscription {
                 subscription.gas
             );
         } else {
-            revert(1111);
+            revert(MetaduesErrors.error_subscription_status_already_active);
         }
     }
 
@@ -243,7 +243,7 @@ contract Subscription {
             ),
             2
         );
-        //require(amount >= svcparams.value, 111);
+        require(amount >= svcparams.service_value, MetaduesErrors.error_not_enough_balance_in_message);
         uint128 service_value_percentage = svcparams.service_value / 100;
         uint128 service_fee_value = service_value_percentage * service_fee;
         uint128 protocol_fee = (svcparams.subscription_value -
@@ -283,6 +283,7 @@ contract Subscription {
     }
 
     function onPaySubscription(uint8 status) external {
+        require(msg.sender == account_address, MetaduesErrors.error_message_sender_is_not_my_owner);
         // allow onlylAccount
         if (status == 1) {
             subscription.status = STATUS_NONACTIVE;

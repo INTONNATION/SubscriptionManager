@@ -3,7 +3,7 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/SubscriptionErrors.sol";
+import "libraries/MetaduesErrors.sol";
 import "libraries/MetaduesGas.sol";
 import "libraries/MsgFlag.sol";
 
@@ -16,7 +16,7 @@ contract SubscriptionIndex {
     modifier onlyOwner() {
         require(
             msg.sender == subscription_address,
-            SubscriptionErrors.error_message_sender_is_not_my_owner
+            MetaduesErrors.error_message_sender_is_not_my_owner
         );
         _;
     }
@@ -29,7 +29,7 @@ contract SubscriptionIndex {
         );
         require(
             msg.sender == root_,
-            SubscriptionErrors.error_message_sender_is_not_root
+            MetaduesErrors.error_message_sender_is_not_root
         );
         tvm.rawReserve(MetaduesGas.INDEX_INITIAL_BALANCE, 2);
         root = root_;

@@ -3,7 +3,7 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/MetaduesRootErrors.sol";
+import "libraries/MetaduesErrors.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/MetaduesGas.sol";
 import "libraries/MsgFlag.sol";

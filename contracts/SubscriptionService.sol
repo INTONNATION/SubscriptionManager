@@ -3,7 +3,7 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/SubscriptionServiceErrors.sol";
+import "libraries/MetaduesErrors.sol";
 import "libraries/MetaduesGas.sol";
 import "libraries/MsgFlag.sol";
 
@@ -46,13 +46,13 @@ contract SubscriptionService {
     }
 
     modifier onlyOwner() {
-        // require service_owner
+        require(msg.sender == service_owner, MetaduesErrors.error_message_sender_is_not_my_owner);
         tvm.accept();
         _;
     }
 
     modifier onlyRoot() {
-        require(msg.sender == root, 111);
+        require(msg.sender == root, MetaduesErrors.error_message_sender_is_not_root);
         _;
     }
 

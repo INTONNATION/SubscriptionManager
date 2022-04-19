@@ -3,7 +3,7 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/SubscriptionServiceErrors.sol";
+import "libraries/MetaduesErrors.sol";
 import "libraries/MetaduesGas.sol";
 import "libraries/MsgFlag.sol";
 
@@ -16,7 +16,7 @@ contract SubscriptionServiceIdentificatorIndex {
     modifier onlyOwner() {
         require(
             msg.sender == service_address,
-            SubscriptionServiceErrors.error_message_sender_is_not_service_owner
+            MetaduesErrors.error_message_sender_is_not_service_owner
         );
         _;
     }
@@ -24,17 +24,17 @@ contract SubscriptionServiceIdentificatorIndex {
     constructor(address serviceAddress_) public {
         require(
             msg.value >= MetaduesGas.INDEX_INITIAL_BALANCE,
-            1111
+            MetaduesErrors.error_message_low_value
         );
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
-        require(salt.hasValue(), SubscriptionServiceErrors.error_salt_is_empty);
+        require(salt.hasValue(), MetaduesErrors.error_salt_is_empty);
         (TvmCell identificator_, address root_) = salt
             .get()
             .toSlice()
             .decode(TvmCell, address);
         require(
             msg.sender == root_,
-            SubscriptionServiceErrors.error_message_sender_is_not_metadues_root
+            MetaduesErrors.error_message_sender_is_not_metadues_root
         );
         tvm.rawReserve(MetaduesGas.INDEX_INITIAL_BALANCE, 2);
         root = root_;
