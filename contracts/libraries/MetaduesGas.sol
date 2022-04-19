@@ -11,16 +11,9 @@ library MetaduesGas {
 
     uint128 constant DEPLOY_ACCOUNT_MIN_VALUE               = 2 ton;
     uint128 constant DEPLOY_SUBSCRIPTION_MIN_VALUE          = 1 ton;
-    uint128 constant DEPLOY_FEE_PROXY_MIN_VALUE             = 1 ton;
 
     uint128 constant SET_SERVICE_INDEXES_VALUE              = 0.5 ton;
-    uint128 constant TRANSFER_ROOT_OWNERSHIP_VALUE          = 0.5 ton;
-    uint128 constant GET_TOKEN_DETAILS_VALUE                = 0.5 ton;
     uint128 constant EXECUTE_SUBSCRIPTION_VALUE             = 1 ton;
-
-
-    uint128 constant PLATFORM_DEPLOY_VALUE                  = 0.1 ton;
-    uint128 constant SET_PLATFORM_CODE_VALUE                = 0.1 ton;
 
     uint128 constant UPGRADE_ROOT_MIN_VALUE                 = 2 ton;
     uint128 constant UPGRADE_ACCOUNT_MIN_VALUE              = 2 ton;
@@ -28,7 +21,6 @@ library MetaduesGas {
     uint128 constant UPGRADE_FEE_PROXY_MIN_VALUE            = 2 ton;
 
     uint128 constant TRANSFER_MIN_VALUE                     = 0.6 ton;
-    uint128 constant SUCCESS_CALLBACK_VALUE                 = 0.1 ton;
     uint128 constant DEPLOY_EMPTY_WALLET_VALUE              = 0.5 ton;
     uint128 constant DEPLOY_EMPTY_WALLET_GRAMS              = 0.2 ton;
 }
