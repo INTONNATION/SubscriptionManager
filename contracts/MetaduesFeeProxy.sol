@@ -3,7 +3,7 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/MetaduesFeeErrors.sol";
+import "libraries/MetaduesErrors.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/MsgFlag.sol";
 import "libraries/MetaduesGas.sol";
@@ -38,12 +38,12 @@ contract MetaduesFeeProxy {
     constructor() public { revert(); }
 
     modifier onlyRoot() {
-        require(msg.sender == root, 111);
+        require(msg.sender == root, MetaduesErrors.error_message_sender_is_not_root);
         _;
     }
     
     modifier onlyDexRoot() {
-        require(msg.sender == dex_root_address, 222);
+        require(msg.sender == dex_root_address, MetaduesErrors.error_message_sender_is_not_dex_root);
         _;
     }
 
@@ -80,7 +80,7 @@ contract MetaduesFeeProxy {
             ),
             2
         );
-        require(sync_balance_currency_root == address(0), 335); // mutex
+        require(sync_balance_currency_root == address(0), MetaduesErrors.error_address_is_empty); // mutex
         sync_balance_currency_root = currency_root; // critical area
         _tmp_deploying_wallets[currency_root] = send_gas_to;
         optional(balance_wallet_struct) current_balance_struct_opt = wallets_mapping.fetch(currency_root); 
@@ -107,8 +107,8 @@ contract MetaduesFeeProxy {
             ),
             2
         );
-        require(msg.value > MetaduesGas.TRANSFER_MIN_VALUE, 1111);
-        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), 1111);
+        require(msg.value > MetaduesGas.TRANSFER_MIN_VALUE, MetaduesErrors.error_message_low_value);
+        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), MetaduesErrors.error_wallet_not_exist);
         TvmBuilder builder;
         builder.store(DexOperationTypes.EXCHANGE);
         builder.store(uint64(0));
@@ -136,7 +136,7 @@ contract MetaduesFeeProxy {
     }
 
     function syncBalance(address currency_root, address send_gas_to) external onlyRoot {
-        require(sync_balance_currency_root == address(0), 335); // mutex
+        require(sync_balance_currency_root == address(0), MetaduesErrors.error_address_is_empty); // mutex
         _tmp_deploying_wallets[currency_root] = send_gas_to;
         tvm.rawReserve(
             math.max(
@@ -170,7 +170,7 @@ contract MetaduesFeeProxy {
     }
 
     function onBalanceOf(uint128 balance_) external {
-        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), 1111);
+        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), MetaduesErrors.error_wallet_not_exist);
         tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
         address send_gas_to = _tmp_deploying_wallets[msg.sender];
         uint128 balance_wallet = balance_;
@@ -183,7 +183,7 @@ contract MetaduesFeeProxy {
     }
 
     function transferRevenue(address revenue_to, address send_gas_to) external onlyRoot {
-        require(msg.value >= (MetaduesGas.TRANSFER_MIN_VALUE), 1111);
+        require(msg.value >= (MetaduesGas.TRANSFER_MIN_VALUE), MetaduesErrors.error_message_low_value);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -233,7 +233,7 @@ contract MetaduesFeeProxy {
     }
 
     function upgrade(TvmCell code,  uint32 version, address send_gas_to) external onlyRoot {
-        require(msg.value > MetaduesGas.UPGRADE_FEE_PROXY_MIN_VALUE, 1111);
+        require(msg.value > MetaduesGas.UPGRADE_FEE_PROXY_MIN_VALUE, MetaduesErrors.error_message_low_value);
 
         tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 
@@ -276,7 +276,7 @@ contract MetaduesFeeProxy {
     
     function setSupportedCurrencies(TvmCell fee_proxy_contract_params, address send_gas_to) external onlyRoot {
         (address[] currencies) = fee_proxy_contract_params.toSlice().decode(address[]);
-        require(msg.value > (MetaduesGas.DEPLOY_EMPTY_WALLET_VALUE * currencies.length), 1111);
+        require(msg.value > (MetaduesGas.DEPLOY_EMPTY_WALLET_VALUE * currencies.length), MetaduesErrors.error_message_low_value);
         tvm.rawReserve(
             math.max(
                 MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -303,7 +303,7 @@ contract MetaduesFeeProxy {
     }
 
     function onDeployWallet(address wallet_address) external {
-        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), 1111);
+        require(_tmp_deploying_wallets.exists(msg.sender) && !wallets_mapping.exists(msg.sender), MetaduesErrors.error_wallet_not_exist);
         tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
         address send_gas_to = _tmp_deploying_wallets[msg.sender];
         wallets_mapping[msg.sender].wallet = wallet_address;
