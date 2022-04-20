@@ -17,6 +17,14 @@ import "../contracts/Subscription.sol";
 import "../contracts/SubscriptionService.sol";
 import "../contracts/SubscriptionServiceIdentificatorIndex.sol";
 
+interface IPlatform {
+    function initializeByRoot(
+       TvmCell code,
+       TvmCell contract_params,
+       uint32 version
+    ) external;
+}
+
 contract MetaduesRoot {
     uint8 public versionTvc;
     uint8 public versionAbi;
@@ -685,8 +693,9 @@ contract MetaduesRoot {
         fee_proxy_address = address(platform);
     }
 
-    function deployAccount() external {
+    function deployAccount(uint256 pubkey) external {
         require(msg.sender != address(0), MetaduesErrors.error_message_sender_address_not_specified);
+        // calculate msg.sender from platform and check
         tvm.rawReserve(
             math.max(
                 MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -696,18 +705,14 @@ contract MetaduesRoot {
         );
 
         TvmCell account_params;
-        Platform platform = new Platform{
-            stateInit: _buildInitData(
-                PlatformTypes.Account,
-                _buildPlatformParams(msg.sender)
-            ),
+        
+        IPlatform(msg.sender).initializeByRoot{
             value: 0,
             flag: MsgFlag.ALL_NOT_RESERVED
         }(
             tvcMetaduesAccount.toSlice().loadRef(),
             account_params,
-            account_version,
-            msg.sender
+            account_version
         );
     }
 
@@ -1018,6 +1023,17 @@ contract MetaduesRoot {
     {
         TvmBuilder builder;
         builder.store(account_owner);
+        return builder.toCell();
+    }
+
+    function _buildPlatformParamsPubkey(uint256 pubkey)
+        private
+        inline
+        pure
+        returns (TvmCell)
+    {
+        TvmBuilder builder;
+        builder.store(pubkey);
         return builder.toCell();
     }
 
