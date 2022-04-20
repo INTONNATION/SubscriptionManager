@@ -19,7 +19,6 @@ contract MetaduesAccount {
     TvmCell platform_params;
     uint32 current_version;
     uint8 type_id;
-    address account_owner;
     uint128 public withdraw_value;
     address public sync_balance_currency_root;
     address owner;
@@ -39,7 +38,7 @@ contract MetaduesAccount {
     }
 
     modifier onlyOwner() {
-        //account_owner
+        require(msg.pubkey() == tvm.pubkey(), 100);
         tvm.accept();
         _;
     }
@@ -49,15 +48,13 @@ contract MetaduesAccount {
 
     function upgrade(
         TvmCell code,
-        uint32 version,
-        address send_gas_to
-    ) external onlyRoot {
+        uint32 version
+    ) external onlyOwner {
         tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 
         TvmBuilder builder;
         TvmBuilder upgrade_params;
         builder.store(root);
-        builder.store(send_gas_to);
         builder.store(current_version);
         builder.store(version);
         builder.store(type_id);
@@ -76,11 +73,10 @@ contract MetaduesAccount {
         TvmSlice s = upgrade_data.toSlice();
         (
             address root_,
-            address send_gas_to,
             uint32 old_version,
             uint32 version,
             uint8 type_id_
-        ) = s.decode(address, address, uint32, uint32, uint8);
+        ) = s.decode(address, uint32, uint32, uint8);
 
         if (old_version == 0) {
             tvm.resetStorage();
@@ -91,9 +87,6 @@ contract MetaduesAccount {
         platform_params = s.loadRef();
         current_version = version;
         type_id = type_id_;
-        account_owner = platform_params.toSlice().decode(address);
-
-        send_gas_to.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS });
     }
 
     function paySubscription(
@@ -110,7 +103,7 @@ contract MetaduesAccount {
             tvm.hash(
                 _buildInitData(
                     PlatformTypes.Subscription,
-                    _buildSubscriptionParams(account_owner, service_address)
+                    _buildSubscriptionParams(address(this), service_address)
                 )
             )
         );
@@ -149,13 +142,7 @@ contract MetaduesAccount {
 
     function syncBalance(address currency_root) external onlyOwner {
         require(sync_balance_currency_root == address(0), 335);
-        tvm.rawReserve(
-            math.max(
-                MetaduesGas.ACCOUNT_INITIAL_BALANCE,
-                address(this).balance - msg.value
-            ),
-            2
-        );        
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);     
         sync_balance_currency_root = currency_root;
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(currency_root);
@@ -164,20 +151,13 @@ contract MetaduesAccount {
         address account_wallet = current_balance_key.wallet;
         TIP3TokenWallet(account_wallet).balance{
             value: 0,
-            bounce: false,
+            bounce: true,
             flag: MsgFlag.ALL_NOT_RESERVED,
             callback: MetaduesAccount.onBalanceOf
         }();
     }
 
     function onBalanceOf(uint128 balance_) external {
-        tvm.rawReserve(
-            math.max(
-                MetaduesGas.ACCOUNT_INITIAL_BALANCE,
-                address(this).balance - msg.value
-            ),
-            2
-        );
         uint128 balance_wallet = balance_;
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(sync_balance_currency_root);
@@ -186,20 +166,14 @@ contract MetaduesAccount {
         current_balance_key.balance = balance_wallet;
         wallets_mapping[sync_balance_currency_root] = current_balance_key;
         sync_balance_currency_root = address(0);
-        account_owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
-    function withdrawFunds(address currency_root, uint128 withdraw_value_)
+    function withdrawFunds(address currency_root, uint128 withdraw_value_, address withdraw_to)
         external
         onlyOwner
     {
-        tvm.rawReserve(
-            math.max(
-                MetaduesGas.ACCOUNT_INITIAL_BALANCE,
-                address(this).balance - msg.value
-            ),
-            2
-        );
+        tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);     
+
         optional(balance_wallet_struct) current_balance_struct = wallets_mapping
             .fetch(currency_root);
         balance_wallet_struct current_balance_key = current_balance_struct
@@ -217,16 +191,16 @@ contract MetaduesAccount {
             flag: MsgFlag.ALL_NOT_RESERVED
         }(
             withdraw_value_,
-            account_owner,
+            withdraw_to,
             0,
-            account_owner,
+            address(this),
             true,
             payload
         );
     }
 
-    function destroyAccount() public onlyOwner {
-        selfdestruct(account_owner);
+    function destroyAccount(address send_gas_to) public onlyOwner {
+        selfdestruct(send_gas_to);
     }
 
     function onAcceptTokensTransfer(
@@ -279,9 +253,5 @@ contract MetaduesAccount {
                 pubkey: 0,
                 code: platform_code
             });
-    }
-
-    function getOwner() external view responsible returns (address wner) {
-        return account_owner;
     }
 }
