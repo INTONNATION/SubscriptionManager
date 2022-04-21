@@ -26,6 +26,7 @@ interface IMetaduesAccount {
 interface ISubscriptionService {
     function getParams() external view responsible returns (TvmCell);
     function getInfo() external view responsible returns (TvmCell);
+    function cancel() external;
 }
 
 interface ISubscriptionIndexContract {
@@ -390,7 +391,7 @@ contract Subscription {
         }
     }
 
-    function cancel(uint128 grams) external onlyOwner {
+    function cancel(uint128 grams) external onlyRoot {
         ISubscriptionIndexContract(subscription_index_address).cancel{
             value: grams,
             flag: MsgFlag.SENDER_PAYS_FEES
