@@ -740,7 +740,8 @@ contract MetaduesRoot {
 			tvcFeeProxy.toSlice().loadRef(),
 			fee_proxy_contract_params,
 			fee_proxy_version,
-			msg.sender
+			msg.sender,
+            0
 		);
 		fee_proxy_address = address(platform);
 	}
@@ -891,7 +892,8 @@ contract MetaduesRoot {
 			subscription_code_salt,
 			service_params.toCell(),
 			subscription_version,
-			msg.sender
+			msg.sender,
+            0
 		);
 		new SubscriptionIndex{
 			value: MetaduesGas.INDEX_INITIAL_BALANCE +
@@ -962,7 +964,7 @@ contract MetaduesRoot {
 			value: MetaduesGas.SERVICE_INITIAL_BALANCE +
 				(additional_gas / 4 - 100),
 			flag: MsgFlag.SENDER_PAYS_FEES
-		}(service_code_salt, service_params, service_version, msg.sender);
+		}(service_code_salt, service_params, service_version, msg.sender,0);
 		TvmCell serviceIndexStateInit = _buildServiceIndex(
 			msg.sender,
 			service_name
