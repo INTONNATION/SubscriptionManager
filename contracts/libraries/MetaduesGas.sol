@@ -18,6 +18,7 @@ library MetaduesGas {
     uint128 constant UPGRADE_ROOT_MIN_VALUE                 = 2 ton;
     uint128 constant UPGRADE_ACCOUNT_MIN_VALUE              = 2 ton;
     uint128 constant UPGRADE_SUBSCRIPTION_MIN_VALUE         = 2 ton;
+    uint128 constant UPGRADE_SERVICE_MIN_VALUE              = 2 ton;
     uint128 constant UPGRADE_FEE_PROXY_MIN_VALUE            = 2 ton;
 
     uint128 constant TRANSFER_MIN_VALUE                     = 0.6 ton;

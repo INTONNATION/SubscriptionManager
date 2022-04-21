@@ -12,6 +12,14 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol"
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
+interface IMetaduesRootA {
+    function upgradeAccount(uint256 pubkey) external;
+	function deploySubscription(address service_address, TvmCell identificator, uint256 owner_pubkey, uint128 additional_gas) external;
+	function upgradeSubscription(address service_address, TvmCell identificator) external;
+	function upgradeService(string service_name, string category) external;
+	function deployService(TvmCell service_params, TvmCell identificator, uint128 additional_gas) external;
+}
+
 contract MetaduesAccount {
     mapping(address => balance_wallet_struct) public wallets_mapping;
     address public root;
@@ -46,10 +54,18 @@ contract MetaduesAccount {
     event Deposit(address walletAddress, uint128 amount);
     event Withdraw(address walletAddress, uint128 amount);
 
+    function upgradeAccount(uint128 additional_gas) public onlyOwner {
+        IMetaduesRootA(root).upgradeAccount{
+            value: MetaduesGas.UPGRADE_ACCOUNT_MIN_VALUE + additional_gas,
+            bounce: true,
+            flag: 0
+        }(tvm.pubkey());
+    }
+
     function upgrade(
         TvmCell code,
         uint32 version
-    ) external onlyOwner {
+    ) external onlyRoot {
         tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 
         TvmBuilder builder;
@@ -156,6 +172,64 @@ contract MetaduesAccount {
             callback: MetaduesAccount.onBalanceOf
         }();
     }
+
+	function upgradeSubscription(address service_address, TvmCell identificator, uint128 additional_gas) public onlyOwner {
+		IMetaduesRootA(root).upgradeSubscription
+		{
+            value: MetaduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE + additional_gas,
+            bounce: true,
+            flag: 0			
+		}(
+			service_address,
+			identificator
+		);		
+	}
+
+    function deployService(TvmCell service_params, TvmCell identificator, uint128 additional_gas) public onlyOwner {
+		IMetaduesRootA(root).deployService
+		{
+            value: MetaduesGas.SERVICE_INITIAL_BALANCE +
+                    MetaduesGas.INDEX_INITIAL_BALANCE * 2 +
+                    MetaduesGas.SET_SERVICE_INDEXES_VALUE +
+                    additional_gas,
+            bounce: true,
+            flag: 0
+		}(
+			service_params,
+			identificator,
+            additional_gas
+		);		
+	}
+	
+	function upgradeService(string service_name, string category, uint128 additional_gas) public onlyOwner {
+		IMetaduesRootA(root).upgradeService
+		{
+            value: MetaduesGas.UPGRADE_SERVICE_MIN_VALUE + additional_gas,
+            bounce: true,
+            flag: 0			
+		}(
+			service_name,
+			category
+		);
+	}
+
+	function deploySubscription(
+        address service_address,
+        TvmCell identificator,
+        uint128 additional_gas
+	) public onlyOwner {
+		IMetaduesRootA(root).deploySubscription
+		{
+            value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE + MetaduesGas.INDEX_INITIAL_BALANCE * 2 + additional_gas,
+            bounce: true,
+            flag: 0			
+		}(
+			service_address,
+			identificator,
+			tvm.pubkey(),
+            additional_gas
+		);
+	}
 
     function onBalanceOf(uint128 balance_) external {
         uint128 balance_wallet = balance_;

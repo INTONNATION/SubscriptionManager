@@ -1,7 +1,7 @@
 {
 	"ABI version": 2,
 	"version": "2.2",
-	"header": ["time"],
+	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
 			"name": "constructor",
@@ -10,6 +10,16 @@
 				{"name":"contract_params","type":"cell"},
 				{"name":"version","type":"uint32"},
 				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "initializeByRoot",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"contract_params","type":"cell"},
+				{"name":"version","type":"uint32"}
 			],
 			"outputs": [
 			]

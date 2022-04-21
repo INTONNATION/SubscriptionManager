@@ -11,11 +11,18 @@
 			]
 		},
 		{
+			"name": "upgradeAccount",
+			"inputs": [
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgrade",
 			"inputs": [
 				{"name":"code","type":"cell"},
-				{"name":"version","type":"uint32"},
-				{"name":"send_gas_to","type":"address"}
+				{"name":"version","type":"uint32"}
 			],
 			"outputs": [
 			]
@@ -44,6 +51,46 @@
 			]
 		},
 		{
+			"name": "upgradeSubscription",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"identificator","type":"cell"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployService",
+			"inputs": [
+				{"name":"service_params","type":"cell"},
+				{"name":"identificator","type":"cell"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeService",
+			"inputs": [
+				{"name":"service_name","type":"string"},
+				{"name":"category","type":"string"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deploySubscription",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"identificator","type":"cell"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "onBalanceOf",
 			"inputs": [
 				{"name":"balance_","type":"uint128"}
@@ -55,7 +102,8 @@
 			"name": "withdrawFunds",
 			"inputs": [
 				{"name":"currency_root","type":"address"},
-				{"name":"withdraw_value_","type":"uint128"}
+				{"name":"withdraw_value_","type":"uint128"},
+				{"name":"withdraw_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -63,6 +111,7 @@
 		{
 			"name": "destroyAccount",
 			"inputs": [
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -78,15 +127,6 @@
 				{"name":"payload","type":"cell"}
 			],
 			"outputs": [
-			]
-		},
-		{
-			"name": "getOwner",
-			"inputs": [
-				{"name":"answerId","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"wner","type":"address"}
 			]
 		},
 		{
@@ -154,7 +194,6 @@
 		{"name":"platform_params","type":"cell"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
-		{"name":"account_owner","type":"address"},
 		{"name":"withdraw_value","type":"uint128"},
 		{"name":"sync_balance_currency_root","type":"address"},
 		{"name":"owner","type":"address"}
