@@ -333,6 +333,7 @@
 		{
 			"name": "upgradeAccount",
 			"inputs": [
+				{"name":"pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -374,6 +375,7 @@
 		{
 			"name": "deployAccount",
 			"inputs": [
+				{"name":"pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -383,8 +385,8 @@
 			"inputs": [
 				{"name":"service_address","type":"address"},
 				{"name":"identificator","type":"cell"},
-				{"name":"deploy_subs_grams","type":"uint128"},
-				{"name":"deploy_index_grams","type":"uint128"}
+				{"name":"owner_pubkey","type":"uint256"},
+				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -394,8 +396,7 @@
 			"inputs": [
 				{"name":"service_params","type":"cell"},
 				{"name":"identificator","type":"cell"},
-				{"name":"deploy_service_grams","type":"uint128"},
-				{"name":"deploy_index_grams","type":"uint128"}
+				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -403,7 +404,7 @@
 		{
 			"name": "accountOf",
 			"inputs": [
-				{"name":"owner_address_","type":"address"}
+				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
 				{"name":"account","type":"address"}
