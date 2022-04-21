@@ -61,6 +61,24 @@
 			]
 		},
 		{
+			"name": "cancelSubscription",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "cancelService",
+			"inputs": [
+				{"name":"service_name","type":"string"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "deployService",
 			"inputs": [
 				{"name":"service_params","type":"cell"},

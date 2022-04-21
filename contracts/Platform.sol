@@ -33,13 +33,14 @@ contract Platform {
                 });
             }
         } else if (msg.isExternal) {
-            require(msg.pubkey() == tvm.pubkey(), 100);
+            uint256 pubkey = tvm.pubkey();
+            require(msg.pubkey() == pubkey, 100);
             tvm.accept();
             IMetaduesRoot(root).deployAccount{
                 value: MetaduesGas.DEPLOY_ACCOUNT_MIN_VALUE,
                 bounce: true,
                 flag: 0
-            }(tvm.pubkey());
+            }(pubkey);
         }
     }
 

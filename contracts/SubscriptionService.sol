@@ -179,7 +179,7 @@ contract SubscriptionService {
         service_owner.transfer({ value: 0, flag: MsgFlag.ALL_NOT_RESERVED });
     }
 
-    function cancel() public onlyOwner {
+    function cancel() external onlyRoot {
         ISubscriptionServiceIndexContract(subscription_service_index_address)
             .cancel();
         ISubscriptionServiceIndexContract(

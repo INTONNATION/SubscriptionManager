@@ -18,6 +18,8 @@ interface IMetaduesRootA {
 	function upgradeSubscription(address service_address, TvmCell identificator) external;
 	function upgradeService(string service_name, string category) external;
 	function deployService(TvmCell service_params, TvmCell identificator, uint128 additional_gas) external;
+	function cancelService(string name) external;
+	function cancelSubscription(address service_address) external;
 }
 
 contract MetaduesAccount {
@@ -182,6 +184,28 @@ contract MetaduesAccount {
 		}(
 			service_address,
 			identificator
+		);		
+	}
+
+	function cancelSubscription(address service_address, uint128 additional_gas) public onlyOwner {
+		IMetaduesRootA(root).cancelSubscription
+		{
+            value: MetaduesGas.CANCEL_MIN_VALUE + additional_gas,
+            bounce: true,
+            flag: 0			
+		}(
+			service_address
+		);		
+	}
+
+	function cancelService(string service_name, uint128 additional_gas) public onlyOwner {
+		IMetaduesRootA(root).cancelService
+		{
+            value: MetaduesGas.CANCEL_MIN_VALUE + additional_gas,
+            bounce: true,
+            flag: 0			
+		}(
+			service_name
 		);		
 	}
 
