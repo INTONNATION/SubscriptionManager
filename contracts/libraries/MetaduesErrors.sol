@@ -28,5 +28,6 @@ library MetaduesErrors {
 
     uint8 constant error_wallet_not_exist                        = 120;
     uint8 constant error_subscription_status_already_active      = 121;
+    uint8 constant subscription_unknown_account_address         = 122;
 
 }

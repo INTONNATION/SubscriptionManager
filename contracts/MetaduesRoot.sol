@@ -835,6 +835,8 @@ contract MetaduesRoot {
 		require(
 			msg.value >=
 				(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE +
+					MetaduesGas.INIT_SUBSCRIPTION_VALUE +
+					MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 					MetaduesGas.INDEX_INITIAL_BALANCE *
 					2 +
 					additional_gas),
@@ -885,7 +887,8 @@ contract MetaduesRoot {
 				PlatformTypes.Subscription,
 				_buildSubscriptionPlatformParams(msg.sender, service_address)
 			),
-			value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE +
+			value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE + 
+				MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 				(additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
@@ -971,7 +974,8 @@ contract MetaduesRoot {
 		);
 		TvmCell serviceIdentificatorIndexStateInit = _buildServiceIdentificatorIndex(
 				msg.sender,
-				identificator
+				identificator,
+				address(platform)
 			);
 		SubscriptionService(address(platform)).setIndexes{
 			value: MetaduesGas.SET_SERVICE_INDEXES_VALUE +
@@ -995,7 +999,7 @@ contract MetaduesRoot {
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: serviceIdentificatorIndexStateInit
-			}(address(platform));
+			}();
 		}
 		msg.sender.transfer({
 			value: 0,
@@ -1090,7 +1094,8 @@ contract MetaduesRoot {
 
 	function _buildServiceIdentificatorIndex(
 		address serviceOwner,
-		TvmCell identificator_
+		TvmCell identificator_,
+		address service_address
 	) private view returns (TvmCell) {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(identificator_, address(this));
@@ -1101,7 +1106,7 @@ contract MetaduesRoot {
 		TvmCell state = tvm.buildStateInit({
 			code: code,
 			pubkey: 0,
-			varInit: {service_owner: serviceOwner},
+			varInit: {service_owner: serviceOwner, service_address: service_address},
 			contr: SubscriptionServiceIdentificatorIndex
 		});
 		return state;

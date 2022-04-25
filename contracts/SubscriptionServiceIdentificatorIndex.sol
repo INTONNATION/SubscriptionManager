@@ -9,7 +9,7 @@ import "libraries/MsgFlag.sol";
 
 contract SubscriptionServiceIdentificatorIndex {
     address static service_owner;
-    address public service_address;
+    address static public service_address;
     address public root;
     TvmCell public identificator;
 
@@ -21,7 +21,7 @@ contract SubscriptionServiceIdentificatorIndex {
         _;
     }
 
-    constructor(address serviceAddress_) public {
+    constructor() public {
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), MetaduesErrors.error_salt_is_empty);
         (TvmCell identificator_, address root_) = salt
@@ -34,7 +34,6 @@ contract SubscriptionServiceIdentificatorIndex {
         );
         tvm.rawReserve(MetaduesGas.INDEX_INITIAL_BALANCE, 2);
         root = root_;
-        service_address = serviceAddress_;
         identificator = identificator_;
         service_owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
     }

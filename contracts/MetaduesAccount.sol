@@ -244,7 +244,7 @@ contract MetaduesAccount {
 	) public onlyOwner {
 		IMetaduesRootA(root).deploySubscription
 		{
-            value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE + MetaduesGas.INDEX_INITIAL_BALANCE * 2 + additional_gas + MetaduesGas.INIT_MESSAGE_VALUE,
+            value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE + MetaduesGas.INIT_SUBSCRIPTION_VALUE + MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE + MetaduesGas.INDEX_INITIAL_BALANCE * 2 + additional_gas + MetaduesGas.INIT_MESSAGE_VALUE,
             bounce: true,
             flag: 0			
 		}(
@@ -351,5 +351,9 @@ contract MetaduesAccount {
                 pubkey: 0,
                 code: platform_code
             });
+    }
+
+    function destroy(address to) public {   
+        selfdestruct(to);
     }
 }
