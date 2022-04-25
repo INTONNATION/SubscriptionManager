@@ -58,7 +58,7 @@ contract MetaduesAccount {
 
     function upgradeAccount(uint128 additional_gas) public onlyOwner {
         IMetaduesRootA(root).upgradeAccount{
-            value: MetaduesGas.UPGRADE_ACCOUNT_MIN_VALUE + additional_gas,
+            value: MetaduesGas.UPGRADE_ACCOUNT_MIN_VALUE + additional_gas + MetaduesGas.INIT_MESSAGE_VALUE,
             bounce: true,
             flag: 0
         }(tvm.pubkey());
@@ -178,7 +178,7 @@ contract MetaduesAccount {
 	function upgradeSubscription(address service_address, TvmCell identificator, uint128 additional_gas) public onlyOwner {
 		IMetaduesRootA(root).upgradeSubscription
 		{
-            value: MetaduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE + additional_gas,
+            value: MetaduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE + additional_gas + MetaduesGas.INIT_MESSAGE_VALUE,
             bounce: true,
             flag: 0			
 		}(
@@ -215,7 +215,7 @@ contract MetaduesAccount {
             value: MetaduesGas.SERVICE_INITIAL_BALANCE +
                     MetaduesGas.INDEX_INITIAL_BALANCE * 2 +
                     MetaduesGas.SET_SERVICE_INDEXES_VALUE +
-                    additional_gas,
+                    additional_gas + MetaduesGas.INIT_MESSAGE_VALUE,
             bounce: true,
             flag: 0
 		}(
@@ -228,7 +228,7 @@ contract MetaduesAccount {
 	function upgradeService(string service_name, string category, uint128 additional_gas) public onlyOwner {
 		IMetaduesRootA(root).upgradeService
 		{
-            value: MetaduesGas.UPGRADE_SERVICE_MIN_VALUE + additional_gas,
+            value: MetaduesGas.UPGRADE_SERVICE_MIN_VALUE + additional_gas + MetaduesGas.INIT_MESSAGE_VALUE,
             bounce: true,
             flag: 0			
 		}(
@@ -244,7 +244,7 @@ contract MetaduesAccount {
 	) public onlyOwner {
 		IMetaduesRootA(root).deploySubscription
 		{
-            value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE + MetaduesGas.INDEX_INITIAL_BALANCE * 2 + additional_gas,
+            value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE + MetaduesGas.INDEX_INITIAL_BALANCE * 2 + additional_gas + MetaduesGas.INIT_MESSAGE_VALUE,
             bounce: true,
             flag: 0			
 		}(
