@@ -148,6 +148,14 @@
 			]
 		},
 		{
+			"name": "destroy",
+			"inputs": [
+				{"name":"to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "wallets_mapping",
 			"inputs": [
 			],

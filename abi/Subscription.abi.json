@@ -92,7 +92,6 @@
 		{
 			"name": "cancel",
 			"inputs": [
-				{"name":"grams","type":"uint128"}
 			],
 			"outputs": [
 			]
