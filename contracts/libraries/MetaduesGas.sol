@@ -11,8 +11,9 @@ library MetaduesGas {
 
     uint128 constant DEPLOY_SUBSCRIPTION_MIN_VALUE          = 1 ton;
 
-    uint128 constant SET_SERVICE_INDEXES_VALUE              = 0.5 ton;
+    uint128 constant SET_SERVICE_INDEXES_VALUE              = 0.2 ton;
     uint128 constant EXECUTE_SUBSCRIPTION_VALUE             = 1 ton;
+    uint128 constant INIT_MESSAGE_VALUE                     = 0.5 ton;
 
     uint128 constant UPGRADE_ROOT_MIN_VALUE                 = 2 ton;
     uint128 constant UPGRADE_ACCOUNT_MIN_VALUE              = 2 ton;

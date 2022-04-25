@@ -22,10 +22,6 @@ contract SubscriptionServiceIndex {
     }
 
     constructor(address serviceAddress_) public {
-        require(
-            msg.value >= MetaduesGas.INDEX_INITIAL_BALANCE,
-            MetaduesErrors.error_message_low_value
-        );
         optional(TvmCell) salt = tvm.codeSalt(tvm.code());
         require(salt.hasValue(), MetaduesErrors.error_salt_is_empty);
         (address service_owner_, address root_) = salt.get().toSlice().decode(address, address);

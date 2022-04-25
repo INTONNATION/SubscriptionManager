@@ -371,7 +371,6 @@ contract Subscription {
     }
 
     function onDeployWallet(address subscription_wallet_) external onlyCurrencyRoot {
-        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
         subscription_wallet = subscription_wallet_;
         ITokenRoot(svcparams.currency_root).walletOf{
             value: 0,
@@ -382,7 +381,6 @@ contract Subscription {
     }
 
     function onWalletOf(address account_wallet_) external onlyCurrencyRoot {
-        tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
         account_wallet = account_wallet_;
         if (subscription.payment_timestamp == 0) {
             executeSubscriptionInline();

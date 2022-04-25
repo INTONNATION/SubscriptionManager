@@ -922,15 +922,15 @@ contract MetaduesRoot {
 		TvmCell identificator,
 		uint128 additional_gas
 	) external view {
-		require(
-			msg.value >=
-				(MetaduesGas.SERVICE_INITIAL_BALANCE +
-					MetaduesGas.INDEX_INITIAL_BALANCE *
-					2 +
-					MetaduesGas.SET_SERVICE_INDEXES_VALUE +
-					additional_gas),
-			MetaduesErrors.error_message_low_value
-		);
+        require(
+            msg.value >=
+                (MetaduesGas.SERVICE_INITIAL_BALANCE +
+                    MetaduesGas.INDEX_INITIAL_BALANCE *
+                    2 +
+                    MetaduesGas.SET_SERVICE_INDEXES_VALUE +
+                    additional_gas),
+        MetaduesErrors.error_message_low_value
+        );
 		tvm.rawReserve(
 			math.max(
 				MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -962,7 +962,7 @@ contract MetaduesRoot {
 				_buildServicePlatformParams(msg.sender, service_name)
 			),
 			value: MetaduesGas.SERVICE_INITIAL_BALANCE +
-				(additional_gas / 4 - 100),
+				(additional_gas / 4) - 100,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(service_code_salt, service_params, service_version, msg.sender,0);
 		TvmCell serviceIndexStateInit = _buildServiceIndex(
@@ -975,7 +975,7 @@ contract MetaduesRoot {
 			);
 		SubscriptionService(address(platform)).setIndexes{
 			value: MetaduesGas.SET_SERVICE_INDEXES_VALUE +
-				(additional_gas / 4 - 100),
+				(additional_gas / 4) - 100,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			address(tvm.hash(serviceIndexStateInit)),
@@ -983,7 +983,7 @@ contract MetaduesRoot {
 		);
 		new SubscriptionServiceIndex{
 			value: MetaduesGas.INDEX_INITIAL_BALANCE +
-				(additional_gas / 4 - 100),
+				(additional_gas / 4) - 100, 
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: serviceIndexStateInit
@@ -991,7 +991,7 @@ contract MetaduesRoot {
 		if (!identificator.toSlice().empty()) {
 			new SubscriptionServiceIdentificatorIndex{
 				value: MetaduesGas.INDEX_INITIAL_BALANCE +
-					(additional_gas / 4 - 100),
+					(additional_gas / 4) - 100,
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: serviceIdentificatorIndexStateInit
