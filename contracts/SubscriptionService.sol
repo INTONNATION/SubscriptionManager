@@ -14,12 +14,12 @@ contract SubscriptionService {
 	address public service_owner;
 	address public subscription_service_index_address;
 	address public subscription_service_index_identificator_address;
-	uint8   public status = 0;
+	uint8 public status = 0;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	TvmCell code;
-	uint32  current_version;
-	uint8   type_id;
+	uint32 current_version;
+	uint8 type_id;
 
 	struct ServiceParams {
 		address to;
@@ -54,7 +54,7 @@ contract SubscriptionService {
 			),
 			2
 		);
-		return {value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS} service_params;
+		return service_params;
 	}
 
 	function getInfo() external view responsible returns (TvmCell) {
@@ -64,10 +64,10 @@ contract SubscriptionService {
 				address(this).balance - msg.value
 			),
 			2
-		);		
+		);
 		TvmBuilder info;
 		info.store(status);
-		return {value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS} info.toCell();
+		return info.toCell();
 	}
 
 	function pause() public onlyRoot {
@@ -79,7 +79,10 @@ contract SubscriptionService {
 			2
 		);
 		status = 1;
-		service_owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
+		service_owner.transfer({
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+		});
 	}
 
 	function resume() public onlyRoot {
@@ -89,9 +92,12 @@ contract SubscriptionService {
 				address(this).balance - msg.value
 			),
 			2
-		);		
+		);
 		status = 0;
-		service_owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
+		service_owner.transfer({
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+		});
 	}
 
 	function upgrade(
@@ -173,7 +179,10 @@ contract SubscriptionService {
 		);
 		subscription_service_index_address = subscription_service_index_address_;
 		subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
-		service_owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
+		service_owner.transfer({
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+		});
 	}
 
 	function updateServiceParams(TvmCell new_service_params) public onlyRoot {
@@ -204,7 +213,10 @@ contract SubscriptionService {
 			.toSlice()
 			.decode(address, string);
 		service_params = new_service_params;
-		service_owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
+		service_owner.transfer({
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+		});
 	}
 
 	function cancel() external onlyRoot {
