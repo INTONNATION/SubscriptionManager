@@ -82,14 +82,6 @@
 			]
 		},
 		{
-			"name": "onWalletOf",
-			"inputs": [
-				{"name":"account_wallet_","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "cancel",
 			"inputs": [
 			],
@@ -214,7 +206,6 @@
 		{"name":"platform_params","type":"cell"},
 		{"name":"contract_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},
-		{"name":"account_wallet","type":"address"},
 		{"name":"service_address","type":"address"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"preprocessing_window","type":"uint32"},

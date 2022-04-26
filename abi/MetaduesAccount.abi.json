@@ -33,7 +33,6 @@
 				{"name":"answerId","type":"uint32"},
 				{"name":"value","type":"uint128"},
 				{"name":"currency_root","type":"address"},
-				{"name":"account_wallet","type":"address"},
 				{"name":"subscription_wallet","type":"address"},
 				{"name":"service_address","type":"address"},
 				{"name":"pay_subscription_gas","type":"uint128"}
