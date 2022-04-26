@@ -3,17 +3,18 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
+import "Platform.sol";
 import "libraries/MetaduesErrors.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/MetaduesGas.sol";
 import "libraries/MsgFlag.sol";
-import "./Platform.sol";
 import "interfaces/IEverduesRoot.sol";
+import "interfaces/IEverduesAccount.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
-contract MetaduesAccount {
+contract MetaduesAccount is IEverduesAccount{
 	mapping(address => balance_wallet_struct) public wallets_mapping;
 	address public root;
 	TvmCell platform_code;
@@ -43,9 +44,6 @@ contract MetaduesAccount {
 		tvm.accept();
 		_;
 	}
-
-	event Deposit(address walletAddress, uint128 amount);
-	event Withdraw(address walletAddress, uint128 amount);
 
 	function upgradeAccount(uint128 additional_gas) public onlyOwner {
 		IEverduesRoot(root).upgradeAccount{
@@ -100,7 +98,7 @@ contract MetaduesAccount {
 		address subscription_wallet,
 		address service_address,
 		uint128 pay_subscription_gas
-	) external responsible returns (uint8) {
+	) external override responsible returns (uint8) {
 		uint128 gas_ = (MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 			pay_subscription_gas);
 		// require > MetaduesGas.TRANSFER_MIN_VALUE + something

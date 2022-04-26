@@ -25,9 +25,10 @@ library MetaduesErrors {
     uint8 constant error_message_sender_is_not_dex_root          = 117;
     uint8 constant error_message_sender_is_not_pending_owner     = 118;
     uint8 constant error_message_sender_is_equal_owner           = 119;
+    uint8 constant error_message_sender_is_not_service_address   = 120;
 
-    uint8 constant error_wallet_not_exist                        = 120;
-    uint8 constant error_subscription_status_already_active      = 121;
-    uint8 constant subscription_unknown_account_address         = 122;
+    uint8 constant error_wallet_not_exist                        = 121;
+    uint8 constant error_subscription_status_already_active      = 122;
+    uint8 constant subscription_unknown_account_address          = 123;
 
 }
