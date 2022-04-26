@@ -11,8 +11,8 @@ if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
-tondev sol compile ../contracts/MetaduesRoot.sol -o ../abi;
-tondev sol compile ../contracts/MetaduesAccount.sol -o ../abi;
+tondev sol compile ../contracts/EverduesRoot.sol -o ../abi;
+tondev sol compile ../contracts/EverduesAccount.sol -o ../abi;
 tondev sol compile ../contracts/Platform.sol -o ../abi;
 tondev sol compile ../contracts/Subscription.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionIndex.sol -o ../abi;
@@ -20,9 +20,9 @@ tondev sol compile ../contracts/SubscriptionIdentificatorIndex.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionService.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionServiceIndex.sol -o ../abi;
 tondev sol compile ../contracts/SubscriptionServiceIdentificatorIndex.sol -o ../abi;
-tondev sol compile ../contracts/MetaduesFeeProxy.sol -o ../abi;
+tondev sol compile ../contracts/EverduesFeeProxy.sol -o ../abi;
 
-CONTRACT_NAME=MetaduesRoot
+CONTRACT_NAME=EverduesRoot
 
 #Giver FLD
 #giver=0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94
@@ -53,26 +53,26 @@ function deploy {
 #genseed $1
 #seed=`cat $1.seed | grep -o '".*"' | tr -d '"'`
 #genkeypair "$1" "$seed"
-CONTRACT_ADDRESS=`cat MetaduesRoot.addr`
+CONTRACT_ADDRESS=`cat EverduesRoot.addr`
 #giver $CONTRACT_ADDRESS
 #echo DEPLOY $1 -----------------------------------------------
 owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
 
 # TVC
 platformTvc=$(cat ../abi/Platform.tvc | base64 $prefix)
-metaduesAccountTvc=$(cat ../abi/MetaduesAccount.tvc | base64 $prefix)
+metaduesAccountTvc=$(cat ../abi/EverduesAccount.tvc | base64 $prefix)
 subscriptionTvc=$(cat ../abi/Subscription.tvc | base64 $prefix)
 subscriptionIndexTvc=$(cat ../abi/SubscriptionIndex.tvc | base64 $prefix)
 subscriptionServiceTvc=$(cat ../abi/SubscriptionService.tvc | base64 $prefix)
 subscriptionServiceIndexTvc=$(cat ../abi/SubscriptionServiceIndex.tvc | base64 $prefix)
 subscriptionidentificatorIndexTvc=$(cat ../abi/SubscriptionIdentificatorIndex.tvc | base64 $prefix)
-feeProxyTvc=$(cat ../abi/MetaduesFeeProxy.tvc | base64 $prefix)
+feeProxyTvc=$(cat ../abi/EverduesFeeProxy.tvc | base64 $prefix)
 serviceIdentificator=$(cat ../abi/SubscriptionServiceIdentificatorIndex.tvc | base64 $prefix)
 
 #ABI
 abiPlatformContract=$(cat ../abi/Platform.abi.json | jq -c .| base64 $prefix)
-abiMetaduesAccountContract=$(cat ../abi/MetaduesAccount.abi.json | jq -c .| base64 $prefix)
-abiMetaduesRootContract=$(cat ../abi/MetaduesRoot.abi.json  | jq 'del(.fields)' | jq -c .| base64 $prefix)
+abiEverduesAccountContract=$(cat ../abi/EverduesAccount.abi.json | jq -c .| base64 $prefix)
+abiEverduesRootContract=$(cat ../abi/EverduesRoot.abi.json  | jq 'del(.fields)' | jq -c .| base64 $prefix)
 abiTIP3RootContract=$(cat ../ton-eth-bridge-token-contracts/build/TokenRoot.abi.json | jq -c .| base64 $prefix)
 abiTIP3TokenWalletContract=$(cat ../ton-eth-bridge-token-contracts/build/TokenWallet.abi.json | jq -c .| base64 $prefix)
 abiServiceContract=$(cat ../abi/SubscriptionService.abi.json | jq -c .| base64 $prefix)
@@ -80,7 +80,7 @@ abiServiceIndexContract=$(cat ../abi/SubscriptionServiceIndex.abi.json | jq -c .
 abiSubscriptionContract=$(cat ../abi/Subscription.abi.json | jq -c .| base64 $prefix)
 abiSubscriptionIndexContract=$(cat ../abi/SubscriptionIndex.abi.json | jq -c .| base64 $prefix)
 abiSubscriptionIdentificatorIndexContract=$(cat ../abi/SubscriptionIdentificatorIndex.abi.json | jq -c .| base64 $prefix)
-abiFeeProxyContract=$(cat ../abi/MetaduesFeeProxy.abi.json | jq -c .| base64 $prefix)
+abiFeeProxyContract=$(cat ../abi/EverduesFeeProxy.abi.json | jq -c .| base64 $prefix)
 abiServiceIdentificator=$(cat ../abi/SubscriptionServiceIdentificatorIndex.abi.json | jq -c .| base64 $prefix)
 
 # Set TVCs

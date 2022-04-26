@@ -9,8 +9,8 @@ import "interfaces/IEverduesAccount.sol";
 import "interfaces/IEverduesIndex.sol";
 import "interfaces/IEverduesSubscriptionService.sol";
 import "interfaces/IEverduesSubscription.sol";
-import "libraries/MetaduesErrors.sol";
-import "libraries/MetaduesGas.sol";
+import "libraries/EverduesErrors.sol";
+import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/EverduesSubscriptionStatus.sol";
@@ -67,7 +67,7 @@ contract Subscription is IEverduesSubscription {
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,
-			MetaduesErrors.error_message_sender_is_not_metadues_root
+			EverduesErrors.error_message_sender_is_not_everdues_root
 		);
 		_;
 	}
@@ -75,7 +75,7 @@ contract Subscription is IEverduesSubscription {
 	modifier onlyService() {
 		require(
 			msg.sender == service_address,
-			MetaduesErrors.error_message_sender_is_not_service_address
+			EverduesErrors.error_message_sender_is_not_service_address
 		);
 		_;
 	}
@@ -83,7 +83,7 @@ contract Subscription is IEverduesSubscription {
 	modifier onlyAccount() {
 		require(
 			msg.sender == account_address,
-			MetaduesErrors.error_message_sender_is_not_account_address
+			EverduesErrors.error_message_sender_is_not_account_address
 		);
 		_;
 	}
@@ -91,7 +91,7 @@ contract Subscription is IEverduesSubscription {
 	modifier onlyCurrencyRoot() {
 		require(
 			msg.sender == svcparams.currency_root,
-			MetaduesErrors.error_message_sender_is_not_currency_root
+			EverduesErrors.error_message_sender_is_not_currency_root
 		);
 		_;
 	}
@@ -101,7 +101,7 @@ contract Subscription is IEverduesSubscription {
 		uint32 version,
 		address send_gas_to
 	) external onlyRoot {
-		require(msg.value > MetaduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE, 1111);
+		require(msg.value > EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE, 1111);
 		TvmBuilder builder;
 		builder.store(root);
 		builder.store(send_gas_to);
@@ -148,7 +148,7 @@ contract Subscription is IEverduesSubscription {
 				subscription.gas = paySubscriptionGas;
 				subscription.execution_timestamp = uint32(now);
 				IEverduesSubscriptionService(service_address).getInfo{
-					value: MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
+					value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 						subscription.gas,
 					bounce: true,
 					flag: 0,
@@ -160,7 +160,7 @@ contract Subscription is IEverduesSubscription {
 		} else {
 			require(
 				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE,
-				MetaduesErrors.error_subscription_status_already_active
+				EverduesErrors.error_subscription_status_already_active
 			);
 		}
 	}
@@ -168,7 +168,7 @@ contract Subscription is IEverduesSubscription {
 	function onGetInfo(TvmCell svc_info) external onlyService {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE,
+				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -188,7 +188,7 @@ contract Subscription is IEverduesSubscription {
 				subscription.gas
 			);
 		} else {
-			revert(MetaduesErrors.error_subscription_status_already_active);
+			revert(EverduesErrors.error_subscription_status_already_active);
 		}
 	}
 
@@ -196,7 +196,7 @@ contract Subscription is IEverduesSubscription {
 		subscription.execution_timestamp = uint32(now);
 		subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
 		IEverduesAccount(account_address).paySubscription{
-			value: MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE,
+			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE,
 			bounce: true,
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			callback: Subscription.onPaySubscription
@@ -223,7 +223,7 @@ contract Subscription is IEverduesSubscription {
 	) public {
 		require(
 			amount >= svcparams.service_value,
-			MetaduesErrors.error_not_enough_balance_in_message
+			EverduesErrors.error_not_enough_balance_in_message
 		);
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 service_fee_value = service_value_percentage * service_fee;
@@ -240,7 +240,7 @@ contract Subscription is IEverduesSubscription {
 		}
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		ITokenWallet(msg.sender).transfer{
-			value: MetaduesGas.TRANSFER_MIN_VALUE,
+			value: EverduesGas.TRANSFER_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(protocol_fee, address_fee_proxy, 0, account_address, true, payload);
 		ITokenWallet(msg.sender).transfer{
@@ -258,7 +258,7 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
-		tvm.rawReserve(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
+		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		tvm.resetStorage();
 		TvmSlice s = upgrade_data.toSlice();
 		(
@@ -334,7 +334,7 @@ contract Subscription is IEverduesSubscription {
 			bounce: false,
 			flag: MsgFlag.REMAINING_GAS,
 			callback: Subscription.onDeployWallet
-		}(address(this), MetaduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
+		}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
 	}
 
 	function onDeployWallet(address subscription_wallet_)
@@ -354,11 +354,11 @@ contract Subscription is IEverduesSubscription {
 
 	function cancel() external onlyRoot {
 		IEverduesIndex(subscription_index_address).cancel{
-			value: MetaduesGas.CANCEL_MIN_VALUE,
+			value: EverduesGas.CANCEL_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}();
 		IEverduesIndex(subscription_index_identificator_address).cancel{
-			value: MetaduesGas.CANCEL_MIN_VALUE,
+			value: EverduesGas.CANCEL_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}();
 		selfdestruct(account_address);
@@ -370,7 +370,7 @@ contract Subscription is IEverduesSubscription {
 	{
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE,
+				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2

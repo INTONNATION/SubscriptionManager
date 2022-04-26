@@ -1,6 +1,6 @@
 pragma ton-solidity >=0.56.0;
 
-library MetaduesErrors {
+library EverduesErrors {
     
     uint8 constant error_not_enough_balance_in_message           = 100;
     uint8 constant error_wrong_tvc                               = 101;
@@ -18,7 +18,7 @@ library MetaduesErrors {
     uint8 constant error_message_sender_address_not_specified    = 110;
     uint8 constant error_message_sender_is_not_root              = 111;
     uint8 constant error_message_sender_is_not_owner             = 112;
-    uint8 constant error_message_sender_is_not_metadues_root     = 113;
+    uint8 constant error_message_sender_is_not_everdues_root     = 113;
     uint8 constant error_message_sender_is_not_index             = 114;
     uint8 constant error_message_sender_is_not_service_owner     = 115;
     uint8 constant error_message_sender_is_not_currency_root     = 116;

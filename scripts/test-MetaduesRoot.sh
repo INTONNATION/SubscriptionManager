@@ -14,7 +14,7 @@ fi
 
 
 
-CONTRACT_NAME=MetaduesRoot
+CONTRACT_NAME=EverduesRoot
 tos=tonos-cli
 
 #./msig.sh test
@@ -48,7 +48,7 @@ USDT_ROOT="0:c5f5a0f97da30c303808acac50eff22d81f4b268745cb43f352495711fe052b1"
 
 ##Deploy account
 $tos --url $NETWORK  call $wallet  submitTransaction "{\"dest\":\"$METADUES_ROOT_ADDRESS\",\"value\":200000000,\"bounce\":false,\"allBalance\":false,\"payload\":\"te6ccgEBAQEABgAACAOxbTU=\"}" --abi ../../ton-labs-contracts/solidity/safemultisig/SafeMultisigWallet.abi.json --sign test.msig.keys.json
-account_address=$(tonos-cli -j run $METADUES_ROOT_ADDRESS accountOf "{\"owner_address_\":\"$wallet\"}" --abi ../abi/MetaduesRoot.abi.json | jq -r .account)
+account_address=$(tonos-cli -j run $METADUES_ROOT_ADDRESS accountOf "{\"owner_address_\":\"$wallet\"}" --abi ../abi/EverduesRoot.abi.json | jq -r .account)
 
 ##top up account wallet
 account_wallet=$($tos --url $NETWORK run $USDT_ROOT  walletOf "{\"answerId\":\"0\",\"walletOwner\":\"$account_address\"}" --abi ../../ton-eth-bridge-token-contracts/build/TokenRoot.abi.json|grep value0|awk '{print $2}' | tr -d \")
@@ -62,16 +62,16 @@ $tos --url $NETWORK  call $wallet  submitTransaction "{\"dest\":$owner_wallet,\"
 ##Check account balance
 sleep 10
 
-$tos --url $NETWORK run $account_address  wallets_mapping "{}" --abi ../abi/MetaduesAccount.abi.json
+$tos --url $NETWORK run $account_address  wallets_mapping "{}" --abi ../abi/EverduesAccount.abi.json
 
 ##Deploy service
-tonos-cli --url $NETWORK call $METADUES_ROOT_ADDRESS  deployService "{\"service_params\":\"te6ccgEBBwEAtwABa4AbmUiTj4jAIB7gbWilvUp9Mdxf9W0+LFUhqoCKyU3O0eAAAAAAAAAAAAAAAAAgbMgAAAAD0AEEAAYFBAIBQ4AaqpoiehC9jd11Xg0kTEEvFKWi0oimoYdhTRY13+72U7ADAAhEZUZpAFxRbVl1NVYzcXRmejNtRENRQVd3WkN3Q21lY014Mm5wZm83Yk5odEZSTnVVTFlXABZsaWItdGVzdDJ2YQAcdGlwMy1saWItdGVzdDU=\"}" --abi ../abi/MetaduesRoot.abi.json
-service_adress=$(tonos-cli -j run $METADUES_ROOT_ADDRESS accountOf "{\"owner_address_\":\"$wallet\",\"service_name_\":\"lib-test\"}" --abi ../abi/MetaduesRoot.abi.json | jq -r .account)
+tonos-cli --url $NETWORK call $METADUES_ROOT_ADDRESS  deployService "{\"service_params\":\"te6ccgEBBwEAtwABa4AbmUiTj4jAIB7gbWilvUp9Mdxf9W0+LFUhqoCKyU3O0eAAAAAAAAAAAAAAAAAgbMgAAAAD0AEEAAYFBAIBQ4AaqpoiehC9jd11Xg0kTEEvFKWi0oimoYdhTRY13+72U7ADAAhEZUZpAFxRbVl1NVYzcXRmejNtRENRQVd3WkN3Q21lY014Mm5wZm83Yk5odEZSTnVVTFlXABZsaWItdGVzdDJ2YQAcdGlwMy1saWItdGVzdDU=\"}" --abi ../abi/EverduesRoot.abi.json
+service_adress=$(tonos-cli -j run $METADUES_ROOT_ADDRESS accountOf "{\"owner_address_\":\"$wallet\",\"service_name_\":\"lib-test\"}" --abi ../abi/EverduesRoot.abi.json | jq -r .account)
 
 
 ##Deploy Subscription
-tonos-cli --url $NETWORK body deploySubscription "{\"service_address\": \"$service_adress\", \"identificator\": \"te6ccgEBAQEAAgAAAA==\"}" --abi ../abi/MetaduesRoot.abi.json
+tonos-cli --url $NETWORK body deploySubscription "{\"service_address\": \"$service_adress\", \"identificator\": \"te6ccgEBAQEAAgAAAA==\"}" --abi ../abi/EverduesRoot.abi.json
 
 ##Check account balance #2
 sleep 120
-$tos --url $NETWORK run $account_address  wallets_mapping "{}" --abi ../abi/MetaduesAccount.abi.json
+$tos --url $NETWORK run $account_address  wallets_mapping "{}" --abi ../abi/EverduesAccount.abi.json

@@ -14,7 +14,7 @@ contract Platform {
 	uint8 static type_id;
 	TvmCell static platform_params;
 	uint128 constant DEPLOY_ACCOUNT_MIN_VALUE = 1 ton;
-	uint8 constant error_message_sender_is_not_metadues_root = 113;
+	uint8 constant error_message_sender_is_not_Everdues_root = 113;
 
 	constructor(
 		TvmCell code,
@@ -50,7 +50,7 @@ contract Platform {
 		TvmCell contract_params,
 		uint32 version
 	) external {
-		require(msg.sender == root, error_message_sender_is_not_metadues_root);
+		require(msg.sender == root, error_message_sender_is_not_Everdues_root);
 		TvmBuilder builder;
 
 		builder.store(root);
@@ -74,7 +74,7 @@ contract Platform {
 		uint32 version,
 		address send_gas_to
 	) private {
-		require(msg.sender == root, error_message_sender_is_not_metadues_root);
+		require(msg.sender == root, error_message_sender_is_not_Everdues_root);
 		TvmBuilder builder;
 
 		builder.store(root);

@@ -3,8 +3,8 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/MetaduesErrors.sol";
-import "libraries/MetaduesGas.sol";
+import "libraries/EverduesErrors.sol";
+import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 
 contract SubscriptionServiceIndex {
@@ -16,23 +16,23 @@ contract SubscriptionServiceIndex {
 	modifier onlyOwner() {
 		require(
 			msg.sender == service_address,
-			MetaduesErrors.error_message_sender_is_not_service_owner
+			EverduesErrors.error_message_sender_is_not_service_owner
 		);
 		_;
 	}
 
 	constructor(address serviceAddress_) public {
 		optional(TvmCell) salt = tvm.codeSalt(tvm.code());
-		require(salt.hasValue(), MetaduesErrors.error_salt_is_empty);
+		require(salt.hasValue(), EverduesErrors.error_salt_is_empty);
 		(address service_owner_, address root_) = salt.get().toSlice().decode(
 			address,
 			address
 		);
 		require(
 			msg.sender == root_,
-			MetaduesErrors.error_message_sender_is_not_metadues_root
+			EverduesErrors.error_message_sender_is_not_everdues_root
 		);
-		tvm.rawReserve(MetaduesGas.INDEX_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.INDEX_INITIAL_BALANCE, 2);
 		service_owner = service_owner_;
 		root = root_;
 		service_address = serviceAddress_;
