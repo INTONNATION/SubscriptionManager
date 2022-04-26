@@ -5,7 +5,7 @@ pragma AbiHeader pubkey;
 
 import "libraries/MsgFlag.sol";
 
-interface IMetaduesRoot {
+interface IPlatformRoot {
 	function deployAccount(uint256 pubkey) external;
 }
 
@@ -37,7 +37,7 @@ contract Platform {
 			uint256 pubkey = tvm.pubkey();
 			require(msg.pubkey() == pubkey, 100);
 			tvm.accept();
-			IMetaduesRoot(root).deployAccount{
+			IPlatformRoot(root).deployAccount{
 				value: DEPLOY_ACCOUNT_MIN_VALUE + additional_gas,
 				bounce: false,
 				flag: 0
@@ -74,10 +74,7 @@ contract Platform {
 		uint32 version,
 		address send_gas_to
 	) private {
-		require(
-			msg.sender == root,
-			error_message_sender_is_not_metadues_root
-		);
+		require(msg.sender == root, error_message_sender_is_not_metadues_root);
 		TvmBuilder builder;
 
 		builder.store(root);
