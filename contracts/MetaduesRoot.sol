@@ -30,7 +30,6 @@ interface ISubscription {
 }
 
 contract MetaduesRoot {
-	uint256 tmp_pubkey; //debug
 	uint8 public versionTvc;
 	uint8 public versionAbi;
 	string[] public categories;
@@ -103,7 +102,7 @@ contract MetaduesRoot {
 
 	onBounce(TvmSlice slice) external {
 		// revert change to initial msg.sender in case of failure during deploy
-		// TODO check SubsMan balance after that
+		// TODO: after https://github.com/tonlabs/ton-labs-node/issues/140
 		uint32 functionId = slice.decode(uint32);
 	}
 
@@ -453,7 +452,7 @@ contract MetaduesRoot {
 		TvmCell fee_proxy_contract_params = currencies_cell.toCell();
 		MetaduesFeeProxy(fee_proxy_address).setSupportedCurrencies{
 			value: 0,
-			bounce: true, // need to handle
+			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(fee_proxy_contract_params, owner);
 	}
@@ -597,7 +596,6 @@ contract MetaduesRoot {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
-		//check that msg.sender from correct account platform
 		require(msg.sender == account_address, 1111);
 		MetaduesAccount(account_address).upgrade{
 			value: 0,
@@ -786,7 +784,7 @@ contract MetaduesRoot {
 				uint32,
 				uint32
 			);
-		// decode vrsparamsAbi and vrsparamsTvc
+		// TODO: decode vrsparamsAbi and vrsparamsTvc
 		account_version = account_version_;
 		service_version = service_version_;
 		fee_proxy_version = fee_proxy_version_;
