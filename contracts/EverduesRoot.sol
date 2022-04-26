@@ -604,10 +604,7 @@ contract EverduesRoot {
 		}(tvcEverduesAccount.toSlice().loadRef(), account_version);
 	}
 
-	function upgradeSubscription(address service_address)
-		external
-		view
-	{
+	function upgradeSubscription(address service_address) external view {
 		require(
 			service_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -638,10 +635,10 @@ contract EverduesRoot {
 		}(subscription_code_salt, subscription_version, msg.sender);
 	}
 
-	function updateSubscriptionIdentificator(address service_address, TvmCell identificator)
-		external
-		view
-	{
+	function updateSubscriptionIdentificator(
+		address service_address,
+		TvmCell identificator
+	) external view {
 		require(
 			service_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -699,7 +696,11 @@ contract EverduesRoot {
 		}(service_code_salt, service_version, msg.sender);
 	}
 
-	function updateServiceParams(string service_name, string category, TvmCell new_service_params) external {
+	function updateServiceParams(
+		string service_name,
+		string category,
+		TvmCell new_service_params
+	) external {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -720,10 +721,14 @@ contract EverduesRoot {
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(new_service_params);		
+		}(new_service_params);
 	}
 
-	function updateServiceIdentificator(string service_name, string category, TvmCell identificator) public {
+	function updateServiceIdentificator(
+		string service_name,
+		string category,
+		TvmCell identificator
+	) public {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -744,7 +749,7 @@ contract EverduesRoot {
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(identificator, msg.sender);		
+		}(identificator, msg.sender);
 	}
 
 	function upgrade(TvmCell code) external onlyOwner {

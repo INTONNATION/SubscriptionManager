@@ -14,7 +14,7 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol"
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
-contract EverduesAccount is IEverduesAccount{
+contract EverduesAccount is IEverduesAccount {
 	address public root;
 	address public sync_balance_currency_root;
 	uint128 public withdraw_value;
@@ -115,7 +115,10 @@ contract EverduesAccount is IEverduesAccount{
 				)
 			)
 		);
-		require(subsciption_addr == msg.sender, EverduesErrors.error_message_sender_is_not_my_subscription);
+		require(
+			subsciption_addr == msg.sender,
+			EverduesErrors.error_message_sender_is_not_my_subscription
+		);
 		TvmCell payload;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
@@ -186,28 +189,42 @@ contract EverduesAccount is IEverduesAccount{
 		}(service_address);
 	}
 
-	function updateServiceIdentificator(string service_name, string category, TvmCell identificator, uint128 additional_gas) public onlyOwner {
+	function updateServiceIdentificator(
+		string service_name,
+		string category,
+		TvmCell identificator,
+		uint128 additional_gas
+	) public onlyOwner {
 		IEverduesRoot(root).updateServiceIdentificator{
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_name, category, identificator);		
+		}(service_name, category, identificator);
 	}
 
-	function updateSubscriptionIdentificator(address service_address, TvmCell identificator, uint128 additional_gas) public onlyOwner {
+	function updateSubscriptionIdentificator(
+		address service_address,
+		TvmCell identificator,
+		uint128 additional_gas
+	) public onlyOwner {
 		IEverduesRoot(root).updateSubscriptionIdentificator{
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_address, identificator);		
+		}(service_address, identificator);
 	}
 
-	function updateServiceParams(string service_name, string category, TvmCell new_service_params, uint128 additional_gas) public onlyOwner {
+	function updateServiceParams(
+		string service_name,
+		string category,
+		TvmCell new_service_params,
+		uint128 additional_gas
+	) public onlyOwner {
 		IEverduesRoot(root).updateServiceParams{
 			value: EverduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_name, category, new_service_params);				
+		}(service_name, category, new_service_params);
 	}
 
 	function cancelService(string service_name, uint128 additional_gas)
@@ -366,6 +383,7 @@ contract EverduesAccount is IEverduesAccount{
 				code: platform_code
 			});
 	}
+
 	//TMP DELETE AFRER FINISH TESTING
 	function destroy(address to) public {
 		selfdestruct(to);
