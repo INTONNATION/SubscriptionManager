@@ -90,6 +90,17 @@
 			]
 		},
 		{
+			"name": "updateServiceParams",
+			"inputs": [
+				{"name":"service_name","type":"string"},
+				{"name":"category","type":"string"},
+				{"name":"new_service_params","type":"cell"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "cancelService",
 			"inputs": [
 				{"name":"service_name","type":"string"},
@@ -176,19 +187,19 @@
 			]
 		},
 		{
-			"name": "wallets_mapping",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
-			]
-		},
-		{
 			"name": "root",
 			"inputs": [
 			],
 			"outputs": [
 				{"name":"root","type":"address"}
+			]
+		},
+		{
+			"name": "sync_balance_currency_root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"sync_balance_currency_root","type":"address"}
 			]
 		},
 		{
@@ -200,11 +211,11 @@
 			]
 		},
 		{
-			"name": "sync_balance_currency_root",
+			"name": "wallets_mapping",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"sync_balance_currency_root","type":"address"}
+				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 			]
 		}
 	],
@@ -234,14 +245,14 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"root","type":"address"},
+		{"name":"sync_balance_currency_root","type":"address"},
+		{"name":"withdraw_value","type":"uint128"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
+		{"name":"owner","type":"address"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
-		{"name":"withdraw_value","type":"uint128"},
-		{"name":"sync_balance_currency_root","type":"address"},
-		{"name":"owner","type":"address"}
+		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 	]
 }

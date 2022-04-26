@@ -365,6 +365,16 @@
 			]
 		},
 		{
+			"name": "updateServiceParams",
+			"inputs": [
+				{"name":"service_name","type":"string"},
+				{"name":"category","type":"string"},
+				{"name":"new_service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "updateServiceIdentificator",
 			"inputs": [
 				{"name":"service_name","type":"string"},

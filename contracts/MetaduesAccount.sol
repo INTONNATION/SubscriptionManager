@@ -15,23 +15,24 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
 contract MetaduesAccount is IEverduesAccount{
-	mapping(address => balance_wallet_struct) public wallets_mapping;
 	address public root;
+	address public sync_balance_currency_root;
+	uint128 public withdraw_value;
 	TvmCell platform_code;
 	TvmCell platform_params;
+	address owner;
 	uint32 current_version;
 	uint8 type_id;
-	uint128 public withdraw_value;
-	address public sync_balance_currency_root;
-	address owner;
-
-	constructor() public {
-		revert();
-	}
 
 	struct balance_wallet_struct {
 		address wallet;
 		uint128 balance;
+	}
+
+	mapping(address => balance_wallet_struct) public wallets_mapping;
+
+	constructor() public {
+		revert();
 	}
 
 	modifier onlyRoot() {
@@ -42,6 +43,14 @@ contract MetaduesAccount is IEverduesAccount{
 	modifier onlyOwner() {
 		require(msg.pubkey() == tvm.pubkey(), 100);
 		tvm.accept();
+		_;
+	}
+
+	modifier onlyCurrencyRoot() {
+		require(
+			msg.sender == sync_balance_currency_root,
+			MetaduesErrors.error_message_sender_is_not_currency_root
+		);
 		_;
 	}
 
@@ -56,8 +65,6 @@ contract MetaduesAccount is IEverduesAccount{
 	}
 
 	function upgrade(TvmCell code, uint32 version) external onlyRoot {
-		tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);
-
 		TvmBuilder builder;
 		TvmBuilder upgrade_params;
 		builder.store(root);
@@ -94,14 +101,12 @@ contract MetaduesAccount is IEverduesAccount{
 	function paySubscription(
 		uint128 value,
 		address currency_root,
-		address account_wallet,
 		address subscription_wallet,
 		address service_address,
 		uint128 pay_subscription_gas
 	) external override responsible returns (uint8) {
 		uint128 gas_ = (MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 			pay_subscription_gas);
-		// require > MetaduesGas.TRANSFER_MIN_VALUE + something
 		address subsciption_addr = address(
 			tvm.hash(
 				_buildInitData(
@@ -110,7 +115,7 @@ contract MetaduesAccount is IEverduesAccount{
 				)
 			)
 		);
-		//        require(subsciption_addr == msg.sender, 333);
+		require(subsciption_addr == msg.sender, MetaduesErrors.error_message_sender_is_not_my_subscription);
 		TvmCell payload;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
@@ -119,6 +124,7 @@ contract MetaduesAccount is IEverduesAccount{
 			balance_wallet_struct current_balance_key_value = current_balance_struct
 					.get();
 			uint128 current_balance = current_balance_key_value.balance;
+			address account_wallet = current_balance_key_value.wallet;
 			if (value >= current_balance) {
 				return 1;
 			} else {
@@ -196,6 +202,14 @@ contract MetaduesAccount is IEverduesAccount{
 		}(service_address, identificator);		
 	}
 
+	function updateServiceParams(string service_name, string category, TvmCell new_service_params, uint128 additional_gas) public onlyOwner {
+		IEverduesRoot(root).updateServiceParams{
+			value: MetaduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
+			bounce: true,
+			flag: 0
+		}(service_name, category, new_service_params);				
+	}
+
 	function cancelService(string service_name, uint128 additional_gas)
 		public
 		onlyOwner
@@ -256,7 +270,7 @@ contract MetaduesAccount is IEverduesAccount{
 		}(service_address, identificator, tvm.pubkey(), additional_gas);
 	}
 
-	function onBalanceOf(uint128 balance_) external {
+	function onBalanceOf(uint128 balance_) external onlyCurrencyRoot {
 		uint128 balance_wallet = balance_;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(sync_balance_currency_root);
@@ -304,7 +318,6 @@ contract MetaduesAccount is IEverduesAccount{
 		address remainingGasTo,
 		TvmCell payload
 	) external {
-		tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 0);
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(tokenRoot);
 		if (current_balance_struct.hasValue()) {
@@ -353,7 +366,7 @@ contract MetaduesAccount is IEverduesAccount{
 				code: platform_code
 			});
 	}
-
+	//TMP DELETE AFRER FINISH TESTING
 	function destroy(address to) public {
 		selfdestruct(to);
 	}
