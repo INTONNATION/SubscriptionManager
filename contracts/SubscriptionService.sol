@@ -3,8 +3,8 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/MetaduesErrors.sol";
-import "libraries/MetaduesGas.sol";
+import "libraries/EverduesErrors.sol";
+import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 import "interfaces/IEverduesIndex.sol";
 
@@ -41,7 +41,7 @@ contract SubscriptionService {
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,
-			MetaduesErrors.error_message_sender_is_not_root
+			EverduesErrors.error_message_sender_is_not_root
 		);
 		_;
 	}
@@ -49,7 +49,7 @@ contract SubscriptionService {
 	function getParams() external view responsible returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.SERVICE_INITIAL_BALANCE,
+				EverduesGas.SERVICE_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -60,7 +60,7 @@ contract SubscriptionService {
 	function getInfo() external view responsible returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.SERVICE_INITIAL_BALANCE,
+				EverduesGas.SERVICE_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -73,7 +73,7 @@ contract SubscriptionService {
 	function pause() public onlyRoot {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.SERVICE_INITIAL_BALANCE,
+				EverduesGas.SERVICE_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -85,7 +85,7 @@ contract SubscriptionService {
 	function resume() public onlyRoot {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.SERVICE_INITIAL_BALANCE,
+				EverduesGas.SERVICE_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -116,7 +116,7 @@ contract SubscriptionService {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
-		tvm.rawReserve(MetaduesGas.SERVICE_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.SERVICE_INITIAL_BALANCE, 2);
 		TvmSlice s = upgrade_data.toSlice();
 		(
 			address root_,
@@ -166,7 +166,7 @@ contract SubscriptionService {
 	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.SERVICE_INITIAL_BALANCE,
+				EverduesGas.SERVICE_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -179,7 +179,7 @@ contract SubscriptionService {
 	function updateServiceParams(TvmCell new_service_params) public onlyRoot {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.SERVICE_INITIAL_BALANCE,
+				EverduesGas.SERVICE_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2

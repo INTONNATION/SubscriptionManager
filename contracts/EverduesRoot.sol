@@ -3,16 +3,16 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/MetaduesErrors.sol";
+import "libraries/EverduesErrors.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/MsgFlag.sol";
-import "libraries/MetaduesGas.sol";
+import "libraries/EverduesGas.sol";
 import "./Platform.sol";
 import "../contracts/SubscriptionIndex.sol";
 import "../contracts/SubscriptionIdentificatorIndex.sol";
 import "../contracts/SubscriptionServiceIndex.sol";
-import "../contracts/MetaduesFeeProxy.sol";
-import "../contracts/MetaduesAccount.sol";
+import "../contracts/EverduesFeeProxy.sol";
+import "../contracts/EverduesAccount.sol";
 import "../contracts/Subscription.sol";
 import "../contracts/SubscriptionService.sol";
 import "../contracts/SubscriptionServiceIdentificatorIndex.sol";
@@ -29,13 +29,13 @@ interface ISubscription {
 	function cancel() external;
 }
 
-contract MetaduesRoot {
+contract EverduesRoot {
 	uint8 public versionTvc;
 	uint8 public versionAbi;
 	string[] public categories;
 
 	TvmCell tvcPlatform;
-	TvmCell tvcMetaduesAccount;
+	TvmCell tvcEverduesAccount;
 	TvmCell tvcSubscriptionService;
 	TvmCell tvcSubscription;
 	TvmCell tvcSubscriptionServiceIndex;
@@ -45,8 +45,8 @@ contract MetaduesRoot {
 	TvmCell tvcFeeProxy;
 
 	string abiPlatformContract;
-	string abiMetaduesAccountContract;
-	string abiMetaduesRootContract;
+	string abiEverduesAccountContract;
+	string abiEverduesRootContract;
 	string abiTIP3RootContract;
 	string abiTIP3TokenWalletContract;
 	string abiServiceContract;
@@ -59,7 +59,7 @@ contract MetaduesRoot {
 
 	struct VersionsTvcParams {
 		TvmCell tvcPlatform;
-		TvmCell tvcMetaduesAccount;
+		TvmCell tvcEverduesAccount;
 		TvmCell tvcSubscriptionService;
 		TvmCell tvcSubscriptionServiceIndex;
 		TvmCell tvcSubscriptionServiceIdentificatorIndex;
@@ -70,8 +70,8 @@ contract MetaduesRoot {
 	}
 	struct VersionsAbiParams {
 		string abiPlatformContract;
-		string abiMetaduesAccountContract;
-		string abiMetaduesRootContract;
+		string abiEverduesAccountContract;
+		string abiEverduesRootContract;
 		string abiTIP3RootContract;
 		string abiTIP3TokenWalletContract;
 		string abiServiceContract;
@@ -107,7 +107,7 @@ contract MetaduesRoot {
 	}
 
 	constructor(address initial_owner) public {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvm.accept();
 		owner = initial_owner;
 		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
@@ -116,7 +116,7 @@ contract MetaduesRoot {
 	modifier onlyOwner() {
 		require(
 			msg.sender == owner,
-			MetaduesErrors.error_message_sender_is_not_my_owner
+			EverduesErrors.error_message_sender_is_not_my_owner
 		);
 		tvm.accept();
 		_;
@@ -125,20 +125,20 @@ contract MetaduesRoot {
 	function transferOwner(address new_owner) external onlyOwner {
 		require(
 			owner != new_owner,
-			MetaduesErrors.error_message_sender_is_equal_owner
+			EverduesErrors.error_message_sender_is_equal_owner
 		);
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		pending_owner = new_owner;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
 	function acceptOwner() external {
-		require(msg.sender.value != 0, MetaduesErrors.error_address_is_empty);
+		require(msg.sender.value != 0, EverduesErrors.error_address_is_empty);
 		require(
 			msg.sender == pending_owner,
-			MetaduesErrors.error_message_sender_is_not_pending_owner
+			EverduesErrors.error_message_sender_is_not_pending_owner
 		);
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		owner = pending_owner;
 		pending_owner = address.makeAddrStd(0, 0);
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -184,20 +184,20 @@ contract MetaduesRoot {
 	function setTvcPlatform(TvmCell tvcPlatformInput) external onlyOwner {
 		require(
 			!has_platform_code,
-			MetaduesErrors.error_platform_code_is_not_empty
+			EverduesErrors.error_platform_code_is_not_empty
 		);
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvcPlatform = tvcPlatformInput;
 		has_platform_code = true;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
-	function setTvcMetaduesAccount(TvmCell tvcMetaduesAccountInput)
+	function setTvcEverduesAccount(TvmCell tvcEverduesAccountInput)
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
-		tvcMetaduesAccount = tvcMetaduesAccountInput;
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvcEverduesAccount = tvcEverduesAccountInput;
 		account_version++;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -206,7 +206,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvcSubscriptionService = tvcSubscriptionServiceInput;
 		service_version++;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -216,7 +216,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvcSubscription = tvcSubscriptionInput;
 		subscription_version++;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -225,7 +225,7 @@ contract MetaduesRoot {
 	function setTvcSubscriptionServiceIndex(
 		TvmCell tvcSubscriptionServiceIndexInput
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -233,7 +233,7 @@ contract MetaduesRoot {
 	function setTvcSubscriptionServiceIdentificatorIndex(
 		TvmCell tvcSubscriptionServiceIdentificatorIndexInput
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvcSubscriptionServiceIdentificatorIndex = tvcSubscriptionServiceIdentificatorIndexInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -242,7 +242,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvcSubscriptionIndex = tvcSubscriptionIndexInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -250,24 +250,24 @@ contract MetaduesRoot {
 	function setTvcSubscriptionIdentificatorIndex(
 		TvmCell tvcSubscriptionIdentificatorIndexInput
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndexInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
 	function setTvcFeeProxy(TvmCell tvcFeeProxyInput) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvcFeeProxy = tvcFeeProxyInput;
 		fee_proxy_version++;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
 	function setTvc() external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		versionTvc++;
 		VersionsTvcParams params;
 		params.tvcPlatform = tvcPlatform;
-		params.tvcMetaduesAccount = tvcMetaduesAccount;
+		params.tvcEverduesAccount = tvcEverduesAccount;
 		params.tvcSubscriptionService = tvcSubscriptionService;
 		params.tvcSubscription = tvcSubscription;
 		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex;
@@ -286,25 +286,25 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiPlatformContract = abiPlatformContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
-	function setAbiMetaduesAccountContract(
-		string abiMetaduesAccountContractInput
+	function setAbiEverduesAccountContract(
+		string abiEverduesAccountContractInput
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
-		abiMetaduesAccountContract = abiMetaduesAccountContractInput;
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		abiEverduesAccountContract = abiEverduesAccountContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
-	function setAbiMetaduesRootContract(string abiMetaduesRootContractInput)
+	function setAbiEverduesRootContract(string abiEverduesRootContractInput)
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
-		abiMetaduesRootContract = abiMetaduesRootContractInput;
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		abiEverduesRootContract = abiEverduesRootContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
@@ -312,7 +312,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiTIP3RootContract = abiTIP3RootContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -320,7 +320,7 @@ contract MetaduesRoot {
 	function setAbiTIP3TokenWalletContract(
 		string abiTIP3TokenWalletContractInput
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiTIP3TokenWalletContract = abiTIP3TokenWalletContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -329,7 +329,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiServiceContract = abiServiceContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -338,7 +338,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiServiceIndexContract = abiServiceIndexContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -346,7 +346,7 @@ contract MetaduesRoot {
 	function setAbiServiceIdentificatorIndexContract(
 		string abiServiceIdentificatorIndexContractInput
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiServiceIdentificatorIndexContract = abiServiceIdentificatorIndexContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -355,7 +355,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiSubscriptionContract = abiSubscriptionContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -363,7 +363,7 @@ contract MetaduesRoot {
 	function setAbiSubscriptionIndexContract(
 		string abiSubscriptionIndexContractInput
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -371,7 +371,7 @@ contract MetaduesRoot {
 	function setAbiSubscriptionIdentificatorIndexContract(
 		string abiSubscriptionIdentificatorIndexContractInput
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -380,18 +380,18 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		abiFeeProxyContract = abiFeeProxyContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
 	function setAbi() external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		versionAbi++;
 		VersionsAbiParams params;
 		params.abiPlatformContract = abiPlatformContract;
-		params.abiMetaduesAccountContract = abiMetaduesAccountContract;
-		params.abiMetaduesRootContract = abiMetaduesRootContract;
+		params.abiEverduesAccountContract = abiEverduesAccountContract;
+		params.abiEverduesRootContract = abiEverduesRootContract;
 		params.abiTIP3RootContract = abiTIP3RootContract;
 		params.abiTIP3TokenWalletContract = abiTIP3TokenWalletContract;
 		params.abiServiceContract = abiServiceContract;
@@ -408,7 +408,7 @@ contract MetaduesRoot {
 	}
 
 	function setCategories(string[] categoriesInput) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		categories = categoriesInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -417,7 +417,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		service_fee = service_fee_;
 		subscription_fee = subscription_fee_;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -427,7 +427,7 @@ contract MetaduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		mtds_revenue_accumulator_address = revenue_to;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -438,11 +438,11 @@ contract MetaduesRoot {
 	{
 		require(
 			fee_proxy_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -450,7 +450,7 @@ contract MetaduesRoot {
 		TvmBuilder currencies_cell;
 		currencies_cell.store(currencies);
 		TvmCell fee_proxy_contract_params = currencies_cell.toCell();
-		MetaduesFeeProxy(fee_proxy_address).setSupportedCurrencies{
+		EverduesFeeProxy(fee_proxy_address).setSupportedCurrencies{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
@@ -463,17 +463,17 @@ contract MetaduesRoot {
 	{
 		require(
 			fee_proxy_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
 		mtds_root_address = mtds_root_;
-		MetaduesFeeProxy(fee_proxy_address).setMTDSRootAddress{
+		EverduesFeeProxy(fee_proxy_address).setMTDSRootAddress{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
@@ -486,17 +486,17 @@ contract MetaduesRoot {
 	{
 		require(
 			fee_proxy_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
 		dex_root_address = dex_root;
-		MetaduesFeeProxy(fee_proxy_address).setDexRootAddress{
+		EverduesFeeProxy(fee_proxy_address).setDexRootAddress{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
@@ -507,16 +507,16 @@ contract MetaduesRoot {
 	function transferRevenueFromFeeProxy() external view onlyOwner {
 		require(
 			fee_proxy_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
-		MetaduesFeeProxy(fee_proxy_address).transferRevenue{
+		EverduesFeeProxy(fee_proxy_address).transferRevenue{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
@@ -526,16 +526,16 @@ contract MetaduesRoot {
 	function swapRevenue(address currency_root) external view onlyOwner {
 		require(
 			fee_proxy_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
-		MetaduesFeeProxy(fee_proxy_address).swapRevenueToMTDS{
+		EverduesFeeProxy(fee_proxy_address).swapRevenueToMTDS{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
@@ -549,16 +549,16 @@ contract MetaduesRoot {
 	{
 		require(
 			fee_proxy_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
-		MetaduesFeeProxy(fee_proxy_address).syncBalance{
+		EverduesFeeProxy(fee_proxy_address).syncBalance{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
@@ -569,16 +569,16 @@ contract MetaduesRoot {
 	function upgradeFeeProxy() external view onlyOwner {
 		require(
 			fee_proxy_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
-		MetaduesFeeProxy(fee_proxy_address).upgrade{
+		EverduesFeeProxy(fee_proxy_address).upgrade{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
@@ -588,7 +588,7 @@ contract MetaduesRoot {
 	function upgradeAccount(uint256 pubkey) external view {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -597,11 +597,11 @@ contract MetaduesRoot {
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
 		require(msg.sender == account_address, 1111);
-		MetaduesAccount(account_address).upgrade{
+		EverduesAccount(account_address).upgrade{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(tvcMetaduesAccount.toSlice().loadRef(), account_version);
+		}(tvcEverduesAccount.toSlice().loadRef(), account_version);
 	}
 
 	function upgradeSubscription(address service_address)
@@ -610,11 +610,11 @@ contract MetaduesRoot {
 	{
 		require(
 			service_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -644,11 +644,11 @@ contract MetaduesRoot {
 	{
 		require(
 			service_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -678,7 +678,7 @@ contract MetaduesRoot {
 	{
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -702,7 +702,7 @@ contract MetaduesRoot {
 	function updateServiceParams(string service_name, string category, TvmCell new_service_params) external {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -726,7 +726,7 @@ contract MetaduesRoot {
 	function updateServiceIdentificator(string service_name, string category, TvmCell identificator) public {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -749,11 +749,11 @@ contract MetaduesRoot {
 
 	function upgrade(TvmCell code) external onlyOwner {
 		require(
-			msg.value >= MetaduesGas.UPGRADE_ROOT_MIN_VALUE,
-			MetaduesErrors.error_message_low_value
+			msg.value >= EverduesGas.UPGRADE_ROOT_MIN_VALUE,
+			EverduesErrors.error_message_low_value
 		);
 
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 
 		TvmBuilder builder;
 		builder.store(account_version);
@@ -769,7 +769,7 @@ contract MetaduesRoot {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
-		tvm.rawReserve(MetaduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvm.resetStorage();
 		(
 			uint32 account_version_,
@@ -801,7 +801,7 @@ contract MetaduesRoot {
 	function deployFeeProxy(address[] currencies) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -829,7 +829,7 @@ contract MetaduesRoot {
 	function cancelService(string service_name) external {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -851,7 +851,7 @@ contract MetaduesRoot {
 	function cancelSubscription(address service_address) external {
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -880,7 +880,7 @@ contract MetaduesRoot {
 		require(msg.sender == account_address, 1111);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -892,7 +892,7 @@ contract MetaduesRoot {
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
-			tvcMetaduesAccount.toSlice().loadRef(),
+			tvcEverduesAccount.toSlice().loadRef(),
 			account_params,
 			account_version
 		);
@@ -906,25 +906,25 @@ contract MetaduesRoot {
 	) external view {
 		require(
 			service_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		require(
 			fee_proxy_address != address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		);
 		require(
 			msg.value >=
-				(MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE +
-					MetaduesGas.INIT_SUBSCRIPTION_VALUE +
-					MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-					MetaduesGas.INDEX_INITIAL_BALANCE *
+				(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
+					EverduesGas.INIT_SUBSCRIPTION_VALUE +
+					EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
+					EverduesGas.INDEX_INITIAL_BALANCE *
 					2 +
 					additional_gas),
-			MetaduesErrors.error_message_low_value
+			EverduesErrors.error_message_low_value
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -967,8 +967,8 @@ contract MetaduesRoot {
 				PlatformTypes.Subscription,
 				_buildSubscriptionPlatformParams(msg.sender, service_address)
 			),
-			value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE +
-				MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
+			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
+				EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 				(additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
@@ -979,7 +979,7 @@ contract MetaduesRoot {
 			0
 		);
 		new SubscriptionIndex{
-			value: MetaduesGas.INDEX_INITIAL_BALANCE +
+			value: EverduesGas.INDEX_INITIAL_BALANCE +
 				(additional_gas / 3 - 100),
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
@@ -987,7 +987,7 @@ contract MetaduesRoot {
 		}(address(platform));
 		if (!identificator.toSlice().empty()) {
 			new SubscriptionIdentificatorIndex{
-				value: MetaduesGas.INDEX_INITIAL_BALANCE +
+				value: EverduesGas.INDEX_INITIAL_BALANCE +
 					(additional_gas / 3 - 100),
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
@@ -1007,16 +1007,16 @@ contract MetaduesRoot {
 	) external view {
 		require(
 			msg.value >=
-				(MetaduesGas.SERVICE_INITIAL_BALANCE +
-					MetaduesGas.INDEX_INITIAL_BALANCE *
+				(EverduesGas.SERVICE_INITIAL_BALANCE +
+					EverduesGas.INDEX_INITIAL_BALANCE *
 					2 +
-					MetaduesGas.SET_SERVICE_INDEXES_VALUE +
+					EverduesGas.SET_SERVICE_INDEXES_VALUE +
 					additional_gas),
-			MetaduesErrors.error_message_low_value
+			EverduesErrors.error_message_low_value
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.ROOT_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -1044,7 +1044,7 @@ contract MetaduesRoot {
 				PlatformTypes.Service,
 				_buildServicePlatformParams(msg.sender, service_name)
 			),
-			value: MetaduesGas.SERVICE_INITIAL_BALANCE +
+			value: EverduesGas.SERVICE_INITIAL_BALANCE +
 				(additional_gas / 4) -
 				100,
 			flag: MsgFlag.SENDER_PAYS_FEES
@@ -1059,7 +1059,7 @@ contract MetaduesRoot {
 				address(platform)
 			);
 		SubscriptionService(address(platform)).setIndexes{
-			value: MetaduesGas.SET_SERVICE_INDEXES_VALUE +
+			value: EverduesGas.SET_SERVICE_INDEXES_VALUE +
 				(additional_gas / 4) -
 				100,
 			flag: MsgFlag.SENDER_PAYS_FEES
@@ -1068,7 +1068,7 @@ contract MetaduesRoot {
 			address(tvm.hash(serviceIdentificatorIndexStateInit))
 		);
 		new SubscriptionServiceIndex{
-			value: MetaduesGas.INDEX_INITIAL_BALANCE +
+			value: EverduesGas.INDEX_INITIAL_BALANCE +
 				(additional_gas / 4) -
 				100,
 			flag: MsgFlag.SENDER_PAYS_FEES,
@@ -1077,7 +1077,7 @@ contract MetaduesRoot {
 		}(address(platform));
 		if (!identificator.toSlice().empty()) {
 			new SubscriptionServiceIdentificatorIndex{
-				value: MetaduesGas.INDEX_INITIAL_BALANCE +
+				value: EverduesGas.INDEX_INITIAL_BALANCE +
 					(additional_gas / 4) -
 					100,
 				flag: MsgFlag.SENDER_PAYS_FEES,

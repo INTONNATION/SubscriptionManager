@@ -3,10 +3,10 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "libraries/MetaduesErrors.sol";
+import "libraries/EverduesErrors.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/MsgFlag.sol";
-import "libraries/MetaduesGas.sol";
+import "libraries/EverduesGas.sol";
 import "libraries/DexOperationTypes.sol";
 import "./interfaces/IDexRoot.sol";
 import "./Platform.sol";
@@ -14,7 +14,7 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol"
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
-contract MetaduesFeeProxy {
+contract EverduesFeeProxy {
 	address public root;
 	TvmCell platform_code;
 	TvmCell platform_params;
@@ -40,7 +40,7 @@ contract MetaduesFeeProxy {
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,
-			MetaduesErrors.error_message_sender_is_not_root
+			EverduesErrors.error_message_sender_is_not_root
 		);
 		_;
 	}
@@ -48,7 +48,7 @@ contract MetaduesFeeProxy {
 	modifier onlyDexRoot() {
 		require(
 			msg.sender == dex_root_address,
-			MetaduesErrors.error_message_sender_is_not_dex_root
+			EverduesErrors.error_message_sender_is_not_dex_root
 		);
 		_;
 	}
@@ -56,7 +56,7 @@ contract MetaduesFeeProxy {
 	modifier onlyCurrencyRoot() {
 		require(
 			msg.sender == sync_balance_currency_root,
-			MetaduesErrors.error_message_sender_is_not_currency_root
+			EverduesErrors.error_message_sender_is_not_currency_root
 		);
 		_;
 	}
@@ -89,14 +89,14 @@ contract MetaduesFeeProxy {
 	{
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
 		require(
 			sync_balance_currency_root == address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		); // mutex
 		sync_balance_currency_root = currency_root; // critical area
 		_tmp_deploying_wallets[currency_root] = send_gas_to;
@@ -111,7 +111,7 @@ contract MetaduesFeeProxy {
 					value: 0,
 					flag: MsgFlag.ALL_NOT_RESERVED,
 					bounce: false,
-					callback: MetaduesFeeProxy.onGetExpectedPairAddress
+					callback: EverduesFeeProxy.onGetExpectedPairAddress
 				}(mtds_root_address, currency_root);
 			}
 		} else {
@@ -125,19 +125,19 @@ contract MetaduesFeeProxy {
 	{
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
 		require(
-			msg.value > MetaduesGas.TRANSFER_MIN_VALUE,
-			MetaduesErrors.error_message_low_value
+			msg.value > EverduesGas.TRANSFER_MIN_VALUE,
+			EverduesErrors.error_message_low_value
 		);
 		require(
 			_tmp_deploying_wallets.exists(msg.sender) &&
 				!wallets_mapping.exists(msg.sender),
-			MetaduesErrors.error_wallet_not_exist
+			EverduesErrors.error_wallet_not_exist
 		);
 		TvmBuilder builder;
 		builder.store(DexOperationTypes.EXCHANGE);
@@ -151,7 +151,7 @@ contract MetaduesFeeProxy {
 			.get();
 		address send_gas_to = _tmp_deploying_wallets[msg.sender];
 		ITokenWallet(current_balance_key.wallet).transfer{
-			value: MetaduesGas.TRANSFER_MIN_VALUE,
+			value: EverduesGas.TRANSFER_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			current_balance_key.balance, // amount
@@ -173,12 +173,12 @@ contract MetaduesFeeProxy {
 	{
 		require(
 			sync_balance_currency_root == address(0),
-			MetaduesErrors.error_address_is_empty
+			EverduesErrors.error_address_is_empty
 		); // mutex
 		_tmp_deploying_wallets[currency_root] = send_gas_to;
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -193,7 +193,7 @@ contract MetaduesFeeProxy {
 			value: MsgFlag.SENDER_PAYS_FEES,
 			flag: MsgFlag.ALL_NOT_RESERVED,
 			bounce: false,
-			callback: MetaduesFeeProxy.onBalanceOf
+			callback: EverduesFeeProxy.onBalanceOf
 		}();
 	}
 
@@ -201,7 +201,7 @@ contract MetaduesFeeProxy {
 		external
 		onlyRoot
 	{
-		tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 		mtds_root_address = mtds_root;
 		send_gas_to.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
@@ -210,7 +210,7 @@ contract MetaduesFeeProxy {
 		external
 		onlyRoot
 	{
-		tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 		dex_root_address = dex_root;
 		send_gas_to.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
@@ -219,9 +219,9 @@ contract MetaduesFeeProxy {
 		require(
 			_tmp_deploying_wallets.exists(msg.sender) &&
 				!wallets_mapping.exists(msg.sender),
-			MetaduesErrors.error_wallet_not_exist
+			EverduesErrors.error_wallet_not_exist
 		);
-		tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 		address send_gas_to = _tmp_deploying_wallets[msg.sender];
 		uint128 balance_wallet = balance_;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
@@ -242,12 +242,12 @@ contract MetaduesFeeProxy {
 		onlyRoot
 	{
 		require(
-			msg.value >= (MetaduesGas.TRANSFER_MIN_VALUE),
-			MetaduesErrors.error_message_low_value
+			msg.value >= (EverduesGas.TRANSFER_MIN_VALUE),
+			EverduesErrors.error_message_low_value
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -308,11 +308,11 @@ contract MetaduesFeeProxy {
 		address send_gas_to
 	) external onlyRoot {
 		require(
-			msg.value > MetaduesGas.UPGRADE_FEE_PROXY_MIN_VALUE,
-			MetaduesErrors.error_message_low_value
+			msg.value > EverduesGas.UPGRADE_FEE_PROXY_MIN_VALUE,
+			EverduesErrors.error_message_low_value
 		);
 
-		tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 
 		TvmBuilder builder;
 		TvmBuilder upgrade_params;
@@ -343,11 +343,11 @@ contract MetaduesFeeProxy {
 			if (!currency_root_wallet_opt.hasValue()) {
 				_tmp_deploying_wallets[currency_root] = send_gas_to;
 				ITokenRoot(currency_root).deployWallet{
-					value: MetaduesGas.DEPLOY_EMPTY_WALLET_VALUE,
+					value: EverduesGas.DEPLOY_EMPTY_WALLET_VALUE,
 					bounce: false,
 					flag: MsgFlag.SENDER_PAYS_FEES,
-					callback: MetaduesFeeProxy.onDeployWallet
-				}(address(this), MetaduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
+					callback: EverduesFeeProxy.onDeployWallet
+				}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
 			}
 		}
 		send_gas_to.transfer({
@@ -365,12 +365,12 @@ contract MetaduesFeeProxy {
 		);
 		require(
 			msg.value >
-				(MetaduesGas.DEPLOY_EMPTY_WALLET_VALUE * currencies.length),
-			MetaduesErrors.error_message_low_value
+				(EverduesGas.DEPLOY_EMPTY_WALLET_VALUE * currencies.length),
+			EverduesErrors.error_message_low_value
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -383,11 +383,11 @@ contract MetaduesFeeProxy {
 			if (!currency_root_wallet_opt.hasValue()) {
 				_tmp_deploying_wallets[currency_root] = send_gas_to;
 				ITokenRoot(currency_root).deployWallet{
-					value: MetaduesGas.DEPLOY_EMPTY_WALLET_VALUE,
+					value: EverduesGas.DEPLOY_EMPTY_WALLET_VALUE,
 					bounce: false,
 					flag: MsgFlag.SENDER_PAYS_FEES,
-					callback: MetaduesFeeProxy.onDeployWallet
-				}(address(this), MetaduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
+					callback: EverduesFeeProxy.onDeployWallet
+				}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
 			}
 		}
 		send_gas_to.transfer({
@@ -400,11 +400,11 @@ contract MetaduesFeeProxy {
 		require(
 			_tmp_deploying_wallets.exists(msg.sender) &&
 				!wallets_mapping.exists(msg.sender),
-			MetaduesErrors.error_wallet_not_exist
+			EverduesErrors.error_wallet_not_exist
 		);
 		tvm.rawReserve(
 			math.max(
-				MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2

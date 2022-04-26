@@ -4,9 +4,9 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "Platform.sol";
-import "libraries/MetaduesErrors.sol";
+import "libraries/EverduesErrors.sol";
 import "libraries/PlatformTypes.sol";
-import "libraries/MetaduesGas.sol";
+import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 import "interfaces/IEverduesRoot.sol";
 import "interfaces/IEverduesAccount.sol";
@@ -14,7 +14,7 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol"
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
-contract MetaduesAccount is IEverduesAccount{
+contract EverduesAccount is IEverduesAccount{
 	address public root;
 	address public sync_balance_currency_root;
 	uint128 public withdraw_value;
@@ -49,16 +49,16 @@ contract MetaduesAccount is IEverduesAccount{
 	modifier onlyCurrencyRoot() {
 		require(
 			msg.sender == sync_balance_currency_root,
-			MetaduesErrors.error_message_sender_is_not_currency_root
+			EverduesErrors.error_message_sender_is_not_currency_root
 		);
 		_;
 	}
 
 	function upgradeAccount(uint128 additional_gas) public onlyOwner {
 		IEverduesRoot(root).upgradeAccount{
-			value: MetaduesGas.UPGRADE_ACCOUNT_MIN_VALUE +
+			value: EverduesGas.UPGRADE_ACCOUNT_MIN_VALUE +
 				additional_gas +
-				MetaduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
 		}(tvm.pubkey());
@@ -82,7 +82,7 @@ contract MetaduesAccount is IEverduesAccount{
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
-		tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 		TvmSlice s = upgrade_data.toSlice();
 		(address root_, uint32 old_version, uint32 version, uint8 type_id_) = s
 			.decode(address, uint32, uint32, uint8);
@@ -105,7 +105,7 @@ contract MetaduesAccount is IEverduesAccount{
 		address service_address,
 		uint128 pay_subscription_gas
 	) external override responsible returns (uint8) {
-		uint128 gas_ = (MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
+		uint128 gas_ = (EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 			pay_subscription_gas);
 		address subsciption_addr = address(
 			tvm.hash(
@@ -115,7 +115,7 @@ contract MetaduesAccount is IEverduesAccount{
 				)
 			)
 		);
-		require(subsciption_addr == msg.sender, MetaduesErrors.error_message_sender_is_not_my_subscription);
+		require(subsciption_addr == msg.sender, EverduesErrors.error_message_sender_is_not_my_subscription);
 		TvmCell payload;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
@@ -129,7 +129,7 @@ contract MetaduesAccount is IEverduesAccount{
 				return 1;
 			} else {
 				ITokenWallet(account_wallet).transferToWallet{
-					value: MetaduesGas.TRANSFER_MIN_VALUE *
+					value: EverduesGas.TRANSFER_MIN_VALUE *
 						2 +
 						pay_subscription_gas,
 					bounce: false,
@@ -147,7 +147,7 @@ contract MetaduesAccount is IEverduesAccount{
 
 	function syncBalance(address currency_root) external onlyOwner {
 		require(sync_balance_currency_root == address(0), 335);
-		tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 		sync_balance_currency_root = currency_root;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
@@ -158,7 +158,7 @@ contract MetaduesAccount is IEverduesAccount{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED,
-			callback: MetaduesAccount.onBalanceOf
+			callback: EverduesAccount.onBalanceOf
 		}();
 	}
 
@@ -167,9 +167,9 @@ contract MetaduesAccount is IEverduesAccount{
 		uint128 additional_gas
 	) public onlyOwner {
 		IEverduesRoot(root).upgradeSubscription{
-			value: MetaduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE +
+			value: EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE +
 				additional_gas +
-				MetaduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
 		}(service_address);
@@ -180,7 +180,7 @@ contract MetaduesAccount is IEverduesAccount{
 		onlyOwner
 	{
 		IEverduesRoot(root).cancelSubscription{
-			value: MetaduesGas.CANCEL_MIN_VALUE + additional_gas,
+			value: EverduesGas.CANCEL_MIN_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_address);
@@ -188,7 +188,7 @@ contract MetaduesAccount is IEverduesAccount{
 
 	function updateServiceIdentificator(string service_name, string category, TvmCell identificator, uint128 additional_gas) public onlyOwner {
 		IEverduesRoot(root).updateServiceIdentificator{
-			value: MetaduesGas.UPDATE_INDEX_VALUE + additional_gas,
+			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_name, category, identificator);		
@@ -196,7 +196,7 @@ contract MetaduesAccount is IEverduesAccount{
 
 	function updateSubscriptionIdentificator(address service_address, TvmCell identificator, uint128 additional_gas) public onlyOwner {
 		IEverduesRoot(root).updateSubscriptionIdentificator{
-			value: MetaduesGas.UPDATE_INDEX_VALUE + additional_gas,
+			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_address, identificator);		
@@ -204,7 +204,7 @@ contract MetaduesAccount is IEverduesAccount{
 
 	function updateServiceParams(string service_name, string category, TvmCell new_service_params, uint128 additional_gas) public onlyOwner {
 		IEverduesRoot(root).updateServiceParams{
-			value: MetaduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
+			value: EverduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_name, category, new_service_params);				
@@ -215,7 +215,7 @@ contract MetaduesAccount is IEverduesAccount{
 		onlyOwner
 	{
 		IEverduesRoot(root).cancelService{
-			value: MetaduesGas.CANCEL_MIN_VALUE + additional_gas,
+			value: EverduesGas.CANCEL_MIN_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_name);
@@ -227,12 +227,12 @@ contract MetaduesAccount is IEverduesAccount{
 		uint128 additional_gas
 	) public onlyOwner {
 		IEverduesRoot(root).deployService{
-			value: MetaduesGas.SERVICE_INITIAL_BALANCE +
-				MetaduesGas.INDEX_INITIAL_BALANCE *
+			value: EverduesGas.SERVICE_INITIAL_BALANCE +
+				EverduesGas.INDEX_INITIAL_BALANCE *
 				2 +
-				MetaduesGas.SET_SERVICE_INDEXES_VALUE +
+				EverduesGas.SET_SERVICE_INDEXES_VALUE +
 				additional_gas +
-				MetaduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
 		}(service_params, identificator, additional_gas);
@@ -244,9 +244,9 @@ contract MetaduesAccount is IEverduesAccount{
 		uint128 additional_gas
 	) public onlyOwner {
 		IEverduesRoot(root).upgradeService{
-			value: MetaduesGas.UPGRADE_SERVICE_MIN_VALUE +
+			value: EverduesGas.UPGRADE_SERVICE_MIN_VALUE +
 				additional_gas +
-				MetaduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
 		}(service_name, category);
@@ -258,13 +258,13 @@ contract MetaduesAccount is IEverduesAccount{
 		uint128 additional_gas
 	) public onlyOwner {
 		IEverduesRoot(root).deploySubscription{
-			value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE +
-				MetaduesGas.INIT_SUBSCRIPTION_VALUE +
-				MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-				MetaduesGas.INDEX_INITIAL_BALANCE *
+			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
+				EverduesGas.INIT_SUBSCRIPTION_VALUE +
+				EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
+				EverduesGas.INDEX_INITIAL_BALANCE *
 				2 +
 				additional_gas +
-				MetaduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
 		}(service_address, identificator, tvm.pubkey(), additional_gas);
@@ -286,7 +286,7 @@ contract MetaduesAccount is IEverduesAccount{
 		uint128 withdraw_value_,
 		address withdraw_to
 	) external onlyOwner {
-		tvm.rawReserve(MetaduesGas.ACCOUNT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);

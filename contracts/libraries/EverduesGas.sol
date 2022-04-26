@@ -1,6 +1,6 @@
 pragma ton-solidity >=0.56.0;
 
-library MetaduesGas {
+library EverduesGas {
 
     uint128 constant ROOT_INITIAL_BALANCE                   = 1 ever;
     uint128 constant ACCOUNT_INITIAL_BALANCE                = 3 ever;
