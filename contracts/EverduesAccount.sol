@@ -96,6 +96,7 @@ contract EverduesAccount is IEverduesAccount {
 		platform_params = s.loadRef();
 		current_version = version;
 		type_id = type_id_;
+		emit AccountDeployed(current_version);
 	}
 
 	function paySubscription(
