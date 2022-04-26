@@ -106,6 +106,14 @@
 			]
 		},
 		{
+			"name": "service_params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_params","type":"cell"}
+			]
+		},
+		{
 			"name": "root",
 			"inputs": [
 			],
@@ -114,19 +122,19 @@
 			]
 		},
 		{
-			"name": "owner_address",
+			"name": "address_fee_proxy",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"owner_address","type":"address"}
+				{"name":"address_fee_proxy","type":"address"}
 			]
 		},
 		{
-			"name": "service_params",
+			"name": "account_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"service_params","type":"cell"}
+				{"name":"account_address","type":"address"}
 			]
 		},
 		{
@@ -162,14 +170,6 @@
 			]
 		},
 		{
-			"name": "address_fee_proxy",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"address_fee_proxy","type":"address"}
-			]
-		},
-		{
 			"name": "svcparams",
 			"inputs": [
 			],
@@ -202,25 +202,24 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"root","type":"address"},
-		{"name":"owner_address","type":"address"},
-		{"name":"platform_code","type":"cell"},
-		{"name":"platform_params","type":"cell"},
-		{"name":"current_version","type":"uint32"},
-		{"name":"type_id","type":"uint8"},
 		{"name":"service_params","type":"cell"},
-		{"name":"subscription_wallet","type":"address"},
-		{"name":"account_wallet","type":"address"},
+		{"name":"root","type":"address"},
+		{"name":"address_fee_proxy","type":"address"},
 		{"name":"account_address","type":"address"},
-		{"name":"service_address","type":"address"},
 		{"name":"subscription_index_address","type":"address"},
 		{"name":"subscription_index_identificator_address","type":"address"},
-		{"name":"cooldown","type":"uint32"},
 		{"name":"service_fee","type":"uint8"},
 		{"name":"subscription_fee","type":"uint8"},
-		{"name":"address_fee_proxy","type":"address"},
+		{"name":"platform_code","type":"cell"},
+		{"name":"platform_params","type":"cell"},
 		{"name":"contract_params","type":"cell"},
+		{"name":"subscription_wallet","type":"address"},
+		{"name":"account_wallet","type":"address"},
+		{"name":"service_address","type":"address"},
+		{"name":"current_version","type":"uint32"},
 		{"name":"preprocessing_window","type":"uint32"},
+		{"name":"cooldown","type":"uint32"},
+		{"name":"type_id","type":"uint8"},
 		{"components":[{"name":"to","type":"address"},{"name":"subscription_value","type":"uint128"},{"name":"service_value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
 		{"components":[{"name":"period","type":"uint32"},{"name":"payment_timestamp","type":"uint32"},{"name":"execution_timestamp","type":"uint32"},{"name":"status","type":"uint8"},{"name":"gas","type":"uint128"}],"name":"subscription","type":"tuple"}
 	]
