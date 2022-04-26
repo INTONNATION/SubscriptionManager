@@ -26,11 +26,11 @@ interface IPlatform {
 }
 
 interface ISubscription {
-    function cancel() external;
+	function cancel() external;
 }
 
 contract MetaduesRoot {
-    uint256 tmp_pubkey; //debug
+	uint256 tmp_pubkey; //debug
 	uint8 public versionTvc;
 	uint8 public versionAbi;
 	string[] public categories;
@@ -703,8 +703,8 @@ contract MetaduesRoot {
 				uint32,
 				uint32,
 				uint32
-		);
-        // decode vrsparamsAbi and vrsparamsTvc
+			);
+		// decode vrsparamsAbi and vrsparamsTvc
 		account_version = account_version_;
 		service_version = service_version_;
 		fee_proxy_version = fee_proxy_version_;
@@ -741,12 +741,12 @@ contract MetaduesRoot {
 			fee_proxy_contract_params,
 			fee_proxy_version,
 			msg.sender,
-            0
+			0
 		);
 		fee_proxy_address = address(platform);
 	}
 
-    function cancelService(string service_name) external {
+	function cancelService(string service_name) external {
 		tvm.rawReserve(
 			math.max(
 				MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -762,13 +762,13 @@ contract MetaduesRoot {
 				)
 			)
 		);
-        ISubscriptionService(service_address).cancel{
+		IEverduesSubscriptionService(service_address).cancel{
 			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED            
-        }();
-    }
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}();
+	}
 
-    function cancelSubscription(address service_address) external {
+	function cancelSubscription(address service_address) external {
 		tvm.rawReserve(
 			math.max(
 				MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -787,11 +787,11 @@ contract MetaduesRoot {
 				)
 			)
 		);
-        ISubscription(subscription_address).cancel{
+		ISubscription(subscription_address).cancel{
 			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED            
-        }();
-    }
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}();
+	}
 
 	function deployAccount(uint256 pubkey) external {
 		address account_address = address(
@@ -887,7 +887,7 @@ contract MetaduesRoot {
 				PlatformTypes.Subscription,
 				_buildSubscriptionPlatformParams(msg.sender, service_address)
 			),
-			value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE + 
+			value: MetaduesGas.SUBSCRIPTION_INITIAL_BALANCE +
 				MetaduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 				(additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES
@@ -896,7 +896,7 @@ contract MetaduesRoot {
 			service_params.toCell(),
 			subscription_version,
 			msg.sender,
-            0
+			0
 		);
 		new SubscriptionIndex{
 			value: MetaduesGas.INDEX_INITIAL_BALANCE +
@@ -925,15 +925,15 @@ contract MetaduesRoot {
 		TvmCell identificator,
 		uint128 additional_gas
 	) external view {
-        require(
-            msg.value >=
-                (MetaduesGas.SERVICE_INITIAL_BALANCE +
-                    MetaduesGas.INDEX_INITIAL_BALANCE *
-                    2 +
-                    MetaduesGas.SET_SERVICE_INDEXES_VALUE +
-                    additional_gas),
-        MetaduesErrors.error_message_low_value
-        );
+		require(
+			msg.value >=
+				(MetaduesGas.SERVICE_INITIAL_BALANCE +
+					MetaduesGas.INDEX_INITIAL_BALANCE *
+					2 +
+					MetaduesGas.SET_SERVICE_INDEXES_VALUE +
+					additional_gas),
+			MetaduesErrors.error_message_low_value
+		);
 		tvm.rawReserve(
 			math.max(
 				MetaduesGas.ROOT_INITIAL_BALANCE,
@@ -965,9 +965,10 @@ contract MetaduesRoot {
 				_buildServicePlatformParams(msg.sender, service_name)
 			),
 			value: MetaduesGas.SERVICE_INITIAL_BALANCE +
-				(additional_gas / 4) - 100,
+				(additional_gas / 4) -
+				100,
 			flag: MsgFlag.SENDER_PAYS_FEES
-		}(service_code_salt, service_params, service_version, msg.sender,0);
+		}(service_code_salt, service_params, service_version, msg.sender, 0);
 		TvmCell serviceIndexStateInit = _buildServiceIndex(
 			msg.sender,
 			service_name
@@ -979,7 +980,8 @@ contract MetaduesRoot {
 			);
 		SubscriptionService(address(platform)).setIndexes{
 			value: MetaduesGas.SET_SERVICE_INDEXES_VALUE +
-				(additional_gas / 4) - 100,
+				(additional_gas / 4) -
+				100,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			address(tvm.hash(serviceIndexStateInit)),
@@ -987,7 +989,8 @@ contract MetaduesRoot {
 		);
 		new SubscriptionServiceIndex{
 			value: MetaduesGas.INDEX_INITIAL_BALANCE +
-				(additional_gas / 4) - 100, 
+				(additional_gas / 4) -
+				100,
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: serviceIndexStateInit
@@ -995,7 +998,8 @@ contract MetaduesRoot {
 		if (!identificator.toSlice().empty()) {
 			new SubscriptionServiceIdentificatorIndex{
 				value: MetaduesGas.INDEX_INITIAL_BALANCE +
-					(additional_gas / 4) - 100,
+					(additional_gas / 4) -
+					100,
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: serviceIdentificatorIndexStateInit
@@ -1106,7 +1110,10 @@ contract MetaduesRoot {
 		TvmCell state = tvm.buildStateInit({
 			code: code,
 			pubkey: 0,
-			varInit: {service_owner: serviceOwner, service_address: service_address},
+			varInit: {
+				service_owner: serviceOwner,
+				service_address: service_address
+			},
 			contr: SubscriptionServiceIdentificatorIndex
 		});
 		return state;
