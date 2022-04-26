@@ -30,7 +30,6 @@ contract Subscription is IEverduesSubscription {
 	TvmCell platform_params;
 	TvmCell contract_params;
 	address subscription_wallet;
-	address account_wallet;
 	address service_address;
 	uint32 current_version;
 	uint32 preprocessing_window;
@@ -77,6 +76,14 @@ contract Subscription is IEverduesSubscription {
 		require(
 			msg.sender == service_address,
 			MetaduesErrors.error_message_sender_is_not_service_address
+		);
+		_;
+	}
+
+	modifier onlyAccount() {
+		require(
+			msg.sender == account_address,
+			MetaduesErrors.error_message_sender_is_not_account_address
 		);
 		_;
 	}
@@ -137,10 +144,6 @@ contract Subscription is IEverduesSubscription {
 				(now > (subscription.execution_timestamp + execute_subscription_cooldown)) ||
 				(subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING)
 			) {
-				require(
-					account_wallet != address(0),
-					MetaduesErrors.subscription_unknown_account_address
-				);
 				tvm.accept();
 				subscription.gas = paySubscriptionGas;
 				subscription.execution_timestamp = uint32(now);
@@ -180,7 +183,6 @@ contract Subscription is IEverduesSubscription {
 			}(
 				svcparams.subscription_value,
 				svcparams.currency_root,
-				account_wallet,
 				subscription_wallet,
 				service_address,
 				subscription.gas
@@ -191,10 +193,6 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function executeSubscription_() private inline {
-		require(
-			account_wallet != address(0),
-			MetaduesErrors.subscription_unknown_account_address
-		);
 		subscription.execution_timestamp = uint32(now);
 		subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
 		IEverduesAccount(account_address).paySubscription{
@@ -205,7 +203,6 @@ contract Subscription is IEverduesSubscription {
 		}(
 			svcparams.subscription_value,
 			svcparams.currency_root,
-			account_wallet,
 			subscription_wallet,
 			service_address,
 			subscription.gas
@@ -252,12 +249,7 @@ contract Subscription is IEverduesSubscription {
 		}(pay_value, svcparams.to, 0, account_address, false, payload);
 	}
 
-	function onPaySubscription(uint8 status) external {
-		require(
-			msg.sender == account_address,
-			MetaduesErrors.error_message_sender_is_not_my_owner
-		);
-		// allow onlylAccount
+	function onPaySubscription(uint8 status) external onlyAccount {
 		if (status == 1) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else if (status == 0) {
@@ -350,16 +342,6 @@ contract Subscription is IEverduesSubscription {
 		onlyCurrencyRoot
 	{
 		subscription_wallet = subscription_wallet_;
-		ITokenRoot(svcparams.currency_root).walletOf{
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.REMAINING_GAS,
-			callback: Subscription.onWalletOf
-		}(account_address);
-	}
-
-	function onWalletOf(address account_wallet_) external onlyCurrencyRoot {
-		account_wallet = account_wallet_;
 		if (subscription.payment_timestamp == 0) {
 			executeSubscription_();
 		} else {

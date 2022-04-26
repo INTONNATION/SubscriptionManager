@@ -11,6 +11,7 @@ interface IEverduesRoot {
 	function upgradeSubscription(address service_address) external;
 
 	function updateServiceIdentificator(string service_name, string category, TvmCell identificator) external;
+	function updateServiceParams(string service_name, string category, TvmCell new_service_params) external;
 	function updateSubscriptionIdentificator(address service_address, TvmCell identificator) external;
 
 	function cancelSubscription(address service_address) external;

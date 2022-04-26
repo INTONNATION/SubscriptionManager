@@ -11,6 +11,7 @@ library MetaduesGas {
 
     uint128 constant DEPLOY_SUBSCRIPTION_MIN_VALUE          = 1 ever;
     uint128 constant UPDATE_INDEX_VALUE                     = 0.1 ever;
+    uint128 constant UPDADE_SERVICE_PARAMS_VALUE            = 0.3 ever;
 
     uint128 constant SET_SERVICE_INDEXES_VALUE              = 0.2 ever;
     uint128 constant EXECUTE_SUBSCRIPTION_VALUE             = 0.5 ever;

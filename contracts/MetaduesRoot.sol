@@ -701,6 +701,30 @@ contract MetaduesRoot {
 		}(service_code_salt, service_version, msg.sender);
 	}
 
+	function updateServiceParams(string service_name, string category, TvmCell new_service_params) external {
+		tvm.rawReserve(
+			math.max(
+				MetaduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		TvmCell service_code_salt = _buildServiceCode(category);
+		address service_address = address(
+			tvm.hash(
+				_buildInitData(
+					PlatformTypes.Service,
+					_buildServicePlatformParams(msg.sender, service_name)
+				)
+			)
+		);
+		SubscriptionService(service_address).updateServiceParams{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(new_service_params);		
+	}
+
 	function updateServiceIdentificator(string service_name, string category, TvmCell identificator) public {
 		tvm.rawReserve(
 			math.max(

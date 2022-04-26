@@ -18,20 +18,20 @@ contract MetaduesFeeProxy {
 	address public root;
 	TvmCell platform_code;
 	TvmCell platform_params;
-	uint32 current_version;
-	uint8 type_id;
 	address mtds_root_address;
 	address sync_balance_currency_root; // mutex
 	address dex_root_address;
-
-	mapping(address => balance_wallet_struct) public wallets_mapping;
-	// token_root -> send_gas_to
-	mapping(address => address) _tmp_deploying_wallets;
+	uint32 current_version;
+	uint8 type_id;
 
 	struct balance_wallet_struct {
 		address wallet;
 		uint128 balance;
 	}
+
+	mapping(address => balance_wallet_struct) public wallets_mapping;
+	// token_root -> send_gas_to
+	mapping(address => address) _tmp_deploying_wallets;
 
 	constructor() public {
 		revert();
@@ -53,6 +53,14 @@ contract MetaduesFeeProxy {
 		_;
 	}
 
+	modifier onlyCurrencyRoot() {
+		require(
+			msg.sender == sync_balance_currency_root,
+			MetaduesErrors.error_message_sender_is_not_currency_root
+		);
+		_;
+	}
+
 	function onAcceptTokensTransfer(
 		address tokenRoot,
 		uint128 amount,
@@ -61,13 +69,6 @@ contract MetaduesFeeProxy {
 		address remainingGasTo,
 		TvmCell payload
 	) external {
-		tvm.rawReserve(
-			math.max(
-				MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(tokenRoot);
 		if (current_balance_struct.hasValue()) {
@@ -78,7 +79,7 @@ contract MetaduesFeeProxy {
 		}
 		remainingGasTo.transfer({
 			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+			flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
 		});
 	}
 
@@ -214,7 +215,7 @@ contract MetaduesFeeProxy {
 		send_gas_to.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function onBalanceOf(uint128 balance_) external {
+	function onBalanceOf(uint128 balance_) external onlyCurrencyRoot {
 		require(
 			_tmp_deploying_wallets.exists(msg.sender) &&
 				!wallets_mapping.exists(msg.sender),
@@ -401,7 +402,13 @@ contract MetaduesFeeProxy {
 				!wallets_mapping.exists(msg.sender),
 			MetaduesErrors.error_wallet_not_exist
 		);
-		tvm.rawReserve(MetaduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				MetaduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		address send_gas_to = _tmp_deploying_wallets[msg.sender];
 		wallets_mapping[msg.sender].wallet = wallet_address;
 		wallets_mapping[msg.sender].balance = 0;
