@@ -606,7 +606,7 @@ contract MetaduesRoot {
 		}(tvcMetaduesAccount.toSlice().loadRef(), account_version);
 	}
 
-	function upgradeSubscription(address service_address, TvmCell identificator)
+	function upgradeSubscription(address service_address)
 		external
 		view
 	{
@@ -640,6 +640,40 @@ contract MetaduesRoot {
 		}(subscription_code_salt, subscription_version, msg.sender);
 	}
 
+	function updateSubscriptionIdentificator(address service_address, TvmCell identificator)
+		external
+		view
+	{
+		require(
+			service_address != address(0),
+			MetaduesErrors.error_address_is_empty
+		);
+		tvm.rawReserve(
+			math.max(
+				MetaduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
+		address subscription_address = address(
+			tvm.hash(
+				_buildInitData(
+					PlatformTypes.Subscription,
+					_buildSubscriptionPlatformParams(
+						msg.sender,
+						service_address
+					)
+				)
+			)
+		);
+		Subscription(subscription_address).updateIdentificator{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(identificator, msg.sender);
+	}
+
 	function upgradeService(string service_name, string category)
 		external
 		view
@@ -665,6 +699,30 @@ contract MetaduesRoot {
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(service_code_salt, service_version, msg.sender);
+	}
+
+	function updateServiceIdentificator(string service_name, string category, TvmCell identificator) public {
+		tvm.rawReserve(
+			math.max(
+				MetaduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		TvmCell service_code_salt = _buildServiceCode(category);
+		address service_address = address(
+			tvm.hash(
+				_buildInitData(
+					PlatformTypes.Service,
+					_buildServicePlatformParams(msg.sender, service_name)
+				)
+			)
+		);
+		SubscriptionService(service_address).updateIdentificator{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(identificator, msg.sender);		
 	}
 
 	function upgrade(TvmCell code) external onlyOwner {

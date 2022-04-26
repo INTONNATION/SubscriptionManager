@@ -6,15 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"subsAddr","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "upgrade",
-			"inputs": [
-				{"name":"code","type":"cell"}
+				{"name":"subscription_addr","type":"address"}
 			],
 			"outputs": [
 			]
@@ -22,6 +14,15 @@
 		{
 			"name": "cancel",
 			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateIdentificator",
+			"inputs": [
+				{"name":"identificator_","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]

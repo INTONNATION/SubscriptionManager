@@ -54,7 +54,6 @@
 			"name": "upgradeSubscription",
 			"inputs": [
 				{"name":"service_address","type":"address"},
-				{"name":"identificator","type":"cell"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
@@ -64,6 +63,27 @@
 			"name": "cancelSubscription",
 			"inputs": [
 				{"name":"service_address","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateServiceIdentificator",
+			"inputs": [
+				{"name":"service_name","type":"string"},
+				{"name":"category","type":"string"},
+				{"name":"identificator","type":"cell"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateSubscriptionIdentificator",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"identificator","type":"cell"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
