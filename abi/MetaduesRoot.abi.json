@@ -341,6 +341,14 @@
 		{
 			"name": "upgradeSubscription",
 			"inputs": [
+				{"name":"service_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateSubscriptionIdentificator",
+			"inputs": [
 				{"name":"service_address","type":"address"},
 				{"name":"identificator","type":"cell"}
 			],
@@ -352,6 +360,16 @@
 			"inputs": [
 				{"name":"service_name","type":"string"},
 				{"name":"category","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateServiceIdentificator",
+			"inputs": [
+				{"name":"service_name","type":"string"},
+				{"name":"category","type":"string"},
+				{"name":"identificator","type":"cell"}
 			],
 			"outputs": [
 			]

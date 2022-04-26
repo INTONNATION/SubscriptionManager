@@ -160,7 +160,6 @@ contract MetaduesAccount {
 
 	function upgradeSubscription(
 		address service_address,
-		TvmCell identificator,
 		uint128 additional_gas
 	) public onlyOwner {
 		IEverduesRoot(root).upgradeSubscription{
@@ -169,7 +168,7 @@ contract MetaduesAccount {
 				MetaduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
-		}(service_address, identificator);
+		}(service_address);
 	}
 
 	function cancelSubscription(address service_address, uint128 additional_gas)
@@ -181,6 +180,22 @@ contract MetaduesAccount {
 			bounce: true,
 			flag: 0
 		}(service_address);
+	}
+
+	function updateServiceIdentificator(string service_name, string category, TvmCell identificator, uint128 additional_gas) public onlyOwner {
+		IEverduesRoot(root).updateServiceIdentificator{
+			value: MetaduesGas.UPDATE_INDEX_VALUE + additional_gas,
+			bounce: true,
+			flag: 0
+		}(service_name, category, identificator);		
+	}
+
+	function updateSubscriptionIdentificator(address service_address, TvmCell identificator, uint128 additional_gas) public onlyOwner {
+		IEverduesRoot(root).updateSubscriptionIdentificator{
+			value: MetaduesGas.UPDATE_INDEX_VALUE + additional_gas,
+			bounce: true,
+			flag: 0
+		}(service_address, identificator);		
 	}
 
 	function cancelService(string service_name, uint128 additional_gas)
