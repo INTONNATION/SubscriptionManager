@@ -71,7 +71,6 @@
 			"name": "updateServiceIdentificator",
 			"inputs": [
 				{"name":"service_name","type":"string"},
-				{"name":"category","type":"string"},
 				{"name":"identificator","type":"cell"},
 				{"name":"additional_gas","type":"uint128"}
 			],
@@ -92,7 +91,6 @@
 			"name": "updateServiceParams",
 			"inputs": [
 				{"name":"service_name","type":"string"},
-				{"name":"category","type":"string"},
 				{"name":"new_service_params","type":"cell"},
 				{"name":"additional_gas","type":"uint128"}
 			],
