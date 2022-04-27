@@ -581,7 +581,7 @@ contract EverduesRoot {
 		);
 		EverduesFeeProxy(fee_proxy_address).upgrade{
 			value: 0,
-			bounce: false,
+			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(tvcFeeProxy.toSlice().loadRef(), fee_proxy_version, msg.sender);
 	}
@@ -664,7 +664,7 @@ contract EverduesRoot {
 		);
 		Subscription(subscription_address).updateIdentificator{
 			value: 0,
-			bounce: false,
+			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(identificator, msg.sender);
 	}
@@ -691,7 +691,7 @@ contract EverduesRoot {
 		);
 		SubscriptionService(service_address).upgrade{
 			value: 0,
-			bounce: false,
+			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(service_code_salt, service_version, msg.sender);
 	}
@@ -717,7 +717,7 @@ contract EverduesRoot {
 		);
 		SubscriptionService(service_address).updateServiceParams{
 			value: 0,
-			bounce: false,
+			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(new_service_params);
 	}
@@ -743,7 +743,7 @@ contract EverduesRoot {
 		);
 		SubscriptionService(service_address).updateIdentificator{
 			value: 0,
-			bounce: false,
+			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(identificator, msg.sender);
 	}
@@ -845,6 +845,7 @@ contract EverduesRoot {
 		);
 		IEverduesSubscriptionService(service_address).cancel{
 			value: 0,
+			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}();
 	}

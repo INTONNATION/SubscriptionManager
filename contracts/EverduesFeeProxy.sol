@@ -296,12 +296,12 @@ contract EverduesFeeProxy {
 		current_version = version;
 		type_id = type_id_;
 		address[] supportedCurrencies = contract_params.decode(address[]);
-		if (old_version != 0) {
+		/*if (old_version != 0) {
 			TvmSlice old_data = s.loadRefAsSlice();
 			mapping(address => balance_wallet_struct) wallets_mapping_ = old_data
 					.decode(mapping(address => balance_wallet_struct));
 			wallets_mapping = wallets_mapping_;
-		}
+		}*/
 		updateSupportedCurrencies(supportedCurrencies, send_gas_to);
 	}
 
@@ -318,7 +318,6 @@ contract EverduesFeeProxy {
 		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 
 		TvmBuilder builder;
-		TvmBuilder upgrade_params;
 		builder.store(root);
 		builder.store(send_gas_to);
 		builder.store(current_version);
@@ -327,8 +326,7 @@ contract EverduesFeeProxy {
 		builder.store(platform_code);
 		builder.store(platform_params);
 		builder.store(code);
-		upgrade_params.store(wallets_mapping);
-		builder.store(upgrade_params.toCell());
+		builder.store(wallets_mapping);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
 		onCodeUpgrade(builder.toCell());
