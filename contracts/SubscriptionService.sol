@@ -54,7 +54,10 @@ contract SubscriptionService {
 			),
 			2
 		);
-		return service_params;
+		return {
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		} service_params;
 	}
 
 	function getInfo() external view responsible returns (TvmCell) {
@@ -67,7 +70,10 @@ contract SubscriptionService {
 		);
 		TvmBuilder info;
 		info.store(status);
-		return info.toCell();
+		return {
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		} info.toCell();
 	}
 
 	function pause() public onlyRoot {
