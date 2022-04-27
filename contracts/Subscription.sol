@@ -229,6 +229,13 @@ contract Subscription is IEverduesSubscription {
 			amount >= svcparams.service_value,
 			EverduesErrors.error_not_enough_balance_in_message
 		);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.SERVICE_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 service_fee_value = service_value_percentage * service_fee;
 		uint128 protocol_fee = (svcparams.subscription_value -
@@ -249,7 +256,7 @@ contract Subscription is IEverduesSubscription {
 		}(protocol_fee, address_fee_proxy, 0, account_address, true, payload);
 		ITokenWallet(msg.sender).transfer{
 			value: 0,
-			flag: MsgFlag.REMAINING_GAS
+			flag: MsgFlag.ALL_NOT_RESERVED
 		}(pay_value, svcparams.to, 0, account_address, false, payload);
 	}
 
