@@ -145,13 +145,13 @@ contract EverduesAccount is IEverduesAccount {
 				uint128 balance_after_pay = current_balance - value;
 				current_balance_key_value.balance = balance_after_pay;
 				wallets_mapping[currency_root] = current_balance_key_value;
-				return{
+				return {
 					value: gas_,
 					flag: MsgFlag.SENDER_PAYS_FEES
 				} 0;
 			}
 		} else {
-			return{
+			return {
 				value: gas_,
 				flag: MsgFlag.SENDER_PAYS_FEES
 			} 1;
