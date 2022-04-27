@@ -101,12 +101,11 @@ contract SubscriptionService {
 	}
 
 	function upgrade(
-		TvmCell code,
+		TvmCell code_,
 		uint32 version,
 		address send_gas_to
 	) external onlyRoot {
 		TvmBuilder builder;
-		TvmBuilder upgrade_params;
 		builder.store(root);
 		builder.store(send_gas_to);
 		builder.store(current_version);
@@ -115,9 +114,9 @@ contract SubscriptionService {
 		builder.store(platform_code);
 		builder.store(platform_params);
 		builder.store(service_params);
-		builder.store(code);
-		tvm.setcode(code);
-		tvm.setCurrentCode(code);
+		builder.store(code_);
+		tvm.setcode(code_);
+		tvm.setCurrentCode(code_);
 		onCodeUpgrade(builder.toCell());
 	}
 
@@ -228,6 +227,7 @@ contract SubscriptionService {
 
 	function updateIdentificator(TvmCell identificator_, address send_gas_to)
 		external
+		view
 		onlyRoot
 	{
 		IEverduesIndex(subscription_service_index_identificator_address)

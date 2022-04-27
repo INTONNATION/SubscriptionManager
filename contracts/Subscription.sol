@@ -165,7 +165,7 @@ contract Subscription is IEverduesSubscription {
 		}
 	}
 
-	function onGetInfo(TvmCell svc_info) external onlyService {
+	function onGetInfo(TvmCell svc_info) external view onlyService {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
@@ -221,6 +221,10 @@ contract Subscription is IEverduesSubscription {
 		address remainingGasTo,
 		TvmCell payload
 	) public {
+        tokenRoot;
+        sender;
+        senderWallet;
+        remainingGasTo;
 		require(
 			amount >= svcparams.service_value,
 			EverduesErrors.error_not_enough_balance_in_message
@@ -263,8 +267,8 @@ contract Subscription is IEverduesSubscription {
 		TvmSlice s = upgrade_data.toSlice();
 		(
 			address root_,
-			address send_gas_to,
-			uint32 old_version,
+			,
+			,
 			uint32 version,
 			uint8 type_id_
 		) = s.decode(address, address, uint32, uint32, uint8);
@@ -366,6 +370,7 @@ contract Subscription is IEverduesSubscription {
 
 	function updateIdentificator(TvmCell code, address send_gas_to)
 		external
+        view
 		onlyRoot
 	{
 		tvm.rawReserve(

@@ -100,10 +100,10 @@ contract EverduesRoot {
 	address public owner;
 	address pending_owner;
 
-	onBounce(TvmSlice slice) external {
+	onBounce(TvmSlice slice) view external {
 		// revert change to initial msg.sender in case of failure during deploy
 		// TODO: after https://github.com/tonlabs/ton-labs-node/issues/140
-		uint32 functionId = slice.decode(uint32);
+		//uint32 functionId = slice.decode(uint32);
 	}
 
 	constructor(address initial_owner) public {
@@ -176,8 +176,8 @@ contract EverduesRoot {
 		return value;
 	}
 
-	function getOwner() external view responsible returns (address owner) {
-		return owner;
+	function getOwner() external pure responsible returns (address owner_) {
+		return owner_;
 	}
 
 	// Settings
@@ -434,6 +434,7 @@ contract EverduesRoot {
 
 	function installOrUpdateFeeProxyParams(address[] currencies)
 		external
+		view
 		onlyOwner
 	{
 		require(
@@ -650,7 +651,6 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
 		address subscription_address = address(
 			tvm.hash(
 				_buildInitData(
@@ -698,9 +698,8 @@ contract EverduesRoot {
 
 	function updateServiceParams(
 		string service_name,
-		string category,
 		TvmCell new_service_params
-	) external {
+	) external view {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -708,7 +707,6 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell service_code_salt = _buildServiceCode(category);
 		address service_address = address(
 			tvm.hash(
 				_buildInitData(
@@ -726,9 +724,8 @@ contract EverduesRoot {
 
 	function updateServiceIdentificator(
 		string service_name,
-		string category,
 		TvmCell identificator
-	) public {
+	) public view {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -736,7 +733,6 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell service_code_salt = _buildServiceCode(category);
 		address service_address = address(
 			tvm.hash(
 				_buildInitData(
@@ -831,7 +827,7 @@ contract EverduesRoot {
 		fee_proxy_address = address(platform);
 	}
 
-	function cancelService(string service_name) external {
+	function cancelService(string service_name) external view {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -853,7 +849,7 @@ contract EverduesRoot {
 		}();
 	}
 
-	function cancelSubscription(address service_address) external {
+	function cancelSubscription(address service_address) external view {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -878,7 +874,7 @@ contract EverduesRoot {
 		}();
 	}
 
-	function deployAccount(uint256 pubkey) external {
+	function deployAccount(uint256 pubkey) external view {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
@@ -1029,7 +1025,6 @@ contract EverduesRoot {
 		TvmCell next_cell;
 		string category;
 		string service_name;
-		address currency_root;
 		(, , , next_cell) = service_params.toSlice().decode(
 			address,
 			uint128,

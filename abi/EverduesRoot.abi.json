@@ -66,7 +66,7 @@
 				{"name":"answerId","type":"uint32"}
 			],
 			"outputs": [
-				{"name":"owner","type":"address"}
+				{"name":"owner_","type":"address"}
 			]
 		},
 		{
@@ -368,7 +368,6 @@
 			"name": "updateServiceParams",
 			"inputs": [
 				{"name":"service_name","type":"string"},
-				{"name":"category","type":"string"},
 				{"name":"new_service_params","type":"cell"}
 			],
 			"outputs": [
@@ -378,7 +377,6 @@
 			"name": "updateServiceIdentificator",
 			"inputs": [
 				{"name":"service_name","type":"string"},
-				{"name":"category","type":"string"},
 				{"name":"identificator","type":"cell"}
 			],
 			"outputs": [
