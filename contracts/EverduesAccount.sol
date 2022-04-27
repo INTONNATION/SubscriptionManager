@@ -54,7 +54,7 @@ contract EverduesAccount is IEverduesAccount {
 		_;
 	}
 
-	function upgradeAccount(uint128 additional_gas) public onlyOwner {
+	function upgradeAccount(uint128 additional_gas) public view onlyOwner {
 		IEverduesRoot(root).upgradeAccount{
 			value: EverduesGas.UPGRADE_ACCOUNT_MIN_VALUE +
 				additional_gas +
@@ -130,7 +130,10 @@ contract EverduesAccount is IEverduesAccount {
 			uint128 current_balance = current_balance_key_value.balance;
 			address account_wallet = current_balance_key_value.wallet;
 			if (value >= current_balance) {
-				return 1;
+				return{
+					value: gas_,
+					flag: MsgFlag.SENDER_PAYS_FEES
+				} 1;
 			} else {
 				ITokenWallet(account_wallet).transferToWallet{
 					value: EverduesGas.TRANSFER_MIN_VALUE *
@@ -142,10 +145,16 @@ contract EverduesAccount is IEverduesAccount {
 				uint128 balance_after_pay = current_balance - value;
 				current_balance_key_value.balance = balance_after_pay;
 				wallets_mapping[currency_root] = current_balance_key_value;
-				return 0;
+				return{
+					value: gas_,
+					flag: MsgFlag.SENDER_PAYS_FEES
+				} 0;
 			}
 		} else {
-			return 1;
+			return{
+				value: gas_,
+				flag: MsgFlag.SENDER_PAYS_FEES
+			} 1;
 		}
 	}
 
@@ -169,7 +178,7 @@ contract EverduesAccount is IEverduesAccount {
 	function upgradeSubscription(
 		address service_address,
 		uint128 additional_gas
-	) public onlyOwner {
+	) public view onlyOwner {
 		IEverduesRoot(root).upgradeSubscription{
 			value: EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE +
 				additional_gas +
@@ -181,6 +190,7 @@ contract EverduesAccount is IEverduesAccount {
 
 	function cancelSubscription(address service_address, uint128 additional_gas)
 		public
+		view
 		onlyOwner
 	{
 		IEverduesRoot(root).cancelSubscription{
@@ -195,7 +205,7 @@ contract EverduesAccount is IEverduesAccount {
 		string category,
 		TvmCell identificator,
 		uint128 additional_gas
-	) public onlyOwner {
+	) public view onlyOwner {
 		IEverduesRoot(root).updateServiceIdentificator{
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
@@ -207,7 +217,7 @@ contract EverduesAccount is IEverduesAccount {
 		address service_address,
 		TvmCell identificator,
 		uint128 additional_gas
-	) public onlyOwner {
+	) public view onlyOwner {
 		IEverduesRoot(root).updateSubscriptionIdentificator{
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
@@ -220,7 +230,7 @@ contract EverduesAccount is IEverduesAccount {
 		string category,
 		TvmCell new_service_params,
 		uint128 additional_gas
-	) public onlyOwner {
+	) public view onlyOwner {
 		IEverduesRoot(root).updateServiceParams{
 			value: EverduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
 			bounce: true,
@@ -230,6 +240,7 @@ contract EverduesAccount is IEverduesAccount {
 
 	function cancelService(string service_name, uint128 additional_gas)
 		public
+		view
 		onlyOwner
 	{
 		IEverduesRoot(root).cancelService{
@@ -243,7 +254,7 @@ contract EverduesAccount is IEverduesAccount {
 		TvmCell service_params,
 		TvmCell identificator,
 		uint128 additional_gas
-	) public onlyOwner {
+	) public view onlyOwner {
 		IEverduesRoot(root).deployService{
 			value: EverduesGas.SERVICE_INITIAL_BALANCE +
 				EverduesGas.INDEX_INITIAL_BALANCE *
@@ -260,7 +271,7 @@ contract EverduesAccount is IEverduesAccount {
 		string service_name,
 		string category,
 		uint128 additional_gas
-	) public onlyOwner {
+	) public view onlyOwner {
 		IEverduesRoot(root).upgradeService{
 			value: EverduesGas.UPGRADE_SERVICE_MIN_VALUE +
 				additional_gas +
@@ -274,7 +285,7 @@ contract EverduesAccount is IEverduesAccount {
 		address service_address,
 		TvmCell identificator,
 		uint128 additional_gas
-	) public onlyOwner {
+	) public view onlyOwner {
 		IEverduesRoot(root).deploySubscription{
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
 				EverduesGas.INIT_SUBSCRIPTION_VALUE +
@@ -302,10 +313,9 @@ contract EverduesAccount is IEverduesAccount {
 	function withdrawFunds(
 		address currency_root,
 		uint128 withdraw_value_,
-		address withdraw_to
+		address withdraw_to,
+		uint128 additional_gas
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
-
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		balance_wallet_struct current_balance_key = current_balance_struct
@@ -318,9 +328,9 @@ contract EverduesAccount is IEverduesAccount {
 		wallets_mapping[currency_root] = current_balance_key;
 		emit Withdraw(msg.sender, withdraw_value_);
 		ITokenWallet(account_wallet).transfer{
-			value: 0,
+			value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
 			bounce: false,
-			flag: MsgFlag.ALL_NOT_RESERVED
+			flag: 0
 		}(withdraw_value_, withdraw_to, 0, address(this), true, payload);
 	}
 
@@ -336,6 +346,9 @@ contract EverduesAccount is IEverduesAccount {
 		address remainingGasTo,
 		TvmCell payload
 	) external {
+		sender;
+		senderWallet;
+		payload;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(tokenRoot);
 		if (current_balance_struct.hasValue()) {
@@ -344,10 +357,10 @@ contract EverduesAccount is IEverduesAccount {
 			current_balance_key.balance += amount;
 			wallets_mapping[tokenRoot] = current_balance_key;
 		} else {
-			balance_wallet_struct current_balance_struct;
-			current_balance_struct.wallet = msg.sender;
-			current_balance_struct.balance = amount;
-			wallets_mapping[tokenRoot] = current_balance_struct;
+			balance_wallet_struct current_balance_struct_;
+			current_balance_struct_.wallet = msg.sender;
+			current_balance_struct_.balance = amount;
+			wallets_mapping[tokenRoot] = current_balance_struct_;
 		}
 		emit Deposit(msg.sender, amount);
 		remainingGasTo.transfer({
@@ -366,7 +379,7 @@ contract EverduesAccount is IEverduesAccount {
 		return builder.toCell();
 	}
 
-	function _buildInitData(uint8 type_id, TvmCell params)
+	function _buildInitData(uint8 type_id_, TvmCell params)
 		private
 		inline
 		view
@@ -377,16 +390,11 @@ contract EverduesAccount is IEverduesAccount {
 				contr: Platform,
 				varInit: {
 					root: address(this),
-					type_id: type_id,
+					type_id: type_id_,
 					platform_params: params
 				},
 				pubkey: 0,
 				code: platform_code
 			});
-	}
-
-	//TMP DELETE AFRER FINISH TESTING
-	function destroy(address to) public {
-		selfdestruct(to);
 	}
 }

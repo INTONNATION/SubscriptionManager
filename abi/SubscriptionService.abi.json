@@ -45,7 +45,7 @@
 		{
 			"name": "upgrade",
 			"inputs": [
-				{"name":"code","type":"cell"},
+				{"name":"code_","type":"cell"},
 				{"name":"version","type":"uint32"},
 				{"name":"send_gas_to","type":"address"}
 			],

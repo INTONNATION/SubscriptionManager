@@ -69,6 +69,9 @@ contract EverduesFeeProxy {
 		address remainingGasTo,
 		TvmCell payload
 	) external {
+		sender;
+		senderWallet;
+		payload;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(tokenRoot);
 		if (current_balance_struct.hasValue()) {
@@ -239,6 +242,7 @@ contract EverduesFeeProxy {
 
 	function transferRevenue(address revenue_to, address send_gas_to)
 		external
+		view
 		onlyRoot
 	{
 		require(
@@ -289,7 +293,6 @@ contract EverduesFeeProxy {
 		platform_code = s.loadRef();
 		platform_params = s.loadRef();
 		TvmSlice contract_params = s.loadRefAsSlice();
-		TvmCell current_code = s.loadRef();
 		current_version = version;
 		type_id = type_id_;
 		address[] supportedCurrencies = contract_params.decode(address[]);

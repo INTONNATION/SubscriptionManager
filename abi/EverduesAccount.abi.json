@@ -151,7 +151,8 @@
 			"inputs": [
 				{"name":"currency_root","type":"address"},
 				{"name":"withdraw_value_","type":"uint128"},
-				{"name":"withdraw_to","type":"address"}
+				{"name":"withdraw_to","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -173,14 +174,6 @@
 				{"name":"senderWallet","type":"address"},
 				{"name":"remainingGasTo","type":"address"},
 				{"name":"payload","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "destroy",
-			"inputs": [
-				{"name":"to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -221,6 +214,14 @@
 	"data": [
 	],
 	"events": [
+		{
+			"name": "AccountDeployed",
+			"inputs": [
+				{"name":"current_version","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
 		{
 			"name": "Deposit",
 			"inputs": [
