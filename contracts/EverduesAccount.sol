@@ -46,14 +46,6 @@ contract EverduesAccount is IEverduesAccount {
 		_;
 	}
 
-	modifier onlyCurrencyRoot() {
-		require(
-			msg.sender == sync_balance_currency_root,
-			EverduesErrors.error_message_sender_is_not_currency_root
-		);
-		_;
-	}
-
 	function upgradeAccount(uint128 additional_gas) public view onlyOwner {
 		IEverduesRoot(root).upgradeAccount{
 			value: EverduesGas.UPGRADE_ACCOUNT_MIN_VALUE +
@@ -299,13 +291,16 @@ contract EverduesAccount is IEverduesAccount {
 		}(service_address, identificator, tvm.pubkey(), additional_gas);
 	}
 
-	function onBalanceOf(uint128 balance_) external onlyCurrencyRoot {
-		uint128 balance_wallet = balance_;
+	function onBalanceOf(uint128 balance_) external {
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(sync_balance_currency_root);
 		balance_wallet_struct current_balance_key = current_balance_struct
 			.get();
-		current_balance_key.balance = balance_wallet;
+		require(
+			msg.sender == current_balance_key.wallet,
+			EverduesErrors.error_message_sender_is_not_currency_root
+		);
+		current_balance_key.balance = balance_;
 		wallets_mapping[sync_balance_currency_root] = current_balance_key;
 		sync_balance_currency_root = address(0);
 	}
