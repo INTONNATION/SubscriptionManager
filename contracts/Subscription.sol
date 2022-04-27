@@ -375,7 +375,7 @@ contract Subscription is IEverduesSubscription {
 		selfdestruct(account_address);
 	}
 
-	function updateIdentificator(TvmCell code, address send_gas_to)
+	function updateIdentificator(TvmCell identificator_, address send_gas_to)
 		external
         view
 		onlyRoot
@@ -392,6 +392,6 @@ contract Subscription is IEverduesSubscription {
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(code, send_gas_to);
+		}(identificator_, send_gas_to);
 	}
 }
