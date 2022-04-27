@@ -194,7 +194,6 @@ contract EverduesAccount is IEverduesAccount {
 
 	function updateServiceIdentificator(
 		string service_name,
-		string category,
 		TvmCell identificator,
 		uint128 additional_gas
 	) public view onlyOwner {
@@ -202,7 +201,7 @@ contract EverduesAccount is IEverduesAccount {
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_name, category, identificator);
+		}(service_name, identificator);
 	}
 
 	function updateSubscriptionIdentificator(
@@ -219,7 +218,6 @@ contract EverduesAccount is IEverduesAccount {
 
 	function updateServiceParams(
 		string service_name,
-		string category,
 		TvmCell new_service_params,
 		uint128 additional_gas
 	) public view onlyOwner {
@@ -227,7 +225,7 @@ contract EverduesAccount is IEverduesAccount {
 			value: EverduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_name, category, new_service_params);
+		}(service_name, new_service_params);
 	}
 
 	function cancelService(string service_name, uint128 additional_gas)
