@@ -631,7 +631,7 @@ contract EverduesRoot {
 		);
 		Subscription(subscription_address).upgrade{
 			value: 0,
-			bounce: false,
+			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(subscription_code_salt, subscription_version, msg.sender);
 	}

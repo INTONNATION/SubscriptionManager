@@ -253,7 +253,7 @@ contract Subscription is IEverduesSubscription {
 		ITokenWallet(msg.sender).transfer{
 			value: EverduesGas.TRANSFER_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
-		}(protocol_fee, address_fee_proxy, 0, account_address, true, payload);
+		}(protocol_fee, address_fee_proxy, 0, address(this), true, payload);
 		ITokenWallet(msg.sender).transfer{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
