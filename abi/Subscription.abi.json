@@ -91,7 +91,7 @@
 		{
 			"name": "updateIdentificator",
 			"inputs": [
-				{"name":"code","type":"cell"},
+				{"name":"identificator_","type":"cell"},
 				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
