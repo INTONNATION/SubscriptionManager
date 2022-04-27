@@ -296,13 +296,15 @@ contract EverduesAccount is IEverduesAccount {
 			.fetch(sync_balance_currency_root);
 		balance_wallet_struct current_balance_key = current_balance_struct
 			.get();
-		require(
-			msg.sender == current_balance_key.wallet,
-			EverduesErrors.error_message_sender_is_not_currency_root
-		);
-		current_balance_key.balance = balance_;
-		wallets_mapping[sync_balance_currency_root] = current_balance_key;
-		sync_balance_currency_root = address(0);
+		if (msg.sender == current_balance_key.wallet) {
+			current_balance_key.balance = balance_;
+			wallets_mapping[sync_balance_currency_root] = current_balance_key;
+			sync_balance_currency_root = address(0);		
+		} else {
+			sync_balance_currency_root = address(0);
+			//revert or tvm.exit1 ?
+			tvm.exit1();
+		}
 	}
 
 	function withdrawFunds(
@@ -384,7 +386,7 @@ contract EverduesAccount is IEverduesAccount {
 			tvm.buildStateInit({
 				contr: Platform,
 				varInit: {
-					root: address(this),
+					root: root,
 					type_id: type_id_,
 					platform_params: params
 				},
