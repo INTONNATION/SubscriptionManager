@@ -24,13 +24,11 @@ interface IEverduesRoot {
 
 	function updateServiceIdentificator(
 		string service_name,
-		string category,
 		TvmCell identificator
 	) external;
 
 	function updateServiceParams(
 		string service_name,
-		string category,
 		TvmCell new_service_params
 	) external;
 
