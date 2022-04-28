@@ -25,4 +25,5 @@ This script deploys TIP-3 tokens(emulation of main net), main smart contract sub
 ### Required external repositories 
 
 https://github.com/broxus/ton-eth-bridge-token-contracts.git
+
 https://github.com/broxus/ton-labs-contracts.git
