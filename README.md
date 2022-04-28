@@ -3,10 +3,10 @@
 - nodejs (used version v17.x)
 - npm (used version 8.3.0)
 - tondev (used version 0.11.2)
-- solidity compiler(used version 0.51.0)
+- solidity compiler(used version 0.57.3)
 - tonos-cli(used version 0.24.12)
 - tvm_linker(used version 0.14.9)
-- stdlib(used version 0.53.0)
+- stdlib(used version 0.57.3)
 - jq
 - curl
 
@@ -25,4 +25,5 @@ This script deploys TIP-3 tokens(emulation of main net), main smart contract sub
 ### Required external repositories 
 
 https://github.com/broxus/ton-eth-bridge-token-contracts.git
+
 https://github.com/broxus/ton-labs-contracts.git
