@@ -597,7 +597,7 @@ contract EverduesRoot {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
-		require(msg.sender == account_address, 1111);
+		require(msg.sender == account_address, EverduesErrors.error_message_sender_is_not_account_address);
 		EverduesAccount(account_address).upgrade{
 			value: 0,
 			bounce: false,
@@ -879,7 +879,7 @@ contract EverduesRoot {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
-		require(msg.sender == account_address, 1111);
+		require(msg.sender == account_address, EverduesErrors.error_message_sender_is_not_account_address);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,

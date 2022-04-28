@@ -36,12 +36,12 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	modifier onlyRoot() {
-		require(msg.sender == root, 111);
+		require(msg.sender == root, EverduesErrors.error_message_sender_is_not_everdues_root);
 		_;
 	}
 
 	modifier onlyOwner() {
-		require(msg.pubkey() == tvm.pubkey(), 100);
+		require(msg.pubkey() == tvm.pubkey(), EverduesErrors.error_message_sender_is_not_owner);
 		tvm.accept();
 		_;
 	}
@@ -151,7 +151,7 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function syncBalance(address currency_root) external onlyOwner {
-		require(sync_balance_currency_root == address(0), 335);
+		require(sync_balance_currency_root == address(0), EverduesErrors.mutex_not_free);
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 		sync_balance_currency_root = currency_root;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
