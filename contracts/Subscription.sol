@@ -101,7 +101,7 @@ contract Subscription is IEverduesSubscription {
 		uint32 version,
 		address send_gas_to
 	) external onlyRoot {
-		require(msg.value > EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE, 1111);
+		require(msg.value > EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE, EverduesErrors.error_message_low_value);
 		TvmBuilder builder;
 		builder.store(root);
 		builder.store(send_gas_to);

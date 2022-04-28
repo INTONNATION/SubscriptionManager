@@ -15,6 +15,7 @@ contract Platform {
 	TvmCell static platform_params;
 	uint128 constant DEPLOY_ACCOUNT_MIN_VALUE = 1 ton;
 	uint8 constant error_message_sender_is_not_everdues_root = 113;
+	uint8 constant error_message_sender_is_not_owner = 112;
 
 	constructor(
 		TvmCell code,
@@ -35,7 +36,7 @@ contract Platform {
 			}
 		} else if (msg.isExternal) {
 			uint256 pubkey = tvm.pubkey();
-			require(msg.pubkey() == pubkey, 100);
+			require(msg.pubkey() == pubkey, error_message_sender_is_not_owner);
 			tvm.accept();
 			IPlatformRoot(root).deployAccount{
 				value: DEPLOY_ACCOUNT_MIN_VALUE + additional_gas,
