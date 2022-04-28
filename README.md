@@ -3,7 +3,7 @@
 - nodejs (used version v17.x)
 - npm (used version 8.3.0)
 - tondev (used version 0.11.2)
-- solidity compiler(used version 0.51.0)
+- solidity compiler(used version 0.57.3)
 - tonos-cli(used version 0.24.12)
 - tvm_linker(used version 0.14.9)
 - stdlib(used version 0.53.0)
