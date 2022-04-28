@@ -6,7 +6,7 @@
 - solidity compiler(used version 0.57.3)
 - tonos-cli(used version 0.24.12)
 - tvm_linker(used version 0.14.9)
-- stdlib(used version 0.53.0)
+- stdlib(used version 0.57.3)
 - jq
 - curl
 
