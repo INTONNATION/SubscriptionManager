@@ -50,6 +50,14 @@
 			]
 		},
 		{
+			"name": "onWalletOf",
+			"inputs": [
+				{"name":"account_wallet","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgradeSubscription",
 			"inputs": [
 				{"name":"service_address","type":"address"},

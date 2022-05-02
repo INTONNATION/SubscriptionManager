@@ -36,12 +36,12 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	modifier onlyRoot() {
-		require(msg.sender == root, EverduesErrors.error_message_sender_is_not_everdues_root);
+		require(msg.sender == root, 111);
 		_;
 	}
 
 	modifier onlyOwner() {
-		require(msg.pubkey() == tvm.pubkey(), EverduesErrors.error_message_sender_is_not_owner);
+		require(msg.pubkey() == tvm.pubkey(), 100);
 		tvm.accept();
 		_;
 	}
@@ -151,14 +151,46 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function syncBalance(address currency_root) external onlyOwner {
-		require(sync_balance_currency_root == address(0), EverduesErrors.mutex_not_free);
-		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
+		require(sync_balance_currency_root == address(0), 335);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ACCOUNT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		sync_balance_currency_root = currency_root;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
-		balance_wallet_struct current_balance_key = current_balance_struct
-			.get();
-		address account_wallet = current_balance_key.wallet;
+		if (current_balance_struct.hasValue()) {
+			balance_wallet_struct current_balance_key = current_balance_struct
+				.get();
+			address account_wallet = current_balance_key.wallet;
+			TIP3TokenWallet(account_wallet).balance{
+				value: 0,
+				bounce: true,
+				flag: MsgFlag.ALL_NOT_RESERVED,
+				callback: EverduesAccount.onBalanceOf
+			}();
+		} else {
+			ITokenRoot(currency_root).walletOf{ 
+				value: 0, 
+				bounce: true, 
+				flag: MsgFlag.ALL_NOT_RESERVED, 
+				callback: EverduesAccount.onWalletOf
+			}(address(this));
+		}
+	}
+
+	function onWalletOf(address account_wallet) external view {
+		require(msg.sender == sync_balance_currency_root, EverduesErrors.error_message_sender_is_not_currency_root);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ACCOUNT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		TIP3TokenWallet(account_wallet).balance{
 			value: 0,
 			bounce: true,
@@ -290,6 +322,7 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function onBalanceOf(uint128 balance_) external {
+		require(msg.sender == sync_balance_currency_root, EverduesErrors.error_message_sender_is_not_currency_root);
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(sync_balance_currency_root);
 		balance_wallet_struct current_balance_key = current_balance_struct
