@@ -150,15 +150,9 @@ contract EverduesAccount is IEverduesAccount {
 		}
 	}
 
-	function syncBalance(address currency_root) external onlyOwner {
+	function syncBalance(address currency_root, uint128 additional_gas) external onlyOwner {
 		require(sync_balance_currency_root == address(0), 335);
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ACCOUNT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
+		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
 		sync_balance_currency_root = currency_root;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
@@ -167,16 +161,16 @@ contract EverduesAccount is IEverduesAccount {
 				.get();
 			address account_wallet = current_balance_key.wallet;
 			TIP3TokenWallet(account_wallet).balance{
-				value: 0,
+				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
 				bounce: true,
-				flag: MsgFlag.ALL_NOT_RESERVED,
+				flag: 0,
 				callback: EverduesAccount.onBalanceOf
 			}();
 		} else {
 			ITokenRoot(currency_root).walletOf{ 
-				value: 0, 
+				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
 				bounce: true, 
-				flag: MsgFlag.ALL_NOT_RESERVED, 
+				flag: 0, 
 				callback: EverduesAccount.onWalletOf
 			}(address(this));
 		}
