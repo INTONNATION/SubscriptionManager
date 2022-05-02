@@ -936,16 +936,12 @@ contract EverduesRoot {
 			address owner_,
 			uint32 service_version_,
 			uint32 fee_proxy_version_,
-			uint32 subscription_version_,
-			mapping(uint8 => EverduesRoot.VersionsTvcParams) versions_tvc,
-			mapping(uint8 => EverduesRoot.VersionsAbiParams) versions_abi
-		) = abi.decode(upgrade_data,(uint32,address,uint32,uint32,uint32,mapping(uint8 => EverduesRoot.VersionsTvcParams),mapping(uint8 => EverduesRoot.VersionsAbiParams)));
+			uint32 subscription_version_
+		) = abi.decode(upgrade_data,(uint32,address,uint32,uint32,uint32));
 		account_version = account_version_;
 		service_version = service_version_;
 		fee_proxy_version = fee_proxy_version_;
 		subscription_version = subscription_version_;
-		vrsparamsTvc = versions_tvc;
-		vrsparamsAbi = versions_abi;
 
 		owner = owner_;
 		owner.transfer({
