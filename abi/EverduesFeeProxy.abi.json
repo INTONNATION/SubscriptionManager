@@ -136,6 +136,14 @@
 			]
 		},
 		{
+			"name": "current_version",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"current_version","type":"uint32"}
+			]
+		},
+		{
 			"name": "wallets_mapping",
 			"inputs": [
 			],
@@ -155,10 +163,10 @@
 		{"name":"root","type":"address"},
 		{"name":"mtds_root_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
+		{"name":"current_version","type":"uint32"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"sync_balance_currency_root","type":"address"},
-		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
 		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"_tmp_deploying_wallets","type":"map(address,address)"}
