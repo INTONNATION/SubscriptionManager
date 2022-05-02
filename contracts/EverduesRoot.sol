@@ -922,7 +922,7 @@ contract EverduesRoot {
 			EverduesErrors.error_message_low_value
 		);
 
-		TvmCell upgrade_data = abi.encode(account_version,owner,service_version,fee_proxy_version,subscription_version,vrsparamsTvc,vrsparamsAbi);
+		TvmCell upgrade_data = abi.encode(account_version,owner,service_version,fee_proxy_version,subscription_version,vrsparamsTvc,vrsparamsAbi,versionTvc,versionAbi);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
 		onCodeUpgrade(upgrade_data);
@@ -936,14 +936,22 @@ contract EverduesRoot {
 			address owner_,
 			uint32 service_version_,
 			uint32 fee_proxy_version_,
-			uint32 subscription_version_
-		) = abi.decode(upgrade_data,(uint32,address,uint32,uint32,uint32));
+			uint32 subscription_version_,
+			mapping(uint8 => EverduesRoot.VersionsTvcParams) versions_tvc_,
+			mapping(uint8 => EverduesRoot.VersionsAbiParams) versions_abi_,
+			uint8 versionTvc_,
+			uint8 versionAbi_
+		) = abi.decode(upgrade_data,(uint32,address,uint32,uint32,uint32,mapping(uint8 => EverduesRoot.VersionsTvcParams),mapping(uint8 => EverduesRoot.VersionsAbiParams),uint8,uint8));
 		account_version = account_version_;
 		service_version = service_version_;
 		fee_proxy_version = fee_proxy_version_;
 		subscription_version = subscription_version_;
-
+		vrsparamsTvc = versions_tvc_;
+		vrsparamsAbi = versions_abi_;
+		versionTvc = versionTvc_;
+		versionAbi = versionAbi_;
 		owner = owner_;
+		
 		owner.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
