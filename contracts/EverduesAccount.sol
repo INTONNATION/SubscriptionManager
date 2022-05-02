@@ -316,7 +316,6 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function onBalanceOf(uint128 balance_) external {
-		require(msg.sender == sync_balance_currency_root, EverduesErrors.error_message_sender_is_not_currency_root);
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(sync_balance_currency_root);
 		balance_wallet_struct current_balance_key = current_balance_struct

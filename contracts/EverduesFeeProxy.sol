@@ -16,11 +16,11 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.s
 
 contract EverduesFeeProxy {
 	address public root;
+	address public mtds_root_address;
+	address public dex_root_address;
 	TvmCell platform_code;
 	TvmCell platform_params;
-	address mtds_root_address;
 	address sync_balance_currency_root; // mutex
-	address dex_root_address;
 	uint32 current_version;
 	uint8 type_id;
 
@@ -278,29 +278,25 @@ contract EverduesFeeProxy {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
+		TvmSlice s = upgrade_data.toSlice();
 		(
 			address root_,
 			address send_gas_to,
 			uint32 old_version,
 			uint32 version,
-			uint8 type_id_,
-			TvmCell platform_code_,
-			TvmCell contract_params,
-			mapping(address => balance_wallet_struct) wallets_mapping_
-		) = abi.decode(upgrade_data, (address, address, uint32, uint32, uint8,TvmCell,TvmCell,mapping(address => balance_wallet_struct)));
+			uint8 type_id_
+		) = s.decode(address, address, uint32, uint32, uint8);
 		if (old_version == 0) {
 			tvm.resetStorage();
 		}
 		root = root_;
+		platform_code = s.loadRef();
+		platform_params = s.loadRef();
+		TvmCell contract_params = s.loadRef();
 		current_version = version;
 		type_id = type_id_;
-		platform_code = platform_code_;
-		address[] supportedCurrencies = contract_params.toSlice().decode(address[]);
-		if (old_version != 0) {
-			wallets_mapping = wallets_mapping_;
-		} else {
-			updateSupportedCurrencies(supportedCurrencies, send_gas_to);
-		}
+		address[] supportedCurrencies = abi.decode(contract_params,(address[]));
+		updateSupportedCurrencies(supportedCurrencies, send_gas_to);
 	}
 
 	function upgrade(
@@ -315,10 +311,18 @@ contract EverduesFeeProxy {
 
 		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 
-		TvmCell upgrade_data = abi.encode(root,send_gas_to,current_version,version,type_id,platform_code,platform_params,code,wallets_mapping);
+		TvmBuilder builder;
+		builder.store(root);
+		builder.store(send_gas_to);
+		builder.store(current_version);
+		builder.store(version);
+		builder.store(type_id);
+		builder.store(platform_code);
+		builder.store(platform_params);
+		builder.store(code);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
-		onCodeUpgrade(upgrade_data);
+		onCodeUpgrade(builder.toCell());
 	}
 
 	function updateSupportedCurrencies(
