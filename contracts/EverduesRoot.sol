@@ -127,7 +127,13 @@ contract EverduesRoot {
 			owner != new_owner,
 			EverduesErrors.error_message_sender_is_equal_owner
 		);
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		pending_owner = new_owner;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -138,7 +144,13 @@ contract EverduesRoot {
 			msg.sender == pending_owner,
 			EverduesErrors.error_message_sender_is_not_pending_owner
 		);
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		owner = pending_owner;
 		pending_owner = address.makeAddrStd(0, 0);
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -186,7 +198,13 @@ contract EverduesRoot {
 			!has_platform_code,
 			EverduesErrors.error_platform_code_is_not_empty
 		);
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcPlatform = tvcPlatformInput;
 		has_platform_code = true;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -196,7 +214,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcEverduesAccount = tvcEverduesAccountInput;
 		account_version++;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -206,7 +230,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcSubscriptionService = tvcSubscriptionServiceInput;
 		service_version++;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -216,7 +246,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcSubscription = tvcSubscriptionInput;
 		subscription_version++;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -225,7 +261,13 @@ contract EverduesRoot {
 	function setTvcSubscriptionServiceIndex(
 		TvmCell tvcSubscriptionServiceIndexInput
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -233,7 +275,13 @@ contract EverduesRoot {
 	function setTvcSubscriptionServiceIdentificatorIndex(
 		TvmCell tvcSubscriptionServiceIdentificatorIndexInput
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcSubscriptionServiceIdentificatorIndex = tvcSubscriptionServiceIdentificatorIndexInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -242,7 +290,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcSubscriptionIndex = tvcSubscriptionIndexInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -250,20 +304,38 @@ contract EverduesRoot {
 	function setTvcSubscriptionIdentificatorIndex(
 		TvmCell tvcSubscriptionIdentificatorIndexInput
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndexInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
 	function setTvcFeeProxy(TvmCell tvcFeeProxyInput) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tvcFeeProxy = tvcFeeProxyInput;
 		fee_proxy_version++;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
 	function setTvc() external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		versionTvc++;
 		VersionsTvcParams params;
 		params.tvcPlatform = tvcPlatform;
@@ -286,7 +358,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiPlatformContract = abiPlatformContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -294,7 +372,13 @@ contract EverduesRoot {
 	function setAbiEverduesAccountContract(
 		string abiEverduesAccountContractInput
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiEverduesAccountContract = abiEverduesAccountContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -303,7 +387,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiEverduesRootContract = abiEverduesRootContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -312,7 +402,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiTIP3RootContract = abiTIP3RootContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -320,7 +416,13 @@ contract EverduesRoot {
 	function setAbiTIP3TokenWalletContract(
 		string abiTIP3TokenWalletContractInput
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiTIP3TokenWalletContract = abiTIP3TokenWalletContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -329,7 +431,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiServiceContract = abiServiceContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -338,7 +446,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiServiceIndexContract = abiServiceIndexContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -346,7 +460,13 @@ contract EverduesRoot {
 	function setAbiServiceIdentificatorIndexContract(
 		string abiServiceIdentificatorIndexContractInput
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiServiceIdentificatorIndexContract = abiServiceIdentificatorIndexContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -355,7 +475,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiSubscriptionContract = abiSubscriptionContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -363,7 +489,13 @@ contract EverduesRoot {
 	function setAbiSubscriptionIndexContract(
 		string abiSubscriptionIndexContractInput
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -371,7 +503,13 @@ contract EverduesRoot {
 	function setAbiSubscriptionIdentificatorIndexContract(
 		string abiSubscriptionIdentificatorIndexContractInput
 	) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -380,13 +518,25 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		abiFeeProxyContract = abiFeeProxyContractInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
 
 	function setAbi() external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		versionAbi++;
 		VersionsAbiParams params;
 		params.abiPlatformContract = abiPlatformContract;
@@ -408,7 +558,13 @@ contract EverduesRoot {
 	}
 
 	function setCategories(string[] categoriesInput) external onlyOwner {
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		categories = categoriesInput;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -417,7 +573,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		service_fee = service_fee_;
 		subscription_fee = subscription_fee_;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
@@ -427,7 +589,13 @@ contract EverduesRoot {
 		external
 		onlyOwner
 	{
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		mtds_revenue_accumulator_address = revenue_to;
 		owner.transfer({value: 0, flag: MsgFlag.REMAINING_GAS});
 	}
@@ -753,8 +921,6 @@ contract EverduesRoot {
 			msg.value >= EverduesGas.UPGRADE_ROOT_MIN_VALUE,
 			EverduesErrors.error_message_low_value
 		);
-
-		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 
 		TvmCell upgrade_data = abi.encode(account_version,owner,service_version,fee_proxy_version,subscription_version,vrsparamsTvc,vrsparamsAbi);
 		tvm.setcode(code);
