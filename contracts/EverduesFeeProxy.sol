@@ -18,10 +18,10 @@ contract EverduesFeeProxy {
 	address public root;
 	address public mtds_root_address;
 	address public dex_root_address;
+	uint32 public current_version;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address sync_balance_currency_root; // mutex
-	uint32 current_version;
 	uint8 type_id;
 
 	struct balance_wallet_struct {
@@ -295,8 +295,8 @@ contract EverduesFeeProxy {
 		TvmCell contract_params = s.loadRef();
 		current_version = version;
 		type_id = type_id_;
-		address[] supportedCurrencies = abi.decode(contract_params,(address[]));
-		updateSupportedCurrencies(supportedCurrencies, send_gas_to);
+		//address[] supportedCurrencies = abi.decode(contract_params,(address[]));
+		//updateSupportedCurrencies(supportedCurrencies, send_gas_to);
 	}
 
 	function upgrade(
