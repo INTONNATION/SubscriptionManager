@@ -756,17 +756,10 @@ contract EverduesRoot {
 
 		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 
-		TvmBuilder builder;
-		builder.store(account_version);
-		builder.store(owner);
-		builder.store(service_version);
-		builder.store(fee_proxy_version);
-		builder.store(subscription_version);
-		builder.store(vrsparamsTvc);
-		builder.store(vrsparamsAbi);
+		TvmCell upgrade_data = abi.encode(account_version,owner,service_version,fee_proxy_version,subscription_version,vrsparamsTvc,vrsparamsAbi);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
-		onCodeUpgrade(builder.toCell());
+		onCodeUpgrade(upgrade_data);
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
@@ -777,19 +770,16 @@ contract EverduesRoot {
 			address owner_,
 			uint32 service_version_,
 			uint32 fee_proxy_version_,
-			uint32 subscription_version_
-		) = upgrade_data.toSlice().decode(
-				uint32,
-				address,
-				uint32,
-				uint32,
-				uint32
-			);
-		// TODO: decode vrsparamsAbi and vrsparamsTvc
+			uint32 subscription_version_,
+			mapping(uint8 => EverduesRoot.VersionsTvcParams) versions_tvc,
+			mapping(uint8 => EverduesRoot.VersionsAbiParams) versions_abi
+		) = abi.decode(upgrade_data,(uint32,address,uint32,uint32,uint32,mapping(uint8 => EverduesRoot.VersionsTvcParams),mapping(uint8 => EverduesRoot.VersionsAbiParams)));
 		account_version = account_version_;
 		service_version = service_version_;
 		fee_proxy_version = fee_proxy_version_;
 		subscription_version = subscription_version_;
+		vrsparamsTvc = versions_tvc;
+		vrsparamsAbi = versions_abi;
 
 		owner = owner_;
 		owner.transfer({

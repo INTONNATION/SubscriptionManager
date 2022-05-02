@@ -278,31 +278,29 @@ contract EverduesFeeProxy {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
-		TvmSlice s = upgrade_data.toSlice();
 		(
 			address root_,
 			address send_gas_to,
 			uint32 old_version,
 			uint32 version,
-			uint8 type_id_
-		) = s.decode(address, address, uint32, uint32, uint8);
+			uint8 type_id_,
+			TvmCell platform_code_,
+			TvmCell contract_params,
+			mapping(address => balance_wallet_struct) wallets_mapping_
+		) = abi.decode(upgrade_data, (address, address, uint32, uint32, uint8,TvmCell,TvmCell,mapping(address => balance_wallet_struct)));
 		if (old_version == 0) {
 			tvm.resetStorage();
 		}
 		root = root_;
-		platform_code = s.loadRef();
-		platform_params = s.loadRef();
-		TvmSlice contract_params = s.loadRefAsSlice();
 		current_version = version;
 		type_id = type_id_;
-		address[] supportedCurrencies = contract_params.decode(address[]);
-		/*if (old_version != 0) {
-			TvmSlice old_data = s.loadRefAsSlice();
-			mapping(address => balance_wallet_struct) wallets_mapping_ = old_data
-					.decode(mapping(address => balance_wallet_struct));
+		platform_code = platform_code_;
+		address[] supportedCurrencies = contract_params.toSlice().decode(address[]);
+		if (old_version != 0) {
 			wallets_mapping = wallets_mapping_;
-		}*/
-		updateSupportedCurrencies(supportedCurrencies, send_gas_to);
+		} else {
+			updateSupportedCurrencies(supportedCurrencies, send_gas_to);
+		}
 	}
 
 	function upgrade(
@@ -317,19 +315,10 @@ contract EverduesFeeProxy {
 
 		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 
-		TvmBuilder builder;
-		builder.store(root);
-		builder.store(send_gas_to);
-		builder.store(current_version);
-		builder.store(version);
-		builder.store(type_id);
-		builder.store(platform_code);
-		builder.store(platform_params);
-		builder.store(code);
-		builder.store(wallets_mapping);
+		TvmCell upgrade_data = abi.encode(root,send_gas_to,current_version,version,type_id,platform_code,platform_params,code,wallets_mapping);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
-		onCodeUpgrade(builder.toCell());
+		onCodeUpgrade(upgrade_data);
 	}
 
 	function updateSupportedCurrencies(
