@@ -100,7 +100,7 @@ contract EverduesRoot {
 	address public owner;
 	address pending_owner;
 
-	onBounce(TvmSlice slice) view external {
+	onBounce(TvmSlice slice) external view {
 		// revert change to initial msg.sender in case of failure during deploy
 		// TODO: after https://github.com/tonlabs/ton-labs-node/issues/140
 		//uint32 functionId = slice.decode(uint32);
@@ -207,7 +207,10 @@ contract EverduesRoot {
 		);
 		tvcPlatform = tvcPlatformInput;
 		has_platform_code = true;
-		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS});
+		owner.transfer({
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+		});
 	}
 
 	function setTvcEverduesAccount(TvmCell tvcEverduesAccountInput)
@@ -337,7 +340,7 @@ contract EverduesRoot {
 			2
 		);
 		versionTvc++;
-		if (versionTvc > 254){
+		if (versionTvc > 254) {
 			versionTvc = 2;
 		}
 		VersionsTvcParams params;
@@ -545,7 +548,7 @@ contract EverduesRoot {
 			2
 		);
 		versionAbi++;
-		if (versionAbi > 254){
+		if (versionAbi > 254) {
 			versionAbi = 2;
 		}
 		VersionsAbiParams params;
@@ -761,7 +764,11 @@ contract EverduesRoot {
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(vrsparamsTvc[versionTvc].tvcFeeProxy.toSlice().loadRef(), fee_proxy_version, msg.sender);
+		}(
+			vrsparamsTvc[versionTvc].tvcFeeProxy.toSlice().loadRef(),
+			fee_proxy_version,
+			msg.sender
+		);
 	}
 
 	function upgradeAccount(uint256 pubkey) external view {
@@ -775,12 +782,18 @@ contract EverduesRoot {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
-		require(msg.sender == account_address, EverduesErrors.error_message_sender_is_not_account_address);
+		require(
+			msg.sender == account_address,
+			EverduesErrors.error_message_sender_is_not_account_address
+		);
 		EverduesAccount(account_address).upgrade{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(vrsparamsTvc[versionTvc].tvcEverduesAccount.toSlice().loadRef(), account_version);
+		}(
+			vrsparamsTvc[versionTvc].tvcEverduesAccount.toSlice().loadRef(),
+			account_version
+		);
 	}
 
 	function upgradeSubscription(address service_address) external view {
@@ -932,7 +945,25 @@ contract EverduesRoot {
 			EverduesErrors.error_message_low_value
 		);
 
-		TvmCell upgrade_data = abi.encode(account_version,owner,service_version,fee_proxy_version,subscription_version,vrsparamsTvc,vrsparamsAbi,versionTvc,versionAbi,has_platform_code,fee_proxy_address);
+		TvmCell upgrade_data = abi.encode(
+			account_version,
+			owner,
+			service_version,
+			fee_proxy_version,
+			subscription_version,
+			vrsparamsTvc,
+			vrsparamsAbi,
+			versionTvc,
+			versionAbi,
+			has_platform_code,
+			fee_proxy_address,
+			categories,
+			service_fee,
+			subscription_fee,
+			dex_root_address,
+			mtds_root_address,
+			mtds_revenue_accumulator_address
+		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
 		onCodeUpgrade(upgrade_data);
@@ -952,8 +983,41 @@ contract EverduesRoot {
 			uint8 versionTvc_,
 			uint8 versionAbi_,
 			bool has_platform_code_,
-			address fee_proxy_address_
-		) = abi.decode(upgrade_data,(uint32,address,uint32,uint32,uint32,mapping(uint8 => EverduesRoot.VersionsTvcParams),mapping(uint8 => EverduesRoot.VersionsAbiParams),uint8,uint8,bool,address));
+			address fee_proxy_address_,
+			string[] categories_,
+			uint8 service_fee_,
+			uint8 subscription_fee_,
+			address dex_root_address_,
+			address mtds_root_address_,
+			address mtds_revenue_accumulator_address_
+		) = abi.decode(
+				upgrade_data,
+				(
+					uint32,
+					address,
+					uint32,
+					uint32,
+					uint32,
+					mapping(uint8 => EverduesRoot.VersionsTvcParams),
+					mapping(uint8 => EverduesRoot.VersionsAbiParams),
+					uint8,
+					uint8,
+					bool,
+					address,
+					string[],
+					uint8,
+					uint8,
+					address,
+					address,
+					address
+				)
+			);
+		categories = categories_;
+		dex_root_address = dex_root_address_;
+		mtds_root_address = mtds_root_address_;
+		mtds_revenue_accumulator_address = mtds_revenue_accumulator_address_;
+		service_fee = service_fee_;
+		subscription_fee = subscription_fee_;
 		account_version = account_version_;
 		service_version = service_version_;
 		fee_proxy_version = fee_proxy_version_;
@@ -965,7 +1029,7 @@ contract EverduesRoot {
 		has_platform_code = has_platform_code_;
 		versionAbi = versionAbi_;
 		owner = owner_;
-		
+
 		owner.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -1051,7 +1115,10 @@ contract EverduesRoot {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
-		require(msg.sender == account_address, EverduesErrors.error_message_sender_is_not_account_address);
+		require(
+			msg.sender == account_address,
+			EverduesErrors.error_message_sender_is_not_account_address
+		);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -1298,7 +1365,10 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(service_address, identificator, address(this));
 		TvmCell code = tvm.setCodeSalt(
-			vrsparamsTvc[versionTvc].tvcSubscriptionIdentificatorIndex.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc]
+				.tvcSubscriptionIdentificatorIndex
+				.toSlice()
+				.loadRef(),
 			saltBuilder.toCell()
 		);
 		TvmCell stateInit = tvm.buildStateInit({
@@ -1337,7 +1407,10 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(serviceOwner, address(this));
 		TvmCell code = tvm.setCodeSalt(
-			vrsparamsTvc[versionTvc].tvcSubscriptionServiceIndex.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc]
+				.tvcSubscriptionServiceIndex
+				.toSlice()
+				.loadRef(),
 			saltBuilder.toCell()
 		);
 		TvmCell state = tvm.buildStateInit({
@@ -1357,7 +1430,10 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(identificator_, address(this));
 		TvmCell code = tvm.setCodeSalt(
-			vrsparamsTvc[versionTvc].tvcSubscriptionServiceIdentificatorIndex.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc]
+				.tvcSubscriptionServiceIdentificatorIndex
+				.toSlice()
+				.loadRef(),
 			saltBuilder.toCell()
 		);
 		TvmCell state = tvm.buildStateInit({
