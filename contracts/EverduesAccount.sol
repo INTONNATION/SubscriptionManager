@@ -82,6 +82,8 @@ contract EverduesAccount is IEverduesAccount {
 		if (old_version == 0) {
 			tvm.resetStorage();
 		}
+		
+		sync_balance_currency_root = address(0);
 
 		root = root_;
 		platform_code = s.loadRef();
@@ -151,7 +153,7 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function syncBalance(address currency_root, uint128 additional_gas) external onlyOwner {
-		require(sync_balance_currency_root == address(0), 335);
+		require(sync_balance_currency_root == address(0), EverduesErrors.mutex_not_free);
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
 		sync_balance_currency_root = currency_root;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
@@ -318,16 +320,24 @@ contract EverduesAccount is IEverduesAccount {
 	function onBalanceOf(uint128 balance_) external {
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(sync_balance_currency_root);
-		balance_wallet_struct current_balance_key = current_balance_struct
-			.get();
-		if (msg.sender == current_balance_key.wallet) {
-			current_balance_key.balance = balance_;
-			wallets_mapping[sync_balance_currency_root] = current_balance_key;
-			sync_balance_currency_root = address(0);		
+		if (current_balance_struct.hasValue()) {
+			balance_wallet_struct current_balance_key = current_balance_struct
+				.get();
+			if (msg.sender == current_balance_key.wallet) {
+				current_balance_key.balance = balance_;
+				wallets_mapping[sync_balance_currency_root] = current_balance_key;
+				sync_balance_currency_root = address(0);		
+			} else {
+				sync_balance_currency_root = address(0);
+				//revert or tvm.exit1 ?
+				tvm.exit1();
+			}
 		} else {
-			sync_balance_currency_root = address(0);
-			//revert or tvm.exit1 ?
-			tvm.exit1();
+			balance_wallet_struct current_balance_struct_;
+			current_balance_struct_.wallet = msg.sender;
+			current_balance_struct_.balance = balance_;
+			wallets_mapping[sync_balance_currency_root] = current_balance_struct_;
+			sync_balance_currency_root = address(0);			
 		}
 	}
 
