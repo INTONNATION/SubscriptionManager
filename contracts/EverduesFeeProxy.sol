@@ -292,7 +292,7 @@ contract EverduesFeeProxy {
 		root = root_;
 		platform_code = s.loadRef();
 		platform_params = s.loadRef();
-		TvmCell contract_params = s.loadRef();
+		//TvmCell contract_params = s.loadRef();
 		current_version = version;
 		type_id = type_id_;
 		//address[] supportedCurrencies = abi.decode(contract_params,(address[]));
