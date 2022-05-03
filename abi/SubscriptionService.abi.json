@@ -145,6 +145,15 @@
 	"data": [
 	],
 	"events": [
+		{
+			"name": "ServiceDeployed",
+			"inputs": [
+				{"name":"subscription_service_index_address","type":"address"},
+				{"name":"subscription_service_index_identificator_address","type":"address"}
+			],
+			"outputs": [
+			]
+		}
 	],
 	"fields": [
 		{"name":"_pubkey","type":"uint256"},

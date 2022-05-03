@@ -4,6 +4,7 @@ interface IEverduesAccount {
 	event AccountDeployed(uint32 current_version);
 	event Deposit(address walletAddress, uint128 amount);
 	event Withdraw(address walletAddress, uint128 amount);
+    event BalanceSynced(uint128 balance);
 
 	function paySubscription(
 		uint128 value,

@@ -326,10 +326,11 @@ contract EverduesAccount is IEverduesAccount {
 			if (msg.sender == current_balance_key.wallet) {
 				current_balance_key.balance = balance_;
 				wallets_mapping[sync_balance_currency_root] = current_balance_key;
-				sync_balance_currency_root = address(0);		
+				sync_balance_currency_root = address(0);
+				emit BalanceSynced(balance_);
 			} else {
 				sync_balance_currency_root = address(0);
-				//revert or tvm.exit1 ?
+				tvm.commit();
 				tvm.exit1();
 			}
 		} else {
@@ -337,7 +338,8 @@ contract EverduesAccount is IEverduesAccount {
 			current_balance_struct_.wallet = msg.sender;
 			current_balance_struct_.balance = balance_;
 			wallets_mapping[sync_balance_currency_root] = current_balance_struct_;
-			sync_balance_currency_root = address(0);			
+			sync_balance_currency_root = address(0);
+			emit BalanceSynced(balance_);		
 		}
 	}
 
