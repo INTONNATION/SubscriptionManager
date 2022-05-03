@@ -337,7 +337,7 @@ contract EverduesRoot {
 			2
 		);
 		versionTvc++;
-		if (versionTvc > 5){
+		if (versionTvc > 254){
 			versionTvc = 2;
 		}
 		VersionsTvcParams params;
@@ -545,7 +545,7 @@ contract EverduesRoot {
 			2
 		);
 		versionAbi++;
-		if (versionAbi > 5){
+		if (versionAbi > 254){
 			versionAbi = 2;
 		}
 		VersionsAbiParams params;
@@ -761,7 +761,7 @@ contract EverduesRoot {
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(tvcFeeProxy.toSlice().loadRef(), fee_proxy_version, msg.sender);
+		}(vrsparamsTvc[versionTvc].tvcFeeProxy.toSlice().loadRef(), fee_proxy_version, msg.sender);
 	}
 
 	function upgradeAccount(uint256 pubkey) external view {
@@ -780,7 +780,7 @@ contract EverduesRoot {
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(tvcEverduesAccount.toSlice().loadRef(), account_version);
+		}(vrsparamsTvc[versionTvc].tvcEverduesAccount.toSlice().loadRef(), account_version);
 	}
 
 	function upgradeSubscription(address service_address) external view {
@@ -990,7 +990,7 @@ contract EverduesRoot {
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
-			tvcFeeProxy.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc].tvcFeeProxy.toSlice().loadRef(),
 			fee_proxy_contract_params,
 			fee_proxy_version,
 			msg.sender,
@@ -1066,7 +1066,7 @@ contract EverduesRoot {
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
-			tvcEverduesAccount.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc].tvcEverduesAccount.toSlice().loadRef(),
 			account_params,
 			account_version
 		);
@@ -1274,7 +1274,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(subscription_owner, address(this)); // Max 4 items
 		TvmCell code = tvm.setCodeSalt(
-			tvcSubscription.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc].tvcSubscription.toSlice().loadRef(),
 			saltBuilder.toCell()
 		);
 		return code;
@@ -1284,7 +1284,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(category, address(this)); // Max 4 items
 		TvmCell code = tvm.setCodeSalt(
-			tvcSubscriptionService.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc].tvcSubscriptionService.toSlice().loadRef(),
 			saltBuilder.toCell()
 		);
 		return code;
@@ -1298,7 +1298,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(service_address, identificator, address(this));
 		TvmCell code = tvm.setCodeSalt(
-			tvcSubscriptionIdentificatorIndex.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc].tvcSubscriptionIdentificatorIndex.toSlice().loadRef(),
 			saltBuilder.toCell()
 		);
 		TvmCell stateInit = tvm.buildStateInit({
@@ -1317,7 +1317,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(service_address, address(this));
 		TvmCell code = tvm.setCodeSalt(
-			tvcSubscriptionIndex.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc].tvcSubscriptionIndex.toSlice().loadRef(),
 			saltBuilder.toCell()
 		);
 		TvmCell stateInit = tvm.buildStateInit({
@@ -1337,7 +1337,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(serviceOwner, address(this));
 		TvmCell code = tvm.setCodeSalt(
-			tvcSubscriptionServiceIndex.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc].tvcSubscriptionServiceIndex.toSlice().loadRef(),
 			saltBuilder.toCell()
 		);
 		TvmCell state = tvm.buildStateInit({
@@ -1357,7 +1357,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(identificator_, address(this));
 		TvmCell code = tvm.setCodeSalt(
-			tvcSubscriptionServiceIdentificatorIndex.toSlice().loadRef(),
+			vrsparamsTvc[versionTvc].tvcSubscriptionServiceIdentificatorIndex.toSlice().loadRef(),
 			saltBuilder.toCell()
 		);
 		TvmCell state = tvm.buildStateInit({
@@ -1387,7 +1387,7 @@ contract EverduesRoot {
 					platform_params: params
 				},
 				pubkey: 0,
-				code: tvcPlatform.toSlice().loadRef()
+				code: vrsparamsTvc[versionTvc].tvcPlatform.toSlice().loadRef()
 			});
 	}
 
@@ -1407,7 +1407,7 @@ contract EverduesRoot {
 					platform_params: params
 				},
 				pubkey: pubkey,
-				code: tvcPlatform.toSlice().loadRef()
+				code: vrsparamsTvc[versionTvc].tvcPlatform.toSlice().loadRef()
 			});
 	}
 
