@@ -331,38 +331,6 @@ contract EverduesRoot {
 		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function setTvc() external onlyOwner {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ROOT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
-		versionTvc++;
-		if (versionTvc > 254) {
-			versionTvc = 2;
-		}
-		VersionsTvcParams params;
-		if (versionTvc == 1) {
-			params.tvcPlatform = tvcPlatform;
-		} else {
-			params.tvcPlatform = vrsparamsTvc[1].tvcPlatform;
-		}
-		params.tvcEverduesAccount = tvcEverduesAccount;
-		params.tvcSubscriptionService = tvcSubscriptionService;
-		params.tvcSubscription = tvcSubscription;
-		params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex;
-		params.tvcSubscriptionIndex = tvcSubscriptionIndex;
-		params
-			.tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
-		params.tvcFeeProxy = tvcFeeProxy;
-		params
-			.tvcSubscriptionServiceIdentificatorIndex = tvcSubscriptionServiceIdentificatorIndex;
-		vrsparamsTvc.add(versionTvc, params);
-		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
-	}
-
 	// Set ABIs
 	function setAbiPlatformContract(string abiPlatformContractInput)
 		external
@@ -539,7 +507,7 @@ contract EverduesRoot {
 		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function setAbi() external onlyOwner {
+	function setVersion() external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -547,26 +515,47 @@ contract EverduesRoot {
 			),
 			2
 		);
+		VersionsTvcParams tvc_params;
+		VersionsAbiParams abi_params;
 		versionAbi++;
+		versionTvc++;
+		if (versionTvc > 254) {
+			versionTvc = 2;
+		}
+		if (versionTvc == 1) {
+			tvc_params.tvcPlatform = tvcPlatform;
+		} else {
+			tvc_params.tvcPlatform = vrsparamsTvc[1].tvcPlatform;
+		}
+		tvc_params.tvcEverduesAccount = tvcEverduesAccount;
+		tvc_params.tvcSubscriptionService = tvcSubscriptionService;
+		tvc_params.tvcSubscription = tvcSubscription;
+		tvc_params.tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex;
+		tvc_params.tvcSubscriptionIndex = tvcSubscriptionIndex;
+		tvc_params
+			.tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex;
+		tvc_params.tvcFeeProxy = tvcFeeProxy;
+		tvc_params
+			.tvcSubscriptionServiceIdentificatorIndex = tvcSubscriptionServiceIdentificatorIndex;
+		vrsparamsTvc.add(versionTvc, tvc_params);
 		if (versionAbi > 254) {
 			versionAbi = 2;
 		}
-		VersionsAbiParams params;
-		params.abiPlatformContract = abiPlatformContract;
-		params.abiEverduesAccountContract = abiEverduesAccountContract;
-		params.abiEverduesRootContract = abiEverduesRootContract;
-		params.abiTIP3RootContract = abiTIP3RootContract;
-		params.abiTIP3TokenWalletContract = abiTIP3TokenWalletContract;
-		params.abiServiceContract = abiServiceContract;
-		params.abiServiceIndexContract = abiServiceIndexContract;
-		params
+		abi_params.abiPlatformContract = abiPlatformContract;
+		abi_params.abiEverduesAccountContract = abiEverduesAccountContract;
+		abi_params.abiEverduesRootContract = abiEverduesRootContract;
+		abi_params.abiTIP3RootContract = abiTIP3RootContract;
+		abi_params.abiTIP3TokenWalletContract = abiTIP3TokenWalletContract;
+		abi_params.abiServiceContract = abiServiceContract;
+		abi_params.abiServiceIndexContract = abiServiceIndexContract;
+		abi_params
 			.abiServiceIdentificatorIndexContract = abiServiceIdentificatorIndexContract;
-		params.abiSubscriptionContract = abiSubscriptionContract;
-		params.abiSubscriptionIndexContract = abiSubscriptionIndexContract;
-		params
+		abi_params.abiSubscriptionContract = abiSubscriptionContract;
+		abi_params.abiSubscriptionIndexContract = abiSubscriptionIndexContract;
+		abi_params
 			.abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContract;
-		params.abiFeeProxyContract = abiFeeProxyContract;
-		vrsparamsAbi.add(versionAbi, params);
+		abi_params.abiFeeProxyContract = abiFeeProxyContract;
+		vrsparamsAbi.add(versionAbi, abi_params);
 		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
