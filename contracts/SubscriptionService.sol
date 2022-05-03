@@ -7,8 +7,9 @@ import "libraries/EverduesErrors.sol";
 import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 import "interfaces/IEverduesIndex.sol";
+import "interfaces/IEverduesSubscriptionService.sol";
 
-contract SubscriptionService {
+contract SubscriptionService is IEverduesSubscriptionService {
 	TvmCell public service_params;
 	address public root;
 	address public service_owner;
@@ -46,7 +47,7 @@ contract SubscriptionService {
 		_;
 	}
 
-	function getParams() external view responsible returns (TvmCell) {
+	function getParams() external override view responsible returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -60,7 +61,7 @@ contract SubscriptionService {
 		} service_params;
 	}
 
-	function getInfo() external view responsible returns (TvmCell) {
+	function getInfo() external override view responsible returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -184,6 +185,7 @@ contract SubscriptionService {
 		);
 		subscription_service_index_address = subscription_service_index_address_;
 		subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
+		emit ServiceDeployed(subscription_service_index_address, subscription_service_index_identificator_address);
 		service_owner.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -224,7 +226,7 @@ contract SubscriptionService {
 		});
 	}
 
-	function cancel() external onlyRoot {
+	function cancel() external override onlyRoot {
 		IEverduesIndex(subscription_service_index_address).cancel();
 		IEverduesIndex(subscription_service_index_identificator_address)
 			.cancel();

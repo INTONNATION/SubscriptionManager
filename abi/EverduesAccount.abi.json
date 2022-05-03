@@ -246,6 +246,14 @@
 			],
 			"outputs": [
 			]
+		},
+		{
+			"name": "BalanceSynced",
+			"inputs": [
+				{"name":"balance","type":"uint128"}
+			],
+			"outputs": [
+			]
 		}
 	],
 	"fields": [
