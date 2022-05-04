@@ -142,13 +142,6 @@
 			]
 		},
 		{
-			"name": "setTvc",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "setAbiPlatformContract",
 			"inputs": [
 				{"name":"abiPlatformContractInput","type":"string"}
@@ -245,7 +238,15 @@
 			]
 		},
 		{
-			"name": "setAbi",
+			"name": "deleteVersion",
+			"inputs": [
+				{"name":"version","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setVersion",
 			"inputs": [
 			],
 			"outputs": [

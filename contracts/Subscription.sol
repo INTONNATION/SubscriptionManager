@@ -24,11 +24,10 @@ contract Subscription is IEverduesSubscription {
 	address public account_address;
 	address public subscription_index_address;
 	address public subscription_index_identificator_address;
-	uint8   public service_fee;
-	uint8   public subscription_fee;
+	uint8 public service_fee;
+	uint8 public subscription_fee;
 	TvmCell platform_code;
 	TvmCell platform_params;
-	TvmCell contract_params;
 	address subscription_wallet;
 	address service_address;
 	uint32 current_version;
@@ -101,20 +100,159 @@ contract Subscription is IEverduesSubscription {
 		uint32 version,
 		address send_gas_to
 	) external onlyRoot {
-		require(msg.value > EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE, EverduesErrors.error_message_low_value);
-		TvmBuilder builder;
-		builder.store(root);
-		builder.store(send_gas_to);
-		builder.store(current_version);
-		builder.store(version);
-		builder.store(type_id);
-		builder.store(platform_code);
-		builder.store(platform_params);
-		builder.store(contract_params);
-		builder.store(subscription);
+		require(
+			msg.value > EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE,
+			EverduesErrors.error_message_low_value
+		);
+		TvmCell contract_params_;
+		TvmCell data = abi.encode(
+			root,
+			send_gas_to,
+			current_version,
+			version,
+			type_id,
+			platform_code,
+			platform_params,
+			contract_params_,
+			code,
+			service_params,
+			subscription,
+			address_fee_proxy,
+			account_address,
+			subscription_index_address,
+			subscription_index_identificator_address,
+			service_fee,
+			subscription_fee,
+			svcparams,
+			preprocessing_window,
+			subscription_wallet,
+			service_address
+		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
-		onCodeUpgrade(builder.toCell());
+		onCodeUpgrade(data);
+	}
+
+	function onCodeUpgrade(TvmCell upgrade_data) private {
+		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
+		tvm.resetStorage();
+		(
+			address root_,
+			address send_gas_to,
+			uint32 old_version,
+			uint32 version,
+			uint8 type_id_,
+			TvmCell platform_code_,
+			TvmCell platform_params_,
+			TvmCell contract_params,
+			TvmCell code
+		) = abi.decode(
+				upgrade_data,
+				(
+					address,
+					address,
+					uint32,
+					uint32,
+					uint8,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					TvmCell
+				)
+			);
+		tvm.resetStorage();
+
+		root = root_;
+		current_version = version;
+		platform_code = platform_code_;
+		platform_params = platform_params_;
+		type_id = type_id_;
+
+		if (old_version == 0) {
+			TvmCell nextCell;
+			(service_address, account_address, nextCell) = contract_params
+				.toSlice()
+				.decode(address, address, TvmCell);
+			(
+				subscription_index_address,
+				subscription_index_identificator_address,
+				nextCell
+			) = nextCell.toSlice().decode(address, address, TvmCell);
+			(address_fee_proxy, service_fee, subscription_fee) = nextCell
+				.toSlice()
+				.decode(address, uint8, uint8);
+			IEverduesSubscriptionService(service_address).getParams{
+				value: 0,
+				bounce: true,
+				flag: MsgFlag.ALL_NOT_RESERVED,
+				callback: Subscription.onGetParams
+			}();
+		} else if (old_version > 0) {
+			(
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				TvmCell service_params_,
+				Subscription.paymentStatus subscription_,
+				address address_fee_proxy_,
+				address account_address_,
+				address subscription_index_address_,
+				address subscription_index_identificator_address_,
+				uint8 service_fee_,
+				uint8 subscription_fee_,
+				Subscription.serviceParams svcparams_,
+				uint32 preprocessing_window_,
+				address subscription_wallet_,
+				address service_address_
+			) = abi.decode(
+					upgrade_data,
+					(
+						address,
+						address,
+						uint32,
+						uint32,
+						uint8,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						Subscription.paymentStatus,
+						address,
+						address,
+						address,
+						address,
+						uint8,
+						uint8,
+						Subscription.serviceParams,
+						uint32,
+						address,
+						address
+					)
+				);
+			service_params = service_params_;
+			subscription = subscription_;
+			address_fee_proxy = address_fee_proxy_;
+			account_address = account_address_;
+			subscription_index_address = subscription_index_address_;
+			subscription_index_identificator_address = subscription_index_identificator_address_;
+			service_fee = service_fee_;
+			subscription_fee = subscription_fee_;
+			svcparams = svcparams_;
+			preprocessing_window = preprocessing_window_;
+			subscription_wallet = subscription_wallet_;
+			service_address = service_address_;
+			send_gas_to.transfer({
+				value: 0,
+				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+			});
+		}
 	}
 
 	function subscriptionStatus() public override returns (uint8) {
@@ -125,7 +263,8 @@ contract Subscription is IEverduesSubscription {
 			return EverduesSubscriptionStatus.STATUS_ACTIVE;
 		} else if (
 			(now > (subscription.payment_timestamp + svcparams.period)) &&
-			(subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING)
+			(subscription.status !=
+				EverduesSubscriptionStatus.STATUS_PROCESSING)
 		) {
 			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else {
@@ -141,8 +280,11 @@ contract Subscription is IEverduesSubscription {
 				preprocessing_window)
 		) {
 			if (
-				(now > (subscription.execution_timestamp + execute_subscription_cooldown)) ||
-				(subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING)
+				(now >
+					(subscription.execution_timestamp +
+						execute_subscription_cooldown)) ||
+				(subscription.status !=
+					EverduesSubscriptionStatus.STATUS_PROCESSING)
 			) {
 				tvm.accept();
 				subscription.gas = paySubscriptionGas;
@@ -221,10 +363,10 @@ contract Subscription is IEverduesSubscription {
 		address remainingGasTo,
 		TvmCell payload
 	) public {
-        tokenRoot;
-        sender;
-        senderWallet;
-        remainingGasTo;
+		tokenRoot;
+		sender;
+		senderWallet;
+		remainingGasTo;
 		require(
 			amount >= svcparams.service_value,
 			EverduesErrors.error_not_enough_balance_in_message
@@ -266,45 +408,6 @@ contract Subscription is IEverduesSubscription {
 		} else if (status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
 		}
-	}
-
-	function onCodeUpgrade(TvmCell upgrade_data) private {
-		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
-		tvm.resetStorage();
-		TvmSlice s = upgrade_data.toSlice();
-		(
-			address root_,
-			,
-			,
-			uint32 version,
-			uint8 type_id_
-		) = s.decode(address, address, uint32, uint32, uint8);
-
-		root = root_;
-		current_version = version;
-		type_id = type_id_;
-		platform_code = s.loadRef();
-
-		platform_params = s.loadRef();
-		contract_params = s.loadRef();
-		TvmCell nextCell;
-		(service_address, account_address, nextCell) = contract_params
-			.toSlice()
-			.decode(address, address, TvmCell);
-		(
-			subscription_index_address,
-			subscription_index_identificator_address,
-			nextCell
-		) = nextCell.toSlice().decode(address, address, TvmCell);
-		(address_fee_proxy, service_fee, subscription_fee) = nextCell
-			.toSlice()
-			.decode(address, uint8, uint8);
-		IEverduesSubscriptionService(service_address).getParams{
-			value: 0,
-			bounce: true,
-			flag: MsgFlag.ALL_NOT_RESERVED,
-			callback: Subscription.onGetParams
-		}();
 	}
 
 	function onGetParams(TvmCell service_params_) external onlyService {
@@ -377,7 +480,7 @@ contract Subscription is IEverduesSubscription {
 
 	function updateIdentificator(TvmCell identificator_, address send_gas_to)
 		external
-        view
+		view
 		onlyRoot
 	{
 		tvm.rawReserve(

@@ -204,7 +204,6 @@
 		{"name":"subscription_fee","type":"uint8"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
-		{"name":"contract_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},
 		{"name":"service_address","type":"address"},
 		{"name":"current_version","type":"uint32"},

@@ -67,7 +67,7 @@ owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
 tonos-cli --url $NETWORK deploy ../abi/$1.tvc "{\"initial_owner\":\"$owner\"}" --sign $1.keys.json --abi ../abi/$1.abi.json
 giver $CONTRACT_ADDRESS
 # Categories
-categories=[\"DeFi\",\"Games\",\"NFTs\",\"Social\",\"Exchanges\",\"Media\",\"Books\",\"Food\",\"Insurance\",\"Health\",\"Other\"]
+categories=[\"Telegram\",\"Gambling\",\"Rentals\",\"Content\",\"Media\",\"Music\",\"Goods\",\"Education\",\"Software\",\"Membership\",\"DeFi\",\"NFT\",\"Games\",\"Other\"]
 
 # TVC
 platformTvc=$(cat ../abi/Platform.tvc | base64 $prefix)
@@ -142,7 +142,7 @@ tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json dev
 message=`tonos-cli -j body setVersion "{}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 # set settings
-message=`tonos-cli -j body deployFeeProxy "{\"currencies\":[\"0:57b268d5c4e2e43a25e53d2d092a5457d8ddd8f6e9ffb6c1dec02b27bfe62105\",\"0:a519f99bb5d6d51ef958ed24d337ad75a1c770885dcd42d51d6663f9fcdacfb2\",\"0:eb2ccad2020d9af9cec137d3146dde067039965c13a27d97293c931dae22b2b9\",\"0:0cfa60f9454b1b619938c4da6a138b1cc62da937b3f6c0506405daf2a88e0115\"]}" --abi ../abi/$1.abi.json | jq -r .Message`
+message=`tonos-cli -j body deployFeeProxy "{\"currencies\":[\"0:57b268d5c4e2e43a25e53d2d092a5457d8ddd8f6e9ffb6c1dec02b27bfe62105\",\"0:a519f99bb5d6d51ef958ed24d337ad75a1c770885dcd42d51d6663f9fcdacfb2\"]}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 4T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body setFees "{\"service_fee_\":\"3\",\"subscription_fee_\":\"0\"}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"

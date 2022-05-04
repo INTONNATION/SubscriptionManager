@@ -16,8 +16,7 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.s
 
 contract EverduesAccount is IEverduesAccount {
 	address public root;
-	address public sync_balance_currency_root;
-	uint128 public withdraw_value;
+	address sync_balance_currency_root;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address owner;
@@ -30,6 +29,7 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	mapping(address => balance_wallet_struct) public wallets_mapping;
+	mapping(address => address) public _tmp_sync_balance;
 
 	constructor() public {
 		revert();
@@ -57,39 +57,80 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function upgrade(TvmCell code, uint32 version) external onlyRoot {
-		TvmBuilder builder;
-		TvmBuilder upgrade_params;
-		builder.store(root);
-		builder.store(current_version);
-		builder.store(version);
-		builder.store(type_id);
-		builder.store(platform_code);
-		builder.store(platform_params);
-		builder.store(code);
-		upgrade_params.store(wallets_mapping);
-		builder.store(upgrade_params.toCell());
+		TvmCell contract_params;
+		TvmCell data = abi.encode(
+			root,
+			uint32(0),
+			version,
+			type_id,
+			tvm.code(),
+			platform_params,
+			contract_params,
+			code,
+			wallets_mapping
+		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
-		onCodeUpgrade(builder.toCell());
+		onCodeUpgrade(data);
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
-		TvmSlice s = upgrade_data.toSlice();
-		(address root_, uint32 old_version, uint32 version, uint8 type_id_) = s
-			.decode(address, uint32, uint32, uint8);
-
-		if (old_version == 0) {
-			tvm.resetStorage();
-		}
-		
-		sync_balance_currency_root = address(0);
-
+		(
+			address root_,
+			uint32 old_version,
+			uint32 version,
+			uint8 type_id_,
+			TvmCell platform_code_,
+			TvmCell platform_params_,
+			TvmCell contract_params,
+			TvmCell code
+		) = abi.decode(
+				upgrade_data,
+				(
+					address,
+					uint32,
+					uint32,
+					uint8,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					TvmCell
+				)
+		);
+		tvm.resetStorage();
 		root = root_;
-		platform_code = s.loadRef();
-		platform_params = s.loadRef();
+		platform_code = platform_code_;
+		platform_params = platform_params_;
 		current_version = version;
 		type_id = type_id_;
+        if (old_version > 0) {
+			(
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				mapping(address => balance_wallet_struct) wallets_mapping_
+			) = abi.decode(
+					upgrade_data,
+					(
+						address,
+						uint32,
+						uint32,
+						uint8,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						mapping(address => balance_wallet_struct)
+					)
+				);
+			wallets_mapping = wallets_mapping_;
+		}
 		emit AccountDeployed(current_version);
 	}
 
@@ -153,15 +194,14 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function syncBalance(address currency_root, uint128 additional_gas) external onlyOwner {
-		require(sync_balance_currency_root == address(0), EverduesErrors.mutex_not_free);
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
-		sync_balance_currency_root = currency_root;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		if (current_balance_struct.hasValue()) {
 			balance_wallet_struct current_balance_key = current_balance_struct
 				.get();
 			address account_wallet = current_balance_key.wallet;
+			_tmp_sync_balance[account_wallet] = currency_root;
 			TIP3TokenWallet(account_wallet).balance{
 				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
 				bounce: true,
@@ -178,7 +218,7 @@ contract EverduesAccount is IEverduesAccount {
 		}
 	}
 
-	function onWalletOf(address account_wallet) external view {
+	function onWalletOf(address account_wallet) external {
 		require(msg.sender == sync_balance_currency_root, EverduesErrors.error_message_sender_is_not_currency_root);
 		tvm.rawReserve(
 			math.max(
@@ -187,6 +227,7 @@ contract EverduesAccount is IEverduesAccount {
 			),
 			2
 		);
+		_tmp_sync_balance[account_wallet] = msg.sender;
 		TIP3TokenWallet(account_wallet).balance{
 			value: 0,
 			bounce: true,
@@ -276,7 +317,7 @@ contract EverduesAccount is IEverduesAccount {
 		IEverduesRoot(root).deployService{
 			value: EverduesGas.SERVICE_INITIAL_BALANCE +
 				EverduesGas.INDEX_INITIAL_BALANCE *
-				2 +
+				2 + EverduesGas.INIT_MESSAGE_VALUE * 4 +
 				EverduesGas.SET_SERVICE_INDEXES_VALUE +
 				additional_gas +
 				EverduesGas.INIT_MESSAGE_VALUE,
@@ -318,34 +359,42 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function onBalanceOf(uint128 balance_) external {
-		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
-			.fetch(sync_balance_currency_root);
-		if (current_balance_struct.hasValue()) {
-			balance_wallet_struct current_balance_key = current_balance_struct
-				.get();
-			if (msg.sender == current_balance_key.wallet) {
-				current_balance_key.balance = balance_;
-				wallets_mapping[sync_balance_currency_root] = current_balance_key;
-				sync_balance_currency_root = address(0);
-				emit BalanceSynced(balance_);
+		optional(address) _currency_root = _tmp_sync_balance
+			.fetch(msg.sender);
+		if (_currency_root.hasValue()) {
+			optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+				.fetch(_tmp_sync_balance[msg.sender]);
+			if (current_balance_struct.hasValue()) {
+				balance_wallet_struct current_balance_key = current_balance_struct
+					.get();
+				if (msg.sender == current_balance_key.wallet) {
+					current_balance_key.balance = balance_;
+					wallets_mapping[_tmp_sync_balance[msg.sender]] = current_balance_key;
+					delete _tmp_sync_balance[msg.sender];
+					emit BalanceSynced(balance_);
+				} else {
+					delete _tmp_sync_balance[msg.sender];
+					tvm.commit();
+					tvm.exit1();
+				}
 			} else {
-				sync_balance_currency_root = address(0);
-				tvm.commit();
-				tvm.exit1();
+				balance_wallet_struct current_balance_struct_;
+				current_balance_struct_.wallet = msg.sender;
+				current_balance_struct_.balance = balance_;
+				wallets_mapping[_tmp_sync_balance[msg.sender]] = current_balance_struct_;
+				delete _tmp_sync_balance[msg.sender];
+				emit BalanceSynced(balance_);		
 			}
-		} else {
-			balance_wallet_struct current_balance_struct_;
-			current_balance_struct_.wallet = msg.sender;
-			current_balance_struct_.balance = balance_;
-			wallets_mapping[sync_balance_currency_root] = current_balance_struct_;
-			sync_balance_currency_root = address(0);
-			emit BalanceSynced(balance_);		
 		}
+	}
+
+    function withdrawGas(uint128 withdraw_value, address withdraw_to) external pure onlyOwner {
+		withdraw_to.transfer({value: withdraw_value, flag: 0});
 	}
 
 	function withdrawFunds(
 		address currency_root,
-		uint128 withdraw_value_,
+		uint128 withdraw_value,
 		address withdraw_to,
 		uint128 additional_gas
 	) external onlyOwner {
@@ -357,14 +406,14 @@ contract EverduesAccount is IEverduesAccount {
 		TvmCell payload;
 		current_balance_key.balance =
 			current_balance_key.balance -
-			withdraw_value_;
+			withdraw_value;
 		wallets_mapping[currency_root] = current_balance_key;
-		emit Withdraw(msg.sender, withdraw_value_);
+		emit Withdraw(msg.sender, withdraw_value);
 		ITokenWallet(account_wallet).transfer{
 			value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
 			bounce: false,
 			flag: 0
-		}(withdraw_value_, withdraw_to, 0, address(this), true, payload);
+		}(withdraw_value, withdraw_to, 0, address(this), true, payload);
 	}
 
 	function destroyAccount(address send_gas_to) public onlyOwner {

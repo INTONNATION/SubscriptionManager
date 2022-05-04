@@ -101,6 +101,8 @@ message=`tonos-cli -j body setAbiSubscriptionIdentificatorIndexContract "{\"abiS
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body setVersion "{}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+message=`tonos-cli -j body upgradeFeeProxy "{}"  --abi ../abi/EverduesRoot.abi.json | jq -r .Message`
+tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 3T --bounce true --allBalance false --payload "$message"
 }
 
 deploy $CONTRACT_NAME

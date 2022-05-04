@@ -112,60 +112,122 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		uint32 version,
 		address send_gas_to
 	) external onlyRoot {
-		TvmBuilder builder;
-		builder.store(root);
-		builder.store(send_gas_to);
-		builder.store(current_version);
-		builder.store(version);
-		builder.store(type_id);
-		builder.store(platform_code);
-		builder.store(platform_params);
-		builder.store(service_params);
-		builder.store(code_);
+		TvmCell contract_params;
+		TvmCell data = abi.encode(
+			root,
+			send_gas_to,
+			current_version,
+			version,
+			type_id,
+			platform_code,
+			platform_params,
+			contract_params,
+			code_,
+			service_params,
+			subscription_service_index_address,
+			subscription_service_index_identificator_address,
+			status,
+			svcparams
+		);
 		tvm.setcode(code_);
 		tvm.setCurrentCode(code_);
-		onCodeUpgrade(builder.toCell());
+		onCodeUpgrade(data);
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
 		tvm.rawReserve(EverduesGas.SERVICE_INITIAL_BALANCE, 2);
-		TvmSlice s = upgrade_data.toSlice();
 		(
 			address root_,
 			address send_gas_to,
 			uint32 old_version,
 			uint32 version,
-			uint8 type_id_
-		) = s.decode(address, address, uint32, uint32, uint8);
-
-		if (old_version == 0) {
-			tvm.resetStorage();
-		}
+			uint8 type_id_,
+			TvmCell platform_code_,
+			TvmCell platform_params_,
+			TvmCell contract_params,
+			TvmCell code
+		) = abi.decode(
+				upgrade_data,
+				(
+					address,
+					address,
+					uint32,
+					uint32,
+					uint8,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					TvmCell
+				)
+		);
+		tvm.resetStorage();
 
 		root = root_;
 		current_version = version;
+		platform_code = platform_code_;
+		platform_params = platform_params_;
 		type_id = type_id_;
-		TvmCell nextCell;
-		platform_code = s.loadRef();
-		platform_params = s.loadRef();
-		(service_owner, svcparams.name) = platform_params.toSlice().decode(
-			address,
-			string
-		);
-		service_params = s.loadRef();
-		(
-			svcparams.to,
-			svcparams.value,
-			svcparams.period,
-			nextCell
-		) = service_params.toSlice().decode(address, uint128, uint32, TvmCell);
-		TvmCell nextCell2;
-		(, svcparams.description, svcparams.image, nextCell2) = nextCell
-			.toSlice()
-			.decode(string, string, string, TvmCell);
-		(svcparams.currency_root, svcparams.category) = nextCell2
-			.toSlice()
-			.decode(address, string);
+		if (old_version == 0) {
+			TvmCell nextCell;
+			(service_owner, svcparams.name) = platform_params.toSlice().decode(
+				address,
+				string
+			);
+			(
+				svcparams.to,
+				svcparams.value,
+				svcparams.period,
+				nextCell
+			) = contract_params.toSlice().decode(address, uint128, uint32, TvmCell);
+			TvmCell nextCell2;
+			(, svcparams.description, svcparams.image, nextCell2) = nextCell
+				.toSlice()
+				.decode(string, string, string, TvmCell);
+			(svcparams.currency_root, svcparams.category) = nextCell2
+				.toSlice()
+				.decode(address, string);
+			service_params = contract_params;
+		} else if (old_version > 0) {
+			(
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				TvmCell service_params_,
+				address subscription_service_index_address_,
+				address subscription_service_index_identificator_address_,
+			    uint8 status_,
+				SubscriptionService.ServiceParams svcparams_
+			) = abi.decode(
+					upgrade_data,
+					(
+						address,
+						address,
+						uint32,
+						uint32,
+						uint8,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						address,
+						address,
+						uint8,
+						SubscriptionService.ServiceParams
+					)
+				);
+			service_params = service_params_;
+			subscription_service_index_address = subscription_service_index_address_;
+			subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
+			status = status_;
+			svcparams = svcparams_;
+		}
 		send_gas_to.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
