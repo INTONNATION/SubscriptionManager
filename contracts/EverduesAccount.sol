@@ -219,7 +219,6 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function onWalletOf(address account_wallet) external {
-		require(msg.sender == sync_balance_currency_root, EverduesErrors.error_message_sender_is_not_currency_root);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ACCOUNT_INITIAL_BALANCE,
