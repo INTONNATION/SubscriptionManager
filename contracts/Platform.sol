@@ -52,21 +52,21 @@ contract Platform {
 		uint32 version
 	) external {
 		require(msg.sender == root, error_message_sender_is_not_everdues_root);
-		TvmBuilder builder;
-
-		builder.store(root);
-		builder.store(uint32(0));
-		builder.store(version);
-		builder.store(type_id);
-		builder.store(tvm.code());
-		builder.store(platform_params);
-		builder.store(contract_params);
-		builder.store(code);
+		TvmCell data = abi.encode(
+			root,
+			uint32(0),
+			version,
+			type_id,
+			tvm.code(),
+			platform_params,
+			contract_params,
+			code
+		);
 
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
 
-		onCodeUpgrade(builder.toCell());
+		onCodeUpgrade(data);
 	}
 
 	function _initialize(
@@ -76,22 +76,22 @@ contract Platform {
 		address send_gas_to
 	) private {
 		require(msg.sender == root, error_message_sender_is_not_everdues_root);
-		TvmBuilder builder;
-
-		builder.store(root);
-		builder.store(send_gas_to);
-		builder.store(uint32(0));
-		builder.store(version);
-		builder.store(type_id);
-		builder.store(tvm.code());
-		builder.store(platform_params);
-		builder.store(contract_params);
-		builder.store(code);
+		TvmCell data = abi.encode(
+			root,
+			send_gas_to,
+			uint32(0),
+			version,
+			type_id,
+			tvm.code(),
+			platform_params,
+			contract_params,
+			code
+		);
 
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
 
-		onCodeUpgrade(builder.toCell());
+		onCodeUpgrade(data);
 	}
 
 	function onCodeUpgrade(TvmCell data) private {}
