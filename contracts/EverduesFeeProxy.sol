@@ -23,7 +23,6 @@ contract EverduesFeeProxy {
 	TvmCell platform_code;
 	TvmCell platform_params;
 	uint8 type_id;
-	uint8 debug;
 
 	struct balance_wallet_struct {
 		address wallet;

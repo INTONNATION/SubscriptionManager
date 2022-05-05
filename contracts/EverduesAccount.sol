@@ -46,6 +46,13 @@ contract EverduesAccount is IEverduesAccount {
 		_;
 	}
 
+	onBounce(TvmSlice slice) external view {
+		// revert change to initial msg.sender in case of failure during deploy
+		// TODO: after https://github.com/tonlabs/ton-labs-node/issues/140
+		//uint32 functionId = slice.decode(uint32);
+		emit BalanceSynced(uint128(0));
+	}
+
 	function upgradeAccount(uint128 additional_gas) public view onlyOwner {
 		IEverduesRoot(root).upgradeAccount{
 			value: EverduesGas.UPGRADE_ACCOUNT_MIN_VALUE +

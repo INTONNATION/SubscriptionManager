@@ -168,7 +168,6 @@
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"type_id","type":"uint8"},
-		{"name":"debug","type":"uint8"},
 		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"_tmp_deploying_wallets","type":"map(address,address)"}
 	]

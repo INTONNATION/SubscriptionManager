@@ -399,7 +399,7 @@ contract Subscription is IEverduesSubscription {
 		ITokenWallet(msg.sender).transfer{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(pay_value, svcparams.to, 0, account_address, true, payload);
+		}(pay_value, svcparams.to, EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS, account_address, true, payload);
 	}
 
 	function onPaySubscription(uint8 status) external onlyAccount {
