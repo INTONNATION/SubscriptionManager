@@ -46,11 +46,17 @@ contract EverduesAccount is IEverduesAccount {
 		_;
 	}
 
-	onBounce(TvmSlice slice) external view {
+	onBounce(TvmSlice slice) external pure {
 		// revert change to initial msg.sender in case of failure during deploy
 		// TODO: after https://github.com/tonlabs/ton-labs-node/issues/140
 		//uint32 functionId = slice.decode(uint32);
-		emit BalanceSynced(uint128(0));
+		// Start decoding the message. First 32 bits store the function id.
+		uint32 functionId = slice.decode(uint32);
+
+		// Api function tvm.functionId() allows to calculate function id by function name.
+		if (functionId == tvm.functionId(TIP3TokenWallet.balance)) {
+			emit BalanceSynced(uint128(0));
+		}
 	}
 
 	function upgradeAccount(uint128 additional_gas) public view onlyOwner {
