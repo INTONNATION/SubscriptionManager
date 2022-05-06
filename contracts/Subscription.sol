@@ -95,6 +95,11 @@ contract Subscription is IEverduesSubscription {
 		_;
 	}
 
+	/*modifier onlyRootPubkey() {
+		require(msg.pubkey() == root_pubkey, 1111);
+		_;
+	}*/
+
 	function upgrade(
 		TvmCell code,
 		uint32 version,
@@ -279,12 +284,8 @@ contract Subscription is IEverduesSubscription {
 				svcparams.period -
 				preprocessing_window)
 		) {
-			if (
-				(now >
-					(subscription.execution_timestamp +
-						execute_subscription_cooldown)) ||
-				(subscription.status !=
-					EverduesSubscriptionStatus.STATUS_PROCESSING)
+			if (subscription.status !=
+					EverduesSubscriptionStatus.STATUS_PROCESSING
 			) {
 				tvm.accept();
 				subscription.gas = paySubscriptionGas;
@@ -307,7 +308,7 @@ contract Subscription is IEverduesSubscription {
 		}
 	}
 
-	function onGetInfo(TvmCell svc_info) external view onlyService {
+	function onGetInfo(TvmCell svc_info) external onlyService {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
@@ -317,6 +318,7 @@ contract Subscription is IEverduesSubscription {
 		);
 		uint8 status = svc_info.toSlice().decode(uint8);
 		if (status == 0) {
+			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
 			IEverduesAccount(account_address).paySubscription{
 				value: 0,
 				bounce: true,
@@ -403,6 +405,7 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function onPaySubscription(uint8 status) external onlyAccount {
+		require(subscription.status == EverduesSubscriptionStatus.STATUS_PROCESSING, 1111);
 		if (status == 1) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else if (status == 0) {
