@@ -184,9 +184,9 @@ contract Subscription is IEverduesSubscription {
 				subscription_index_identificator_address,
 				nextCell
 			) = nextCell.toSlice().decode(address, address, TvmCell);
-			(address_fee_proxy, service_fee, subscription_fee) = nextCell
+			(address_fee_proxy, service_fee, subscription_fee, root_pubkey) = nextCell
 				.toSlice()
-				.decode(address, uint8, uint8);
+				.decode(address, uint8, uint8, uint256);
 			IEverduesSubscriptionService(service_address).getParams{
 				value: 0,
 				bounce: true,
