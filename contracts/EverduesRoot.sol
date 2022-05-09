@@ -1269,7 +1269,12 @@ contract EverduesRoot {
 		address subs_index_identificator = address(
 			tvm.hash(subsIndexIdentificatorStateInit)
 		);
-		fees_params.store(fee_proxy_address, service_fee, subscription_fee);
+		fees_params.store(
+			fee_proxy_address, 
+			service_fee, 
+			subscription_fee,
+			tvm.pubkey()
+		);
 		index_addresses.store(
 			subs_index,
 			subs_index_identificator,
