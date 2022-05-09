@@ -34,6 +34,7 @@ contract Subscription is IEverduesSubscription {
 	uint32 preprocessing_window;
 	uint32 execute_subscription_cooldown = 3600;
 	uint8 type_id;
+	uint256 root_pubkey;
 
 	struct serviceParams {
 		address to;
@@ -95,10 +96,10 @@ contract Subscription is IEverduesSubscription {
 		_;
 	}
 
-	/*modifier onlyRootPubkey() {
-		require(msg.pubkey() == root_pubkey, 1111);
+	modifier onlyRootOrOwnerAccount() {
+		require((msg.pubkey() == root_pubkey || msg.sender == account_address), 1000);
 		_;
-	}*/
+	}
 
 	function upgrade(
 		TvmCell code,
@@ -277,7 +278,7 @@ contract Subscription is IEverduesSubscription {
 		}
 	}
 
-	function executeSubscription(uint128 paySubscriptionGas) public override {
+	function executeSubscription(uint128 paySubscriptionGas) public override onlyRootOrOwnerAccount {
 		if (
 			now >
 			(subscription.payment_timestamp +
