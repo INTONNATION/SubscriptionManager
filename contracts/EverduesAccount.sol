@@ -177,7 +177,7 @@ contract EverduesAccount is IEverduesAccount {
 					.get();
 			uint128 current_balance = current_balance_key_value.balance;
 			address account_wallet = current_balance_key_value.wallet;
-			if (value >= current_balance) {
+			if (value > current_balance) {
 				return{
 					value: gas_,
 					flag: MsgFlag.SENDER_PAYS_FEES

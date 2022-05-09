@@ -240,7 +240,7 @@
 		{
 			"name": "deleteVersion",
 			"inputs": [
-				{"name":"version","type":"uint8"}
+				{"name":"version_","type":"uint8"}
 			],
 			"outputs": [
 			]
@@ -474,19 +474,11 @@
 			]
 		},
 		{
-			"name": "versionTvc",
+			"name": "version",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"versionTvc","type":"uint8"}
-			]
-		},
-		{
-			"name": "versionAbi",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"versionAbi","type":"uint8"}
+				{"name":"version","type":"uint8"}
 			]
 		},
 		{
@@ -578,8 +570,7 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"versionTvc","type":"uint8"},
-		{"name":"versionAbi","type":"uint8"},
+		{"name":"version","type":"uint8"},
 		{"name":"categories","type":"string[]"},
 		{"name":"tvcPlatform","type":"cell"},
 		{"name":"tvcEverduesAccount","type":"cell"},
