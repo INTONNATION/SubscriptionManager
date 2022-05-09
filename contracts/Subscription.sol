@@ -284,22 +284,19 @@ contract Subscription is IEverduesSubscription {
 				svcparams.period -
 				preprocessing_window)
 		) {
-			if (subscription.status !=
-					EverduesSubscriptionStatus.STATUS_PROCESSING
-			) {
-				tvm.accept();
-				subscription.gas = paySubscriptionGas;
-				subscription.execution_timestamp = uint32(now);
-				IEverduesSubscriptionService(service_address).getInfo{
-					value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-						subscription.gas,
-					bounce: true,
-					flag: 0,
-					callback: Subscription.onGetInfo
-				}();
-			} else {
-				revert(1000);
-			}
+			require(subscription.status !=
+					EverduesSubscriptionStatus.STATUS_PROCESSING, 1000
+			);
+			tvm.accept();
+			subscription.gas = paySubscriptionGas;
+			subscription.execution_timestamp = uint32(now);
+			IEverduesSubscriptionService(service_address).getInfo{
+				value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
+					subscription.gas,
+				bounce: true,
+				flag: 0,
+				callback: Subscription.onGetInfo
+			}();
 		} else {
 			require(
 				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE,
@@ -317,6 +314,9 @@ contract Subscription is IEverduesSubscription {
 			2
 		);
 		uint8 status = svc_info.toSlice().decode(uint8);
+		require(subscription.status !=
+				EverduesSubscriptionStatus.STATUS_PROCESSING, 1000
+		);
 		if (status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
 			IEverduesAccount(account_address).paySubscription{
