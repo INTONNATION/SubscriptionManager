@@ -34,4 +34,5 @@ library EverduesErrors {
     uint8 constant subscription_unknown_account_address          = 124;
     uint8 constant mutex_not_free                                = 125;
     uint8 constant error_subscription_already_executed           = 126;
+    uint8 constant error_subscription_is_not_in_processing_state = 126;
 }

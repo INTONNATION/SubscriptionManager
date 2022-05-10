@@ -36,12 +36,12 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	modifier onlyRoot() {
-		require(msg.sender == root, 111);
+		require(msg.sender == root, EverduesErrors.error_message_sender_is_not_my_owner);
 		_;
 	}
 
 	modifier onlyOwner() {
-		require(msg.pubkey() == tvm.pubkey(), 100);
+		require(msg.pubkey() == tvm.pubkey(), EverduesErrors.error_message_sender_is_not_my_owner);
 		tvm.accept();
 		_;
 	}
@@ -154,7 +154,7 @@ contract EverduesAccount is IEverduesAccount {
 		address service_address,
 		uint128 pay_subscription_gas
 	) external override responsible returns (uint8) {
-		uint128 gas_ = (EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
+		uint128 gas_ = (EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + 2 milliever +
 			pay_subscription_gas);
 		address subsciption_addr = address(
 			tvm.hash(
