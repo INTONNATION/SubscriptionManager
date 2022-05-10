@@ -4,7 +4,7 @@ library EverduesGas {
 
     uint128 constant ROOT_INITIAL_BALANCE                   = 1 ever;
     uint128 constant ACCOUNT_INITIAL_BALANCE                = 3 ever;
-    uint128 constant SUBSCRIPTION_INITIAL_BALANCE           = 2 ever;
+    uint128 constant SUBSCRIPTION_INITIAL_BALANCE           = 1 ever;
     uint128 constant SERVICE_INITIAL_BALANCE                = 1 ever;
     uint128 constant INDEX_INITIAL_BALANCE                  = 0.1 ever;
     uint128 constant FEE_PROXY_INITIAL_BALANCE              = 1 ever;

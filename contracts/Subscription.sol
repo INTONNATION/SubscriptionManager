@@ -56,7 +56,7 @@ contract Subscription is IEverduesSubscription {
 		uint32 payment_timestamp;
 		uint32 execution_timestamp;
 		uint8 status;
-		uint128 gas;
+		uint128 pay_subscription_gas;
 	}
 
 	paymentStatus public subscription;
@@ -233,31 +233,31 @@ contract Subscription is IEverduesSubscription {
 				subscription_wallet,
 				service_address
 			) = abi.decode(
-					upgrade_data,
-					(
-						address,
-						address,
-						uint32,
-						uint32,
-						uint8,
-						TvmCell,
-						TvmCell,
-						TvmCell,
-						TvmCell,
-						TvmCell,
-						Subscription.paymentStatus,
-						address,
-						address,
-						address,
-						address,
-						uint8,
-						uint8,
-						Subscription.serviceParams,
-						uint32,
-						address,
-						address
-					)
-				);
+				upgrade_data,
+				(
+					address,
+					address,
+					uint32,
+					uint32,
+					uint8,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					Subscription.paymentStatus,
+					address,
+					address,
+					address,
+					address,
+					uint8,
+					uint8,
+					Subscription.serviceParams,
+					uint32,
+					address,
+					address
+				)
+			);
 			send_gas_to.transfer({
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -282,7 +282,7 @@ contract Subscription is IEverduesSubscription {
 		}
 	}
 
-	function executeSubscription(uint128 paySubscriptionGas)
+	function executeSubscription(uint128 paySubscriptionGas )
 		public
 		override
 		onlyRootOrOwnerAccount
@@ -299,11 +299,11 @@ contract Subscription is IEverduesSubscription {
 				EverduesErrors.error_subscription_already_executed
 			);
 			tvm.accept();
-			subscription.gas = paySubscriptionGas;
+			subscription.pay_subscription_gas = paySubscriptionGas;
 			subscription.execution_timestamp = uint32(now);
 			IEverduesSubscriptionService(service_address).getInfo{
 				value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-					subscription.gas,
+					subscription.pay_subscription_gas,
 				bounce: true,
 				flag: 0,
 				callback: Subscription.onGetInfo
@@ -338,7 +338,7 @@ contract Subscription is IEverduesSubscription {
 				svcparams.currency_root,
 				subscription_wallet,
 				service_address,
-				subscription.gas
+				subscription.pay_subscription_gas
 			);
 		} else {
 			revert(EverduesErrors.error_subscription_status_already_active);
@@ -358,11 +358,12 @@ contract Subscription is IEverduesSubscription {
 			svcparams.currency_root,
 			subscription_wallet,
 			service_address,
-			subscription.gas
+			subscription.pay_subscription_gas
 		);
+		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		account_address.transfer({
 			value: 0,
-			flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
+			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}
 
@@ -423,7 +424,7 @@ contract Subscription is IEverduesSubscription {
 	function onPaySubscription(uint8 status) external onlyAccount {
 		require(
 			subscription.status == EverduesSubscriptionStatus.STATUS_PROCESSING,
-			1111
+			EverduesErrors.error_subscription_is_not_in_processing_state
 		);
 		if (status == 1) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
