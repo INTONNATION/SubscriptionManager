@@ -154,7 +154,7 @@ contract EverduesAccount is IEverduesAccount {
 		address service_address,
 		uint128 pay_subscription_gas
 	) external override responsible returns (uint8) {
-		uint128 gas_ = (EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + 2 milliever +
+		uint128 gas_ = (EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 			pay_subscription_gas);
 		address subsciption_addr = address(
 			tvm.hash(
