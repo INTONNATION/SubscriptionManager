@@ -23,6 +23,7 @@ owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
 platformTvc=$(cat ../abi/Platform.tvc | base64 $prefix)
 subscriptionTvc=$(cat ../abi/Subscription.tvc | base64 $prefix)
 subscriptionIndexTvc=$(cat ../abi/SubscriptionIndex.tvc | base64 $prefix)
+subscriptionidentificatorIndexTvc=$(cat ../abi/SubscriptionIdentificatorIndex.tvc | base64 $prefix)
 
 #ABI
 abiPlatformContract=$(cat ../abi/Platform.abi.json | jq -c .| base64 $prefix)

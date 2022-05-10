@@ -98,6 +98,7 @@ contract EverduesRoot {
 	address public dex_root_address;
 	address public owner;
 	address pending_owner;
+	uint8 debug;
 
 	onBounce(TvmSlice slice) external view {
 		// revert change to initial msg.sender in case of failure during deploy
@@ -991,43 +992,43 @@ contract EverduesRoot {
 		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvm.resetStorage();
 		(
-			uint32 account_version_,
-			address owner_,
-			uint32 service_version_,
-			uint32 fee_proxy_version_,
-			uint32 subscription_version_,
-			mapping(uint8 => EverduesRoot.VersionsTvcParams) versions_tvc_,
-			mapping(uint8 => EverduesRoot.VersionsAbiParams) versions_abi_,
-			uint8 version_,
-			bool has_platform_code_,
-			address fee_proxy_address_,
-			string[] categories_,
-			uint8 service_fee_,
-			uint8 subscription_fee_,
-			address dex_root_address_,
-			address mtds_root_address_,
-			address mtds_revenue_accumulator_address_,
-			TvmCell tvcPlatform_,
-			TvmCell tvcEverduesAccount_,
-			TvmCell tvcSubscriptionService_,
-			TvmCell tvcSubscription_,
-			TvmCell tvcSubscriptionServiceIndex_,
-			TvmCell tvcSubscriptionServiceIdentificatorIndex_,
-			TvmCell tvcSubscriptionIndex_,
-			TvmCell tvcSubscriptionIdentificatorIndex_,
-			TvmCell tvcFeeProxy_,
-			string abiPlatformContract_,
-			string abiEverduesAccountContract_,
-			string abiEverduesRootContract_,
-			string abiTIP3RootContract_,
-			string abiTIP3TokenWalletContract_,
-			string abiServiceContract_,
-			string abiServiceIndexContract_,
-			string abiSubscriptionContract_,
-			string abiSubscriptionIndexContract_,
-			string abiSubscriptionIdentificatorIndexContract_,
-			string abiFeeProxyContract_,
-			string abiServiceIdentificatorIndexContract_		
+			account_version,
+			owner,
+			service_version,
+			fee_proxy_version,
+			subscription_version,
+			vrsparamsTvc,
+			vrsparamsAbi,
+			version,
+			has_platform_code,
+			fee_proxy_address,
+			categories,
+			service_fee,
+			subscription_fee,
+			dex_root_address,
+			mtds_root_address,
+			mtds_revenue_accumulator_address,
+			tvcPlatform,
+			tvcEverduesAccount,
+			tvcSubscriptionService,
+			tvcSubscription,
+			tvcSubscriptionServiceIndex,
+			tvcSubscriptionServiceIdentificatorIndex,
+			tvcSubscriptionIndex,
+			tvcSubscriptionIdentificatorIndex,
+			tvcFeeProxy,
+			abiPlatformContract,
+			abiEverduesAccountContract,
+			abiEverduesRootContract,
+			abiTIP3RootContract,
+			abiTIP3TokenWalletContract,
+			abiServiceContract,
+			abiServiceIndexContract,
+			abiSubscriptionContract,
+			abiSubscriptionIndexContract,
+			abiSubscriptionIdentificatorIndexContract,
+			abiFeeProxyContract,
+			abiServiceIdentificatorIndexContract
 		) = abi.decode(
 				upgrade_data,
 				(
@@ -1070,44 +1071,6 @@ contract EverduesRoot {
 					string
 				)
 			);
-		categories = categories_;
-		dex_root_address = dex_root_address_;
-		mtds_root_address = mtds_root_address_;
-		mtds_revenue_accumulator_address = mtds_revenue_accumulator_address_;
-		service_fee = service_fee_;
-		subscription_fee = subscription_fee_;
-		account_version = account_version_;
-		service_version = service_version_;
-		fee_proxy_version = fee_proxy_version_;
-		fee_proxy_address = fee_proxy_address_;
-		subscription_version = subscription_version_;
-		vrsparamsTvc = versions_tvc_;
-		vrsparamsAbi = versions_abi_;
-		version = version_;
-		has_platform_code = has_platform_code_;
-		owner = owner_;
-		tvcPlatform = tvcPlatform_;
-		tvcEverduesAccount = tvcEverduesAccount_;
-		tvcSubscriptionService = tvcSubscriptionService_;
-		tvcSubscription = tvcSubscription_;
-		tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndex_;
-		tvcSubscriptionServiceIdentificatorIndex = tvcSubscriptionServiceIdentificatorIndex_;
-		tvcSubscriptionIndex = tvcSubscriptionIndex_;
-		tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndex_;
-		tvcFeeProxy = tvcFeeProxy_;
-		abiPlatformContract = abiPlatformContract_;
-		abiEverduesAccountContract = abiEverduesAccountContract_;
-		abiEverduesRootContract = abiEverduesRootContract_;
-		abiTIP3RootContract = abiTIP3RootContract_;
-		abiTIP3TokenWalletContract = abiTIP3TokenWalletContract_;
-		abiServiceContract = abiServiceContract_;
-		abiServiceIndexContract = abiServiceIndexContract_;
-		abiSubscriptionContract = abiSubscriptionContract_;
-		abiSubscriptionIndexContract = abiSubscriptionIndexContract_;
-		abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContract_;
-		abiFeeProxyContract = abiFeeProxyContract_;
-		abiServiceIdentificatorIndexContract = abiServiceIdentificatorIndexContract_;
-
 		owner.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -1259,9 +1222,6 @@ contract EverduesRoot {
 				msg.sender
 			);
 		TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
-		TvmBuilder service_params;
-		TvmBuilder index_addresses;
-		TvmBuilder fees_params;
 		address owner_account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, owner_pubkey))
 		);
@@ -1269,21 +1229,16 @@ contract EverduesRoot {
 		address subs_index_identificator = address(
 			tvm.hash(subsIndexIdentificatorStateInit)
 		);
-		fees_params.store(
-			fee_proxy_address, 
-			service_fee, 
+		TvmCell subscription_params = abi.encode(
+			fee_proxy_address,
+			service_fee,
 			subscription_fee,
-			tvm.pubkey()
-		);
-		index_addresses.store(
+			tvm.pubkey(),
 			subs_index,
 			subs_index_identificator,
-			fees_params.toCell()
-		);
-		service_params.store(
 			service_address,
 			owner_account_address,
-			index_addresses.toCell()
+			owner_pubkey
 		);
 
 		Platform platform = new Platform{
@@ -1297,7 +1252,7 @@ contract EverduesRoot {
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			subscription_code_salt,
-			service_params.toCell(),
+			subscription_params,
 			subscription_version,
 			msg.sender,
 			0
@@ -1334,7 +1289,8 @@ contract EverduesRoot {
 				(EverduesGas.SERVICE_INITIAL_BALANCE +
 					EverduesGas.INDEX_INITIAL_BALANCE *
 					2 +
-					EverduesGas.INIT_MESSAGE_VALUE * 4 +
+					EverduesGas.INIT_MESSAGE_VALUE *
+					4 +
 					EverduesGas.SET_SERVICE_INDEXES_VALUE +
 					additional_gas),
 			EverduesErrors.error_message_low_value
@@ -1368,7 +1324,8 @@ contract EverduesRoot {
 				PlatformTypes.Service,
 				_buildServicePlatformParams(msg.sender, service_name)
 			),
-			value: EverduesGas.SERVICE_INITIAL_BALANCE + EverduesGas.INIT_MESSAGE_VALUE +
+			value: EverduesGas.SERVICE_INITIAL_BALANCE +
+				EverduesGas.INIT_MESSAGE_VALUE +
 				(additional_gas / 4),
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(service_code_salt, service_params, service_version, msg.sender, 0);
@@ -1382,7 +1339,8 @@ contract EverduesRoot {
 				address(platform)
 			);
 		SubscriptionService(address(platform)).setIndexes{
-			value: EverduesGas.SET_SERVICE_INDEXES_VALUE + EverduesGas.INIT_MESSAGE_VALUE +
+			value: EverduesGas.SET_SERVICE_INDEXES_VALUE +
+				EverduesGas.INIT_MESSAGE_VALUE +
 				(additional_gas / 4),
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
@@ -1390,7 +1348,8 @@ contract EverduesRoot {
 			address(tvm.hash(serviceIdentificatorIndexStateInit))
 		);
 		new SubscriptionServiceIndex{
-			value: EverduesGas.INDEX_INITIAL_BALANCE + EverduesGas.INIT_MESSAGE_VALUE +
+			value: EverduesGas.INDEX_INITIAL_BALANCE +
+				EverduesGas.INIT_MESSAGE_VALUE +
 				(additional_gas / 4),
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
@@ -1398,7 +1357,8 @@ contract EverduesRoot {
 		}(address(platform));
 		if (!identificator.toSlice().empty()) {
 			new SubscriptionServiceIdentificatorIndex{
-				value: EverduesGas.INDEX_INITIAL_BALANCE + EverduesGas.INIT_MESSAGE_VALUE +
+				value: EverduesGas.INDEX_INITIAL_BALANCE +
+					EverduesGas.INIT_MESSAGE_VALUE +
 					(additional_gas / 4),
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,

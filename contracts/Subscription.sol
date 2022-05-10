@@ -30,11 +30,12 @@ contract Subscription is IEverduesSubscription {
 	TvmCell platform_params;
 	address subscription_wallet;
 	address service_address;
+	uint256 root_pubkey;
+	uint256 owner_pubkey;
 	uint32 current_version;
 	uint32 preprocessing_window;
-	uint32 execute_subscription_cooldown = 3600;
 	uint8 type_id;
-	uint256 root_pubkey;
+	uint8 debug;
 
 	struct serviceParams {
 		address to;
@@ -97,7 +98,10 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	modifier onlyRootOrOwnerAccount() {
-		require((msg.pubkey() == root_pubkey || msg.sender == account_address), 1000);
+		require(
+			(msg.pubkey() == root_pubkey || msg.pubkey() == owner_pubkey),
+			1000
+		);
 		_;
 	}
 
@@ -175,18 +179,30 @@ contract Subscription is IEverduesSubscription {
 		type_id = type_id_;
 
 		if (old_version == 0) {
-			TvmCell nextCell;
-			(service_address, account_address, nextCell) = contract_params
-				.toSlice()
-				.decode(address, address, TvmCell);
 			(
+				address_fee_proxy,
+				service_fee,
+				subscription_fee,
+				root_pubkey,
 				subscription_index_address,
 				subscription_index_identificator_address,
-				nextCell
-			) = nextCell.toSlice().decode(address, address, TvmCell);
-			(address_fee_proxy, service_fee, subscription_fee, root_pubkey) = nextCell
-				.toSlice()
-				.decode(address, uint8, uint8, uint256);
+				service_address,
+				account_address,
+				owner_pubkey
+			) = abi.decode(
+				contract_params,
+				(
+					address,
+					uint8,
+					uint8,
+					uint256,
+					address,
+					address,
+					address,
+					address,
+					uint256
+				)
+			);
 			IEverduesSubscriptionService(service_address).getParams{
 				value: 0,
 				bounce: true,
@@ -204,18 +220,18 @@ contract Subscription is IEverduesSubscription {
 				,
 				,
 				,
-				TvmCell service_params_,
-				Subscription.paymentStatus subscription_,
-				address address_fee_proxy_,
-				address account_address_,
-				address subscription_index_address_,
-				address subscription_index_identificator_address_,
-				uint8 service_fee_,
-				uint8 subscription_fee_,
-				Subscription.serviceParams svcparams_,
-				uint32 preprocessing_window_,
-				address subscription_wallet_,
-				address service_address_
+				service_params,
+				subscription,
+				address_fee_proxy,
+				account_address,
+				subscription_index_address,
+				subscription_index_identificator_address,
+				service_fee,
+				subscription_fee,
+				svcparams,
+				preprocessing_window,
+				subscription_wallet,
+				service_address
 			) = abi.decode(
 					upgrade_data,
 					(
@@ -242,18 +258,6 @@ contract Subscription is IEverduesSubscription {
 						address
 					)
 				);
-			service_params = service_params_;
-			subscription = subscription_;
-			address_fee_proxy = address_fee_proxy_;
-			account_address = account_address_;
-			subscription_index_address = subscription_index_address_;
-			subscription_index_identificator_address = subscription_index_identificator_address_;
-			service_fee = service_fee_;
-			subscription_fee = subscription_fee_;
-			svcparams = svcparams_;
-			preprocessing_window = preprocessing_window_;
-			subscription_wallet = subscription_wallet_;
-			service_address = service_address_;
 			send_gas_to.transfer({
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -278,15 +282,21 @@ contract Subscription is IEverduesSubscription {
 		}
 	}
 
-	function executeSubscription(uint128 paySubscriptionGas) public override onlyRootOrOwnerAccount {
+	function executeSubscription(uint128 paySubscriptionGas)
+		public
+		override
+		onlyRootOrOwnerAccount
+	{
 		if (
 			now >
 			(subscription.payment_timestamp +
 				svcparams.period -
 				preprocessing_window)
 		) {
-			require(subscription.status !=
-					EverduesSubscriptionStatus.STATUS_PROCESSING, 1000
+			require(
+				subscription.status !=
+					EverduesSubscriptionStatus.STATUS_PROCESSING,
+				EverduesErrors.error_subscription_already_executed
 			);
 			tvm.accept();
 			subscription.gas = paySubscriptionGas;
@@ -299,10 +309,7 @@ contract Subscription is IEverduesSubscription {
 				callback: Subscription.onGetInfo
 			}();
 		} else {
-			require(
-				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE,
-				EverduesErrors.error_subscription_status_already_active
-			);
+			revert(EverduesErrors.error_subscription_status_already_active);
 		}
 	}
 
@@ -315,8 +322,9 @@ contract Subscription is IEverduesSubscription {
 			2
 		);
 		uint8 status = svc_info.toSlice().decode(uint8);
-		require(subscription.status !=
-				EverduesSubscriptionStatus.STATUS_PROCESSING, 1000
+		require(
+			subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING,
+			1000
 		);
 		if (status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
@@ -402,11 +410,21 @@ contract Subscription is IEverduesSubscription {
 		ITokenWallet(msg.sender).transfer{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(pay_value, svcparams.to, EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS, account_address, true, payload);
+		}(
+			pay_value,
+			svcparams.to,
+			EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS,
+			account_address,
+			true,
+			payload
+		);
 	}
 
 	function onPaySubscription(uint8 status) external onlyAccount {
-		require(subscription.status == EverduesSubscriptionStatus.STATUS_PROCESSING, 1111);
+		require(
+			subscription.status == EverduesSubscriptionStatus.STATUS_PROCESSING,
+			1111
+		);
 		if (status == 1) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else if (status == 0) {
