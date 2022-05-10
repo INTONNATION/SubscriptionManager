@@ -206,10 +206,12 @@
 		{"name":"platform_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},
 		{"name":"service_address","type":"address"},
+		{"name":"root_pubkey","type":"uint256"},
+		{"name":"owner_pubkey","type":"uint256"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"preprocessing_window","type":"uint32"},
-		{"name":"execute_subscription_cooldown","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
+		{"name":"debug","type":"uint8"},
 		{"components":[{"name":"to","type":"address"},{"name":"subscription_value","type":"uint128"},{"name":"service_value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},
 		{"components":[{"name":"period","type":"uint32"},{"name":"payment_timestamp","type":"uint32"},{"name":"execution_timestamp","type":"uint32"},{"name":"status","type":"uint8"},{"name":"gas","type":"uint128"}],"name":"subscription","type":"tuple"}
 	]

@@ -21,7 +21,6 @@ contract SubscriptionService is IEverduesSubscriptionService {
 	TvmCell code;
 	uint32 current_version;
 	uint8 type_id;
-	uint8 debug;
 
 	struct ServiceParams {
 		address to;
