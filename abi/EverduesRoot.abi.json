@@ -607,7 +607,6 @@
 		{"name":"mtds_revenue_accumulator_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"owner","type":"address"},
-		{"name":"pending_owner","type":"address"},
-		{"name":"debug","type":"uint8"}
+		{"name":"pending_owner","type":"address"}
 	]
 }

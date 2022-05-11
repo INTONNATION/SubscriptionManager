@@ -98,7 +98,6 @@ contract EverduesRoot {
 	address public dex_root_address;
 	address public owner;
 	address pending_owner;
-	uint8 debug;
 
 	onBounce(TvmSlice slice) external view {
 		// revert change to initial msg.sender in case of failure during deploy
@@ -1247,6 +1246,7 @@ contract EverduesRoot {
 				_buildSubscriptionPlatformParams(msg.sender, service_address)
 			),
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
+				EverduesGas.INIT_SUBSCRIPTION_VALUE +
 				EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 				(additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES
