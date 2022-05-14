@@ -28,4 +28,5 @@ library EverduesGas {
     uint128 constant DEPLOY_EMPTY_WALLET_VALUE              = 0.5 ever;
     uint128 constant DEPLOY_EMPTY_WALLET_GRAMS              = 0.2 ever;
     uint128 constant CANCEL_MIN_VALUE                       = 0.5 ever;
+    uint128 constant SWAP_TIP3_TO_EVER_MIN_VALUE            = 3 ever;
 }

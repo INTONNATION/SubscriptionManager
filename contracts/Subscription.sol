@@ -341,7 +341,7 @@ contract Subscription is IEverduesSubscription {
 				subscription.pay_subscription_gas
 			);
 		} else {
-			revert(EverduesErrors.error_subscription_status_already_active);
+			revert(EverduesErrors.error_service_is_not_active);
 		}
 	}
 
