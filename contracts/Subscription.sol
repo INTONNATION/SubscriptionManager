@@ -155,7 +155,7 @@ contract Subscription is IEverduesSubscription {
 			TvmCell platform_code_,
 			TvmCell platform_params_,
 			TvmCell contract_params,
-			TvmCell code
+			/*TvmCell code*/
 		) = abi.decode(
 				upgrade_data,
 				(
@@ -421,7 +421,7 @@ contract Subscription is IEverduesSubscription {
 		);
 	}
 
-	function onPaySubscription(uint8 status) external onlyAccount {
+	function onPaySubscription(uint8 status) external override onlyAccount {
 		require(
 			subscription.status == EverduesSubscriptionStatus.STATUS_PROCESSING,
 			EverduesErrors.error_subscription_is_not_in_processing_state
