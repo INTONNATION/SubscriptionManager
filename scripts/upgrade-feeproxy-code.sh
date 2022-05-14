@@ -5,7 +5,7 @@ LOCALNET=http://127.0.0.1
 DEVNET=net.ton.dev
 MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
-NETWORK=$DEVNET
+NETWORK=$MAINNET
 
 if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
