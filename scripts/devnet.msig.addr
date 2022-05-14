@@ -1,4 +1,4 @@
-Config: /home/ubuntu/SubscriptionManager/scripts/tonos-cli.conf.json
+Config: /home/gofman/ever/SubscriptionManager/scripts/tonos-cli.conf.json
 Input arguments:
      tvc: ../../ton-labs-contracts/solidity/bridgemultisig/BridgeMultisigWallet.tvc
       wc: 0

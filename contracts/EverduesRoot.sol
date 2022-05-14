@@ -1167,7 +1167,7 @@ contract EverduesRoot {
 			2
 		);
 
-		TvmCell account_params;
+		TvmCell account_params = abi.encode(dex_root_address, wever_root, tip3_to_ever_address);
 
 		IPlatform(msg.sender).initializeByRoot{
 			value: 0,

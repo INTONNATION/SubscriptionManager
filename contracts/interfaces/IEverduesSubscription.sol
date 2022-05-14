@@ -6,4 +6,6 @@ interface IEverduesSubscription {
 	function subscriptionStatus() external returns (uint8);
 
 	function executeSubscription(uint128 paySubscriptionGas) external;
+	
+	function onPaySubscription(uint8 status) external;
 }
