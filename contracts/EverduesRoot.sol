@@ -98,6 +98,8 @@ contract EverduesRoot {
 	address public dex_root_address;
 	address public owner;
 	address pending_owner;
+	address wever_root;
+	address tip3_to_ever_address;
 
 	onBounce(TvmSlice slice) external view {
 		// revert change to initial msg.sender in case of failure during deploy
@@ -611,6 +613,21 @@ contract EverduesRoot {
 		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
+	function installOrUpgradeWEVERRoot(address wever_root_)
+		external
+		onlyOwner
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		wever_root = wever_root_;
+		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
+	}
+
 	function installOrUpdateFeeProxyParams(address[] currencies)
 		external
 		view
@@ -660,7 +677,7 @@ contract EverduesRoot {
 		}(mtds_root_address, owner);
 	}
 
-	function installOrUpgradeDexRootAddress(address dex_root)
+	function installOrUpgradeDexRootAddresses(address dex_root, address tip3_to_ever)
 		external
 		onlyOwner
 	{
@@ -676,6 +693,7 @@ contract EverduesRoot {
 			2
 		);
 		dex_root_address = dex_root;
+		tip3_to_ever_address = tip3_to_ever;
 		EverduesFeeProxy(fee_proxy_address).setDexRootAddress{
 			value: 0,
 			bounce: false,
