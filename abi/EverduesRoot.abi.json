@@ -278,6 +278,14 @@
 			]
 		},
 		{
+			"name": "installOrUpgradeWEVERRoot",
+			"inputs": [
+				{"name":"wever_root_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpdateFeeProxyParams",
 			"inputs": [
 				{"name":"currencies","type":"address[]"}
@@ -294,9 +302,10 @@
 			]
 		},
 		{
-			"name": "installOrUpgradeDexRootAddress",
+			"name": "installOrUpgradeDexRootAddresses",
 			"inputs": [
-				{"name":"dex_root","type":"address"}
+				{"name":"dex_root","type":"address"},
+				{"name":"tip3_to_ever","type":"address"}
 			],
 			"outputs": [
 			]
@@ -607,6 +616,8 @@
 		{"name":"mtds_revenue_accumulator_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"owner","type":"address"},
-		{"name":"pending_owner","type":"address"}
+		{"name":"pending_owner","type":"address"},
+		{"name":"wever_root","type":"address"},
+		{"name":"tip3_to_ever_address","type":"address"}
 	]
 }
