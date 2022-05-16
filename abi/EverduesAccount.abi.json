@@ -220,6 +220,30 @@
 			]
 		},
 		{
+			"name": "dex_root_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"dex_root_address","type":"address"}
+			]
+		},
+		{
+			"name": "wever_root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"wever_root","type":"address"}
+			]
+		},
+		{
+			"name": "tip3_to_ever_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"tip3_to_ever_address","type":"address"}
+			]
+		},
+		{
 			"name": "wallets_mapping",
 			"inputs": [
 			],
@@ -279,7 +303,6 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"root","type":"address"},
-		{"name":"sync_balance_currency_root","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"wever_root","type":"address"},
 		{"name":"tip3_to_ever_address","type":"address"},
