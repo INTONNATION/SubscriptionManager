@@ -569,6 +569,14 @@
 			"outputs": [
 				{"name":"owner","type":"address"}
 			]
+		},
+		{
+			"name": "wever_root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"wever_root","type":"address"}
+			]
 		}
 	],
 	"data": [
@@ -616,8 +624,8 @@
 		{"name":"mtds_revenue_accumulator_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"owner","type":"address"},
-		{"name":"pending_owner","type":"address"},
 		{"name":"wever_root","type":"address"},
+		{"name":"pending_owner","type":"address"},
 		{"name":"tip3_to_ever_address","type":"address"}
 	]
 }

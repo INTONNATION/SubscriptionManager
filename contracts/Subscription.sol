@@ -293,11 +293,13 @@ contract Subscription is IEverduesSubscription {
 				svcparams.period -
 				preprocessing_window)
 		) {
-			require(
+			/*require(
 				subscription.status !=
-					EverduesSubscriptionStatus.STATUS_PROCESSING,
+					EverduesSubscriptionStatus.STATUS_PROCESSING && 
+				subscription.status !=
+				    EverduesSubscriptionStatus.STATUS_ACTIVE,
 				EverduesErrors.error_subscription_already_executed
-			);
+			);*/
 			tvm.accept();
 			subscription.pay_subscription_gas = paySubscriptionGas;
 			subscription.execution_timestamp = uint32(now);
