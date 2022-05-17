@@ -324,10 +324,10 @@ contract Subscription is IEverduesSubscription {
 			2
 		);
 		uint8 status = svc_info.toSlice().decode(uint8);
-		require(
+		/*require(
 			subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING,
 			1000
-		);
+		);*/
 		if (status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
 			IEverduesAccount(account_address).paySubscription{

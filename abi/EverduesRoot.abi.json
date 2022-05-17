@@ -577,6 +577,14 @@
 			"outputs": [
 				{"name":"wever_root","type":"address"}
 			]
+		},
+		{
+			"name": "tip3_to_ever_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"tip3_to_ever_address","type":"address"}
+			]
 		}
 	],
 	"data": [

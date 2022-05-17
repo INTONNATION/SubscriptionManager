@@ -45,7 +45,16 @@
 			"name": "onExpectedExchange",
 			"inputs": [
 				{"name":"expected_amount","type":"uint128"},
-				{"name":"value1","type":"uint128"}
+				{"name":"expected_fee","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "swapTIP3ToEver",
+			"inputs": [
+				{"name":"expected_amount","type":"uint128"},
+				{"name":"call_id","type":"uint64"}
 			],
 			"outputs": [
 			]

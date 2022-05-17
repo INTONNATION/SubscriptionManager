@@ -99,7 +99,7 @@ contract EverduesRoot {
 	address public owner;
 	address public wever_root;
 	address pending_owner;
-	address tip3_to_ever_address;
+	address public tip3_to_ever_address;
 
 	onBounce(TvmSlice slice) external view {
 		// revert change to initial msg.sender in case of failure during deploy
@@ -999,7 +999,8 @@ contract EverduesRoot {
 			abiSubscriptionIdentificatorIndexContract,
 			abiFeeProxyContract,
 			abiServiceIdentificatorIndexContract,
-	        wever_root
+	        wever_root,
+			tip3_to_ever_address
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -1047,7 +1048,8 @@ contract EverduesRoot {
 			abiSubscriptionIdentificatorIndexContract,
 			abiFeeProxyContract,
 			abiServiceIdentificatorIndexContract,
-			wever_root
+			wever_root,
+			tip3_to_ever_address
 		) = abi.decode(
 				upgrade_data,
 				(
@@ -1088,6 +1090,7 @@ contract EverduesRoot {
 					string,
 					string,
 					string,
+					address,
 					address
 				)
 			);
