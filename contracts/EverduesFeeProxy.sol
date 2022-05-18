@@ -56,19 +56,20 @@ contract EverduesFeeProxy {
 	function onAcceptTokensTransfer(
 		address tokenRoot,
 		uint128 amount,
-		address sender,
-		address senderWallet,
+		address, /*sender*/
+		address, /*senderWallet*/
 		address remainingGasTo,
-		TvmCell payload
+		TvmCell /*payload*/
 	) external {
-		sender;
-		senderWallet;
-		payload;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(tokenRoot);
 		if (current_balance_struct.hasValue()) {
 			balance_wallet_struct current_balance_key = current_balance_struct
 				.get();
+			require(
+				msg.sender == current_balance_key.wallet,
+				EverduesErrors.error_message_sender_is_not_feeproxy_wallet
+			);
 			current_balance_key.balance += amount;
 			wallets_mapping[tokenRoot] = current_balance_key;
 		}
@@ -144,9 +145,7 @@ contract EverduesFeeProxy {
 			.fetch(swap_currency_root);
 		balance_wallet_struct current_balance_key = current_balance_struct
 			.get();
-		address send_gas_to = _tmp_deploying_wallets[
-			swap_currency_root
-		];
+		address send_gas_to = _tmp_deploying_wallets[swap_currency_root];
 		ITokenWallet(current_balance_key.wallet).transfer{
 			value: EverduesGas.TRANSFER_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
@@ -323,8 +322,9 @@ contract EverduesFeeProxy {
 			TvmCell platform_code_,
 			TvmCell platform_params_,
 			TvmCell contract_params,
-			/*TvmCell code*/
-		) = abi.decode(
+
+		) = /*TvmCell code*/
+			abi.decode(
 				upgrade_data,
 				(
 					address,
@@ -337,7 +337,7 @@ contract EverduesFeeProxy {
 					TvmCell,
 					TvmCell
 				)
-		);
+			);
 		tvm.resetStorage();
 		root = root_;
 		current_version = version;

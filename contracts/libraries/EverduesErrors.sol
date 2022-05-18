@@ -36,4 +36,7 @@ library EverduesErrors {
     uint8 constant error_subscription_already_executed           = 126;
     uint8 constant error_subscription_is_not_in_processing_state = 126;
     uint8 constant error_service_is_not_active                   = 127;
+    uint8 constant error_message_sender_is_not_subscription_wallet = 128;
+    uint8 constant error_message_sender_is_not_feeproxy_wallet   = 129;
+    uint8 constant error_message_sender_is_not_account_wallet    = 130;
 }
