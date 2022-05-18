@@ -642,19 +642,20 @@ contract EverduesAccount is IEverduesAccount {
 	function onAcceptTokensTransfer(
 		address tokenRoot,
 		uint128 amount,
-		address sender,
-		address senderWallet,
+		address /*sender*/,
+		address /*senderWallet*/,
 		address remainingGasTo,
-		TvmCell payload
+		TvmCell /*payload*/
 	) external {
-		sender;
-		senderWallet;
-		payload;
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
 			.fetch(tokenRoot);
 		if (current_balance_struct.hasValue()) {
 			balance_wallet_struct current_balance_key = current_balance_struct
 				.get();
+			require(
+				msg.sender == current_balance_key.wallet,
+				EverduesErrors.error_message_sender_is_not_account_wallet
+			);
 			current_balance_key.balance += amount;
 			wallets_mapping[tokenRoot] = current_balance_key;
 			remainingGasTo.transfer({
