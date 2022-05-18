@@ -787,6 +787,24 @@ contract EverduesRoot {
 		);
 	}
 
+	function forceUpgradeAccount(address account_address) external view onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		EverduesAccount(account_address).upgrade{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(
+			vrsparamsTvc[version].tvcEverduesAccount.toSlice().loadRef(),
+			account_version
+		);
+	}
+
 	function upgradeAccount(uint256 pubkey) external view {
 		tvm.rawReserve(
 			math.max(
@@ -841,6 +859,22 @@ contract EverduesRoot {
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(subscription_code_salt, subscription_version, msg.sender);
+	}
+
+	function forceUpgradeSubscription(address subscription_address, address subscription_owner) external view {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		TvmCell subscription_code_salt = _buildSubscriptionCode(subscription_owner);
+		Subscription(subscription_address).upgrade{
+			value: 0,
+			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(subscription_code_salt, subscription_version, address(this));
 	}
 
 	function updateSubscriptionIdentificator(
@@ -901,6 +935,25 @@ contract EverduesRoot {
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(service_code_salt, service_version, msg.sender);
+	}
+
+	function forceUpgradeService(address service_address,string category)
+		external
+		view
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		TvmCell service_code_salt = _buildServiceCode(category);
+		SubscriptionService(service_address).upgrade{
+			value: 0,
+			bounce: true,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(service_code_salt, service_version, address(this));
 	}
 
 	function updateServiceParams(
