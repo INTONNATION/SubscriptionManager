@@ -293,13 +293,13 @@ contract Subscription is IEverduesSubscription {
 				svcparams.period -
 				preprocessing_window)
 		) {
-			/*require(
+			require(
 				subscription.status !=
 					EverduesSubscriptionStatus.STATUS_PROCESSING && 
 				subscription.status !=
 				    EverduesSubscriptionStatus.STATUS_ACTIVE,
 				EverduesErrors.error_subscription_already_executed
-			);*/
+			);
 			tvm.accept();
 			subscription.pay_subscription_gas = paySubscriptionGas;
 			subscription.execution_timestamp = uint32(now);
@@ -324,10 +324,10 @@ contract Subscription is IEverduesSubscription {
 			2
 		);
 		uint8 status = svc_info.toSlice().decode(uint8);
-		/*require(
+		require(
 			subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING,
 			1000
-		);*/
+		);
 		if (status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
 			IEverduesAccount(account_address).paySubscription{
