@@ -155,7 +155,7 @@ contract Subscription is IEverduesSubscription {
 			TvmCell platform_code_,
 			TvmCell platform_params_,
 			TvmCell contract_params,
-			TvmCell code
+			/*TvmCell code*/
 		) = abi.decode(
 				upgrade_data,
 				(
@@ -295,7 +295,9 @@ contract Subscription is IEverduesSubscription {
 		) {
 			require(
 				subscription.status !=
-					EverduesSubscriptionStatus.STATUS_PROCESSING,
+					EverduesSubscriptionStatus.STATUS_PROCESSING && 
+				subscription.status !=
+				    EverduesSubscriptionStatus.STATUS_ACTIVE,
 				EverduesErrors.error_subscription_already_executed
 			);
 			tvm.accept();
@@ -341,7 +343,7 @@ contract Subscription is IEverduesSubscription {
 				subscription.pay_subscription_gas
 			);
 		} else {
-			revert(EverduesErrors.error_subscription_status_already_active);
+			revert(EverduesErrors.error_service_is_not_active);
 		}
 	}
 
@@ -421,7 +423,7 @@ contract Subscription is IEverduesSubscription {
 		);
 	}
 
-	function onPaySubscription(uint8 status) external onlyAccount {
+	function onPaySubscription(uint8 status) external override onlyAccount {
 		require(
 			subscription.status == EverduesSubscriptionStatus.STATUS_PROCESSING,
 			EverduesErrors.error_subscription_is_not_in_processing_state
