@@ -145,7 +145,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			TvmCell platform_code_,
 			TvmCell platform_params_,
 			TvmCell contract_params,
-			TvmCell code
+			/*TvmCell code*/
 		) = abi.decode(
 				upgrade_data,
 				(
