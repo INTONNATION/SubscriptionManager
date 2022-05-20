@@ -110,9 +110,9 @@ contract SubscriptionService is IEverduesSubscriptionService {
 	function upgrade(
 		TvmCell code_,
 		uint32 version,
-		address send_gas_to
+		address send_gas_to,
+		TvmCell contract_params
 	) external onlyRoot {
-		TvmCell contract_params;
 		TvmCell data = abi.encode(
 			root,
 			send_gas_to,
@@ -167,7 +167,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		platform_code = platform_code_;
 		platform_params = platform_params_;
 		type_id = type_id_;
-		if (old_version == 0) {
+		if (old_version == 0 || !contract_params.toSlice().empty()) {
 			TvmCell nextCell;
 			(service_owner, svcparams.name) = platform_params.toSlice().decode(
 				address,
