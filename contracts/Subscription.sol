@@ -370,21 +370,20 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function onAcceptTokensTransfer(
-		address tokenRoot,
+		address /*tokenRoot*/,
 		uint128 amount,
-		address sender,
-		address senderWallet,
-		address remainingGasTo,
+		address /*sender*/,
+		address /*senderWallet*/,
+		address /*remainingGasTo*/,
 		TvmCell payload
 	) public {
-		tokenRoot;
-		sender;
-		senderWallet;
-		remainingGasTo;
 		require(
 			amount >= svcparams.service_value,
 			EverduesErrors.error_not_enough_balance_in_message
 		);
+		require(
+			msg.sender == subscription_wallet,
+			EverduesErrors.error_message_sender_is_not_subscription_wallet);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -403,7 +402,7 @@ contract Subscription is IEverduesSubscription {
 				subscription.payment_timestamp +
 				subscription.period;
 		} else {
-			subscription.payment_timestamp = uint32(now);
+			subscription.payment_timestamp = uint32(now) + subscription.period;
 		}
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		ITokenWallet(msg.sender).transfer{
