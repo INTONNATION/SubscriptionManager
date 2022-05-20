@@ -107,8 +107,7 @@ contract EverduesAccount is IEverduesAccount {
 		}(tvm.pubkey());
 	}
 
-	function upgrade(TvmCell code, uint32 version) external onlyRoot {
-		TvmCell contract_params;
+	function upgrade(TvmCell code, uint32 version, TvmCell contract_params) external onlyRoot {
 		TvmCell data = abi.encode(
 			root,
 			current_version,
@@ -119,6 +118,7 @@ contract EverduesAccount is IEverduesAccount {
 			contract_params,
 			code,
 			wallets_mapping,
+			dex_root_address,
 			wever_root,
 			tip3_to_ever_address
 		);
@@ -127,7 +127,7 @@ contract EverduesAccount is IEverduesAccount {
 		onCodeUpgrade(data);
 	}
 
-	function onCodeUpgrade(TvmCell upgrade_data) private {
+	function onCodeUpgrade(TvmCell data) private {
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 		(
 			address root_,
@@ -137,9 +137,9 @@ contract EverduesAccount is IEverduesAccount {
 			TvmCell platform_code_,
 			TvmCell platform_params_,
 			TvmCell contract_params,
-			TvmCell code
+			/*TvmCell code*/
 		) = abi.decode(
-				upgrade_data,
+				data,
 				(
 					address,
 					uint32,
@@ -157,7 +157,7 @@ contract EverduesAccount is IEverduesAccount {
 		platform_params = platform_params_;
 		current_version = version;
 		type_id = type_id_;
-		if (old_version > 0) {
+		if (old_version > 0 && contract_params.toSlice().empty()) {
 			(
 				,
 				,
@@ -168,10 +168,11 @@ contract EverduesAccount is IEverduesAccount {
 				,
 				,
 				mapping(address => balance_wallet_struct) wallets_mapping_,
+				address dex_root_address_,
 				address wever_root_,
 				address tip3_to_ever_address_
 			) = abi.decode(
-					upgrade_data,
+					data,
 					(
 						address,
 						uint32,
@@ -183,13 +184,38 @@ contract EverduesAccount is IEverduesAccount {
 						TvmCell,
 						mapping(address => balance_wallet_struct),
 						address,
-						address
-					)
+						address,
+						address					)
 				);
 			wallets_mapping = wallets_mapping_;
 			wever_root = wever_root_;
 			tip3_to_ever_address = tip3_to_ever_address_;
+			dex_root_address = dex_root_address_;
 		} else {
+			(
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				,
+				mapping(address => balance_wallet_struct) wallets_mapping_
+			) = abi.decode(
+					data,
+					(
+						address,
+						uint32,
+						uint32,
+						uint8,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						TvmCell,
+						mapping(address => balance_wallet_struct)			)
+			);
+			wallets_mapping = wallets_mapping_;
 			(dex_root_address, wever_root, tip3_to_ever_address) = abi.decode(
 				contract_params,
 				(address, address, address)
@@ -267,7 +293,7 @@ contract EverduesAccount is IEverduesAccount {
 		}
 	}
 
-	function onExpectedExchange(uint128 expected_amount, uint128 expected_fee)
+	function onExpectedExchange(uint128 expected_amount, uint128 /*expected_fee*/)
 		external
 	{
 		optional(uint64, ExchangeOperation) keyOpt = _tmp_exchange_operations
