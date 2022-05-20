@@ -402,7 +402,7 @@ contract Subscription is IEverduesSubscription {
 				subscription.payment_timestamp +
 				subscription.period;
 		} else {
-			subscription.payment_timestamp = uint32(now);
+			subscription.payment_timestamp = uint32(now) + subscription.period;
 		}
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		ITokenWallet(msg.sender).transfer{

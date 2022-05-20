@@ -795,13 +795,15 @@ contract EverduesRoot {
 			),
 			2
 		);
+		TvmCell update_data = abi.encode(wever_root, tip3_to_ever_address);
 		EverduesAccount(account_address).upgrade{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
 			vrsparamsTvc[version].tvcEverduesAccount.toSlice().loadRef(),
-			account_version
+			account_version,
+			update_data
 		);
 	}
 
@@ -816,6 +818,7 @@ contract EverduesRoot {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
+		TvmCell update_data = abi.encode(wever_root, tip3_to_ever_address);
 		require(
 			msg.sender == account_address,
 			EverduesErrors.error_message_sender_is_not_account_address
@@ -826,7 +829,8 @@ contract EverduesRoot {
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
 			vrsparamsTvc[version].tvcEverduesAccount.toSlice().loadRef(),
-			account_version
+			account_version,
+			update_data
 		);
 	}
 

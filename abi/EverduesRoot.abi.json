@@ -341,6 +341,14 @@
 			]
 		},
 		{
+			"name": "forceUpgradeAccount",
+			"inputs": [
+				{"name":"account_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgradeAccount",
 			"inputs": [
 				{"name":"pubkey","type":"uint256"}
@@ -352,6 +360,15 @@
 			"name": "upgradeSubscription",
 			"inputs": [
 				{"name":"service_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "forceUpgradeSubscription",
+			"inputs": [
+				{"name":"subscription_address","type":"address"},
+				{"name":"subscription_owner","type":"address"}
 			],
 			"outputs": [
 			]
@@ -369,6 +386,15 @@
 			"name": "upgradeService",
 			"inputs": [
 				{"name":"service_name","type":"string"},
+				{"name":"category","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "forceUpgradeService",
+			"inputs": [
+				{"name":"service_address","type":"address"},
 				{"name":"category","type":"string"}
 			],
 			"outputs": [

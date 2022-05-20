@@ -22,7 +22,8 @@
 			"name": "upgrade",
 			"inputs": [
 				{"name":"code","type":"cell"},
-				{"name":"version","type":"uint32"}
+				{"name":"version","type":"uint32"},
+				{"name":"contract_params","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -45,7 +46,7 @@
 			"name": "onExpectedExchange",
 			"inputs": [
 				{"name":"expected_amount","type":"uint128"},
-				{"name":"expected_fee","type":"uint128"}
+				{"name":"value1","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -212,10 +213,10 @@
 			"inputs": [
 				{"name":"tokenRoot","type":"address"},
 				{"name":"amount","type":"uint128"},
-				{"name":"sender","type":"address"},
-				{"name":"senderWallet","type":"address"},
+				{"name":"value2","type":"address"},
+				{"name":"value3","type":"address"},
 				{"name":"remainingGasTo","type":"address"},
-				{"name":"payload","type":"cell"}
+				{"name":"value5","type":"cell"}
 			],
 			"outputs": [
 			]
