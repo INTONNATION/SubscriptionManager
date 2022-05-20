@@ -200,7 +200,7 @@ contract EverduesAccount is IEverduesAccount {
 				,
 				,
 				,
-				TvmCell code_
+				,
 				mapping(address => balance_wallet_struct) wallets_mapping_
 			) = abi.decode(
 					data,
