@@ -191,7 +191,7 @@ contract EverduesAccount is IEverduesAccount {
 			wever_root = wever_root_;
 			tip3_to_ever_address = tip3_to_ever_address_;
 			dex_root_address = dex_root_address_;
-		} else {
+		} else if (old_version == 1 && !contract_params.toSlice().empty()) { // current mainnet version
 			(
 				,
 				,
@@ -220,6 +220,11 @@ contract EverduesAccount is IEverduesAccount {
 				contract_params,
 				(address, address, address)
 			);
+		} else if (!contract_params.toSlice().empty()) {
+			(dex_root_address, wever_root, tip3_to_ever_address) = abi.decode(
+				contract_params,
+				(address, address, address)
+			);			
 		}
 		emit AccountDeployed(current_version);
 	}
