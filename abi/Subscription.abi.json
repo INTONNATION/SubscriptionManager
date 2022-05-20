@@ -15,7 +15,8 @@
 			"inputs": [
 				{"name":"code","type":"cell"},
 				{"name":"version","type":"uint32"},
-				{"name":"send_gas_to","type":"address"}
+				{"name":"send_gas_to","type":"address"},
+				{"name":"contract_params_","type":"cell"}
 			],
 			"outputs": [
 			]
