@@ -191,7 +191,7 @@ contract EverduesAccount is IEverduesAccount {
 			wever_root = wever_root_;
 			tip3_to_ever_address = tip3_to_ever_address_;
 			dex_root_address = dex_root_address_;
-		} else if (old_version == 1 && !contract_params.toSlice().empty()) { // current mainnet version
+		} else if (old_version > 0 && !contract_params.toSlice().empty()) { // current mainnet version
 			(
 				,
 				,
@@ -200,7 +200,7 @@ contract EverduesAccount is IEverduesAccount {
 				,
 				,
 				,
-				,
+				TvmCell code_
 				mapping(address => balance_wallet_struct) wallets_mapping_
 			) = abi.decode(
 					data,
@@ -212,15 +212,16 @@ contract EverduesAccount is IEverduesAccount {
 						TvmCell,
 						TvmCell,
 						TvmCell,
-						TvmCell,
-						mapping(address => balance_wallet_struct)			)
+						TvmCell
+						mapping(address => balance_wallet_struct)			
+					)
 			);
 			wallets_mapping = wallets_mapping_;
 			(dex_root_address, wever_root, tip3_to_ever_address) = abi.decode(
 				contract_params,
 				(address, address, address)
 			);
-		} else if (!contract_params.toSlice().empty()) {
+		} else if (old_version == 0 && !contract_params.toSlice().empty()) {
 			(dex_root_address, wever_root, tip3_to_ever_address) = abi.decode(
 				contract_params,
 				(address, address, address)
@@ -272,7 +273,7 @@ contract EverduesAccount is IEverduesAccount {
 					uint128 balance_after_pay = current_balance - value;
 					current_balance_key_value.balance = balance_after_pay;
 					wallets_mapping[currency_root] = current_balance_key_value;
-					return {value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 0;
+					return {value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 1;
 				}
 			} else {
 				balance_wallet_struct current_balance_key_value = current_balance_struct
@@ -344,6 +345,11 @@ contract EverduesAccount is IEverduesAccount {
 					expected_amount,
 					call_id
 				);
+				IEverduesSubscription(last_operation.subscription_contract)
+					.onPaySubscription{
+					value: last_operation.pay_subscription_gas,
+					flag: 0
+				}(uint8(0));
 			} else {
 				if (current_balance_key.balance > expected_amount) {
 					EverduesAccount(address(this)).swapTIP3ToEver{
