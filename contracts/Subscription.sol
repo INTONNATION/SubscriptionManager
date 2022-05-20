@@ -108,13 +108,13 @@ contract Subscription is IEverduesSubscription {
 	function upgrade(
 		TvmCell code,
 		uint32 version,
-		address send_gas_to
+		address send_gas_to,
+		TvmCell contract_params_
 	) external onlyRoot {
 		require(
 			msg.value > EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE,
 			EverduesErrors.error_message_low_value
 		);
-		TvmCell contract_params_;
 		TvmCell data = abi.encode(
 			root,
 			send_gas_to,
@@ -178,7 +178,7 @@ contract Subscription is IEverduesSubscription {
 		platform_params = platform_params_;
 		type_id = type_id_;
 
-		if (old_version == 0) {
+		if (old_version == 0 || !contract_params.toSlice().empty()) {
 			(
 				address_fee_proxy,
 				service_fee,
