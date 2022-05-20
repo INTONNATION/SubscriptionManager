@@ -858,11 +858,12 @@ contract EverduesRoot {
 				)
 			)
 		);
+		TvmCell upgrade_data;
 		Subscription(subscription_address).upgrade{
 			value: 0,
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(subscription_code_salt, subscription_version, msg.sender);
+		}(subscription_code_salt, subscription_version, msg.sender, upgrade_data);
 	}
 
 	function forceUpgradeSubscription(address subscription_address, address subscription_owner) external view {
@@ -874,11 +875,12 @@ contract EverduesRoot {
 			2
 		);
 		TvmCell subscription_code_salt = _buildSubscriptionCode(subscription_owner);
+		TvmCell upgrade_data;
 		Subscription(subscription_address).upgrade{
 			value: 0,
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(subscription_code_salt, subscription_version, address(this));
+		}(subscription_code_salt, subscription_version, address(this), upgrade_data);
 	}
 
 	function updateSubscriptionIdentificator(
@@ -934,11 +936,12 @@ contract EverduesRoot {
 				)
 			)
 		);
+		TvmCell upgrade_data;
 		SubscriptionService(service_address).upgrade{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(service_code_salt, service_version, msg.sender);
+		}(service_code_salt, service_version, msg.sender, upgrade_data);
 	}
 
 	function forceUpgradeService(address service_address,string category)
@@ -953,11 +956,12 @@ contract EverduesRoot {
 			2
 		);
 		TvmCell service_code_salt = _buildServiceCode(category);
+		TvmCell upgrade_data;
 		SubscriptionService(service_address).upgrade{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(service_code_salt, service_version, address(this));
+		}(service_code_salt, service_version, address(this), upgrade_data);
 	}
 
 	function updateServiceParams(
