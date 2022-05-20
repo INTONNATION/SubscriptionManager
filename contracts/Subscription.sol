@@ -397,13 +397,7 @@ contract Subscription is IEverduesSubscription {
 			svcparams.service_value +
 			service_fee_value);
 		uint128 pay_value = svcparams.subscription_value - protocol_fee;
-		if (subscription.payment_timestamp != 0) {
-			subscription.payment_timestamp =
-				subscription.payment_timestamp +
-				subscription.period;
-		} else {
-			subscription.payment_timestamp = uint32(now) + subscription.period;
-		}
+		subscription.payment_timestamp = uint32(now) + subscription.period;
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		ITokenWallet(msg.sender).transfer{
 			value: EverduesGas.TRANSFER_MIN_VALUE,
