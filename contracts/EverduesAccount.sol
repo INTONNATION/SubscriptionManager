@@ -192,7 +192,7 @@ contract EverduesAccount is IEverduesAccount {
 			tip3_to_ever_address = tip3_to_ever_address_;
 			dex_root_address = dex_root_address_;
 		} else if (old_version > 0 && !contract_params.toSlice().empty()) { // current mainnet version
-			(
+			/*(
 				,
 				,
 				,
@@ -217,6 +217,7 @@ contract EverduesAccount is IEverduesAccount {
 					)
 			);
 			wallets_mapping = wallets_mapping_;
+			*/
 			(dex_root_address, wever_root, tip3_to_ever_address) = abi.decode(
 				contract_params,
 				(address, address, address)
@@ -425,6 +426,34 @@ contract EverduesAccount is IEverduesAccount {
 				value: 0,
 				flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
 			});
+		}
+	}
+
+	function syncBalanceByRoot(address currency_root, uint128 additional_gas)
+		external
+		onlyRoot
+	{
+		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
+		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+			.fetch(currency_root);
+		if (current_balance_struct.hasValue()) {
+			balance_wallet_struct current_balance_key = current_balance_struct
+				.get();
+			address account_wallet = current_balance_key.wallet;
+			_tmp_sync_balance[account_wallet] = currency_root;
+			TIP3TokenWallet(account_wallet).balance{
+				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
+				bounce: true,
+				flag: 0,
+				callback: EverduesAccount.onBalanceOf
+			}();
+		} else {
+			ITokenRoot(currency_root).walletOf{
+				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
+				bounce: true,
+				flag: 0,
+				callback: EverduesAccount.onWalletOf
+			}(address(this));
 		}
 	}
 
@@ -695,6 +724,18 @@ contract EverduesAccount is IEverduesAccount {
 			);
 			current_balance_key.balance += amount;
 			wallets_mapping[tokenRoot] = current_balance_key;
+			if (current_balance_key.dex_ever_pair_address != address(0)) {
+				_tmp_get_pairs[now] = GetDexPairOperation(
+					tokenRoot,
+					remainingGasTo
+				);
+				IDexRoot(dex_root_address).getExpectedPairAddress{
+					value: EverduesGas.INIT_MESSAGE_VALUE,
+					flag: 0,
+					bounce: false,
+					callback: EverduesAccount.onGetExpectedPairAddress
+				}(wever_root, tokenRoot);
+			}
 			remainingGasTo.transfer({
 				value: 0,
 				flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS

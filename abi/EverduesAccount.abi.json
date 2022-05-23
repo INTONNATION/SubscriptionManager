@@ -69,6 +69,15 @@
 			]
 		},
 		{
+			"name": "syncBalanceByRoot",
+			"inputs": [
+				{"name":"currency_root","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "syncBalance",
 			"inputs": [
 				{"name":"currency_root","type":"address"},
