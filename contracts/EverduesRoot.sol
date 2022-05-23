@@ -25,8 +25,12 @@ interface IPlatform {
 	) external;
 }
 
-interface ISubscription {
-	function cancel() external;
+interface IEverduesAccountTemp {
+	function upgrade(TvmCell code, uint32 version) external;
+}
+
+interface ISubscriptionTemp {
+	function upgrade(TvmCell code_, uint32 version, address send_gas_to) external;
 }
 
 contract EverduesRoot {
@@ -795,15 +799,14 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell update_data = abi.encode(wever_root, tip3_to_ever_address);
-		EverduesAccount(account_address).upgrade{
+		//TvmCell update_data = abi.encode(wever_root, tip3_to_ever_address);
+		IEverduesAccountTemp(account_address).upgrade{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
 			vrsparamsTvc[version].tvcEverduesAccount.toSlice().loadRef(),
-			account_version,
-			update_data
+			account_version
 		);
 	}
 
@@ -818,19 +821,18 @@ contract EverduesRoot {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
-		TvmCell update_data = abi.encode(dex_root_address, wever_root, tip3_to_ever_address);
+		//TvmCell update_data = abi.encode(dex_root_address, wever_root, tip3_to_ever_address);
 		require(
 			msg.sender == account_address,
 			EverduesErrors.error_message_sender_is_not_account_address
 		);
-		EverduesAccount(account_address).upgrade{
+		IEverduesAccountTemp(account_address).upgrade{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
 			vrsparamsTvc[version].tvcEverduesAccount.toSlice().loadRef(),
-			account_version,
-			update_data
+			account_version
 		);
 	}
 
@@ -858,12 +860,11 @@ contract EverduesRoot {
 				)
 			)
 		);
-		TvmCell upgrade_data;
-		Subscription(subscription_address).upgrade{
+		ISubscriptionTemp(subscription_address).upgrade{
 			value: 0,
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(subscription_code_salt, subscription_version, msg.sender, upgrade_data);
+		}(subscription_code_salt, subscription_version, msg.sender);
 	}
 
 	function forceUpgradeSubscription(address subscription_address, address subscription_owner) external view {
@@ -875,12 +876,11 @@ contract EverduesRoot {
 			2
 		);
 		TvmCell subscription_code_salt = _buildSubscriptionCode(subscription_owner);
-		TvmCell upgrade_data;
-		Subscription(subscription_address).upgrade{
+		ISubscriptionTemp(subscription_address).upgrade{
 			value: 0,
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(subscription_code_salt, subscription_version, address(this), upgrade_data);
+		}(subscription_code_salt, subscription_version, address(this));
 	}
 
 	function updateSubscriptionIdentificator(
@@ -1230,7 +1230,7 @@ contract EverduesRoot {
 				)
 			)
 		);
-		ISubscription(subscription_address).cancel{
+		Subscription(subscription_address).cancel{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}();

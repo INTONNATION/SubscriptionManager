@@ -18,7 +18,7 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol"
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
-contract EverduesAccount is IEverduesAccount {
+contract EverduesAccount is IEverduesAccount  {
 	address public root;
 	address public dex_root_address;
 	address public wever_root;
@@ -191,7 +191,7 @@ contract EverduesAccount is IEverduesAccount {
 			wever_root = wever_root_;
 			tip3_to_ever_address = tip3_to_ever_address_;
 			dex_root_address = dex_root_address_;
-		} else if (old_version > 0 && !contract_params.toSlice().empty()) { // current mainnet version
+		} else if (old_version == 1) { 
 			(
 				,
 				,
@@ -217,10 +217,6 @@ contract EverduesAccount is IEverduesAccount {
 					)
 			);
 			wallets_mapping = wallets_mapping_;
-			(dex_root_address, wever_root, tip3_to_ever_address) = abi.decode(
-				contract_params,
-				(address, address, address)
-			);
 		} else if (old_version == 0 && !contract_params.toSlice().empty()) {
 			(dex_root_address, wever_root, tip3_to_ever_address) = abi.decode(
 				contract_params,
@@ -292,7 +288,7 @@ contract EverduesAccount is IEverduesAccount {
 					gas_,
 					msg.sender
 				);
-				return {value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 0;
+				return {value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 1;
 			}
 		} else {
 			return {value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 1;
