@@ -292,7 +292,7 @@ contract EverduesAccount is IEverduesAccount {
 					gas_,
 					msg.sender
 				);
-				return {value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 0;
+				return {value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 1;
 			}
 		} else {
 			return {value: gas_, flag: MsgFlag.SENDER_PAYS_FEES} 1;
