@@ -806,6 +806,24 @@ contract EverduesRoot {
 			update_data
 		);
 	}
+	
+	function syncAccountBalance(address account_address, address currency_root) external view onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		EverduesAccount(account_address).syncBalanceByRoot{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED			
+		}(
+			currency_root,
+			uint128(0)
+		);
+	}
 
 	function upgradeAccount(uint256 pubkey) external view {
 		tvm.rawReserve(
