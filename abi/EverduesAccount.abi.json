@@ -78,6 +78,15 @@
 			]
 		},
 		{
+			"name": "syncBalanceByRoot",
+			"inputs": [
+				{"name":"currency_root","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "onWalletOf",
 			"inputs": [
 				{"name":"account_wallet","type":"address"}
