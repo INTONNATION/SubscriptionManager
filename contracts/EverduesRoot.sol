@@ -795,7 +795,7 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell update_data = abi.encode(wever_root, tip3_to_ever_address);
+		TvmCell update_data = abi.encode(dex_root_address, wever_root, tip3_to_ever_address);
 		EverduesAccount(account_address).upgrade{
 			value: 0,
 			bounce: false,
@@ -804,6 +804,24 @@ contract EverduesRoot {
 			vrsparamsTvc[version].tvcEverduesAccount.toSlice().loadRef(),
 			account_version,
 			update_data
+		);
+	}
+	
+	function syncAccountBalance(address account_address, address currency_root) external view onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		EverduesAccount(account_address).syncBalanceByRoot{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED			
+		}(
+			currency_root,
+			uint128(0)
 		);
 	}
 
