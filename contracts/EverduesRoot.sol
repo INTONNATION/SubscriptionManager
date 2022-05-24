@@ -956,12 +956,12 @@ contract EverduesRoot {
 			2
 		);
 		TvmCell service_code_salt = _buildServiceCode(category);
-		TvmCell upgrade_data;
-		SubscriptionService(service_address).upgrade{
+		//TvmCell upgrade_data;
+		ISubscriptionTemp(service_address).upgrade{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(service_code_salt, service_version, address(this), upgrade_data);
+		}(service_code_salt, service_version, address(this));
 	}
 
 	function updateServiceParams(
