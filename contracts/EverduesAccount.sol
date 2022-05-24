@@ -192,31 +192,6 @@ contract EverduesAccount is IEverduesAccount {
 			tip3_to_ever_address = tip3_to_ever_address_;
 			dex_root_address = dex_root_address_;
 		} else if (old_version > 0 && !contract_params.toSlice().empty()) { // current mainnet version
-			(
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				mapping(address => balance_wallet_struct) wallets_mapping_
-			) = abi.decode(
-					data,
-					(
-						address,
-						uint32,
-						uint32,
-						uint8,
-						TvmCell,
-						TvmCell,
-						TvmCell,
-						TvmCell,
-						mapping(address => balance_wallet_struct)			
-					)
-			);
-			wallets_mapping = wallets_mapping_;
 			(dex_root_address, wever_root, tip3_to_ever_address) = abi.decode(
 				contract_params,
 				(address, address, address)

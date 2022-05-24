@@ -795,7 +795,7 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell update_data = abi.encode(wever_root, tip3_to_ever_address);
+		TvmCell update_data = abi.encode(dex_root_address, wever_root, tip3_to_ever_address);
 		EverduesAccount(account_address).upgrade{
 			value: 0,
 			bounce: false,
