@@ -452,6 +452,34 @@ contract EverduesAccount is IEverduesAccount  {
 		}
 	}
 
+	function syncBalanceByRoot(address currency_root, uint128 additional_gas)
+		external
+		onlyRoot
+	{
+		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
+		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+			.fetch(currency_root);
+		if (current_balance_struct.hasValue()) {
+			balance_wallet_struct current_balance_key = current_balance_struct
+				.get();
+			address account_wallet = current_balance_key.wallet;
+			_tmp_sync_balance[account_wallet] = currency_root;
+			TIP3TokenWallet(account_wallet).balance{
+				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
+				bounce: true,
+				flag: 0,
+				callback: EverduesAccount.onBalanceOf
+			}();
+		} else {
+			ITokenRoot(currency_root).walletOf{
+				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
+				bounce: true,
+				flag: 0,
+				callback: EverduesAccount.onWalletOf
+			}(address(this));
+		}
+	}
+
 	function onWalletOf(address account_wallet) external {
 		tvm.rawReserve(
 			math.max(
