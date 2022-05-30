@@ -212,7 +212,7 @@ contract EverduesAccount is IEverduesAccount {
 		address service_address,
 		uint128 pay_subscription_gas
 	) external override responsible returns (uint8) {
-		address subsciption_addr = address(
+		/*address subsciption_addr = address(
 			tvm.hash(
 				_buildInitData(
 					PlatformTypes.Subscription,
@@ -223,7 +223,7 @@ contract EverduesAccount is IEverduesAccount {
 		require(
 			subsciption_addr == msg.sender,
 			EverduesErrors.error_message_sender_is_not_my_subscription
-		);
+		);*/
 		uint128 gas_ = (EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 			pay_subscription_gas);
 		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
