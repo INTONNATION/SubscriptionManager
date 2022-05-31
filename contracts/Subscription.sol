@@ -7,6 +7,7 @@ import "SubscriptionIndex.sol";
 import "./Platform.sol";
 import "interfaces/IEverduesAccount.sol";
 import "interfaces/IEverduesIndex.sol";
+import "interfaces/IEverduesFeeProxy.sol";
 import "interfaces/IEverduesSubscriptionService.sol";
 import "interfaces/IEverduesSubscription.sol";
 import "libraries/EverduesErrors.sol";
@@ -282,7 +283,7 @@ contract Subscription is IEverduesSubscription {
 		}
 	}
 
-	function executeSubscription(uint128 paySubscriptionGas )
+	function executeSubscription(uint128 paySubscriptionGas)
 		public
 		override
 		onlyRootOrOwnerAccount
@@ -316,13 +317,6 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function onGetInfo(TvmCell svc_info) external onlyService {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
 		uint8 status = svc_info.toSlice().decode(uint8);
 		require(
 			subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING,
@@ -330,17 +324,15 @@ contract Subscription is IEverduesSubscription {
 		);
 		if (status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
-			IEverduesAccount(account_address).paySubscription{
+			IEverduesAccount(account_address).getNextPaymentStatus{
 				value: 0,
 				bounce: true,
-				flag: MsgFlag.ALL_NOT_RESERVED,
-				callback: Subscription.onPaySubscription
+				flag: MsgFlag.REMAINING_GAS,
+				callback: Subscription.onGetNextPaymentStatus
 			}(
-				svcparams.subscription_value,
-				svcparams.currency_root,
-				subscription_wallet,
 				service_address,
-				subscription.pay_subscription_gas
+				svcparams.subscription_value,
+				svcparams.currency_root
 			);
 		} else {
 			revert(EverduesErrors.error_service_is_not_active);
@@ -348,21 +340,19 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function executeSubscription_() private inline {
+		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		subscription.execution_timestamp = uint32(now);
 		subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
-		IEverduesAccount(account_address).paySubscription{
+		IEverduesAccount(account_address).getNextPaymentStatus{
 			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE,
 			bounce: true,
 			flag: MsgFlag.SENDER_PAYS_FEES,
-			callback: Subscription.onPaySubscription
+			callback: Subscription.onGetNextPaymentStatus
 		}(
-			svcparams.subscription_value,
-			svcparams.currency_root,
-			subscription_wallet,
 			service_address,
-			subscription.pay_subscription_gas
+			svcparams.subscription_value,
+			svcparams.currency_root
 		);
-		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		account_address.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -386,7 +376,7 @@ contract Subscription is IEverduesSubscription {
 			EverduesErrors.error_message_sender_is_not_subscription_wallet);
 		tvm.rawReserve(
 			math.max(
-				EverduesGas.SERVICE_INITIAL_BALANCE,
+				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
@@ -416,15 +406,22 @@ contract Subscription is IEverduesSubscription {
 		);
 	}
 
-	function onPaySubscription(uint8 status) external override onlyAccount {
-		require(
-			subscription.status == EverduesSubscriptionStatus.STATUS_PROCESSING,
-			EverduesErrors.error_subscription_is_not_in_processing_state
-		);
-		if (status == 1) {
+	function replenishGas() external override {
+		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
+		TvmCell body;
+		msg.sender.transfer(0, false, MsgFlag.REMAINING_GAS, body);
+	}
+	
+	function onGetNextPaymentStatus(uint8 next_payment_status, uint128 account_gas_balance) external {
+		if (next_payment_status == 1) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
-		} else if (status == 0) {
+		} else if (next_payment_status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
+			IEverduesFeeProxy(address_fee_proxy).executePaySubscription{
+				value: 0,
+				bounce: true,
+				flag: MsgFlag.REMAINING_GAS
+			}(account_address, svcparams.service_value, svcparams.currency_root, subscription_wallet, account_gas_balance, subscription.pay_subscription_gas);
 		}
 	}
 

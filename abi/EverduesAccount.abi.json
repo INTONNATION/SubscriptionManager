@@ -29,41 +29,25 @@
 			]
 		},
 		{
-			"name": "paySubscription",
+			"name": "getNextPaymentStatus",
 			"inputs": [
 				{"name":"answerId","type":"uint32"},
+				{"name":"service_address","type":"address"},
+				{"name":"value","type":"uint128"},
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"},
+				{"name":"value1","type":"uint128"}
+			]
+		},
+		{
+			"name": "paySubscription",
+			"inputs": [
 				{"name":"value","type":"uint128"},
 				{"name":"currency_root","type":"address"},
 				{"name":"subscription_wallet","type":"address"},
-				{"name":"service_address","type":"address"},
-				{"name":"pay_subscription_gas","type":"uint128"}
-			],
-			"outputs": [
-				{"name":"value0","type":"uint8"}
-			]
-		},
-		{
-			"name": "onExpectedExchange",
-			"inputs": [
-				{"name":"expected_amount","type":"uint128"},
-				{"name":"value1","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "swapTIP3ToEver",
-			"inputs": [
-				{"name":"expected_amount","type":"uint128"},
-				{"name":"call_id","type":"uint64"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "onGetExpectedPairAddress",
-			"inputs": [
-				{"name":"dex_pair_address","type":"address"}
+				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -322,8 +306,6 @@
 		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
 		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"},{"name":"dex_ever_pair_address","type":"address"}],"name":"wallets_mapping","type":"map(address,tuple)"},
-		{"name":"_tmp_sync_balance","type":"map(address,address)"},
-		{"components":[{"name":"currency_root","type":"address"},{"name":"value","type":"uint128"},{"name":"subscription_wallet","type":"address"},{"name":"pay_subscription_gas","type":"uint128"},{"name":"subscription_contract","type":"address"}],"name":"_tmp_exchange_operations","type":"map(uint64,tuple)"},
-		{"components":[{"name":"currency_root","type":"address"},{"name":"send_gas_to","type":"address"}],"name":"_tmp_get_pairs","type":"map(uint64,tuple)"}
+		{"name":"_tmp_sync_balance","type":"map(address,address)"}
 	]
 }

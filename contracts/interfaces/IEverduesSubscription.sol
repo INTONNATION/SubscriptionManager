@@ -7,5 +7,5 @@ interface IEverduesSubscription {
 
 	function executeSubscription(uint128 paySubscriptionGas) external;
 	
-	function onPaySubscription(uint8 status) external;
+	function replenishGas() external;
 }

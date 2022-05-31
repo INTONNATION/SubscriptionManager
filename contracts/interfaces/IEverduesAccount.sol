@@ -10,7 +10,8 @@ interface IEverduesAccount {
 		uint128 value,
 		address currency_root,
 		address subscription_wallet,
-		address service_address,
 		uint128 pay_subscription_gas
-	) external responsible returns (uint8);
+	) external;
+
+	function getNextPaymentStatus(address service_address, uint128 value, address currency_root) external responsible returns (uint8, uint128);
 }
