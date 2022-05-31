@@ -9,6 +9,8 @@ import "libraries/MsgFlag.sol";
 import "libraries/EverduesGas.sol";
 import "libraries/DexOperationTypes.sol";
 import "./interfaces/IDexRoot.sol";
+import "./interfaces/IEverduesAccount.sol";
+import "./interfaces/IEverduesSubscription.sol";
 import "./Platform.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
@@ -163,6 +165,25 @@ contract EverduesFeeProxy {
 		send_gas_to.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
+	function executePaySubscription(address account_address, uint128 value, address currency_root, address subscription_wallet, uint128 account_gas_balance, uint128 additional_gas) external pure {
+		uint128 gas_;
+		if (account_gas_balance < 10 ever) {
+			gas_ = 10 ever - account_gas_balance + additional_gas + 0.5 ever ;
+		} else {
+			gas_ = additional_gas + 0.5 ever;
+		}
+		IEverduesAccount(account_address).paySubscription{
+			value: gas_,
+			bounce: true,
+			flag: 0
+		}(value,currency_root,subscription_wallet, additional_gas);
+		IEverduesSubscription(msg.sender).replenishGas{
+			value: 1 ever,
+			bounce: true,
+			flag: 0
+		}();
+	}
+
 	function syncBalance(address currency_root, address send_gas_to)
 		external
 		onlyRoot
@@ -286,11 +307,6 @@ contract EverduesFeeProxy {
 		uint32 version,
 		address send_gas_to
 	) external onlyRoot {
-		require(
-			msg.value > EverduesGas.UPGRADE_FEE_PROXY_MIN_VALUE,
-			EverduesErrors.error_message_low_value
-		);
-
 		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 		TvmCell contract_params;
 		TvmCell data = abi.encode(
@@ -384,6 +400,10 @@ contract EverduesFeeProxy {
 			mtds_root_address = mtds_root_address_;
 			dex_root_address = dex_root_address_;
 			wallets_mapping = wallets_mapping_;
+			send_gas_to.transfer({
+				value: 0,
+				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+			});
 		}
 	}
 

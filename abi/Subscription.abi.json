@@ -59,9 +59,17 @@
 			]
 		},
 		{
-			"name": "onPaySubscription",
+			"name": "replenishGas",
 			"inputs": [
-				{"name":"status","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onGetNextPaymentStatus",
+			"inputs": [
+				{"name":"next_payment_status","type":"uint8"},
+				{"name":"account_gas_balance","type":"uint128"}
 			],
 			"outputs": [
 			]
