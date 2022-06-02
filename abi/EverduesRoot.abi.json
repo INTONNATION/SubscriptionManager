@@ -261,6 +261,22 @@
 			]
 		},
 		{
+			"name": "setDeployServiceLockValue",
+			"inputs": [
+				{"name":"deploy_service_lock_value_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAccountGasThreshold",
+			"inputs": [
+				{"name":"account_threshold_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setFees",
 			"inputs": [
 				{"name":"service_fee_","type":"uint8"},
@@ -338,6 +354,15 @@
 			"inputs": [
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "getDeployServiceRequirements",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
 			]
 		},
 		{
@@ -611,6 +636,22 @@
 			"outputs": [
 				{"name":"tip3_to_ever_address","type":"address"}
 			]
+		},
+		{
+			"name": "deploy_service_lock_value",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"deploy_service_lock_value","type":"uint128"}
+			]
+		},
+		{
+			"name": "account_threshold",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"account_threshold","type":"uint128"}
+			]
 		}
 	],
 	"data": [
@@ -660,6 +701,8 @@
 		{"name":"owner","type":"address"},
 		{"name":"wever_root","type":"address"},
 		{"name":"pending_owner","type":"address"},
-		{"name":"tip3_to_ever_address","type":"address"}
+		{"name":"tip3_to_ever_address","type":"address"},
+		{"name":"deploy_service_lock_value","type":"uint128"},
+		{"name":"account_threshold","type":"uint128"}
 	]
 }

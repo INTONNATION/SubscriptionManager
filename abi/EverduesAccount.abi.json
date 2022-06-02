@@ -146,6 +146,14 @@
 			]
 		},
 		{
+			"name": "onGetDeployServiceRequirements",
+			"inputs": [
+				{"name":"requirements","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgradeService",
 			"inputs": [
 				{"name":"service_name","type":"string"},
@@ -169,15 +177,6 @@
 			"name": "onBalanceOf",
 			"inputs": [
 				{"name":"balance_","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "withdrawGas",
-			"inputs": [
-				{"name":"withdraw_value","type":"uint128"},
-				{"name":"withdraw_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -325,6 +324,7 @@
 		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"},{"name":"dex_ever_pair_address","type":"address"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"_tmp_sync_balance","type":"map(address,address)"},
 		{"components":[{"name":"currency_root","type":"address"},{"name":"send_gas_to","type":"address"}],"name":"_tmp_get_pairs","type":"map(uint64,tuple)"},
-		{"components":[{"name":"currency_root","type":"address"},{"name":"value","type":"uint128"},{"name":"subscription_wallet","type":"address"},{"name":"pay_subscription_gas","type":"uint128"},{"name":"subscription_contract","type":"address"}],"name":"_tmp_exchange_operations","type":"map(uint64,tuple)"}
+		{"components":[{"name":"currency_root","type":"address"},{"name":"value","type":"uint128"},{"name":"subscription_wallet","type":"address"},{"name":"pay_subscription_gas","type":"uint128"},{"name":"subscription_contract","type":"address"}],"name":"_tmp_exchange_operations","type":"map(uint64,tuple)"},
+		{"components":[{"name":"service_params","type":"cell"},{"name":"identificator","type":"cell"},{"name":"additional_gas","type":"uint128"}],"name":"_tmp_deploy_service_operations","type":"map(uint64,tuple)"}
 	]
 }

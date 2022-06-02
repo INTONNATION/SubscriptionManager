@@ -100,6 +100,8 @@ contract EverduesRoot {
 	address public wever_root;
 	address pending_owner;
 	address public tip3_to_ever_address;
+	uint128 public deploy_service_lock_value = 200 ever;
+	uint128 public account_threshold = 10 ever;
 
 	onBounce(TvmSlice slice) external view {
 		// revert change to initial msg.sender in case of failure during deploy
@@ -582,6 +584,34 @@ contract EverduesRoot {
 		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
+	function setDeployServiceLockValue(uint128 deploy_service_lock_value_) external onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		deploy_service_lock_value = deploy_service_lock_value_;
+		msg.sender.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
+	}
+
+	function setAccountGasThreshold(uint128 account_threshold_) external onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		account_threshold = account_threshold_;
+		EverduesFeeProxy(fee_proxy_address).setAccountGasThreshold{
+			value: 0,
+			bounce: true,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(account_threshold, owner);
+	}
+
 	function setFees(uint8 service_fee_, uint8 subscription_fee_)
 		external
 		onlyOwner
@@ -785,6 +815,18 @@ contract EverduesRoot {
 			fee_proxy_version,
 			msg.sender
 		);
+	}
+
+	function getDeployServiceRequirements() external responsible view returns (TvmCell) {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		TvmCell response = abi.encode(account_threshold, deploy_service_lock_value);
+		return { value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED } (response);
 	}
 
 	function forceUpgradeAccount(address account_address) external view onlyOwner {
@@ -1270,6 +1312,7 @@ contract EverduesRoot {
 		uint256 owner_pubkey,
 		uint128 additional_gas
 	) external view {
+		// TODO: require sender is account contract
 		require(
 			service_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -1369,17 +1412,7 @@ contract EverduesRoot {
 		TvmCell identificator,
 		uint128 additional_gas
 	) external view {
-		require(
-			msg.value >=
-				(EverduesGas.SERVICE_INITIAL_BALANCE +
-					EverduesGas.INDEX_INITIAL_BALANCE *
-					2 +
-					EverduesGas.INIT_MESSAGE_VALUE *
-					4 +
-					EverduesGas.SET_SERVICE_INDEXES_VALUE +
-					additional_gas),
-			EverduesErrors.error_message_low_value
-		);
+		// TODO: require sender is account contract
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -1409,10 +1442,8 @@ contract EverduesRoot {
 				PlatformTypes.Service,
 				_buildServicePlatformParams(msg.sender, service_name)
 			),
-			value: EverduesGas.SERVICE_INITIAL_BALANCE +
-				EverduesGas.INIT_MESSAGE_VALUE +
-				(additional_gas / 4),
-			flag: MsgFlag.SENDER_PAYS_FEES
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED
 		}(service_code_salt, service_params, service_version, msg.sender, 0);
 		TvmCell serviceIndexStateInit = _buildServiceIndex(
 			msg.sender,
@@ -1426,7 +1457,7 @@ contract EverduesRoot {
 		SubscriptionService(address(platform)).setIndexes{
 			value: EverduesGas.SET_SERVICE_INDEXES_VALUE +
 				EverduesGas.INIT_MESSAGE_VALUE +
-				(additional_gas / 4),
+				(additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			address(tvm.hash(serviceIndexStateInit)),
@@ -1435,7 +1466,7 @@ contract EverduesRoot {
 		new SubscriptionServiceIndex{
 			value: EverduesGas.INDEX_INITIAL_BALANCE +
 				EverduesGas.INIT_MESSAGE_VALUE +
-				(additional_gas / 4),
+				(additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: serviceIndexStateInit
@@ -1444,7 +1475,7 @@ contract EverduesRoot {
 			new SubscriptionServiceIdentificatorIndex{
 				value: EverduesGas.INDEX_INITIAL_BALANCE +
 					EverduesGas.INIT_MESSAGE_VALUE +
-					(additional_gas / 4),
+					(additional_gas / 3),
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: serviceIdentificatorIndexStateInit
