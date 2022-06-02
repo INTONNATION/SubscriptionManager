@@ -806,6 +806,7 @@ contract EverduesRoot {
 			),
 			2
 		);
+		TvmCell upgrade_data;
 		EverduesFeeProxy(fee_proxy_address).upgrade{
 			value: 0,
 			bounce: true,
@@ -813,7 +814,8 @@ contract EverduesRoot {
 		}(
 			vrsparamsTvc[version].tvcFeeProxy.toSlice().loadRef(),
 			fee_proxy_version,
-			msg.sender
+			msg.sender,
+			upgrade_data
 		);
 	}
 

@@ -353,10 +353,10 @@ contract EverduesFeeProxy {
 	function upgrade(
 		TvmCell code,
 		uint32 version,
-		address send_gas_to
+		address send_gas_to,
+		TvmCell contract_params
 	) external onlyRoot {
 		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
-		TvmCell contract_params;
 		TvmCell data = abi.encode(
 			root,
 			send_gas_to,
