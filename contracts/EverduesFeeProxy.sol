@@ -21,6 +21,7 @@ contract EverduesFeeProxy {
 	address public mtds_root_address;
 	address public dex_root_address;
 	uint32 public current_version;
+	uint128 public account_threshold = 10 ever;
 	address swap_currency_root;
 	TvmCell platform_code;
 	TvmCell platform_params;
@@ -29,6 +30,7 @@ contract EverduesFeeProxy {
 	struct balance_wallet_struct {
 		address wallet;
 		uint128 balance;
+		address dex_ever_pair_address;
 	}
 
 	mapping(address => balance_wallet_struct) public wallets_mapping;
@@ -165,10 +167,22 @@ contract EverduesFeeProxy {
 		send_gas_to.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function executePaySubscription(address account_address, uint128 value, address currency_root, address subscription_wallet, uint128 account_gas_balance, uint128 additional_gas) external pure {
+	function setAccountGasThreshold(uint128 account_threshold_, address send_gas_to) external onlyRoot {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		account_threshold = account_threshold_;
+		send_gas_to.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
+	}
+
+	function executePaySubscription(address account_address, uint128 value, address currency_root, address subscription_wallet, uint128 account_gas_balance, uint128 additional_gas) external view {
 		uint128 gas_;
-		if (account_gas_balance < 10 ever) {
-			gas_ = 10 ever - account_gas_balance + additional_gas + 0.5 ever ;
+		if (account_gas_balance < account_threshold) {
+			gas_ = account_threshold - account_gas_balance + additional_gas + 0.5 ever ;
 		} else {
 			gas_ = additional_gas + 0.5 ever;
 		}
@@ -182,6 +196,40 @@ contract EverduesFeeProxy {
 			bounce: true,
 			flag: 0
 		}();
+	}
+
+	function swapTIP3ToEver(uint128 amount, address currency_root, address dex_ever_pair_address, address tip3_to_ever_address) external onlyRoot {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+			.fetch(currency_root);
+		balance_wallet_struct current_balance_key = current_balance_struct
+			.get();
+		TvmBuilder payload;
+		payload.store(uint8(2));
+		payload.store(uint64(0));
+		payload.store(dex_ever_pair_address);
+		payload.store(uint128(0));
+		uint128 balance_after_pay = current_balance_key.balance -
+			amount;
+		current_balance_key.balance = balance_after_pay;
+		wallets_mapping[currency_root] = current_balance_key;
+		ITokenWallet(current_balance_key.wallet).transfer{
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(
+			amount,
+			tip3_to_ever_address,
+			0,
+			root,
+			true,
+			payload.toCell()
+		);
 	}
 
 	function syncBalance(address currency_root, address send_gas_to)

@@ -41,6 +41,15 @@
 			]
 		},
 		{
+			"name": "setAccountGasThreshold",
+			"inputs": [
+				{"name":"account_threshold_","type":"uint128"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "executePaySubscription",
 			"inputs": [
 				{"name":"account_address","type":"address"},
@@ -49,6 +58,17 @@
 				{"name":"subscription_wallet","type":"address"},
 				{"name":"account_gas_balance","type":"uint128"},
 				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "swapTIP3ToEver",
+			"inputs": [
+				{"name":"amount","type":"uint128"},
+				{"name":"currency_root","type":"address"},
+				{"name":"dex_ever_pair_address","type":"address"},
+				{"name":"tip3_to_ever_address","type":"address"}
 			],
 			"outputs": [
 			]
@@ -157,11 +177,19 @@
 			]
 		},
 		{
+			"name": "account_threshold",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"account_threshold","type":"uint128"}
+			]
+		},
+		{
 			"name": "wallets_mapping",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
+				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"},{"name":"dex_ever_pair_address","type":"address"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 			]
 		}
 	],
@@ -177,11 +205,12 @@
 		{"name":"mtds_root_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"current_version","type":"uint32"},
+		{"name":"account_threshold","type":"uint128"},
 		{"name":"swap_currency_root","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"type_id","type":"uint8"},
-		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
+		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"},{"name":"dex_ever_pair_address","type":"address"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"_tmp_deploying_wallets","type":"map(address,address)"}
 	]
 }

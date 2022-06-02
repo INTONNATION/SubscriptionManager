@@ -4,6 +4,7 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "Platform.sol";
+import "EverduesRoot.sol";
 import "libraries/EverduesErrors.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/EverduesGas.sol";
@@ -48,10 +49,17 @@ contract EverduesAccount is IEverduesAccount {
 		address subscription_contract;
 	}
 
+	struct DeployServiceOperation {
+		TvmCell service_params;
+		TvmCell identificator;
+		uint128 additional_gas;
+	}
+
 	mapping(address => balance_wallet_struct) public wallets_mapping;
 	mapping(address => address) public _tmp_sync_balance;
 	mapping(uint64 => GetDexPairOperation) _tmp_get_pairs;
 	mapping(uint64 => ExchangeOperation) _tmp_exchange_operations;
+	mapping(uint64 => DeployServiceOperation) _tmp_deploy_service_operations;
 
 	constructor() public {
 		revert();
@@ -410,24 +418,40 @@ contract EverduesAccount is IEverduesAccount {
 			flag: 0
 		}(service_name);
 	}
-
 	function deployService(
 		TvmCell service_params,
 		TvmCell identificator,
 		uint128 additional_gas
-	) public view onlyOwner {
-		IEverduesRoot(root).deployService{
-			value: EverduesGas.SERVICE_INITIAL_BALANCE +
-				EverduesGas.INDEX_INITIAL_BALANCE *
-				2 +
-				EverduesGas.INIT_MESSAGE_VALUE *
-				4 +
-				EverduesGas.SET_SERVICE_INDEXES_VALUE +
-				additional_gas +
-				EverduesGas.INIT_MESSAGE_VALUE,
+	) public onlyOwner {
+		_tmp_deploy_service_operations[now] = DeployServiceOperation(
+			service_params,
+			identificator,
+			additional_gas
+		);
+		EverduesRoot(root).getDeployServiceRequirements{
+			value: EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
-			flag: 0
-		}(service_params, identificator, additional_gas);
+			flag: 0,
+			callback: EverduesAccount.onGetDeployServiceRequirements
+		}();
+	}
+
+	function onGetDeployServiceRequirements(TvmCell requirements) external onlyRoot {
+		(uint128 account_threshold, uint128 deploy_service_lock_value) = abi.decode(requirements, (uint128, uint128));
+		require(address(this).balance > deploy_service_lock_value, EverduesErrors.error_deploy_service_requirements_not_met);
+		optional(uint64, DeployServiceOperation) keyOpt = _tmp_deploy_service_operations
+			.min();
+		if (keyOpt.hasValue()) {
+			(uint64 call_id, DeployServiceOperation last_operation) = keyOpt.get();
+			call_id;
+			uint128 gas = address(this).balance - account_threshold;
+			IEverduesRoot(root).deployService{
+				value: gas,
+				bounce: true,
+				flag: 0
+			}(last_operation.service_params, last_operation.identificator, last_operation.additional_gas);
+			_tmp_deploy_service_operations.delMin();
+		}
 	}
 
 	function upgradeService(
@@ -504,14 +528,6 @@ contract EverduesAccount is IEverduesAccount {
 		}
 	}
 
-	function withdrawGas(uint128 withdraw_value, address withdraw_to)
-		external
-		pure
-		onlyOwner
-	{
-		withdraw_to.transfer({value: withdraw_value, flag: 0});
-	}
-
 	function withdrawFunds(
 		address currency_root,
 		uint128 withdraw_value,
@@ -536,7 +552,7 @@ contract EverduesAccount is IEverduesAccount {
 		}(withdraw_value, withdraw_to, 0, address(this), true, payload);
 	}
 
-	function destroyAccount(address send_gas_to) public onlyOwner {
+	function destroyAccount(address send_gas_to) public onlyRoot {
 		selfdestruct(send_gas_to);
 	}
 
