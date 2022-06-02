@@ -386,7 +386,7 @@ contract Subscription is IEverduesSubscription {
 		uint128 service_fee_value = service_value_percentage * service_fee;
 		uint128 protocol_fee = (svcparams.subscription_value -
 			svcparams.service_value +
-			service_fee_value);
+			service_fee_value + account_compensation_fee);
 		uint128 pay_value = svcparams.subscription_value - protocol_fee;
 		subscription.payment_timestamp = uint32(now) + subscription.period;
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
