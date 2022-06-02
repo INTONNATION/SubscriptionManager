@@ -381,6 +381,7 @@ contract Subscription is IEverduesSubscription {
 			),
 			2
 		);
+		uint128 account_compensation_fee = abi.decode(payload, (uint128));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 service_fee_value = service_value_percentage * service_fee;
 		uint128 protocol_fee = (svcparams.subscription_value -
