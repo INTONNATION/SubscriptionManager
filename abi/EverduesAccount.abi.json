@@ -53,6 +53,15 @@
 			]
 		},
 		{
+			"name": "onExpectedExchange",
+			"inputs": [
+				{"name":"expected_amount","type":"uint128"},
+				{"name":"value1","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "syncBalance",
 			"inputs": [
 				{"name":"currency_root","type":"address"},
@@ -206,6 +215,14 @@
 			]
 		},
 		{
+			"name": "onGetExpectedPairAddress",
+			"inputs": [
+				{"name":"dex_pair_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "root",
 			"inputs": [
 			],
@@ -306,6 +323,8 @@
 		{"name":"current_version","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
 		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"},{"name":"dex_ever_pair_address","type":"address"}],"name":"wallets_mapping","type":"map(address,tuple)"},
-		{"name":"_tmp_sync_balance","type":"map(address,address)"}
+		{"name":"_tmp_sync_balance","type":"map(address,address)"},
+		{"components":[{"name":"currency_root","type":"address"},{"name":"send_gas_to","type":"address"}],"name":"_tmp_get_pairs","type":"map(uint64,tuple)"},
+		{"components":[{"name":"currency_root","type":"address"},{"name":"value","type":"uint128"},{"name":"subscription_wallet","type":"address"},{"name":"pay_subscription_gas","type":"uint128"},{"name":"subscription_contract","type":"address"}],"name":"_tmp_exchange_operations","type":"map(uint64,tuple)"}
 	]
 }
