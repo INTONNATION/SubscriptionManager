@@ -135,7 +135,6 @@ contract SubscriptionService is IEverduesSubscriptionService {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
-		tvm.rawReserve(EverduesGas.SERVICE_INITIAL_BALANCE, 2);
 		(
 			address root_,
 			address send_gas_to,
@@ -167,7 +166,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		platform_code = platform_code_;
 		platform_params = platform_params_;
 		type_id = type_id_;
-		if (old_version == 0 || !contract_params.toSlice().empty()) {
+		if (old_version == 0) {
 			TvmCell nextCell;
 			(service_owner, svcparams.name) = platform_params.toSlice().decode(
 				address,
@@ -227,11 +226,11 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
 			status = status_;
 			svcparams = svcparams_;
+			send_gas_to.transfer({
+				value: 0,
+				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+			});
 		}
-		send_gas_to.transfer({
-			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-		});
 	}
 
 	function setIndexes(
