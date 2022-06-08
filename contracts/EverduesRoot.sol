@@ -862,7 +862,7 @@ contract EverduesRoot {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
-		TvmCell update_data = abi.encode(dex_root_address, wever_root, tip3_to_ever_address);
+		TvmCell update_data = abi.encode(dex_root_address, wever_root);
 		require(
 			msg.sender == account_address,
 			EverduesErrors.error_message_sender_is_not_account_address
