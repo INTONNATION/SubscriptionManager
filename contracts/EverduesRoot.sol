@@ -584,7 +584,10 @@ contract EverduesRoot {
 		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function setDeployServiceLockValue(uint128 deploy_service_lock_value_) external onlyOwner {
+	function setDeployServiceLockValue(uint128 deploy_service_lock_value_)
+		external
+		onlyOwner
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -596,7 +599,10 @@ contract EverduesRoot {
 		msg.sender.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function setAccountGasThreshold(uint128 account_threshold_) external onlyOwner {
+	function setAccountGasThreshold(uint128 account_threshold_)
+		external
+		onlyOwner
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -643,10 +649,7 @@ contract EverduesRoot {
 		owner.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function installOrUpgradeWEVERRoot(address wever_root_)
-		external
-		onlyOwner
-	{
+	function installOrUpgradeWEVERRoot(address wever_root_) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -707,10 +710,10 @@ contract EverduesRoot {
 		}(mtds_root_address, owner);
 	}
 
-	function installOrUpgradeDexRootAddresses(address dex_root, address tip3_to_ever)
-		external
-		onlyOwner
-	{
+	function installOrUpgradeDexRootAddresses(
+		address dex_root,
+		address tip3_to_ever
+	) external onlyOwner {
 		require(
 			fee_proxy_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -819,7 +822,12 @@ contract EverduesRoot {
 		);
 	}
 
-	function getDeployServiceRequirements() external responsible view returns (TvmCell) {
+	function getDeployServiceRequirements()
+		external
+		view
+		responsible
+		returns (TvmCell)
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -827,11 +835,21 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell response = abi.encode(account_threshold, deploy_service_lock_value);
-		return { value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED } (response);
+		TvmCell response = abi.encode(
+			account_threshold,
+			deploy_service_lock_value
+		);
+		return
+			{value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED} (
+				response
+			);
 	}
 
-	function forceUpgradeAccount(address account_address) external view onlyOwner {
+	function forceUpgradeAccount(address account_address)
+		external
+		view
+		onlyOwner
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -907,10 +925,18 @@ contract EverduesRoot {
 			value: 0,
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(subscription_code_salt, subscription_version, msg.sender, upgrade_data);
+		}(
+			subscription_code_salt,
+			subscription_version,
+			msg.sender,
+			upgrade_data
+		);
 	}
 
-	function forceUpgradeSubscription(address subscription_address, address subscription_owner) external view {
+	function forceUpgradeSubscription(
+		address subscription_address,
+		address subscription_owner
+	) external view {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -918,13 +944,20 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell subscription_code_salt = _buildSubscriptionCode(subscription_owner);
+		TvmCell subscription_code_salt = _buildSubscriptionCode(
+			subscription_owner
+		);
 		TvmCell upgrade_data;
 		Subscription(subscription_address).upgrade{
 			value: 0,
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(subscription_code_salt, subscription_version, address(this), upgrade_data);
+		}(
+			subscription_code_salt,
+			subscription_version,
+			address(this),
+			upgrade_data
+		);
 	}
 
 	function updateSubscriptionIdentificator(
@@ -988,7 +1021,7 @@ contract EverduesRoot {
 		}(service_code_salt, service_version, msg.sender, upgrade_data);
 	}
 
-	function forceUpgradeService(address service_address,string category)
+	function forceUpgradeService(address service_address, string category)
 		external
 		view
 	{
@@ -1104,7 +1137,7 @@ contract EverduesRoot {
 			abiSubscriptionIdentificatorIndexContract,
 			abiFeeProxyContract,
 			abiServiceIdentificatorIndexContract,
-	        wever_root,
+			wever_root,
 			tip3_to_ever_address
 		);
 		tvm.setcode(code);
@@ -1156,49 +1189,49 @@ contract EverduesRoot {
 			wever_root,
 			tip3_to_ever_address
 		) = abi.decode(
-				upgrade_data,
-				(
-					uint32,
-					address,
-					uint32,
-					uint32,
-					uint32,
-					mapping(uint8 => EverduesRoot.VersionsTvcParams),
-					mapping(uint8 => EverduesRoot.VersionsAbiParams),
-					uint8,
-					bool,
-					address,
-					string[],
-					uint8,
-					uint8,
-					address,
-					address,
-					address,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					string,
-					string,
-					string,
-					string,
-					string,
-					string,
-					string,
-					string,
-					string,
-					string,
-					string,
-					string,
-					address,
-					address
-				)
-			);
+			upgrade_data,
+			(
+				uint32,
+				address,
+				uint32,
+				uint32,
+				uint32,
+				mapping(uint8 => EverduesRoot.VersionsTvcParams),
+				mapping(uint8 => EverduesRoot.VersionsAbiParams),
+				uint8,
+				bool,
+				address,
+				string[],
+				uint8,
+				uint8,
+				address,
+				address,
+				address,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				string,
+				string,
+				string,
+				string,
+				string,
+				string,
+				string,
+				string,
+				string,
+				string,
+				string,
+				string,
+				address,
+				address
+			)
+		);
 		owner.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -1296,7 +1329,11 @@ contract EverduesRoot {
 			2
 		);
 
-		TvmCell account_params = abi.encode(dex_root_address, wever_root, tip3_to_ever_address);
+		TvmCell account_params = abi.encode(
+			dex_root_address,
+			wever_root,
+			tip3_to_ever_address
+		);
 
 		IPlatform(msg.sender).initializeByRoot{
 			value: 0,
