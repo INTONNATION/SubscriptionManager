@@ -125,6 +125,22 @@ contract EverduesRoot {
 		_;
 	}
 
+	modifier onlyAccountContract(uint256 pubkey) {
+		address account_contract_address = address(
+			tvm.hash(
+				_buildInitData(
+					PlatformTypes.Account,
+					_buildAccountInitData(PlatformTypes.Account, pubkey)
+				)
+			)
+		);
+		require(
+			msg.sender == account_contract_address,
+			EverduesErrors.error_message_sender_is_not_my_subscription
+		);		
+		_;
+	}
+
 	function transferOwner(address new_owner) external onlyOwner {
 		require(
 			owner != new_owner,
@@ -1350,8 +1366,7 @@ contract EverduesRoot {
 		TvmCell identificator,
 		uint256 owner_pubkey,
 		uint128 additional_gas
-	) external view {
-		// TODO: require sender is account contract
+	) external view onlyAccountContract(owner_pubkey) {
 		require(
 			service_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -1449,9 +1464,9 @@ contract EverduesRoot {
 	function deployService(
 		TvmCell service_params,
 		TvmCell identificator,
+		uint256 owner_pubkey,
 		uint128 additional_gas
-	) external view {
-		// TODO: require sender is account contract
+	) external view onlyAccountContract(owner_pubkey) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
