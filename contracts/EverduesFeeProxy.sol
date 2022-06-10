@@ -57,6 +57,25 @@ contract EverduesFeeProxy {
 		_;
 	}
 
+	modifier onlySubscriptionContract(
+		address account_address,
+		address service_address
+	) {
+		address subscription_contract_address = address(
+			tvm.hash(
+				_buildInitData(
+					PlatformTypes.Subscription,
+					_buildSubscriptionParams(account_address, service_address)
+				)
+			)
+		);
+		require(
+			msg.sender == subscription_contract_address,
+			EverduesErrors.error_message_sender_is_not_my_subscription
+		);
+		_;
+	}
+
 	function onAcceptTokensTransfer(
 		address tokenRoot,
 		uint128 amount,
@@ -167,7 +186,10 @@ contract EverduesFeeProxy {
 		send_gas_to.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function setAccountGasThreshold(uint128 account_threshold_, address send_gas_to) external onlyRoot {
+	function setAccountGasThreshold(
+		uint128 account_threshold_,
+		address send_gas_to
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -179,10 +201,22 @@ contract EverduesFeeProxy {
 		send_gas_to.transfer({value: 0, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
-	function executePaySubscription(address account_address, uint128 value, address currency_root, address subscription_wallet, uint128 account_gas_balance, uint128 additional_gas) external view {
+	function executePaySubscription(
+		address account_address,
+		address service_address,
+		uint128 value,
+		address currency_root,
+		address subscription_wallet,
+		uint128 account_gas_balance,
+		uint128 additional_gas
+	) external view onlySubscriptionContract(account_address, service_address) {
 		uint128 gas_;
 		if (account_gas_balance < account_threshold) {
-			gas_ = account_threshold - account_gas_balance + additional_gas + 0.5 ever ;
+			gas_ =
+				account_threshold -
+				account_gas_balance +
+				additional_gas +
+				0.5 ever;
 		} else {
 			gas_ = additional_gas + 0.5 ever;
 		}
@@ -190,7 +224,7 @@ contract EverduesFeeProxy {
 			value: gas_,
 			bounce: true,
 			flag: 0
-		}(value,currency_root,subscription_wallet, additional_gas);
+		}(value, currency_root, subscription_wallet, additional_gas);
 		IEverduesSubscription(msg.sender).replenishGas{
 			value: 1 ever,
 			bounce: true,
@@ -198,7 +232,12 @@ contract EverduesFeeProxy {
 		}();
 	}
 
-	function swapTIP3ToEver(uint128 amount, address currency_root, address dex_ever_pair_address, address tip3_to_ever_address) external onlyRoot {
+	function swapTIP3ToEver(
+		uint128 amount,
+		address currency_root,
+		address dex_ever_pair_address,
+		address tip3_to_ever_address
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -215,21 +254,13 @@ contract EverduesFeeProxy {
 		payload.store(uint64(0));
 		payload.store(dex_ever_pair_address);
 		payload.store(uint128(0));
-		uint128 balance_after_pay = current_balance_key.balance -
-			amount;
+		uint128 balance_after_pay = current_balance_key.balance - amount;
 		current_balance_key.balance = balance_after_pay;
 		wallets_mapping[currency_root] = current_balance_key;
 		ITokenWallet(current_balance_key.wallet).transfer{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(
-			amount,
-			tip3_to_ever_address,
-			0,
-			root,
-			true,
-			payload.toCell()
-		);
+		}(amount, tip3_to_ever_address, 0, root, true, payload.toCell());
 	}
 
 	function syncBalance(address currency_root, address send_gas_to)
@@ -385,10 +416,9 @@ contract EverduesFeeProxy {
 			uint8 type_id_,
 			TvmCell platform_code_,
 			TvmCell platform_params_,
-			TvmCell contract_params,
+			TvmCell contract_params, /*TvmCell code*/
 
-		) = /*TvmCell code*/
-			abi.decode(
+		) = abi.decode(
 				upgrade_data,
 				(
 					address,
@@ -540,5 +570,34 @@ contract EverduesFeeProxy {
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
+	}
+
+	function _buildSubscriptionParams(
+		address subscription_owner,
+		address service_address
+	) private inline pure returns (TvmCell) {
+		TvmBuilder builder;
+		builder.store(subscription_owner);
+		builder.store(service_address);
+		return builder.toCell();
+	}
+
+	function _buildInitData(uint8 type_id_, TvmCell params)
+		private
+		inline
+		view
+		returns (TvmCell)
+	{
+		return
+			tvm.buildStateInit({
+				contr: Platform,
+				varInit: {
+					root: root,
+					type_id: type_id_,
+					platform_params: params
+				},
+				pubkey: 0,
+				code: platform_code
+			});
 	}
 }

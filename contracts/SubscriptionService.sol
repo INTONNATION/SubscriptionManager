@@ -47,7 +47,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		_;
 	}
 
-	function getParams() external override view responsible returns (TvmCell) {
+	function getParams() external view responsible override returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -55,13 +55,10 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			),
 			2
 		);
-		return {
-			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		} service_params;
+		return {value: 0, flag: MsgFlag.ALL_NOT_RESERVED} service_params;
 	}
 
-	function getInfo() external override view responsible returns (TvmCell) {
+	function getInfo() external view responsible override returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -71,10 +68,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		);
 		TvmBuilder info;
 		info.store(status);
-		return {
-			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		} info.toCell();
+		return {value: 0, flag: MsgFlag.ALL_NOT_RESERVED} info.toCell();
 	}
 
 	function pause() public onlyRoot {
@@ -144,8 +138,9 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			TvmCell platform_code_,
 			TvmCell platform_params_,
 			TvmCell contract_params,
-			/*TvmCell code*/
-		) = abi.decode(
+
+		) = /*TvmCell code*/
+			abi.decode(
 				upgrade_data,
 				(
 					address,
@@ -158,7 +153,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 					TvmCell,
 					TvmCell
 				)
-		);
+			);
 		tvm.resetStorage();
 
 		root = root_;
@@ -177,7 +172,12 @@ contract SubscriptionService is IEverduesSubscriptionService {
 				svcparams.value,
 				svcparams.period,
 				nextCell
-			) = contract_params.toSlice().decode(address, uint128, uint32, TvmCell);
+			) = contract_params.toSlice().decode(
+				address,
+				uint128,
+				uint32,
+				TvmCell
+			);
 			TvmCell nextCell2;
 			(, svcparams.description, svcparams.image, nextCell2) = nextCell
 				.toSlice()
@@ -200,7 +200,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 				TvmCell service_params_,
 				address subscription_service_index_address_,
 				address subscription_service_index_identificator_address_,
-			    uint8 status_,
+				uint8 status_,
 				SubscriptionService.ServiceParams svcparams_
 			) = abi.decode(
 					upgrade_data,
@@ -246,7 +246,10 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		);
 		subscription_service_index_address = subscription_service_index_address_;
 		subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
-		emit ServiceDeployed(subscription_service_index_address, subscription_service_index_identificator_address);
+		emit ServiceDeployed(
+			subscription_service_index_address,
+			subscription_service_index_identificator_address
+		);
 		service_owner.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS

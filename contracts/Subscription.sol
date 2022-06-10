@@ -156,8 +156,9 @@ contract Subscription is IEverduesSubscription {
 			TvmCell platform_code_,
 			TvmCell platform_params_,
 			TvmCell contract_params,
-			/*TvmCell code*/
-		) = abi.decode(
+
+		) = /*TvmCell code*/
+			abi.decode(
 				upgrade_data,
 				(
 					address,
@@ -286,7 +287,7 @@ contract Subscription is IEverduesSubscription {
 	function executeSubscription(uint128 paySubscriptionGas)
 		public
 		override
-		onlyRootOrOwnerAccount
+		onlyRootOrOwnerAccount // TODO: add serviceOwner
 	{
 		if (
 			now >
@@ -296,9 +297,9 @@ contract Subscription is IEverduesSubscription {
 		) {
 			require(
 				subscription.status !=
-					EverduesSubscriptionStatus.STATUS_PROCESSING && 
-				subscription.status !=
-				    EverduesSubscriptionStatus.STATUS_ACTIVE,
+					EverduesSubscriptionStatus.STATUS_PROCESSING &&
+					subscription.status !=
+					EverduesSubscriptionStatus.STATUS_ACTIVE,
 				EverduesErrors.error_subscription_already_executed
 			);
 			tvm.accept();
@@ -360,11 +361,11 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function onAcceptTokensTransfer(
-		address /*tokenRoot*/,
+		address, /*tokenRoot*/
 		uint128 amount,
-		address /*sender*/,
-		address /*senderWallet*/,
-		address /*remainingGasTo*/,
+		address, /*sender*/
+		address, /*senderWallet*/
+		address, /*remainingGasTo*/
 		TvmCell payload
 	) public {
 		require(
@@ -373,7 +374,8 @@ contract Subscription is IEverduesSubscription {
 		);
 		require(
 			msg.sender == subscription_wallet,
-			EverduesErrors.error_message_sender_is_not_subscription_wallet);
+			EverduesErrors.error_message_sender_is_not_subscription_wallet
+		);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
@@ -386,7 +388,8 @@ contract Subscription is IEverduesSubscription {
 		uint128 service_fee_value = service_value_percentage * service_fee;
 		uint128 protocol_fee = (svcparams.subscription_value -
 			svcparams.service_value +
-			service_fee_value + account_compensation_fee);
+			service_fee_value +
+			account_compensation_fee);
 		uint128 pay_value = svcparams.subscription_value - protocol_fee;
 		subscription.payment_timestamp = uint32(now) + subscription.period;
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
@@ -412,8 +415,11 @@ contract Subscription is IEverduesSubscription {
 		TvmCell body;
 		msg.sender.transfer(0, false, MsgFlag.REMAINING_GAS, body);
 	}
-	
-	function onGetNextPaymentStatus(uint8 next_payment_status, uint128 account_gas_balance) external {
+
+	function onGetNextPaymentStatus(
+		uint8 next_payment_status,
+		uint128 account_gas_balance
+	) external onlyAccount {
 		if (next_payment_status == 1) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else if (next_payment_status == 0) {
@@ -422,7 +428,15 @@ contract Subscription is IEverduesSubscription {
 				value: 0,
 				bounce: true,
 				flag: MsgFlag.REMAINING_GAS
-			}(account_address, svcparams.service_value, svcparams.currency_root, subscription_wallet, account_gas_balance, subscription.pay_subscription_gas);
+			}(
+				account_address,
+				service_address,
+				svcparams.service_value,
+				svcparams.currency_root,
+				subscription_wallet,
+				account_gas_balance,
+				subscription.pay_subscription_gas
+			);
 		}
 	}
 
