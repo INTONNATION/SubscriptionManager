@@ -95,7 +95,7 @@ contract EverduesAccount is IEverduesAccount {
 			tvm.hash(
 				_buildInitData(
 					PlatformTypes.FeeProxy,
-					_buildPlatformParamsOwnerAddress(address(this))
+					_buildPlatformParamsOwnerAddress(root)
 				)
 			)
 		);

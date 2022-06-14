@@ -23,6 +23,7 @@ contract Subscription is IEverduesSubscription {
 	address public root;
 	address public address_fee_proxy;
 	address public account_address;
+	uint256 public owner_pubkey;
 	address public subscription_index_address;
 	address public subscription_index_identificator_address;
 	uint8 public service_fee;
@@ -32,7 +33,6 @@ contract Subscription is IEverduesSubscription {
 	address subscription_wallet;
 	address service_address;
 	uint256 root_pubkey;
-	uint256 owner_pubkey;
 	uint32 current_version;
 	uint32 preprocessing_window;
 	uint8 type_id;
@@ -137,7 +137,8 @@ contract Subscription is IEverduesSubscription {
 			svcparams,
 			preprocessing_window,
 			subscription_wallet,
-			service_address
+			service_address,
+			owner_pubkey
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -233,7 +234,8 @@ contract Subscription is IEverduesSubscription {
 				svcparams,
 				preprocessing_window,
 				subscription_wallet,
-				service_address
+				service_address,
+				owner_pubkey
 			) = abi.decode(
 				upgrade_data,
 				(
@@ -257,7 +259,8 @@ contract Subscription is IEverduesSubscription {
 					Subscription.serviceParams,
 					uint32,
 					address,
-					address
+					address,
+					uint256
 				)
 			);
 			send_gas_to.transfer({
@@ -295,10 +298,11 @@ contract Subscription is IEverduesSubscription {
 				svcparams.period -
 				preprocessing_window)
 		) {
+			uint8 subcr_status = subscriptionStatus();
 			require(
-				subscription.status !=
+				subcr_status !=
 					EverduesSubscriptionStatus.STATUS_PROCESSING &&
-					subscription.status !=
+					subcr_status !=
 					EverduesSubscriptionStatus.STATUS_ACTIVE,
 				EverduesErrors.error_subscription_already_executed
 			);

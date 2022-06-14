@@ -139,6 +139,14 @@
 			]
 		},
 		{
+			"name": "owner_pubkey",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"owner_pubkey","type":"uint256"}
+			]
+		},
+		{
 			"name": "subscription_index_address",
 			"inputs": [
 			],
@@ -207,6 +215,7 @@
 		{"name":"root","type":"address"},
 		{"name":"address_fee_proxy","type":"address"},
 		{"name":"account_address","type":"address"},
+		{"name":"owner_pubkey","type":"uint256"},
 		{"name":"subscription_index_address","type":"address"},
 		{"name":"subscription_index_identificator_address","type":"address"},
 		{"name":"service_fee","type":"uint8"},
@@ -216,7 +225,6 @@
 		{"name":"subscription_wallet","type":"address"},
 		{"name":"service_address","type":"address"},
 		{"name":"root_pubkey","type":"uint256"},
-		{"name":"owner_pubkey","type":"uint256"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"preprocessing_window","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
