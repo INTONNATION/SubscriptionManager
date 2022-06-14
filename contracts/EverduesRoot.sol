@@ -128,16 +128,13 @@ contract EverduesRoot {
 	modifier onlyAccountContract(uint256 pubkey) {
 		address account_contract_address = address(
 			tvm.hash(
-				_buildInitData(
-					PlatformTypes.Account,
-					_buildAccountInitData(PlatformTypes.Account, pubkey)
-				)
+				_buildAccountInitData(PlatformTypes.Account, pubkey)
 			)
 		);
 		require(
 			msg.sender == account_contract_address,
-			EverduesErrors.error_message_sender_is_not_my_subscription
-		);		
+			EverduesErrors.error_message_sender_is_not_account_address
+		);
 		_;
 	}
 
