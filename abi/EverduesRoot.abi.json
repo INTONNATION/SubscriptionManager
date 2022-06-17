@@ -382,9 +382,20 @@
 			]
 		},
 		{
+			"name": "upgradeSubscriptionPlan",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"subscription_plan","type":"uint8"},
+				{"name":"owner_pubkey","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "upgradeSubscription",
 			"inputs": [
-				{"name":"service_address","type":"address"}
+				{"name":"service_address","type":"address"},
+				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -402,7 +413,8 @@
 			"name": "updateSubscriptionIdentificator",
 			"inputs": [
 				{"name":"service_address","type":"address"},
-				{"name":"identificator","type":"cell"}
+				{"name":"identificator","type":"cell"},
+				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -411,7 +423,9 @@
 			"name": "upgradeService",
 			"inputs": [
 				{"name":"service_name","type":"string"},
-				{"name":"category","type":"string"}
+				{"name":"category","type":"string"},
+				{"name":"publish_to_catalog","type":"bool"},
+				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -420,7 +434,8 @@
 			"name": "forceUpgradeService",
 			"inputs": [
 				{"name":"service_address","type":"address"},
-				{"name":"category","type":"string"}
+				{"name":"category","type":"string"},
+				{"name":"publish_to_catalog","type":"bool"}
 			],
 			"outputs": [
 			]
@@ -429,7 +444,8 @@
 			"name": "updateServiceParams",
 			"inputs": [
 				{"name":"service_name","type":"string"},
-				{"name":"new_service_params","type":"cell"}
+				{"name":"new_service_params","type":"cell"},
+				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -438,7 +454,8 @@
 			"name": "updateServiceIdentificator",
 			"inputs": [
 				{"name":"service_name","type":"string"},
-				{"name":"identificator","type":"cell"}
+				{"name":"identificator","type":"cell"},
+				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -462,15 +479,8 @@
 		{
 			"name": "cancelService",
 			"inputs": [
-				{"name":"service_name","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "cancelSubscription",
-			"inputs": [
-				{"name":"service_address","type":"address"}
+				{"name":"service_name","type":"string"},
+				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -489,6 +499,7 @@
 				{"name":"service_address","type":"address"},
 				{"name":"identificator","type":"cell"},
 				{"name":"owner_pubkey","type":"uint256"},
+				{"name":"subscription_plan","type":"uint8"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
@@ -500,6 +511,7 @@
 				{"name":"service_params","type":"cell"},
 				{"name":"identificator","type":"cell"},
 				{"name":"owner_pubkey","type":"uint256"},
+				{"name":"publish_to_catalog","type":"bool"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [

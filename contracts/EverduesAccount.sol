@@ -51,6 +51,7 @@ contract EverduesAccount is IEverduesAccount {
 	struct DeployServiceOperation {
 		TvmCell service_params;
 		TvmCell identificator;
+		bool publish_to_catalog;
 		uint128 additional_gas;
 	}
 
@@ -255,13 +256,13 @@ contract EverduesAccount is IEverduesAccount {
 			uint128 current_balance = current_balance_key_value.balance;
 			if (value > current_balance) {
 				return
-					{value: 0, flag: MsgFlag.ALL_NOT_RESERVED} (
+					{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} (
 						1,
 						address(this).balance
 					);
 			} else {
 				return
-					{value: 0, flag: MsgFlag.ALL_NOT_RESERVED} (
+					{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} (
 						0,
 						address(this).balance
 					);
@@ -408,19 +409,7 @@ contract EverduesAccount is IEverduesAccount {
 				EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
-		}(service_address);
-	}
-
-	function cancelSubscription(address service_address, uint128 additional_gas)
-		public
-		view
-		onlyOwner
-	{
-		IEverduesRoot(root).cancelSubscription{
-			value: EverduesGas.CANCEL_MIN_VALUE + additional_gas,
-			bounce: true,
-			flag: 0
-		}(service_address);
+		}(service_address, tvm.pubkey());
 	}
 
 	function updateServiceIdentificator(
@@ -432,7 +421,7 @@ contract EverduesAccount is IEverduesAccount {
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_name, identificator);
+		}(service_name, identificator, tvm.pubkey());
 	}
 
 	function updateSubscriptionIdentificator(
@@ -444,7 +433,7 @@ contract EverduesAccount is IEverduesAccount {
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_address, identificator);
+		}(service_address, identificator, tvm.pubkey());
 	}
 
 	function updateServiceParams(
@@ -456,7 +445,7 @@ contract EverduesAccount is IEverduesAccount {
 			value: EverduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_name, new_service_params);
+		}(service_name, new_service_params, tvm.pubkey());
 	}
 
 	function cancelService(string service_name, uint128 additional_gas)
@@ -468,17 +457,19 @@ contract EverduesAccount is IEverduesAccount {
 			value: EverduesGas.CANCEL_MIN_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
-		}(service_name);
+		}(service_name, tvm.pubkey());
 	}
 
 	function deployService(
 		TvmCell service_params,
 		TvmCell identificator,
+		bool publish_to_catalog,
 		uint128 additional_gas
 	) public onlyOwner {
 		_tmp_deploy_service_operations[now] = DeployServiceOperation(
 			service_params,
 			identificator,
+			publish_to_catalog,
 			additional_gas
 		);
 		EverduesRoot(root).getDeployServiceRequirements{
@@ -507,7 +498,7 @@ contract EverduesAccount is IEverduesAccount {
 			(uint64 call_id, DeployServiceOperation last_operation) = keyOpt
 				.get();
 			call_id;
-			uint128 gas = address(this).balance - account_threshold;
+			uint128 gas = deploy_service_lock_value - account_threshold;
 			IEverduesRoot(root).deployService{
 				value: gas,
 				bounce: true,
@@ -515,6 +506,8 @@ contract EverduesAccount is IEverduesAccount {
 			}(
 				last_operation.service_params,
 				last_operation.identificator,
+				tvm.pubkey(),
+				last_operation.publish_to_catalog,
 				last_operation.additional_gas
 			);
 			_tmp_deploy_service_operations.delMin();
@@ -532,12 +525,27 @@ contract EverduesAccount is IEverduesAccount {
 				EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
-		}(service_name, category);
+		}(service_name, category, tvm.pubkey());
+	}
+
+	function upgradeSubscriptionPlan(
+		uint8 new_subscription_plan,
+		address service_address,
+		uint128 additional_gas
+	) public view onlyOwner {
+		IEverduesRoot(root).upgradeSubscriptionPlan{
+			value: EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE +
+				additional_gas +
+				EverduesGas.INIT_MESSAGE_VALUE,
+			bounce: true,
+			flag: 0
+		}(service_address, new_subscription_plan, tvm.pubkey());
 	}
 
 	function deploySubscription(
 		address service_address,
 		TvmCell identificator,
+		uint8 subscription_plan,
 		uint128 additional_gas
 	) public view onlyOwner {
 		IEverduesRoot(root).deploySubscription{
@@ -550,7 +558,13 @@ contract EverduesAccount is IEverduesAccount {
 				EverduesGas.INIT_MESSAGE_VALUE,
 			bounce: true,
 			flag: 0
-		}(service_address, identificator, tvm.pubkey(), additional_gas);
+		}(
+			service_address,
+			identificator,
+			tvm.pubkey(),
+			subscription_plan,
+			additional_gas
+		);
 	}
 
 	function onBalanceOf(uint128 balance_) external {

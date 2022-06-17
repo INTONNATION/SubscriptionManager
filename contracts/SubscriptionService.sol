@@ -10,12 +10,13 @@ import "interfaces/IEverduesIndex.sol";
 import "interfaces/IEverduesSubscriptionService.sol";
 
 contract SubscriptionService is IEverduesSubscriptionService {
-	TvmCell public service_params;
 	address public root;
 	address public service_owner;
 	address public subscription_service_index_address;
 	address public subscription_service_index_identificator_address;
 	uint8 public status = 0;
+	uint256 public registation_timestamp;
+	mapping(uint8 => TvmCell) public service_params;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	TvmCell code;
@@ -33,8 +34,6 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		string category;
 	}
 
-	ServiceParams public svcparams;
-
 	constructor() public {
 		revert();
 	}
@@ -47,7 +46,13 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		_;
 	}
 
-	function getParams() external view responsible override returns (TvmCell) {
+	function getParams(uint8 subscription_plan)
+		external
+		view
+		responsible
+		override
+		returns (TvmCell)
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -55,7 +60,10 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			),
 			2
 		);
-		return {value: 0, flag: MsgFlag.ALL_NOT_RESERVED} service_params;
+		return
+			{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} service_params[
+				subscription_plan
+			];
 	}
 
 	function getInfo() external view responsible override returns (TvmCell) {
@@ -68,7 +76,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		);
 		TvmBuilder info;
 		info.store(status);
-		return {value: 0, flag: MsgFlag.ALL_NOT_RESERVED} info.toCell();
+		return {value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} info.toCell();
 	}
 
 	function pause() public onlyRoot {
@@ -120,8 +128,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			service_params,
 			subscription_service_index_address,
 			subscription_service_index_identificator_address,
-			status,
-			svcparams
+			status
 		);
 		tvm.setcode(code_);
 		tvm.setCurrentCode(code_);
@@ -137,10 +144,9 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			uint8 type_id_,
 			TvmCell platform_code_,
 			TvmCell platform_params_,
-			TvmCell contract_params,
+			TvmCell contract_params, /*TvmCell code*/
 
-		) = /*TvmCell code*/
-			abi.decode(
+		) = abi.decode(
 				upgrade_data,
 				(
 					address,
@@ -162,30 +168,11 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		platform_params = platform_params_;
 		type_id = type_id_;
 		if (old_version == 0) {
-			TvmCell nextCell;
-			(service_owner, svcparams.name) = platform_params.toSlice().decode(
-				address,
-				string
+			service_params = abi.decode(
+				contract_params,
+				(mapping(uint8 => TvmCell))
 			);
-			(
-				svcparams.to,
-				svcparams.value,
-				svcparams.period,
-				nextCell
-			) = contract_params.toSlice().decode(
-				address,
-				uint128,
-				uint32,
-				TvmCell
-			);
-			TvmCell nextCell2;
-			(, svcparams.description, svcparams.image, nextCell2) = nextCell
-				.toSlice()
-				.decode(string, string, string, TvmCell);
-			(svcparams.currency_root, svcparams.category) = nextCell2
-				.toSlice()
-				.decode(address, string);
-			service_params = contract_params;
+			registation_timestamp = now;
 		} else if (old_version > 0) {
 			(
 				,
@@ -197,11 +184,10 @@ contract SubscriptionService is IEverduesSubscriptionService {
 				,
 				,
 				,
-				TvmCell service_params_,
+				mapping(uint8 => TvmCell) service_params_,
 				address subscription_service_index_address_,
 				address subscription_service_index_identificator_address_,
-				uint8 status_,
-				SubscriptionService.ServiceParams svcparams_
+				uint8 status_
 			) = abi.decode(
 					upgrade_data,
 					(
@@ -214,18 +200,16 @@ contract SubscriptionService is IEverduesSubscriptionService {
 						TvmCell,
 						TvmCell,
 						TvmCell,
-						TvmCell,
+						mapping(uint8 => TvmCell),
 						address,
 						address,
-						uint8,
-						SubscriptionService.ServiceParams
+						uint8
 					)
 				);
 			service_params = service_params_;
 			subscription_service_index_address = subscription_service_index_address_;
 			subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
 			status = status_;
-			svcparams = svcparams_;
 			send_gas_to.transfer({
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -264,26 +248,10 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			),
 			2
 		);
-		TvmCell nextCell;
-		(
-			svcparams.to,
-			svcparams.value,
-			svcparams.period,
-			nextCell
-		) = new_service_params.toSlice().decode(
-			address,
-			uint128,
-			uint32,
-			TvmCell
+		service_params = abi.decode(
+			new_service_params,
+			(mapping(uint8 => TvmCell))
 		);
-		TvmCell nextCell2;
-		(, svcparams.description, svcparams.image, nextCell2) = nextCell
-			.toSlice()
-			.decode(string, string, string, TvmCell);
-		(svcparams.currency_root, svcparams.category) = nextCell2
-			.toSlice()
-			.decode(address, string);
-		service_params = new_service_params;
 		service_owner.transfer({
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS

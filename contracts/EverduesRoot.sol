@@ -25,10 +25,6 @@ interface IPlatform {
 	) external;
 }
 
-interface ISubscription {
-	function cancel() external;
-}
-
 contract EverduesRoot {
 	uint8 public version;
 	string[] public categories;
@@ -127,9 +123,7 @@ contract EverduesRoot {
 
 	modifier onlyAccountContract(uint256 pubkey) {
 		address account_contract_address = address(
-			tvm.hash(
-				_buildAccountInitData(PlatformTypes.Account, pubkey)
-			)
+			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
 		);
 		require(
 			msg.sender == account_contract_address,
@@ -179,7 +173,7 @@ contract EverduesRoot {
 		responsible
 		returns (address dex_pending_owner)
 	{
-		return pending_owner;
+		return {value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS} pending_owner;
 	}
 
 	function getTvcsLatest() public view returns (optional(VersionsTvcParams)) {
@@ -195,7 +189,7 @@ contract EverduesRoot {
 		returns (VersionsTvcParams)
 	{
 		VersionsTvcParams value = vrsparamsTvc[version];
-		return (value);
+		return {value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS} value;
 	}
 
 	// Get all latest ABIs
@@ -205,7 +199,7 @@ contract EverduesRoot {
 	}
 
 	function getOwner() external pure responsible returns (address owner_) {
-		return owner_;
+		return {value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS} owner_;
 	}
 
 	// Settings
@@ -882,7 +876,11 @@ contract EverduesRoot {
 		);
 	}
 
-	function upgradeAccount(uint256 pubkey) external view {
+	function upgradeAccount(uint256 pubkey)
+		external
+		view
+		onlyAccountContract(pubkey)
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -909,7 +907,45 @@ contract EverduesRoot {
 		);
 	}
 
-	function upgradeSubscription(address service_address) external view {
+	function upgradeSubscriptionPlan(
+		address service_address,
+		uint8 subscription_plan,
+		uint256 owner_pubkey
+	) external view onlyAccountContract(owner_pubkey) {
+		require(
+			service_address != address(0),
+			EverduesErrors.error_address_is_empty
+		);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		address subscription_address = address(
+			tvm.hash(
+				_buildInitData(
+					PlatformTypes.Subscription,
+					_buildSubscriptionPlatformParams(
+						msg.sender,
+						service_address
+					)
+				)
+			)
+		);
+		Subscription(subscription_address).upgradeSubscriptionPlan{
+			value: 0,
+			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(subscription_plan);
+	}
+
+	function upgradeSubscription(address service_address, uint256 owner_pubkey)
+		external
+		view
+		onlyAccountContract(owner_pubkey)
+	{
 		require(
 			service_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -975,8 +1011,9 @@ contract EverduesRoot {
 
 	function updateSubscriptionIdentificator(
 		address service_address,
-		TvmCell identificator
-	) external view {
+		TvmCell identificator,
+		uint256 owner_pubkey
+	) external view onlyAccountContract(owner_pubkey) {
 		require(
 			service_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -1006,10 +1043,12 @@ contract EverduesRoot {
 		}(identificator, msg.sender);
 	}
 
-	function upgradeService(string service_name, string category)
-		external
-		view
-	{
+	function upgradeService(
+		string service_name,
+		string category,
+		bool publish_to_catalog,
+		uint256 owner_pubkey
+	) external view onlyAccountContract(owner_pubkey) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -1017,7 +1056,13 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell service_code_salt = _buildServiceCode(category);
+		TvmCell service_code_salt;
+		if (publish_to_catalog) {
+			service_code_salt = _buildPublicServiceCode(category);
+		} else {
+			uint256 nonce = rnd.next();
+			service_code_salt = _buildPrivateServiceCode(nonce);
+		}
 		address service_address = address(
 			tvm.hash(
 				_buildInitData(
@@ -1034,10 +1079,11 @@ contract EverduesRoot {
 		}(service_code_salt, service_version, msg.sender, upgrade_data);
 	}
 
-	function forceUpgradeService(address service_address, string category)
-		external
-		view
-	{
+	function forceUpgradeService(
+		address service_address,
+		string category,
+		bool publish_to_catalog
+	) external view {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -1045,7 +1091,13 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell service_code_salt = _buildServiceCode(category);
+		TvmCell service_code_salt;
+		if (publish_to_catalog) {
+			service_code_salt = _buildPublicServiceCode(category);
+		} else {
+			uint256 nonce = rnd.next();
+			service_code_salt = _buildPrivateServiceCode(nonce);
+		}
 		TvmCell upgrade_data;
 		SubscriptionService(service_address).upgrade{
 			value: 0,
@@ -1056,8 +1108,9 @@ contract EverduesRoot {
 
 	function updateServiceParams(
 		string service_name,
-		TvmCell new_service_params
-	) external view {
+		TvmCell new_service_params,
+		uint256 owner_pubkey
+	) external view onlyAccountContract(owner_pubkey) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -1082,8 +1135,9 @@ contract EverduesRoot {
 
 	function updateServiceIdentificator(
 		string service_name,
-		TvmCell identificator
-	) public view {
+		TvmCell identificator,
+		uint256 owner_pubkey
+	) public view onlyAccountContract(owner_pubkey) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -1278,7 +1332,11 @@ contract EverduesRoot {
 		fee_proxy_address = address(platform);
 	}
 
-	function cancelService(string service_name) external view {
+	function cancelService(string service_name, uint256 owner_pubkey)
+		external
+		view
+		onlyAccountContract(owner_pubkey)
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -1297,31 +1355,6 @@ contract EverduesRoot {
 		IEverduesSubscriptionService(service_address).cancel{
 			value: 0,
 			bounce: true,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}();
-	}
-
-	function cancelSubscription(address service_address) external view {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ROOT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
-		address subscription_address = address(
-			tvm.hash(
-				_buildInitData(
-					PlatformTypes.Subscription,
-					_buildSubscriptionPlatformParams(
-						msg.sender,
-						service_address
-					)
-				)
-			)
-		);
-		ISubscription(subscription_address).cancel{
-			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}();
 	}
@@ -1362,6 +1395,7 @@ contract EverduesRoot {
 		address service_address,
 		TvmCell identificator,
 		uint256 owner_pubkey,
+		uint8 subscription_plan,
 		uint128 additional_gas
 	) external view onlyAccountContract(owner_pubkey) {
 		require(
@@ -1416,7 +1450,8 @@ contract EverduesRoot {
 			subs_index_identificator,
 			service_address,
 			owner_account_address,
-			owner_pubkey
+			owner_pubkey,
+			subscription_plan
 		);
 
 		Platform platform = new Platform{
@@ -1462,6 +1497,7 @@ contract EverduesRoot {
 		TvmCell service_params,
 		TvmCell identificator,
 		uint256 owner_pubkey,
+		bool publish_to_catalog,
 		uint128 additional_gas
 	) external view onlyAccountContract(owner_pubkey) {
 		tvm.rawReserve(
@@ -1487,7 +1523,13 @@ contract EverduesRoot {
 			TvmCell
 		);
 		(, category) = next_cell.toSlice().decode(address, string);
-		TvmCell service_code_salt = _buildServiceCode(category);
+		TvmCell service_code_salt;
+		if (publish_to_catalog) {
+			service_code_salt = _buildPublicServiceCode(category);
+		} else {
+			uint256 nonce = rnd.next();
+			service_code_salt = _buildPrivateServiceCode(nonce);
+		}
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
 				PlatformTypes.Service,
@@ -1554,9 +1596,27 @@ contract EverduesRoot {
 		return code;
 	}
 
-	function _buildServiceCode(string category) private view returns (TvmCell) {
+	function _buildPublicServiceCode(string category)
+		private
+		view
+		returns (TvmCell)
+	{
 		TvmBuilder saltBuilder;
 		saltBuilder.store(category, address(this)); // Max 4 items
+		TvmCell code = tvm.setCodeSalt(
+			vrsparamsTvc[version].tvcSubscriptionService.toSlice().loadRef(),
+			saltBuilder.toCell()
+		);
+		return code;
+	}
+
+	function _buildPrivateServiceCode(uint256 nonce)
+		private
+		view
+		returns (TvmCell)
+	{
+		TvmBuilder saltBuilder;
+		saltBuilder.store(nonce, address(this)); // Max 4 items
 		TvmCell code = tvm.setCodeSalt(
 			vrsparamsTvc[version].tvcSubscriptionService.toSlice().loadRef(),
 			saltBuilder.toCell()

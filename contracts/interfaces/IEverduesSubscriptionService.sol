@@ -1,9 +1,16 @@
 pragma ton-solidity >=0.56.0;
 
 interface IEverduesSubscriptionService {
-	event ServiceDeployed(address subscription_service_index_address, address subscription_service_index_identificator_address);
+	event ServiceDeployed(
+		address subscription_service_index_address,
+		address subscription_service_index_identificator_address
+	);
 
-	function getParams() external view responsible returns (TvmCell);
+	function getParams(uint8 subscription_plan)
+		external
+		view
+		responsible
+		returns (TvmCell);
 
 	function getInfo() external view responsible returns (TvmCell);
 
