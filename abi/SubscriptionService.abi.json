@@ -13,7 +13,8 @@
 		{
 			"name": "getParams",
 			"inputs": [
-				{"name":"answerId","type":"uint32"}
+				{"name":"answerId","type":"uint32"},
+				{"name":"subscription_plan","type":"uint8"}
 			],
 			"outputs": [
 				{"name":"value0","type":"cell"}
@@ -87,14 +88,6 @@
 			]
 		},
 		{
-			"name": "service_params",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"service_params","type":"cell"}
-			]
-		},
-		{
 			"name": "root",
 			"inputs": [
 			],
@@ -135,11 +128,19 @@
 			]
 		},
 		{
-			"name": "svcparams",
+			"name": "registation_timestamp",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+				{"name":"registation_timestamp","type":"uint256"}
+			]
+		},
+		{
+			"name": "service_params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_params","type":"map(uint8,cell)"}
 			]
 		}
 	],
@@ -160,17 +161,17 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"service_params","type":"cell"},
 		{"name":"root","type":"address"},
 		{"name":"service_owner","type":"address"},
 		{"name":"subscription_service_index_address","type":"address"},
 		{"name":"subscription_service_index_identificator_address","type":"address"},
 		{"name":"status","type":"uint8"},
+		{"name":"registation_timestamp","type":"uint256"},
+		{"name":"service_params","type":"map(uint8,cell)"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"code","type":"cell"},
 		{"name":"current_version","type":"uint32"},
-		{"name":"type_id","type":"uint8"},
-		{"components":[{"name":"to","type":"address"},{"name":"value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"}
+		{"name":"type_id","type":"uint8"}
 	]
 }

@@ -22,6 +22,14 @@
 			]
 		},
 		{
+			"name": "upgradeSubscriptionPlan",
+			"inputs": [
+				{"name":"new_subscription_plan","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "subscriptionStatus",
 			"inputs": [
 			],
@@ -86,6 +94,20 @@
 			"name": "onDeployWallet",
 			"inputs": [
 				{"name":"subscription_wallet_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "stopSubscribtion",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "resumeSubscribtion",
+			"inputs": [
 			],
 			"outputs": [
 			]
@@ -179,6 +201,14 @@
 			]
 		},
 		{
+			"name": "subscription_plan",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_plan","type":"uint8"}
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
@@ -220,6 +250,7 @@
 		{"name":"subscription_index_identificator_address","type":"address"},
 		{"name":"service_fee","type":"uint8"},
 		{"name":"subscription_fee","type":"uint8"},
+		{"name":"subscription_plan","type":"uint8"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},

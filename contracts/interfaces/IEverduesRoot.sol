@@ -7,37 +7,52 @@ interface IEverduesRoot {
 		address service_address,
 		TvmCell identificator,
 		uint256 owner_pubkey,
+		uint8 subscription_plan,
 		uint128 additional_gas
 	) external;
 
 	function deployService(
 		TvmCell service_params,
 		TvmCell identificator,
+		uint256 owner_pubkey,
+		bool publish_to_catalog,
 		uint128 additional_gas
 	) external;
 
 	function upgradeAccount(uint256 pubkey) external;
 
-	function upgradeService(string service_name, string category) external;
+	function upgradeService(
+		string service_name,
+		string category,
+		uint256 owner_pubkey
+	) external;
 
-	function upgradeSubscription(address service_address) external;
+	function upgradeSubscription(address service_address, uint256 owner_pubkey)
+		external;
+
+	function upgradeSubscriptionPlan(
+		address service_address,
+		uint8 subscription_plan,
+		uint256 owner_pubkey
+	) external;
 
 	function updateServiceIdentificator(
 		string service_name,
-		TvmCell identificator
+		TvmCell identificator,
+		uint256 owner_pubkey
 	) external;
 
 	function updateServiceParams(
 		string service_name,
-		TvmCell new_service_params
+		TvmCell new_service_params,
+		uint256 owner_pubkey
 	) external;
 
 	function updateSubscriptionIdentificator(
 		address service_address,
-		TvmCell identificator
+		TvmCell identificator,
+		uint256 owner_pubkey
 	) external;
 
-	function cancelSubscription(address service_address) external;
-
-	function cancelService(string name) external;
+	function cancelService(string name, uint256 owner_pubkey) external;
 }
