@@ -55,12 +55,18 @@ contract EverduesAccount is IEverduesAccount {
 		uint128 additional_gas;
 	}
 
+	struct DepositTokens {
+		address wallet;
+		uint128 amount;
+	}
+
 	mapping(address => balance_wallet_struct) public wallets_mapping;
 	mapping(address => address) public _tmp_sync_balance;
 	mapping(uint64 => GetDexPairOperation) public _tmp_get_pairs;
 	mapping(uint64 => ExchangeOperation) public _tmp_exchange_operations;
 	mapping(uint64 => DeployServiceOperation)
 		public _tmp_deploy_service_operations;
+	mapping (address=>DepositTokens) tmp_deposit_tokens;
 
 	constructor() public {
 		revert();
@@ -320,6 +326,7 @@ contract EverduesAccount is IEverduesAccount {
 				);
 			balance_wallet_struct current_balance_key = current_balance_struct
 				.get();
+			require(msg.sender == current_balance_key.dex_ever_pair_address, EverduesErrors.error_message_sender_is_not_dex_pair);
 			address account_wallet = current_balance_key.wallet;
 			ITokenWallet(account_wallet).transferToWallet{
 				value: EverduesGas.TRANSFER_MIN_VALUE *
@@ -373,6 +380,7 @@ contract EverduesAccount is IEverduesAccount {
 				callback: EverduesAccount.onBalanceOf
 			}();
 		} else {
+			_tmp_sync_balance[currency_root] = address(0);
 			ITokenRoot(currency_root).walletOf{
 				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
 				bounce: true,
@@ -380,6 +388,24 @@ contract EverduesAccount is IEverduesAccount {
 				callback: EverduesAccount.onWalletOf
 			}(address(this));
 		}
+	}
+
+	function onAcceptTokensWalletOf(address account_wallet) external {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ACCOUNT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		DepositTokens deposit = tmp_deposit_tokens[msg.sender];
+		require(deposit.wallet == account_wallet, EverduesErrors.error_message_sender_is_not_account_wallet);
+		balance_wallet_struct current_balance_struct_;
+		current_balance_struct_.wallet = account_wallet;
+		current_balance_struct_.balance = deposit.amount;
+		wallets_mapping[msg.sender] = current_balance_struct_;
+		emit Deposit(msg.sender, deposit.amount);
+		delete tmp_deposit_tokens[msg.sender];
 	}
 
 	function onWalletOf(address account_wallet) external {
@@ -390,6 +416,8 @@ contract EverduesAccount is IEverduesAccount {
 			),
 			2
 		);
+		require(_tmp_sync_balance.exists(msg.sender), EverduesErrors.error_message_sender_is_not_currency_root);
+		delete _tmp_sync_balance[msg.sender];
 		_tmp_sync_balance[account_wallet] = msg.sender;
 		TIP3TokenWallet(account_wallet).balance{
 			value: 0,
@@ -674,17 +702,20 @@ contract EverduesAccount is IEverduesAccount {
 					callback: EverduesAccount.onGetExpectedPairAddress
 				}(wever_root, tokenRoot);
 			}
+			emit Deposit(msg.sender, amount);
 			remainingGasTo.transfer({
 				value: 0,
 				flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
 			});
 		} else {
-			balance_wallet_struct current_balance_struct_;
-			current_balance_struct_.wallet = msg.sender;
-			current_balance_struct_.balance = amount;
-			wallets_mapping[tokenRoot] = current_balance_struct_;
+			tmp_deposit_tokens[tokenRoot] = DepositTokens(msg.sender, amount);
+			ITokenRoot(tokenRoot).walletOf{
+				value: EverduesGas.INIT_MESSAGE_VALUE,
+				bounce: true,
+				flag: 0,
+				callback: EverduesAccount.onAcceptTokensWalletOf
+			}(address(this));
 		}
-		emit Deposit(msg.sender, amount);
 	}
 
 	function onGetExpectedPairAddress(address dex_pair_address)

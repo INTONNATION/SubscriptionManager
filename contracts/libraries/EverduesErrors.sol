@@ -36,4 +36,5 @@ library EverduesErrors {
 	uint8 constant error_message_sender_is_not_account_wallet = 132;
 	uint8 constant error_deploy_service_requirements_not_met = 133;
 	uint8 constant error_message_sender_is_not_my_subscription = 134;
+	uint8 constant error_message_sender_is_not_dex_pair = 135;
 }
