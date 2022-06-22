@@ -19,7 +19,6 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol"
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
 contract Subscription is IEverduesSubscription {
-	TvmCell public service_params;
 	address public root;
 	address public address_fee_proxy;
 	address public account_address;
@@ -29,6 +28,7 @@ contract Subscription is IEverduesSubscription {
 	uint8 public service_fee;
 	uint8 public subscription_fee;
 	uint8 public subscription_plan;
+	TvmCell public subscription_params;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address subscription_wallet;
@@ -127,7 +127,6 @@ contract Subscription is IEverduesSubscription {
 			platform_params,
 			contract_params_,
 			code,
-			service_params,
 			subscription,
 			address_fee_proxy,
 			account_address,
@@ -223,7 +222,6 @@ contract Subscription is IEverduesSubscription {
 				,
 				,
 				,
-				service_params,
 				subscription,
 				address_fee_proxy,
 				account_address,
@@ -245,7 +243,6 @@ contract Subscription is IEverduesSubscription {
 					uint32,
 					uint32,
 					uint8,
-					TvmCell,
 					TvmCell,
 					TvmCell,
 					TvmCell,
@@ -468,23 +465,16 @@ contract Subscription is IEverduesSubscription {
 
 	function onGetParams(TvmCell service_params_) external onlyService {
 		// TODO: validate service params
-		TvmCell next_cell;
-		service_params = service_params_;
-		(
-			svcparams.to,
-			svcparams.service_value,
-			svcparams.period,
-			next_cell
-		) = service_params.toSlice().decode(address, uint128, uint32, TvmCell);
-		(
+		TvmCell service_params;
+		(service_params, subscription_params) = abi.decode(
+			service_params_,
+			(TvmCell, TvmCell)
+		);		
+		(svcparams.to,
 			svcparams.name,
 			svcparams.description,
-			svcparams.image,
-			next_cell
-		) = next_cell.toSlice().decode(string, string, string, TvmCell);
-		(svcparams.currency_root, svcparams.category) = next_cell
-			.toSlice()
-			.decode(address, string);
+			svcparams.image, svcparams.category) = abi.decode(service_params, (address,string,string,string,string));
+		(svcparams.service_value,svcparams.period,svcparams.currency_root) = abi.decode(subscription_params, (uint128,uint32,address));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 subscription_fee_value = service_value_percentage *
 			subscription_fee;
@@ -492,7 +482,7 @@ contract Subscription is IEverduesSubscription {
 			svcparams.service_value +
 			subscription_fee_value;
 		preprocessing_window = (svcparams.period / 100) * 30;
-		emit paramsRecieved(service_params_);
+		emit paramsRecieved(service_params);
 		subscription = paymentStatus(
 			svcparams.period,
 			0,
