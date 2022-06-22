@@ -161,15 +161,17 @@ contract EverduesAccount is IEverduesAccount {
 
 	function onCodeUpgrade(TvmCell data) private {
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
+		uint32 old_version;
+		TvmCell contract_params;
 		(
-			address root_,
-			uint32 old_version,
-			uint32 version,
-			uint8 type_id_,
-			TvmCell platform_code_,
-			TvmCell platform_params_,
-			TvmCell contract_params, /*TvmCell code*/
-
+			root,
+			old_version,
+			current_version,
+			type_id,
+			platform_code,
+			platform_params,
+			contract_params, 
+			/*TvmCell code*/
 		) = abi.decode(
 				data,
 				(
@@ -184,11 +186,6 @@ contract EverduesAccount is IEverduesAccount {
 				)
 			);
 		tvm.resetStorage();
-		root = root_;
-		platform_code = platform_code_;
-		platform_params = platform_params_;
-		current_version = version;
-		type_id = type_id_;
 		if (old_version > 0 && contract_params.toSlice().empty()) {
 			(
 				,
@@ -199,9 +196,9 @@ contract EverduesAccount is IEverduesAccount {
 				,
 				,
 				,
-				mapping(address => balance_wallet_struct) wallets_mapping_,
-				address dex_root_address_,
-				address wever_root_
+				wallets_mapping,
+				dex_root_address,
+				wever_root
 			) = abi.decode(
 					data,
 					(
@@ -218,9 +215,6 @@ contract EverduesAccount is IEverduesAccount {
 						address
 					)
 				);
-			wallets_mapping = wallets_mapping_;
-			wever_root = wever_root_;
-			dex_root_address = dex_root_address_;
 		} else if (old_version == 0 || !contract_params.toSlice().empty()) {
 			(dex_root_address, wever_root) = abi.decode(
 				contract_params,
