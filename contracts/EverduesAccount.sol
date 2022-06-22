@@ -52,6 +52,8 @@ contract EverduesAccount is IEverduesAccount {
 		TvmCell service_params;
 		TvmCell identificator;
 		bool publish_to_catalog;
+		string category;
+		string service_name;
 		uint128 additional_gas;
 	}
 
@@ -486,12 +488,16 @@ contract EverduesAccount is IEverduesAccount {
 		TvmCell service_params,
 		TvmCell identificator,
 		bool publish_to_catalog,
+		string category,
+		string service_name,
 		uint128 additional_gas
 	) public onlyOwner {
 		_tmp_deploy_service_operations[now] = DeployServiceOperation(
 			service_params,
 			identificator,
 			publish_to_catalog,
+		    category,
+		    service_name,
 			additional_gas
 		);
 		EverduesRoot(root).getDeployServiceRequirements{
@@ -530,6 +536,8 @@ contract EverduesAccount is IEverduesAccount {
 				last_operation.identificator,
 				tvm.pubkey(),
 				last_operation.publish_to_catalog,
+		 		last_operation.category,
+		 		last_operation.service_name,
 				last_operation.additional_gas
 			);
 			_tmp_deploy_service_operations.delMin();

@@ -512,6 +512,8 @@
 				{"name":"identificator","type":"cell"},
 				{"name":"owner_pubkey","type":"uint256"},
 				{"name":"publish_to_catalog","type":"bool"},
+				{"name":"category","type":"string"},
+				{"name":"service_name","type":"string"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
@@ -587,83 +589,11 @@
 			]
 		},
 		{
-			"name": "service_fee",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"service_fee","type":"uint8"}
-			]
-		},
-		{
-			"name": "subscription_fee",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"subscription_fee","type":"uint8"}
-			]
-		},
-		{
-			"name": "mtds_root_address",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"mtds_root_address","type":"address"}
-			]
-		},
-		{
-			"name": "mtds_revenue_accumulator_address",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"mtds_revenue_accumulator_address","type":"address"}
-			]
-		},
-		{
-			"name": "dex_root_address",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"dex_root_address","type":"address"}
-			]
-		},
-		{
 			"name": "owner",
 			"inputs": [
 			],
 			"outputs": [
 				{"name":"owner","type":"address"}
-			]
-		},
-		{
-			"name": "wever_root",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"wever_root","type":"address"}
-			]
-		},
-		{
-			"name": "tip3_to_ever_address",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"tip3_to_ever_address","type":"address"}
-			]
-		},
-		{
-			"name": "deploy_service_lock_value",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"deploy_service_lock_value","type":"uint128"}
-			]
-		},
-		{
-			"name": "account_threshold",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"account_threshold","type":"uint128"}
 			]
 		}
 	],
@@ -700,18 +630,18 @@
 		{"name":"abiServiceIdentificatorIndexContract","type":"string"},
 		{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcEverduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
 		{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiEverduesAccountContract","type":"string"},{"name":"abiEverduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiServiceIdentificatorIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"},
+		{"name":"fee_proxy_address","type":"address"},
+		{"name":"owner","type":"address"},
 		{"name":"has_platform_code","type":"bool"},
 		{"name":"service_version","type":"uint32"},
 		{"name":"account_version","type":"uint32"},
 		{"name":"subscription_version","type":"uint32"},
 		{"name":"fee_proxy_version","type":"uint32"},
-		{"name":"fee_proxy_address","type":"address"},
 		{"name":"service_fee","type":"uint8"},
 		{"name":"subscription_fee","type":"uint8"},
 		{"name":"mtds_root_address","type":"address"},
 		{"name":"mtds_revenue_accumulator_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
-		{"name":"owner","type":"address"},
 		{"name":"wever_root","type":"address"},
 		{"name":"pending_owner","type":"address"},
 		{"name":"tip3_to_ever_address","type":"address"},
