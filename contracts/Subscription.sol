@@ -150,16 +150,19 @@ contract Subscription is IEverduesSubscription {
 	function onCodeUpgrade(TvmCell upgrade_data) private {
 		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		tvm.resetStorage();
+		address send_gas_to;
+		uint32 old_version;
+		TvmCell contract_params;
 		(
-			address root_,
-			address send_gas_to,
-			uint32 old_version,
-			uint32 version,
-			uint8 type_id_,
-			TvmCell platform_code_,
-			TvmCell platform_params_,
-			TvmCell contract_params, /*TvmCell code*/
-
+			root,
+			send_gas_to,
+			old_version,
+			current_version,
+			type_id,
+			platform_code,
+			platform_params,
+			contract_params, 
+			/*TvmCell code*/
 		) = abi.decode(
 				upgrade_data,
 				(
@@ -175,12 +178,6 @@ contract Subscription is IEverduesSubscription {
 				)
 			);
 		tvm.resetStorage();
-
-		root = root_;
-		current_version = version;
-		platform_code = platform_code_;
-		platform_params = platform_params_;
-		type_id = type_id_;
 
 		if (old_version == 0) {
 			(

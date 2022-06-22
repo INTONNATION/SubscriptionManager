@@ -136,16 +136,19 @@ contract SubscriptionService is IEverduesSubscriptionService {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
+		address send_gas_to;
+		uint32 old_version;
+		TvmCell contract_params;
 		(
-			address root_,
-			address send_gas_to,
-			uint32 old_version,
-			uint32 version,
-			uint8 type_id_,
-			TvmCell platform_code_,
-			TvmCell platform_params_,
-			TvmCell contract_params, /*TvmCell code*/
-
+			root,
+			send_gas_to,
+			old_version,
+			current_version,
+			type_id,
+			platform_code,
+			platform_params,
+			contract_params,
+			/*TvmCell code*/
 		) = abi.decode(
 				upgrade_data,
 				(
@@ -162,11 +165,6 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			);
 		tvm.resetStorage();
 
-		root = root_;
-		current_version = version;
-		platform_code = platform_code_;
-		platform_params = platform_params_;
-		type_id = type_id_;
 		if (old_version == 0) {
 			service_params = abi.decode(
 				contract_params,
@@ -184,10 +182,10 @@ contract SubscriptionService is IEverduesSubscriptionService {
 				,
 				,
 				,
-				mapping(uint8 => TvmCell) service_params_,
-				address subscription_service_index_address_,
-				address subscription_service_index_identificator_address_,
-				uint8 status_
+				service_params,
+				subscription_service_index_address,
+				subscription_service_index_identificator_address,
+				status
 			) = abi.decode(
 					upgrade_data,
 					(
@@ -206,10 +204,6 @@ contract SubscriptionService is IEverduesSubscriptionService {
 						uint8
 					)
 				);
-			service_params = service_params_;
-			subscription_service_index_address = subscription_service_index_address_;
-			subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
-			status = status_;
 			send_gas_to.transfer({
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS

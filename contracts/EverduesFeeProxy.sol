@@ -408,16 +408,19 @@ contract EverduesFeeProxy {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
+		address send_gas_to;
+		uint32 old_version;
+		TvmCell contract_params;
 		(
-			address root_,
-			address send_gas_to,
-			uint32 old_version,
-			uint32 version,
-			uint8 type_id_,
-			TvmCell platform_code_,
-			TvmCell platform_params_,
-			TvmCell contract_params, /*TvmCell code*/
-
+			root,
+			send_gas_to,
+			old_version,
+			current_version,
+			type_id,
+			platform_code,
+			platform_params,
+			contract_params, 
+			/*TvmCell code*/
 		) = abi.decode(
 				upgrade_data,
 				(
@@ -433,11 +436,6 @@ contract EverduesFeeProxy {
 				)
 			);
 		tvm.resetStorage();
-		root = root_;
-		current_version = version;
-		platform_code = platform_code_;
-		platform_params = platform_params_;
-		type_id = type_id_;
 		if (old_version == 0) {
 			address[] supportedCurrencies = abi.decode(
 				contract_params,
@@ -455,9 +453,9 @@ contract EverduesFeeProxy {
 				,
 				,
 				,
-				address mtds_root_address_,
-				address dex_root_address_,
-				mapping(address => balance_wallet_struct) wallets_mapping_
+				mtds_root_address,
+				dex_root_address,
+				wallets_mapping
 			) = abi.decode(
 					upgrade_data,
 					(
@@ -475,9 +473,6 @@ contract EverduesFeeProxy {
 						mapping(address => balance_wallet_struct)
 					)
 				);
-			mtds_root_address = mtds_root_address_;
-			dex_root_address = dex_root_address_;
-			wallets_mapping = wallets_mapping_;
 			send_gas_to.transfer({
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
