@@ -16,8 +16,6 @@ interface IEverduesRoot {
 		TvmCell identificator,
 		uint256 owner_pubkey,
 		bool publish_to_catalog,
-		string category,
-		string service_name,
 		uint128 additional_gas
 	) external;
 
