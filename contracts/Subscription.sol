@@ -311,6 +311,7 @@ contract Subscription is IEverduesSubscription {
 		override
 		onlyRootOrOwner // TODO: add serviceOwner
 	{
+		// TODO: Add check that service_params exist
 		require(
 			subscription.status != EverduesSubscriptionStatus.STATUS_STOPPED,
 			EverduesErrors.error_subscription_is_stopped

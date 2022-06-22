@@ -81,23 +81,24 @@ contract EverduesRoot {
 	mapping(uint8 => VersionsTvcParams) public vrsparamsTvc;
 	mapping(uint8 => VersionsAbiParams) public vrsparamsAbi;
 
+	address public fee_proxy_address;
+	address public owner;
+
 	bool has_platform_code;
 	uint32 service_version;
 	uint32 account_version;
 	uint32 subscription_version;
 	uint32 fee_proxy_version;
-	address public fee_proxy_address;
-	uint8 public service_fee;
-	uint8 public subscription_fee;
-	address public mtds_root_address;
-	address public mtds_revenue_accumulator_address;
-	address public dex_root_address;
-	address public owner;
-	address public wever_root;
+	uint8 service_fee;
+	uint8 subscription_fee;
+	address mtds_root_address;
+	address mtds_revenue_accumulator_address;
+	address dex_root_address;
+	address wever_root;
 	address pending_owner;
-	address public tip3_to_ever_address;
-	uint128 public deploy_service_lock_value = 200 ever;
-	uint128 public account_threshold = 10 ever;
+	address tip3_to_ever_address;
+	uint128 deploy_service_lock_value = 2 ever;
+	uint128 account_threshold = 10 ever;
 
 	onBounce(TvmSlice slice) external view {
 		// revert change to initial msg.sender in case of failure during deploy
@@ -1137,7 +1138,7 @@ contract EverduesRoot {
 		string service_name,
 		TvmCell identificator,
 		uint256 owner_pubkey
-	) public view onlyAccountContract(owner_pubkey) {
+	) external view onlyAccountContract(owner_pubkey) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -1498,6 +1499,8 @@ contract EverduesRoot {
 		TvmCell identificator,
 		uint256 owner_pubkey,
 		bool publish_to_catalog,
+		string category,
+		string service_name,
 		uint128 additional_gas
 	) external view onlyAccountContract(owner_pubkey) {
 		tvm.rawReserve(
@@ -1507,22 +1510,7 @@ contract EverduesRoot {
 			),
 			2
 		);
-		TvmCell next_cell;
-		string category;
-		string service_name;
-		(, , , next_cell) = service_params.toSlice().decode(
-			address,
-			uint128,
-			uint32,
-			TvmCell
-		);
-		(service_name, , , next_cell) = next_cell.toSlice().decode(
-			string,
-			string,
-			string,
-			TvmCell
-		);
-		(, category) = next_cell.toSlice().decode(address, string);
+
 		TvmCell service_code_salt;
 		if (publish_to_catalog) {
 			service_code_salt = _buildPublicServiceCode(category);
