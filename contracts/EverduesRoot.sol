@@ -1499,8 +1499,6 @@ contract EverduesRoot {
 		TvmCell identificator,
 		uint256 owner_pubkey,
 		bool publish_to_catalog,
-		string category,
-		string service_name,
 		uint128 additional_gas
 	) external view onlyAccountContract(owner_pubkey) {
 		tvm.rawReserve(
@@ -1510,7 +1508,7 @@ contract EverduesRoot {
 			),
 			2
 		);
-
+		(/*address account*/, string service_name, /*string description*/, /*string image*/, string category) = abi.decode(service_params,(address,string,string,string,string));
 		TvmCell service_code_salt;
 		if (publish_to_catalog) {
 			service_code_salt = _buildPublicServiceCode(category);
