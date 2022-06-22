@@ -16,23 +16,13 @@ contract SubscriptionService is IEverduesSubscriptionService {
 	address public subscription_service_index_identificator_address;
 	uint8 public status = 0;
 	uint256 public registation_timestamp;
-	mapping(uint8 => TvmCell) public service_params;
+	mapping(uint8 => TvmCell) public subscription_plans;
+	TvmCell public service_params;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	TvmCell code;
 	uint32 current_version;
 	uint8 type_id;
-
-	struct ServiceParams {
-		address to;
-		uint128 value;
-		uint32 period;
-		string name;
-		string description;
-		string image;
-		address currency_root;
-		string category;
-	}
 
 	constructor() public {
 		revert();
@@ -60,10 +50,9 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			),
 			2
 		);
+		TvmCell response = abi.encode(service_params, subscription_plans[subscription_plan]);
 		return
-			{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} service_params[
-				subscription_plan
-			];
+			{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} response;
 	}
 
 	function getInfo() external view responsible override returns (TvmCell) {
@@ -166,10 +155,11 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		tvm.resetStorage();
 
 		if (old_version == 0) {
-			service_params = abi.decode(
+			(service_params, subscription_plans) = abi.decode(
 				contract_params,
-				(mapping(uint8 => TvmCell))
+				(TvmCell, mapping(uint8 => TvmCell))
 			);
+			
 			registation_timestamp = now;
 		} else if (old_version > 0) {
 			(
@@ -183,6 +173,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 				,
 				,
 				service_params,
+				subscription_plans,
 				subscription_service_index_address,
 				subscription_service_index_identificator_address,
 				status
@@ -194,6 +185,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 						uint32,
 						uint32,
 						uint8,
+						TvmCell,
 						TvmCell,
 						TvmCell,
 						TvmCell,
@@ -242,9 +234,9 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			),
 			2
 		);
-		service_params = abi.decode(
+		(service_params, subscription_plans) = abi.decode(
 			new_service_params,
-			(mapping(uint8 => TvmCell))
+			(TvmCell, mapping(uint8 => TvmCell))
 		);
 		service_owner.transfer({
 			value: 0,

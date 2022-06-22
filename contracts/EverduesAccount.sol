@@ -165,6 +165,7 @@ contract EverduesAccount is IEverduesAccount {
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 		uint32 old_version;
 		TvmCell contract_params;
+		TvmCell code;
 		(
 			root,
 			old_version,
@@ -173,7 +174,7 @@ contract EverduesAccount is IEverduesAccount {
 			platform_code,
 			platform_params,
 			contract_params, 
-			/*TvmCell code*/
+			code
 		) = abi.decode(
 				data,
 				(
