@@ -379,6 +379,7 @@ contract Subscription is IEverduesSubscription {
 		);
 		account_address.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}
@@ -508,6 +509,7 @@ contract Subscription is IEverduesSubscription {
 		} else {
 			account_address.transfer({
 				value: 0,
+				bounce: false,
 				flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
 			});
 		}

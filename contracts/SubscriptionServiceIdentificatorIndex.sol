@@ -37,6 +37,7 @@ contract SubscriptionServiceIdentificatorIndex {
 		identificator = identificator_;
 		service_owner.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}
@@ -52,6 +53,7 @@ contract SubscriptionServiceIdentificatorIndex {
 		identificator = identificator_;
 		send_gas_to.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
 		});
 	}

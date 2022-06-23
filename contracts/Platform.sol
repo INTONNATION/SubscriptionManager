@@ -14,8 +14,8 @@ contract Platform {
 	uint8 static type_id;
 	TvmCell static platform_params;
 	uint128 constant DEPLOY_ACCOUNT_MIN_VALUE = 1 ton;
-	uint8 constant error_message_sender_is_not_everdues_root = 113;
-	uint8 constant error_message_sender_is_not_owner = 112;
+	uint8 constant ERROR_MESSAGE_SENDER_IS_NOT_EVERDUES_ROOT = 113;
+	uint8 constant ERROR_MESSAGE_SENDER_IS_NOT_OWNER = 112;
 
 	constructor(
 		TvmCell code,
