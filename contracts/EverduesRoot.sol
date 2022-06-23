@@ -531,6 +531,7 @@ contract EverduesRoot {
 			delete vrsparamsTvc[version_];
 			delete vrsparamsAbi[version_];
 		}
+		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
 	}
 
 	function setVersion() external onlyOwner {
