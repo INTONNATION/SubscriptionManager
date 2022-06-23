@@ -218,12 +218,12 @@ contract SubscriptionService is IEverduesSubscriptionService {
 					uint8
 				)
 			);
+			send_gas_to.transfer({
+				value: 0,
+				bounce: false,
+				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+			});
 		}
-		send_gas_to.transfer({
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-		});
 	}
 
 	function updateServiceParams(TvmCell new_service_params) public onlyRoot {
