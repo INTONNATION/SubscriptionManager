@@ -129,14 +129,6 @@
 			]
 		},
 		{
-			"name": "service_params",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"service_params","type":"cell"}
-			]
-		},
-		{
 			"name": "root",
 			"inputs": [
 			],
@@ -209,6 +201,14 @@
 			]
 		},
 		{
+			"name": "subscription_params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_params","type":"cell"}
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
@@ -241,7 +241,6 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"service_params","type":"cell"},
 		{"name":"root","type":"address"},
 		{"name":"address_fee_proxy","type":"address"},
 		{"name":"account_address","type":"address"},
@@ -251,6 +250,7 @@
 		{"name":"service_fee","type":"uint8"},
 		{"name":"subscription_fee","type":"uint8"},
 		{"name":"subscription_plan","type":"uint8"},
+		{"name":"subscription_params","type":"cell"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},

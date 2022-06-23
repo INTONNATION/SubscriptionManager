@@ -140,8 +140,6 @@
 				{"name":"service_params","type":"cell"},
 				{"name":"identificator","type":"cell"},
 				{"name":"publish_to_catalog","type":"bool"},
-				{"name":"category","type":"string"},
-				{"name":"service_name","type":"string"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
@@ -295,7 +293,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"service_params","type":"cell"},{"name":"identificator","type":"cell"},{"name":"publish_to_catalog","type":"bool"},{"name":"category","type":"string"},{"name":"service_name","type":"string"},{"name":"additional_gas","type":"uint128"}],"name":"_tmp_deploy_service_operations","type":"map(uint64,tuple)"}
+				{"components":[{"name":"service_params","type":"cell"},{"name":"identificator","type":"cell"},{"name":"publish_to_catalog","type":"bool"},{"name":"additional_gas","type":"uint128"}],"name":"_tmp_deploy_service_operations","type":"map(uint64,tuple)"}
 			]
 		}
 	],
@@ -353,7 +351,7 @@
 		{"name":"_tmp_sync_balance","type":"map(address,address)"},
 		{"components":[{"name":"currency_root","type":"address"},{"name":"send_gas_to","type":"address"}],"name":"_tmp_get_pairs","type":"map(uint64,tuple)"},
 		{"components":[{"name":"currency_root","type":"address"},{"name":"value","type":"uint128"},{"name":"subscription_wallet","type":"address"},{"name":"pay_subscription_gas","type":"uint128"},{"name":"subscription_contract","type":"address"}],"name":"_tmp_exchange_operations","type":"map(uint64,tuple)"},
-		{"components":[{"name":"service_params","type":"cell"},{"name":"identificator","type":"cell"},{"name":"publish_to_catalog","type":"bool"},{"name":"category","type":"string"},{"name":"service_name","type":"string"},{"name":"additional_gas","type":"uint128"}],"name":"_tmp_deploy_service_operations","type":"map(uint64,tuple)"},
+		{"components":[{"name":"service_params","type":"cell"},{"name":"identificator","type":"cell"},{"name":"publish_to_catalog","type":"bool"},{"name":"additional_gas","type":"uint128"}],"name":"_tmp_deploy_service_operations","type":"map(uint64,tuple)"},
 		{"components":[{"name":"wallet","type":"address"},{"name":"amount","type":"uint128"}],"name":"tmp_deposit_tokens","type":"map(address,tuple)"}
 	]
 }

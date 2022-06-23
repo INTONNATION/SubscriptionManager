@@ -36,7 +36,7 @@ contract Platform {
 			}
 		} else if (msg.isExternal) {
 			uint256 pubkey = tvm.pubkey();
-			require(msg.pubkey() == pubkey, error_message_sender_is_not_owner);
+			require(msg.pubkey() == pubkey, ERROR_MESSAGE_SENDER_IS_NOT_OWNER);
 			tvm.accept();
 			IPlatformRoot(root).deployAccount{
 				value: DEPLOY_ACCOUNT_MIN_VALUE + additional_gas,
@@ -51,7 +51,7 @@ contract Platform {
 		TvmCell contract_params,
 		uint32 version
 	) external {
-		require(msg.sender == root, error_message_sender_is_not_everdues_root);
+		require(msg.sender == root, ERROR_MESSAGE_SENDER_IS_NOT_EVERDUES_ROOT);
 		TvmCell data = abi.encode(
 			root,
 			uint32(0),
@@ -75,7 +75,7 @@ contract Platform {
 		uint32 version,
 		address send_gas_to
 	) private {
-		require(msg.sender == root, error_message_sender_is_not_everdues_root);
+		require(msg.sender == root, ERROR_MESSAGE_SENDER_IS_NOT_EVERDUES_ROOT);
 		TvmCell data = abi.encode(
 			root,
 			send_gas_to,
