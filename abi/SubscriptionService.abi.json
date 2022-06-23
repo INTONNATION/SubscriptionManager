@@ -55,15 +55,6 @@
 			]
 		},
 		{
-			"name": "setIndexes",
-			"inputs": [
-				{"name":"subscription_service_index_address_","type":"address"},
-				{"name":"subscription_service_index_identificator_address_","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "updateServiceParams",
 			"inputs": [
 				{"name":"new_service_params","type":"cell"}

@@ -50,7 +50,10 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			),
 			2
 		);
-		TvmCell response = abi.encode(service_params, subscription_plans[subscription_plan]);
+		TvmCell response = abi.encode(
+			service_params,
+			subscription_plans[subscription_plan]
+		);
 		return
 			{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} response;
 	}
@@ -65,7 +68,9 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		);
 		TvmBuilder info;
 		info.store(status);
-		return {value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} info.toCell();
+		return
+			{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} info
+				.toCell();
 	}
 
 	function pause() public onlyRoot {
@@ -140,28 +145,43 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			platform_params,
 			contract_params,
 			/*TvmCell code*/
+
 		) = abi.decode(
-				upgrade_data,
-				(
-					address,
-					address,
-					uint32,
-					uint32,
-					uint8,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell
-				)
-			);
+			upgrade_data,
+			(
+				address,
+				address,
+				uint32,
+				uint32,
+				uint8,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				TvmCell
+			)
+		);
 		tvm.resetStorage();
 
 		if (old_version == 0) {
-			(service_params, subscription_plans) = abi.decode(
-				contract_params,
-				(TvmCell, mapping(uint8 => TvmCell))
+			(TvmCell service_params_cell, TvmCell additional_params) = abi
+				.decode(contract_params, (TvmCell, TvmCell));
+			TvmCell subscription_plans_cell;
+			(service_params, subscription_plans_cell) = abi.decode(
+				service_params_cell,
+				(TvmCell, TvmCell)
 			);
-			
+			subscription_plans = abi.decode(
+				subscription_plans_cell,
+				(mapping(uint8 => TvmCell))
+			);
+			(
+				subscription_service_index_address,
+				subscription_service_index_identificator_address
+			) = abi.decode(additional_params, (address, address));
+			emit ServiceDeployed(
+				subscription_service_index_address,
+				subscription_service_index_identificator_address
+			);
 			registation_timestamp = now;
 		} else if (old_version > 0) {
 			(
@@ -180,50 +200,26 @@ contract SubscriptionService is IEverduesSubscriptionService {
 				subscription_service_index_identificator_address,
 				status
 			) = abi.decode(
-					upgrade_data,
-					(
-						address,
-						address,
-						uint32,
-						uint32,
-						uint8,
-						TvmCell,
-						TvmCell,
-						TvmCell,
-						TvmCell,
-						TvmCell,
-						mapping(uint8 => TvmCell),
-						address,
-						address,
-						uint8
-					)
-				);
-			send_gas_to.transfer({
-				value: 0,
-				bounce: false,
-				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-			});
+				upgrade_data,
+				(
+					address,
+					address,
+					uint32,
+					uint32,
+					uint8,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					TvmCell,
+					mapping(uint8 => TvmCell),
+					address,
+					address,
+					uint8
+				)
+			);
 		}
-	}
-
-	function setIndexes(
-		address subscription_service_index_address_,
-		address subscription_service_index_identificator_address_
-	) external onlyRoot {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.SERVICE_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
-		subscription_service_index_address = subscription_service_index_address_;
-		subscription_service_index_identificator_address = subscription_service_index_identificator_address_;
-		emit ServiceDeployed(
-			subscription_service_index_address,
-			subscription_service_index_identificator_address
-		);
-		service_owner.transfer({
+		send_gas_to.transfer({
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -238,9 +234,14 @@ contract SubscriptionService is IEverduesSubscriptionService {
 			),
 			2
 		);
-		(service_params, subscription_plans) = abi.decode(
+		TvmCell subscription_plans_cell;
+		(service_params, subscription_plans_cell) = abi.decode(
 			new_service_params,
-			(TvmCell, mapping(uint8 => TvmCell))
+			(TvmCell, TvmCell)
+		);
+		subscription_plans = abi.decode(
+			subscription_plans_cell,
+			mapping(uint8 => TvmCell)
 		);
 		service_owner.transfer({
 			value: 0,
