@@ -38,6 +38,7 @@ contract SubscriptionServiceIndex {
 		service_address = serviceAddress_;
 		service_owner.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}

@@ -79,6 +79,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		status = 1;
 		service_owner.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}
@@ -94,6 +95,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		status = 0;
 		service_owner.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}
@@ -198,6 +200,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 				);
 			send_gas_to.transfer({
 				value: 0,
+				bounce: false,
 				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 			});
 		}
@@ -222,6 +225,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		);
 		service_owner.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}
@@ -240,6 +244,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 		);
 		service_owner.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}

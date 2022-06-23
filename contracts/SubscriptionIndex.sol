@@ -37,6 +37,7 @@ contract SubscriptionIndex {
 		subscription_address = subscription_address_;
 		subscription_owner.transfer({
 			value: 0,
+			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
 	}

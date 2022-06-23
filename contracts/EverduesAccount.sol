@@ -29,7 +29,7 @@ contract EverduesAccount is IEverduesAccount {
 	uint32 current_version;
 	uint8 type_id;
 
-	struct balance_wallet_struct {
+	struct BalanceWalletStruct {
 		address wallet;
 		uint128 balance;
 		address dex_ever_pair_address;
@@ -60,7 +60,7 @@ contract EverduesAccount is IEverduesAccount {
 		uint128 amount;
 	}
 
-	mapping(address => balance_wallet_struct) public wallets_mapping;
+	mapping(address => BalanceWalletStruct) public wallets_mapping;
 	mapping(address => address) public _tmp_sync_balance;
 	mapping(uint64 => GetDexPairOperation) public _tmp_get_pairs;
 	mapping(uint64 => ExchangeOperation) public _tmp_exchange_operations;
@@ -211,7 +211,7 @@ contract EverduesAccount is IEverduesAccount {
 						TvmCell,
 						TvmCell,
 						TvmCell,
-						mapping(address => balance_wallet_struct),
+						mapping(address => BalanceWalletStruct),
 						address,
 						address
 					)
@@ -249,10 +249,10 @@ contract EverduesAccount is IEverduesAccount {
 			subsciption_addr == msg.sender,
 			EverduesErrors.error_message_sender_is_not_my_subscription
 		);
-		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		if (current_balance_struct.hasValue()) {
-			balance_wallet_struct current_balance_key_value = current_balance_struct
+			BalanceWalletStruct current_balance_key_value = current_balance_struct
 					.get();
 			uint128 current_balance = current_balance_key_value.balance;
 			if (value > current_balance) {
@@ -277,10 +277,10 @@ contract EverduesAccount is IEverduesAccount {
 		address subscription_wallet,
 		uint128 additional_gas
 	) external override onlyFeeProxy {
-		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		if (current_balance_struct.hasValue()) {
-			balance_wallet_struct current_balance_key_value = current_balance_struct
+			BalanceWalletStruct current_balance_key_value = current_balance_struct
 					.get();
 			uint128 current_balance = current_balance_key_value.balance;
 			if (value > current_balance) {
@@ -315,11 +315,11 @@ contract EverduesAccount is IEverduesAccount {
 			(uint64 call_id, ExchangeOperation last_operation) = keyOpt.get();
 			call_id;
 			optional(
-				balance_wallet_struct
+				BalanceWalletStruct
 			) current_balance_struct = wallets_mapping.fetch(
 					last_operation.currency_root
 				);
-			balance_wallet_struct current_balance_key = current_balance_struct
+			BalanceWalletStruct current_balance_key = current_balance_struct
 				.get();
 			require(msg.sender == current_balance_key.dex_ever_pair_address, EverduesErrors.error_message_sender_is_not_dex_pair);
 			address account_wallet = current_balance_key.wallet;
@@ -349,10 +349,10 @@ contract EverduesAccount is IEverduesAccount {
 		onlyOwner
 	{
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
-		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		if (current_balance_struct.hasValue()) {
-			balance_wallet_struct current_balance_key = current_balance_struct
+			BalanceWalletStruct current_balance_key = current_balance_struct
 				.get();
 			address account_wallet = current_balance_key.wallet;
 			_tmp_sync_balance[account_wallet] = currency_root;
@@ -395,7 +395,7 @@ contract EverduesAccount is IEverduesAccount {
 		);
 		DepositTokens deposit = tmp_deposit_tokens[msg.sender];
 		require(deposit.wallet == account_wallet, EverduesErrors.error_message_sender_is_not_account_wallet);
-		balance_wallet_struct current_balance_struct_;
+		BalanceWalletStruct current_balance_struct_;
 		current_balance_struct_.wallet = account_wallet;
 		current_balance_struct_.balance = deposit.amount;
 		wallets_mapping[msg.sender] = current_balance_struct_;
@@ -594,12 +594,12 @@ contract EverduesAccount is IEverduesAccount {
 		optional(address) _currency_root = _tmp_sync_balance.fetch(msg.sender);
 		if (_currency_root.hasValue()) {
 			optional(
-				balance_wallet_struct
+				BalanceWalletStruct
 			) current_balance_struct = wallets_mapping.fetch(
 					_tmp_sync_balance[msg.sender]
 				);
 			if (current_balance_struct.hasValue()) {
-				balance_wallet_struct current_balance_key = current_balance_struct
+				BalanceWalletStruct current_balance_key = current_balance_struct
 						.get();
 				if (msg.sender == current_balance_key.wallet) {
 					current_balance_key.balance = balance_;
@@ -614,7 +614,7 @@ contract EverduesAccount is IEverduesAccount {
 					tvm.exit1();
 				}
 			} else {
-				balance_wallet_struct current_balance_struct_;
+				BalanceWalletStruct current_balance_struct_;
 				current_balance_struct_.wallet = msg.sender;
 				current_balance_struct_.balance = balance_;
 				wallets_mapping[
@@ -641,9 +641,9 @@ contract EverduesAccount is IEverduesAccount {
 		address withdraw_to,
 		uint128 additional_gas
 	) external onlyOwner {
-		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
-		balance_wallet_struct current_balance_key = current_balance_struct
+		BalanceWalletStruct current_balance_key = current_balance_struct
 			.get();
 		address account_wallet = current_balance_key.wallet;
 		TvmCell payload;
@@ -674,10 +674,10 @@ contract EverduesAccount is IEverduesAccount {
 		address remainingGasTo,
 		TvmCell /*payload*/
 	) external {
-		optional(balance_wallet_struct) current_balance_struct = wallets_mapping
+		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(tokenRoot);
 		if (current_balance_struct.hasValue()) {
-			balance_wallet_struct current_balance_key = current_balance_struct
+			BalanceWalletStruct current_balance_key = current_balance_struct
 				.get();
 			require(
 				msg.sender == current_balance_key.wallet,
@@ -700,6 +700,7 @@ contract EverduesAccount is IEverduesAccount {
 			emit Deposit(msg.sender, amount);
 			remainingGasTo.transfer({
 				value: 0,
+				bounce: false,
 				flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
 			});
 		} else {
@@ -727,7 +728,7 @@ contract EverduesAccount is IEverduesAccount {
 		optional(uint64, GetDexPairOperation) keyOpt = _tmp_get_pairs.min();
 		if (keyOpt.hasValue()) {
 			(, GetDexPairOperation dex_operation) = keyOpt.get();
-			balance_wallet_struct current_balance_key = wallets_mapping[
+			BalanceWalletStruct current_balance_key = wallets_mapping[
 				dex_operation.currency_root
 			];
 			current_balance_key.dex_ever_pair_address = dex_pair_address;
@@ -736,6 +737,7 @@ contract EverduesAccount is IEverduesAccount {
 			if (dex_operation.send_gas_to != address(this)) {
 				dex_operation.send_gas_to.transfer({
 					value: 0,
+					bounce: false,
 					flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 				});
 			}
