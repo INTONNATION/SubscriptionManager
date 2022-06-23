@@ -136,11 +136,19 @@
 			]
 		},
 		{
+			"name": "subscription_plans",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_plans","type":"map(uint8,cell)"}
+			]
+		},
+		{
 			"name": "service_params",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"service_params","type":"map(uint8,cell)"}
+				{"name":"service_params","type":"cell"}
 			]
 		}
 	],
@@ -167,7 +175,8 @@
 		{"name":"subscription_service_index_identificator_address","type":"address"},
 		{"name":"status","type":"uint8"},
 		{"name":"registation_timestamp","type":"uint256"},
-		{"name":"service_params","type":"map(uint8,cell)"},
+		{"name":"subscription_plans","type":"map(uint8,cell)"},
+		{"name":"service_params","type":"cell"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"code","type":"cell"},

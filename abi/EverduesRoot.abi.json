@@ -512,8 +512,6 @@
 				{"name":"identificator","type":"cell"},
 				{"name":"owner_pubkey","type":"uint256"},
 				{"name":"publish_to_catalog","type":"bool"},
-				{"name":"category","type":"string"},
-				{"name":"service_name","type":"string"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
