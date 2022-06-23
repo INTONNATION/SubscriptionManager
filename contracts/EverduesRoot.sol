@@ -110,7 +110,11 @@ contract EverduesRoot {
 		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
 		tvm.accept();
 		owner = initial_owner;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	modifier onlyOwner() {
@@ -146,7 +150,11 @@ contract EverduesRoot {
 			2
 		);
 		pending_owner = new_owner;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function acceptOwner() external {
@@ -164,7 +172,11 @@ contract EverduesRoot {
 		);
 		owner = pending_owner;
 		pending_owner = address.makeAddrStd(0, 0);
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	// Getters
@@ -174,7 +186,12 @@ contract EverduesRoot {
 		responsible
 		returns (address dex_pending_owner)
 	{
-		return {value: 0, bounce: false, flag: MsgFlag.REMAINING_GAS} pending_owner;
+		return
+			{
+				value: 0,
+				bounce: false,
+				flag: MsgFlag.REMAINING_GAS
+			} pending_owner;
 	}
 
 	function getTvcsLatest() public view returns (optional(VersionsTvcParams)) {
@@ -238,7 +255,11 @@ contract EverduesRoot {
 		);
 		tvcEverduesAccount = tvcEverduesAccountInput;
 		account_version++;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setTvcSubscriptionService(TvmCell tvcSubscriptionServiceInput)
@@ -254,7 +275,11 @@ contract EverduesRoot {
 		);
 		tvcSubscriptionService = tvcSubscriptionServiceInput;
 		service_version++;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setTvcSubscription(TvmCell tvcSubscriptionInput)
@@ -270,7 +295,11 @@ contract EverduesRoot {
 		);
 		tvcSubscription = tvcSubscriptionInput;
 		subscription_version++;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setTvcSubscriptionServiceIndex(
@@ -284,7 +313,11 @@ contract EverduesRoot {
 			2
 		);
 		tvcSubscriptionServiceIndex = tvcSubscriptionServiceIndexInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setTvcSubscriptionServiceIdentificatorIndex(
@@ -298,7 +331,11 @@ contract EverduesRoot {
 			2
 		);
 		tvcSubscriptionServiceIdentificatorIndex = tvcSubscriptionServiceIdentificatorIndexInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setTvcSubscriptionIndex(TvmCell tvcSubscriptionIndexInput)
@@ -313,7 +350,11 @@ contract EverduesRoot {
 			2
 		);
 		tvcSubscriptionIndex = tvcSubscriptionIndexInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setTvcSubscriptionIdentificatorIndex(
@@ -327,7 +368,11 @@ contract EverduesRoot {
 			2
 		);
 		tvcSubscriptionIdentificatorIndex = tvcSubscriptionIdentificatorIndexInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setTvcFeeProxy(TvmCell tvcFeeProxyInput) external onlyOwner {
@@ -340,7 +385,11 @@ contract EverduesRoot {
 		);
 		tvcFeeProxy = tvcFeeProxyInput;
 		fee_proxy_version++;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	// Set ABIs
@@ -356,7 +405,11 @@ contract EverduesRoot {
 			2
 		);
 		abiPlatformContract = abiPlatformContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiEverduesAccountContract(
@@ -370,7 +423,11 @@ contract EverduesRoot {
 			2
 		);
 		abiEverduesAccountContract = abiEverduesAccountContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiEverduesRootContract(string abiEverduesRootContractInput)
@@ -385,7 +442,11 @@ contract EverduesRoot {
 			2
 		);
 		abiEverduesRootContract = abiEverduesRootContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiTIP3RootContract(string abiTIP3RootContractInput)
@@ -400,7 +461,11 @@ contract EverduesRoot {
 			2
 		);
 		abiTIP3RootContract = abiTIP3RootContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiTIP3TokenWalletContract(
@@ -414,7 +479,11 @@ contract EverduesRoot {
 			2
 		);
 		abiTIP3TokenWalletContract = abiTIP3TokenWalletContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiServiceContract(string abiServiceContractInput)
@@ -429,7 +498,11 @@ contract EverduesRoot {
 			2
 		);
 		abiServiceContract = abiServiceContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiServiceIndexContract(string abiServiceIndexContractInput)
@@ -444,7 +517,11 @@ contract EverduesRoot {
 			2
 		);
 		abiServiceIndexContract = abiServiceIndexContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiServiceIdentificatorIndexContract(
@@ -458,7 +535,11 @@ contract EverduesRoot {
 			2
 		);
 		abiServiceIdentificatorIndexContract = abiServiceIdentificatorIndexContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiSubscriptionContract(string abiSubscriptionContractInput)
@@ -473,7 +554,11 @@ contract EverduesRoot {
 			2
 		);
 		abiSubscriptionContract = abiSubscriptionContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiSubscriptionIndexContract(
@@ -487,7 +572,11 @@ contract EverduesRoot {
 			2
 		);
 		abiSubscriptionIndexContract = abiSubscriptionIndexContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiSubscriptionIdentificatorIndexContract(
@@ -501,7 +590,11 @@ contract EverduesRoot {
 			2
 		);
 		abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAbiFeeProxyContract(string abiFeeProxyContractInput)
@@ -516,7 +609,11 @@ contract EverduesRoot {
 			2
 		);
 		abiFeeProxyContract = abiFeeProxyContractInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function deleteVersion(uint8 version_) external onlyOwner {
@@ -531,7 +628,11 @@ contract EverduesRoot {
 			delete vrsparamsTvc[version_];
 			delete vrsparamsAbi[version_];
 		}
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setVersion() external onlyOwner {
@@ -579,7 +680,11 @@ contract EverduesRoot {
 			.abiSubscriptionIdentificatorIndexContract = abiSubscriptionIdentificatorIndexContract;
 		abi_params.abiFeeProxyContract = abiFeeProxyContract;
 		vrsparamsAbi.add(version, abi_params);
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setCategories(string[] categoriesInput) external onlyOwner {
@@ -591,7 +696,11 @@ contract EverduesRoot {
 			2
 		);
 		categories = categoriesInput;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setDeployServiceLockValue(uint128 deploy_service_lock_value_)
@@ -606,7 +715,11 @@ contract EverduesRoot {
 			2
 		);
 		deploy_service_lock_value = deploy_service_lock_value_;
-		msg.sender.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		msg.sender.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function setAccountGasThreshold(uint128 account_threshold_)
@@ -641,7 +754,11 @@ contract EverduesRoot {
 		);
 		service_fee = service_fee_;
 		subscription_fee = subscription_fee_;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to)
@@ -656,7 +773,11 @@ contract EverduesRoot {
 			2
 		);
 		mtds_revenue_accumulator_address = revenue_to;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function installOrUpgradeWEVERRoot(address wever_root_) external onlyOwner {
@@ -668,7 +789,11 @@ contract EverduesRoot {
 			2
 		);
 		wever_root = wever_root_;
-		owner.transfer({value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED});
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function installOrUpdateFeeProxyParams(address[] currencies)
@@ -1499,7 +1624,7 @@ contract EverduesRoot {
 	}
 
 	function deployService(
-		TvmCell service_params,
+		TvmCell service_params_cell,
 		TvmCell identificator,
 		uint256 owner_pubkey,
 		bool publish_to_catalog,
@@ -1512,7 +1637,21 @@ contract EverduesRoot {
 			),
 			2
 		);
-		(/*address account*/, string service_name, /*string description*/, /*string image*/, string category) = abi.decode(service_params,(address,string,string,string,string));
+		(
+			TvmCell service_params, /*TvmCell subscription_plans*/
+
+		) = abi.decode(service_params_cell, (TvmCell, TvmCell));
+		(
+			,
+			/*address account*/
+			string service_name, /*string description*/ /*string image*/
+			,
+			,
+			string category
+		) = abi.decode(
+				service_params,
+				(address, string, string, string, string)
+			);
 		TvmCell service_code_salt;
 		if (publish_to_catalog) {
 			service_code_salt = _buildPublicServiceCode(category);
@@ -1520,14 +1659,6 @@ contract EverduesRoot {
 			uint256 nonce = rnd.next();
 			service_code_salt = _buildPrivateServiceCode(nonce);
 		}
-		Platform platform = new Platform{
-			stateInit: _buildInitData(
-				PlatformTypes.Service,
-				_buildServicePlatformParams(msg.sender, service_name)
-			),
-			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}(service_code_salt, service_params, service_version, msg.sender, 0);
 		TvmCell serviceIndexStateInit = _buildServiceIndex(
 			msg.sender,
 			service_name
@@ -1535,16 +1666,39 @@ contract EverduesRoot {
 		TvmCell serviceIdentificatorIndexStateInit = _buildServiceIdentificatorIndex(
 				msg.sender,
 				identificator,
-				address(platform)
+				address(
+					tvm.hash(
+						_buildInitData(
+							PlatformTypes.Service,
+							_buildServicePlatformParams(
+								msg.sender,
+								service_name
+							)
+						)
+					)
+				)
 			);
-		SubscriptionService(address(platform)).setIndexes{
-			value: EverduesGas.SET_SERVICE_INDEXES_VALUE +
-				EverduesGas.INIT_MESSAGE_VALUE +
-				(additional_gas / 3),
-			flag: MsgFlag.SENDER_PAYS_FEES
-		}(
+		TvmCell additional_params = abi.encode(
 			address(tvm.hash(serviceIndexStateInit)),
 			address(tvm.hash(serviceIdentificatorIndexStateInit))
+		);
+		TvmCell service_params_cell_with_additional_params = abi.encode(
+			service_params_cell,
+			additional_params
+		);
+		Platform platform = new Platform{
+			stateInit: _buildInitData(
+				PlatformTypes.Service,
+				_buildServicePlatformParams(msg.sender, service_name)
+			),
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(
+			service_code_salt,
+			service_params_cell_with_additional_params,
+			service_version,
+			msg.sender,
+			0
 		);
 		new SubscriptionServiceIndex{
 			value: EverduesGas.INDEX_INITIAL_BALANCE +

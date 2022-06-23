@@ -508,7 +508,7 @@
 		{
 			"name": "deployService",
 			"inputs": [
-				{"name":"service_params","type":"cell"},
+				{"name":"service_params_cell","type":"cell"},
 				{"name":"identificator","type":"cell"},
 				{"name":"owner_pubkey","type":"uint256"},
 				{"name":"publish_to_catalog","type":"bool"},
