@@ -161,6 +161,7 @@ contract EverduesAccount is IEverduesAccount {
 
 	function onCodeUpgrade(TvmCell data) private {
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
+		tvm.resetStorage();
 		uint32 old_version;
 		TvmCell contract_params;
 		TvmCell code;
@@ -186,7 +187,6 @@ contract EverduesAccount is IEverduesAccount {
 					TvmCell
 				)
 			);
-		tvm.resetStorage();
 		if (old_version > 0 && contract_params.toSlice().empty()) {
 			(
 				,
