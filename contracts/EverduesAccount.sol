@@ -495,30 +495,6 @@ contract EverduesAccount is IEverduesAccount {
 		);
 	}
 
-	function onGetDeployServiceRequirements(TvmCell requirements)
-		external
-		onlyRoot
-	{
-		(uint128 account_threshold, uint128 deploy_service_lock_value) = abi
-			.decode(requirements, (uint128, uint128));
-		require(
-			address(this).balance > deploy_service_lock_value,
-			EverduesErrors.error_deploy_service_requirements_not_met
-		);
-		optional(
-			uint64,
-			DeployServiceOperation
-		) keyOpt = _tmp_deploy_service_operations.min();
-		if (keyOpt.hasValue()) {
-			(uint64 call_id, DeployServiceOperation last_operation) = keyOpt
-				.get();
-			call_id;
-			uint128 gas = deploy_service_lock_value - account_threshold;
-
-			_tmp_deploy_service_operations.delMin();
-		}
-	}
-
 	function upgradeService(
 		string service_name,
 		string category,
