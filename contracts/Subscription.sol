@@ -29,6 +29,7 @@ contract Subscription is IEverduesSubscription {
 	uint8 public subscription_fee;
 	uint8 public subscription_plan;
 	TvmCell public subscription_params;
+	TvmCell public service_params;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address subscription_wallet;
@@ -466,7 +467,6 @@ contract Subscription is IEverduesSubscription {
 
 	function onGetParams(TvmCell service_params_) external onlyService {
 		// TODO: validate service params
-		TvmCell service_params;
 		(service_params, subscription_params) = abi.decode(
 			service_params_,
 			(TvmCell, TvmCell)
