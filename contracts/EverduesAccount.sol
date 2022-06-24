@@ -133,6 +133,7 @@ contract EverduesAccount is IEverduesAccount {
 		uint32 version,
 		TvmCell contract_params
 	) external onlyRoot {
+		TvmCell wallets_mapping_cell = abi.encode(wallets_mapping);
 		TvmCell data = abi.encode(
 			root,
 			current_version,
@@ -142,7 +143,7 @@ contract EverduesAccount is IEverduesAccount {
 			platform_params,
 			contract_params,
 			code,
-			wallets_mapping,
+			wallets_mapping_cell,
 			dex_root_address,
 			wever_root
 		);
@@ -180,6 +181,7 @@ contract EverduesAccount is IEverduesAccount {
 				)
 			);
 		if (old_version > 0 && contract_params.toSlice().empty()) {
+			TvmCell wallets_mapping_cell;
 			(
 				,
 				,
@@ -189,7 +191,7 @@ contract EverduesAccount is IEverduesAccount {
 				,
 				,
 				,
-				wallets_mapping,
+				wallets_mapping_cell,
 				dex_root_address,
 				wever_root
 			) = abi.decode(
@@ -203,11 +205,12 @@ contract EverduesAccount is IEverduesAccount {
 						TvmCell,
 						TvmCell,
 						TvmCell,
-						mapping(address => BalanceWalletStruct),
+						TvmCell,
 						address,
 						address
 					)
 				);
+				wallets_mapping = abi.decode(wallets_mapping_cell, (mapping(address => BalanceWalletStruct)));
 		} else if (old_version == 0) {
 			(dex_root_address, wever_root, /*address tip3_to_ever_address*/, account_gas_threshold) = abi.decode(
 				contract_params,
@@ -391,6 +394,16 @@ contract EverduesAccount is IEverduesAccount {
 		current_balance_struct_.wallet = account_wallet;
 		current_balance_struct_.balance = deposit.amount;
 		wallets_mapping[msg.sender] = current_balance_struct_;
+		_tmp_get_pairs[now] = GetDexPairOperation(
+			msg.sender,
+			address(this)
+		);
+		IDexRoot(dex_root_address).getExpectedPairAddress{
+			value: EverduesGas.INIT_MESSAGE_VALUE,
+			flag: 0,
+			bounce: false,
+			callback: EverduesAccount.onGetExpectedPairAddress
+		}(wever_root, msg.sender);
 		emit Deposit(msg.sender, deposit.amount);
 		delete tmp_deposit_tokens[msg.sender];
 	}
