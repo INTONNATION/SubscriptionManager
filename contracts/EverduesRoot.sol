@@ -957,29 +957,6 @@ contract EverduesRoot {
 		);
 	}
 
-	function getDeployServiceRequirements()
-		external
-		view
-		responsible
-		returns (TvmCell)
-	{
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ROOT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
-		TvmCell response = abi.encode(
-			account_threshold,
-			deploy_service_lock_value
-		);
-		return
-			{value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED} (
-				response
-			);
-	}
-
 	function forceUpgradeAccount(address account_address)
 		external
 		view
@@ -1507,7 +1484,8 @@ contract EverduesRoot {
 		TvmCell account_params = abi.encode(
 			dex_root_address,
 			wever_root,
-			tip3_to_ever_address
+			tip3_to_ever_address,
+			account_threshold
 		);
 
 		IPlatform(msg.sender).initializeByRoot{
@@ -1630,6 +1608,7 @@ contract EverduesRoot {
 		bool publish_to_catalog,
 		uint128 additional_gas
 	) external view onlyAccountContract(owner_pubkey) {
+		require(msg.value >= deploy_service_lock_value, EverduesErrors.error_message_low_value);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,

@@ -26,6 +26,7 @@ contract EverduesAccount is IEverduesAccount {
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address owner;
+	uint128 account_gas_threshold;
 	uint32 current_version;
 	uint8 type_id;
 
@@ -48,13 +49,6 @@ contract EverduesAccount is IEverduesAccount {
 		address subscription_contract;
 	}
 
-	struct DeployServiceOperation {
-		TvmCell service_params;
-		TvmCell identificator;
-		bool publish_to_catalog;
-		uint128 additional_gas;
-	}
-
 	struct DepositTokens {
 		address wallet;
 		uint128 amount;
@@ -64,8 +58,6 @@ contract EverduesAccount is IEverduesAccount {
 	mapping(address => address) public _tmp_sync_balance;
 	mapping(uint64 => GetDexPairOperation) public _tmp_get_pairs;
 	mapping(uint64 => ExchangeOperation) public _tmp_exchange_operations;
-	mapping(uint64 => DeployServiceOperation)
-		public _tmp_deploy_service_operations;
 	mapping (address=>DepositTokens) tmp_deposit_tokens;
 
 	constructor() public {
@@ -217,9 +209,9 @@ contract EverduesAccount is IEverduesAccount {
 					)
 				);
 		} else if (old_version == 0 || !contract_params.toSlice().empty()) {
-			(dex_root_address, wever_root) = abi.decode(
+			(dex_root_address, wever_root, /*address tip3_to_ever_address*/, account_gas_threshold) = abi.decode(
 				contract_params,
-				(address, address)
+				(address, address,address,uint128)
 			);
 		}
 		emit AccountDeployed(current_version);
@@ -487,20 +479,20 @@ contract EverduesAccount is IEverduesAccount {
 		TvmCell service_params,
 		TvmCell identificator,
 		bool publish_to_catalog,
+		uint128 deploy_value,
 		uint128 additional_gas
 	) public onlyOwner {
-		_tmp_deploy_service_operations[now] = DeployServiceOperation(
+		IEverduesRoot(root).deployService{
+			value: deploy_value,
+			bounce: true,
+			flag: 0
+		}(
 			service_params,
 			identificator,
+			tvm.pubkey(),
 			publish_to_catalog,
 			additional_gas
 		);
-		EverduesRoot(root).getDeployServiceRequirements{
-			value: EverduesGas.INIT_MESSAGE_VALUE,
-			bounce: true,
-			flag: 0,
-			callback: EverduesAccount.onGetDeployServiceRequirements
-		}();
 	}
 
 	function onGetDeployServiceRequirements(TvmCell requirements)
@@ -522,17 +514,7 @@ contract EverduesAccount is IEverduesAccount {
 				.get();
 			call_id;
 			uint128 gas = deploy_service_lock_value - account_threshold;
-			IEverduesRoot(root).deployService{
-				value: gas,
-				bounce: true,
-				flag: 0
-			}(
-				last_operation.service_params,
-				last_operation.identificator,
-				tvm.pubkey(),
-				last_operation.publish_to_catalog,
-				last_operation.additional_gas
-			);
+
 			_tmp_deploy_service_operations.delMin();
 		}
 	}
