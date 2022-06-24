@@ -132,6 +132,7 @@ contract SubscriptionService is IEverduesSubscriptionService {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
+		tvm.resetStorage();
 		address send_gas_to;
 		uint32 old_version;
 		TvmCell contract_params;
@@ -160,8 +161,6 @@ contract SubscriptionService is IEverduesSubscriptionService {
 				TvmCell
 			)
 		);
-		tvm.resetStorage();
-
 		if (old_version == 0) {
 			(TvmCell service_params_cell, TvmCell additional_params) = abi
 				.decode(contract_params, (TvmCell, TvmCell));

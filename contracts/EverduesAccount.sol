@@ -208,10 +208,10 @@ contract EverduesAccount is IEverduesAccount {
 						address
 					)
 				);
-		} else if (old_version == 0 || !contract_params.toSlice().empty()) {
+		} else if (old_version == 0) {
 			(dex_root_address, wever_root, /*address tip3_to_ever_address*/, account_gas_threshold) = abi.decode(
 				contract_params,
-				(address, address,address,uint128)
+				(address, address, address, uint128)
 			);
 		}
 		emit AccountDeployed(current_version);
@@ -481,7 +481,7 @@ contract EverduesAccount is IEverduesAccount {
 		bool publish_to_catalog,
 		uint128 deploy_value,
 		uint128 additional_gas
-	) public onlyOwner {
+	) public view onlyOwner {
 		IEverduesRoot(root).deployService{
 			value: deploy_value,
 			bounce: true,
