@@ -357,15 +357,6 @@
 			]
 		},
 		{
-			"name": "getDeployServiceRequirements",
-			"inputs": [
-				{"name":"answerId","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"value0","type":"cell"}
-			]
-		},
-		{
 			"name": "forceUpgradeAccount",
 			"inputs": [
 				{"name":"account_address","type":"address"}
