@@ -36,20 +36,20 @@
 			]
 		},
 		{
-			"name": "getTvcsLatest",
+			"name": "getCodeLatest",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcEverduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"value0","type":"optional(tuple)"}
+				{"components":[{"name":"codePlatform","type":"cell"},{"name":"codeEverduesAccount","type":"cell"},{"name":"codeSubscriptionService","type":"cell"},{"name":"codeSubscriptionServiceIndex","type":"cell"},{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"codeSubscription","type":"cell"},{"name":"codeSubscriptionIndex","type":"cell"},{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},{"name":"codeFeeProxy","type":"cell"}],"name":"value0","type":"optional(tuple)"}
 			]
 		},
 		{
-			"name": "getTvcsLatestResponsible",
+			"name": "getCodesLatestResponsible",
 			"inputs": [
 				{"name":"answerId","type":"uint32"}
 			],
 			"outputs": [
-				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcEverduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"value0","type":"tuple"}
+				{"components":[{"name":"codePlatform","type":"cell"},{"name":"codeEverduesAccount","type":"cell"},{"name":"codeSubscriptionService","type":"cell"},{"name":"codeSubscriptionServiceIndex","type":"cell"},{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"codeSubscription","type":"cell"},{"name":"codeSubscriptionIndex","type":"cell"},{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},{"name":"codeFeeProxy","type":"cell"}],"name":"value0","type":"tuple"}
 			]
 		},
 		{
@@ -70,73 +70,73 @@
 			]
 		},
 		{
-			"name": "setTvcPlatform",
+			"name": "setCodePlatform",
 			"inputs": [
-				{"name":"tvcPlatformInput","type":"cell"}
+				{"name":"codePlatformInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setTvcEverduesAccount",
+			"name": "setCodeEverduesAccount",
 			"inputs": [
-				{"name":"tvcEverduesAccountInput","type":"cell"}
+				{"name":"codeEverduesAccountInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setTvcSubscriptionService",
+			"name": "setCodeSubscriptionService",
 			"inputs": [
-				{"name":"tvcSubscriptionServiceInput","type":"cell"}
+				{"name":"codeSubscriptionServiceInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setTvcSubscription",
+			"name": "setCodeSubscription",
 			"inputs": [
-				{"name":"tvcSubscriptionInput","type":"cell"}
+				{"name":"codeSubscriptionInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setTvcSubscriptionServiceIndex",
+			"name": "setCodeSubscriptionServiceIndex",
 			"inputs": [
-				{"name":"tvcSubscriptionServiceIndexInput","type":"cell"}
+				{"name":"codeSubscriptionServiceIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setTvcSubscriptionServiceIdentificatorIndex",
+			"name": "setCodeSubscriptionServiceIdentificatorIndex",
 			"inputs": [
-				{"name":"tvcSubscriptionServiceIdentificatorIndexInput","type":"cell"}
+				{"name":"codeSubscriptionServiceIdentificatorIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setTvcSubscriptionIndex",
+			"name": "setCodeSubscriptionIndex",
 			"inputs": [
-				{"name":"tvcSubscriptionIndexInput","type":"cell"}
+				{"name":"codeSubscriptionIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setTvcSubscriptionIdentificatorIndex",
+			"name": "setCodeSubscriptionIdentificatorIndex",
 			"inputs": [
-				{"name":"tvcSubscriptionIdentificatorIndexInput","type":"cell"}
+				{"name":"codeSubscriptionIdentificatorIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setTvcFeeProxy",
+			"name": "setCodeFeeProxy",
 			"inputs": [
-				{"name":"tvcFeeProxyInput","type":"cell"}
+				{"name":"codeFeeProxyInput","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -554,11 +554,11 @@
 			]
 		},
 		{
-			"name": "vrsparamsTvc",
+			"name": "vrsparamsCode",
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcEverduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"}
+				{"components":[{"name":"codePlatform","type":"cell"},{"name":"codeEverduesAccount","type":"cell"},{"name":"codeSubscriptionService","type":"cell"},{"name":"codeSubscriptionServiceIndex","type":"cell"},{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"codeSubscription","type":"cell"},{"name":"codeSubscriptionIndex","type":"cell"},{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},{"name":"codeFeeProxy","type":"cell"}],"name":"vrsparamsCode","type":"map(uint8,tuple)"}
 			]
 		},
 		{
@@ -596,15 +596,15 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"version","type":"uint8"},
 		{"name":"categories","type":"string[]"},
-		{"name":"tvcPlatform","type":"cell"},
-		{"name":"tvcEverduesAccount","type":"cell"},
-		{"name":"tvcSubscriptionService","type":"cell"},
-		{"name":"tvcSubscription","type":"cell"},
-		{"name":"tvcSubscriptionServiceIndex","type":"cell"},
-		{"name":"tvcSubscriptionServiceIdentificatorIndex","type":"cell"},
-		{"name":"tvcSubscriptionIndex","type":"cell"},
-		{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},
-		{"name":"tvcFeeProxy","type":"cell"},
+		{"name":"codePlatform","type":"cell"},
+		{"name":"codeEverduesAccount","type":"cell"},
+		{"name":"codeSubscriptionService","type":"cell"},
+		{"name":"codeSubscription","type":"cell"},
+		{"name":"codeSubscriptionServiceIndex","type":"cell"},
+		{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},
+		{"name":"codeSubscriptionIndex","type":"cell"},
+		{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},
+		{"name":"codeFeeProxy","type":"cell"},
 		{"name":"abiPlatformContract","type":"string"},
 		{"name":"abiEverduesAccountContract","type":"string"},
 		{"name":"abiEverduesRootContract","type":"string"},
@@ -617,7 +617,7 @@
 		{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},
 		{"name":"abiFeeProxyContract","type":"string"},
 		{"name":"abiServiceIdentificatorIndexContract","type":"string"},
-		{"components":[{"name":"tvcPlatform","type":"cell"},{"name":"tvcEverduesAccount","type":"cell"},{"name":"tvcSubscriptionService","type":"cell"},{"name":"tvcSubscriptionServiceIndex","type":"cell"},{"name":"tvcSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"tvcSubscription","type":"cell"},{"name":"tvcSubscriptionIndex","type":"cell"},{"name":"tvcSubscriptionIdentificatorIndex","type":"cell"},{"name":"tvcFeeProxy","type":"cell"}],"name":"vrsparamsTvc","type":"map(uint8,tuple)"},
+		{"components":[{"name":"codePlatform","type":"cell"},{"name":"codeEverduesAccount","type":"cell"},{"name":"codeSubscriptionService","type":"cell"},{"name":"codeSubscriptionServiceIndex","type":"cell"},{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"codeSubscription","type":"cell"},{"name":"codeSubscriptionIndex","type":"cell"},{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},{"name":"codeFeeProxy","type":"cell"}],"name":"vrsparamsCode","type":"map(uint8,tuple)"},
 		{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiEverduesAccountContract","type":"string"},{"name":"abiEverduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiServiceIdentificatorIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"},
 		{"name":"fee_proxy_address","type":"address"},
 		{"name":"owner","type":"address"},

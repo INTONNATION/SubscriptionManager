@@ -209,6 +209,14 @@
 			]
 		},
 		{
+			"name": "service_params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_params","type":"cell"}
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
@@ -251,6 +259,7 @@
 		{"name":"subscription_fee","type":"uint8"},
 		{"name":"subscription_plan","type":"uint8"},
 		{"name":"subscription_params","type":"cell"},
+		{"name":"service_params","type":"cell"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},

@@ -20,15 +20,15 @@ CONTRACT_ADDRESS=`cat EverduesRoot.addr`
 owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
 
 # TVC
-platformTvc=$(cat ../abi/Platform.tvc | base64 $prefix)
-everduesAccountTvc=$(cat ../abi/EverduesAccount.tvc | base64 $prefix)
+platformCode=$(tvm_linker decode --tvc ../abi/Platform.tvc | grep code: | awk '{ print $2 }')
+metaduesAccountCode=$(tvm_linker decode --tvc ../abi/EverduesAccount.tvc | grep code: | awk '{ print $2 }')
 
 #ABI
 abiPlatformContract=$(cat ../abi/Platform.abi.json | jq -c .| base64 $prefix)
 abiEverduesAccountContract=$(cat ../abi/EverduesAccount.abi.json | jq -c .| base64 $prefix)
 
 # Set TVCs
-message=`tonos-cli -j body setTvcEverduesAccount "{\"tvcEverduesAccountInput\":\"$everduesAccountTvc\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+message=`tonos-cli -j body setCodeEverduesAccount "{\"codeEverduesAccountInput\":\"$metaduesAccountCode\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 #
 ## SET ABIs

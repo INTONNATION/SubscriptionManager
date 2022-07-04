@@ -4,17 +4,17 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "SubscriptionIndex.sol";
-import "./Platform.sol";
-import "interfaces/IEverduesAccount.sol";
-import "interfaces/IEverduesIndex.sol";
-import "interfaces/IEverduesFeeProxy.sol";
-import "interfaces/IEverduesSubscriptionService.sol";
-import "interfaces/IEverduesSubscription.sol";
+import "Platform.sol";
 import "libraries/EverduesErrors.sol";
 import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 import "libraries/PlatformTypes.sol";
 import "libraries/EverduesSubscriptionStatus.sol";
+import "interfaces/IEverduesAccount.sol";
+import "interfaces/IEverduesIndex.sol";
+import "interfaces/IEverduesFeeProxy.sol";
+import "interfaces/IEverduesSubscriptionService.sol";
+import "interfaces/IEverduesSubscription.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
@@ -291,7 +291,7 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function subscriptionStatus() public override returns (uint8) {
-		if (now < (subscription.payment_timestamp + svcparams.period)) {
+		if (now < (subscription.payment_timestamp + svcparams.period) || (subscription.period == 0 && subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE)) {
 			return EverduesSubscriptionStatus.STATUS_ACTIVE;
 		} else if (
 			(now > (subscription.payment_timestamp + svcparams.period)) &&
@@ -314,28 +314,32 @@ contract Subscription is IEverduesSubscription {
 			subscription.status != EverduesSubscriptionStatus.STATUS_STOPPED,
 			EverduesErrors.error_subscription_is_stopped
 		);
-		if (
-			now >
-			(subscription.payment_timestamp +
-				svcparams.period -
-				preprocessing_window)
-		) {
-			uint8 subcr_status = subscriptionStatus();
-			require(
-				subcr_status != EverduesSubscriptionStatus.STATUS_PROCESSING &&
-					subcr_status != EverduesSubscriptionStatus.STATUS_ACTIVE,
-				EverduesErrors.error_subscription_already_executed
-			);
-			tvm.accept();
-			subscription.pay_subscription_gas = paySubscriptionGas;
-			subscription.execution_timestamp = uint32(now);
-			IEverduesSubscriptionService(service_address).getInfo{
-				value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-					subscription.pay_subscription_gas,
-				bounce: true,
-				flag: 0,
-				callback: Subscription.onGetInfo
-			}();
+		if (subscription.period != 0 && subscription.status != EverduesSubscriptionStatus.STATUS_ACTIVE) {
+			if (
+				now >
+				(subscription.payment_timestamp +
+					svcparams.period -
+					preprocessing_window)
+			) {
+				uint8 subcr_status = subscriptionStatus();
+				require(
+					subcr_status != EverduesSubscriptionStatus.STATUS_PROCESSING &&
+						subcr_status != EverduesSubscriptionStatus.STATUS_ACTIVE,
+					EverduesErrors.error_subscription_already_executed
+				);
+				tvm.accept();
+				subscription.pay_subscription_gas = paySubscriptionGas;
+				subscription.execution_timestamp = uint32(now);
+				IEverduesSubscriptionService(service_address).getInfo{
+					value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
+						subscription.pay_subscription_gas,
+					bounce: true,
+					flag: 0,
+					callback: Subscription.onGetInfo
+				}();
+			} else {
+				revert(EverduesErrors.error_subscription_status_already_active);
+			}
 		} else {
 			revert(EverduesErrors.error_subscription_status_already_active);
 		}
