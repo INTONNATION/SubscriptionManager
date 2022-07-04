@@ -20,10 +20,15 @@ CONTRACT_ADDRESS=`cat EverduesRoot.addr`
 owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
 
 # TVC
-platformTvc=$(cat ../abi/Platform.tvc | base64 $prefix)
-subscriptionTvc=$(cat ../abi/Subscription.tvc | base64 $prefix)
-subscriptionIndexTvc=$(cat ../abi/SubscriptionIndex.tvc | base64 $prefix)
-subscriptionidentificatorIndexTvc=$(cat ../abi/SubscriptionIdentificatorIndex.tvc | base64 $prefix)
+platformCode=$(tvm_linker decode --tvc ../abi/Platform.tvc | grep code: | awk '{ print $2 }')
+metaduesAccountCode=$(tvm_linker decode --tvc ../abi/EverduesAccount.tvc | grep code: | awk '{ print $2 }')
+subscriptionCode=$(tvm_linker decode --tvc  ../abi/Subscription.tvc | grep code: | awk '{ print $2 }')
+subscriptionIndexCode=$(tvm_linker decode --tvc  ../abi/SubscriptionIndex.tvc | grep code: | awk '{ print $2 }')
+subscriptionServiceCode=$(tvm_linker decode --tvc  ../abi/SubscriptionService.tvc | grep code: | awk '{ print $2 }')
+subscriptionServiceIndexCode=$(tvm_linker decode --tvc  ../abi/SubscriptionServiceIndex.tvc | grep code: | awk '{ print $2 }')
+subscriptionidentificatorIndexCode=$(tvm_linker decode --tvc  ../abi/SubscriptionIdentificatorIndex.tvc | grep code: | awk '{ print $2 }')
+feeProxyCode=$(tvm_linker decode --tvc  ../abi/EverduesFeeProxy.tvc | grep code: | awk '{ print $2 }')
+serviceIdentificator=$(tvm_linker decode --tvc  ../abi/SubscriptionServiceIdentificatorIndex.tvc | grep code: | awk '{ print $2 }')
 
 #ABI
 abiPlatformContract=$(cat ../abi/Platform.abi.json | jq -c .| base64 $prefix)
@@ -33,11 +38,11 @@ abiSubscriptionIdentificatorIndexContract=$(cat ../abi/SubscriptionIdentificator
 
 # Set TVCs
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
-message=`tonos-cli -j body setTvcSubscription "{\"tvcSubscriptionInput\":\"$subscriptionTvc\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
+message=`tonos-cli -j body setCodeSubscription "{\"codeSubscriptionInput\":\"$subscriptionCode\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
-message=`tonos-cli -j body setTvcSubscriptionIndex "{\"tvcSubscriptionIndexInput\":\"$subscriptionIndexTvc\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
+message=`tonos-cli -j body setCodeSubscriptionIndex "{\"codeSubscriptionIndexInput\":\"$subscriptionIndexCode\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
-message=`tonos-cli -j body setTvcSubscriptionIdentificatorIndex "{\"tvcSubscriptionIdentificatorIndexInput\":\"$subscriptionidentificatorIndexTvc\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
+message=`tonos-cli -j body setCodeSubscriptionIdentificatorIndex "{\"codeSubscriptionIdentificatorIndexInput\":\"$subscriptionidentificatorIndexCode\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
 tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 #
 ## SET ABIs
