@@ -528,6 +528,15 @@
 			]
 		},
 		{
+			"name": "getServiceCodeHashesByVersion",
+			"inputs": [
+				{"name":"version_","type":"uint8"}
+			],
+			"outputs": [
+				{"name":"service_hashes","type":"uint256[]"}
+			]
+		},
+		{
 			"name": "subscriptionOf",
 			"inputs": [
 				{"name":"owner_address_","type":"address"},

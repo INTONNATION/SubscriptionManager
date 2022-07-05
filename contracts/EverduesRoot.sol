@@ -1713,7 +1713,7 @@ contract EverduesRoot {
 		returns (TvmCell)
 	{
 		TvmBuilder saltBuilder;
-		saltBuilder.store(subscription_owner, address(this)); // Max 4 items
+		saltBuilder.store(subscription_owner, address(this));
 		TvmCell code = tvm.setCodeSalt(
 			vrsparamsCode[version].codeSubscription,
 			saltBuilder.toCell()
@@ -1727,9 +1727,23 @@ contract EverduesRoot {
 		returns (TvmCell)
 	{
 		TvmBuilder saltBuilder;
-		saltBuilder.store(category, address(this)); // Max 4 items
+		saltBuilder.store(category, address(this));
 		TvmCell code = tvm.setCodeSalt(
 			vrsparamsCode[version].codeSubscriptionService,
+			saltBuilder.toCell()
+		);
+		return code;
+	}
+
+	function _buildPublicServiceCodeByVersion(string category, uint8 version_)
+		private
+		view
+		returns (TvmCell)
+	{
+		TvmBuilder saltBuilder;
+		saltBuilder.store(category, address(this));
+		TvmCell code = tvm.setCodeSalt(
+			vrsparamsCode[version_].codeSubscriptionService,
 			saltBuilder.toCell()
 		);
 		return code;
@@ -1741,7 +1755,7 @@ contract EverduesRoot {
 		returns (TvmCell)
 	{
 		TvmBuilder saltBuilder;
-		saltBuilder.store(nonce, address(this)); // Max 4 items
+		saltBuilder.store(nonce, address(this));
 		TvmCell code = tvm.setCodeSalt(
 			vrsparamsCode[version].codeSubscriptionService,
 			saltBuilder.toCell()
@@ -1929,6 +1943,18 @@ contract EverduesRoot {
 				)
 			)
 		);
+	}
+
+	function getServiceCodeHashesByVersion(uint8 version_)
+		public
+		view
+		returns (uint256[] service_hashes)
+	{	
+		uint256[] hashes;
+        for (uint i=0; i<categories.length; i++) {
+			hashes.push(tvm.hash(_buildPublicServiceCodeByVersion(categories[i], version_)));
+        }
+		service_hashes = hashes;
 	}
 
 	function subscriptionOf(address owner_address_, address service_address_)

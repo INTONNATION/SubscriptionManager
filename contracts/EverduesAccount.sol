@@ -58,7 +58,7 @@ contract EverduesAccount is IEverduesAccount {
 	mapping(address => address) public _tmp_sync_balance;
 	mapping(uint64 => GetDexPairOperation) public _tmp_get_pairs;
 	mapping(uint64 => ExchangeOperation) public _tmp_exchange_operations;
-	mapping (address=>DepositTokens) tmp_deposit_tokens;
+	mapping(address=>DepositTokens) tmp_deposit_tokens;
 
 	constructor() public {
 		revert();
