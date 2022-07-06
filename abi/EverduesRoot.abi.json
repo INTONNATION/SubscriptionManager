@@ -27,46 +27,20 @@
 			]
 		},
 		{
+			"name": "getServiceCodeHashes",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_hashes","type":"uint256[]"}
+			]
+		},
+		{
 			"name": "getPendingOwner",
 			"inputs": [
 				{"name":"answerId","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"dex_pending_owner","type":"address"}
-			]
-		},
-		{
-			"name": "getCodeLatest",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"codePlatform","type":"cell"},{"name":"codeEverduesAccount","type":"cell"},{"name":"codeSubscriptionService","type":"cell"},{"name":"codeSubscriptionServiceIndex","type":"cell"},{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"codeSubscription","type":"cell"},{"name":"codeSubscriptionIndex","type":"cell"},{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},{"name":"codeFeeProxy","type":"cell"}],"name":"value0","type":"optional(tuple)"}
-			]
-		},
-		{
-			"name": "getCodesLatestResponsible",
-			"inputs": [
-				{"name":"answerId","type":"uint32"}
-			],
-			"outputs": [
-				{"components":[{"name":"codePlatform","type":"cell"},{"name":"codeEverduesAccount","type":"cell"},{"name":"codeSubscriptionService","type":"cell"},{"name":"codeSubscriptionServiceIndex","type":"cell"},{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"codeSubscription","type":"cell"},{"name":"codeSubscriptionIndex","type":"cell"},{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},{"name":"codeFeeProxy","type":"cell"}],"name":"value0","type":"tuple"}
-			]
-		},
-		{
-			"name": "getAbisLatest",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiEverduesAccountContract","type":"string"},{"name":"abiEverduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiServiceIdentificatorIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"value0","type":"optional(tuple)"}
-			]
-		},
-		{
-			"name": "getOwner",
-			"inputs": [
-				{"name":"answerId","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"owner_","type":"address"}
 			]
 		},
 		{
@@ -86,9 +60,9 @@
 			]
 		},
 		{
-			"name": "setCodeSubscriptionService",
+			"name": "setCodeService",
 			"inputs": [
-				{"name":"codeSubscriptionServiceInput","type":"cell"}
+				{"name":"codeServiceInput","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -102,17 +76,17 @@
 			]
 		},
 		{
-			"name": "setCodeSubscriptionServiceIndex",
+			"name": "setCodeServiceIndex",
 			"inputs": [
-				{"name":"codeSubscriptionServiceIndexInput","type":"cell"}
+				{"name":"codeServiceIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "setCodeSubscriptionServiceIdentificatorIndex",
+			"name": "setCodeServiceIdentificatorIndex",
 			"inputs": [
-				{"name":"codeSubscriptionServiceIdentificatorIndexInput","type":"cell"}
+				{"name":"codeServiceIdentificatorIndexInput","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -240,14 +214,8 @@
 		{
 			"name": "deleteVersion",
 			"inputs": [
+				{"name":"contract_type","type":"uint8"},
 				{"name":"version_","type":"uint8"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setVersion",
-			"inputs": [
 			],
 			"outputs": [
 			]
@@ -528,15 +496,6 @@
 			]
 		},
 		{
-			"name": "getServiceCodeHashesByVersion",
-			"inputs": [
-				{"name":"version_","type":"uint8"}
-			],
-			"outputs": [
-				{"name":"service_hashes","type":"uint256[]"}
-			]
-		},
-		{
 			"name": "subscriptionOf",
 			"inputs": [
 				{"name":"owner_address_","type":"address"},
@@ -547,35 +506,11 @@
 			]
 		},
 		{
-			"name": "version",
+			"name": "versions",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"version","type":"uint8"}
-			]
-		},
-		{
-			"name": "categories",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"categories","type":"string[]"}
-			]
-		},
-		{
-			"name": "vrsparamsCode",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"codePlatform","type":"cell"},{"name":"codeEverduesAccount","type":"cell"},{"name":"codeSubscriptionService","type":"cell"},{"name":"codeSubscriptionServiceIndex","type":"cell"},{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"codeSubscription","type":"cell"},{"name":"codeSubscriptionIndex","type":"cell"},{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},{"name":"codeFeeProxy","type":"cell"}],"name":"vrsparamsCode","type":"map(uint8,tuple)"}
-			]
-		},
-		{
-			"name": "vrsparamsAbi",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiEverduesAccountContract","type":"string"},{"name":"abiEverduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiServiceIdentificatorIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"}
+				{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"}
 			]
 		},
 		{
@@ -593,6 +528,14 @@
 			"outputs": [
 				{"name":"owner","type":"address"}
 			]
+		},
+		{
+			"name": "categories",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"categories","type":"string[]"}
+			]
 		}
 	],
 	"data": [
@@ -603,22 +546,20 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"version","type":"uint8"},
-		{"name":"categories","type":"string[]"},
 		{"name":"codePlatform","type":"cell"},
-		{"name":"codeEverduesAccount","type":"cell"},
-		{"name":"codeSubscriptionService","type":"cell"},
-		{"name":"codeSubscription","type":"cell"},
-		{"name":"codeSubscriptionServiceIndex","type":"cell"},
-		{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},
-		{"name":"codeSubscriptionIndex","type":"cell"},
-		{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},
-		{"name":"codeFeeProxy","type":"cell"},
 		{"name":"abiPlatformContract","type":"string"},
-		{"name":"abiEverduesAccountContract","type":"string"},
 		{"name":"abiEverduesRootContract","type":"string"},
 		{"name":"abiTIP3RootContract","type":"string"},
 		{"name":"abiTIP3TokenWalletContract","type":"string"},
+		{"name":"codeEverduesAccount","type":"cell"},
+		{"name":"codeFeeProxy","type":"cell"},
+		{"name":"codeService","type":"cell"},
+		{"name":"codeServiceIndex","type":"cell"},
+		{"name":"codeServiceIdentificatorIndex","type":"cell"},
+		{"name":"codeSubscription","type":"cell"},
+		{"name":"codeSubscriptionIndex","type":"cell"},
+		{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},
+		{"name":"abiEverduesAccountContract","type":"string"},
 		{"name":"abiServiceContract","type":"string"},
 		{"name":"abiServiceIndexContract","type":"string"},
 		{"name":"abiSubscriptionContract","type":"string"},
@@ -626,23 +567,23 @@
 		{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},
 		{"name":"abiFeeProxyContract","type":"string"},
 		{"name":"abiServiceIdentificatorIndexContract","type":"string"},
-		{"components":[{"name":"codePlatform","type":"cell"},{"name":"codeEverduesAccount","type":"cell"},{"name":"codeSubscriptionService","type":"cell"},{"name":"codeSubscriptionServiceIndex","type":"cell"},{"name":"codeSubscriptionServiceIdentificatorIndex","type":"cell"},{"name":"codeSubscription","type":"cell"},{"name":"codeSubscriptionIndex","type":"cell"},{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},{"name":"codeFeeProxy","type":"cell"}],"name":"vrsparamsCode","type":"map(uint8,tuple)"},
-		{"components":[{"name":"abiPlatformContract","type":"string"},{"name":"abiEverduesAccountContract","type":"string"},{"name":"abiEverduesRootContract","type":"string"},{"name":"abiTIP3RootContract","type":"string"},{"name":"abiTIP3TokenWalletContract","type":"string"},{"name":"abiServiceContract","type":"string"},{"name":"abiServiceIndexContract","type":"string"},{"name":"abiServiceIdentificatorIndexContract","type":"string"},{"name":"abiSubscriptionContract","type":"string"},{"name":"abiSubscriptionIndexContract","type":"string"},{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},{"name":"abiFeeProxyContract","type":"string"}],"name":"vrsparamsAbi","type":"map(uint8,tuple)"},
-		{"name":"fee_proxy_address","type":"address"},
-		{"name":"owner","type":"address"},
+		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"},
 		{"name":"has_platform_code","type":"bool"},
 		{"name":"service_version","type":"uint32"},
 		{"name":"account_version","type":"uint32"},
 		{"name":"subscription_version","type":"uint32"},
 		{"name":"fee_proxy_version","type":"uint32"},
-		{"name":"service_fee","type":"uint8"},
-		{"name":"subscription_fee","type":"uint8"},
+		{"name":"fee_proxy_address","type":"address"},
+		{"name":"owner","type":"address"},
 		{"name":"mtds_root_address","type":"address"},
 		{"name":"mtds_revenue_accumulator_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"wever_root","type":"address"},
 		{"name":"pending_owner","type":"address"},
 		{"name":"tip3_to_ever_address","type":"address"},
+		{"name":"service_fee","type":"uint8"},
+		{"name":"subscription_fee","type":"uint8"},
+		{"name":"categories","type":"string[]"},
 		{"name":"deploy_service_lock_value","type":"uint128"},
 		{"name":"account_threshold","type":"uint128"}
 	]

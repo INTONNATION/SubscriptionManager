@@ -26,23 +26,22 @@ interface IPlatform {
 }
 
 contract EverduesRoot {
+
 	TvmCell codePlatform;
+	string abiPlatformContract;
+	string abiEverduesRootContract;
+	string abiTIP3RootContract;
+	string abiTIP3TokenWalletContract;
 
 	TvmCell codeEverduesAccount;
 	TvmCell codeFeeProxy;
-
 	TvmCell codeService;
 	TvmCell codeServiceIndex;
 	TvmCell codeServiceIdentificatorIndex;
 	TvmCell codeSubscription;
 	TvmCell codeSubscriptionIndex;
 	TvmCell codeSubscriptionIdentificatorIndex;
-
-	string abiPlatformContract;
 	string abiEverduesAccountContract;
-	string abiEverduesRootContract;
-	string abiTIP3RootContract;
-	string abiTIP3TokenWalletContract;
 	string abiServiceContract;
 	string abiServiceIndexContract;
 	string abiSubscriptionContract;
@@ -58,23 +57,26 @@ contract EverduesRoot {
 
 	mapping(uint8 => mapping(uint32 => ContractVersionParams)) public versions;
 
-	address public fee_proxy_address;
-	address public owner;
-	string[] public categories;
-
 	bool has_platform_code;
+
 	uint32 service_version;
 	uint32 account_version;
 	uint32 subscription_version;
 	uint32 fee_proxy_version;
-	uint8 service_fee;
-	uint8 subscription_fee;
+
+	address public fee_proxy_address;
+	address public owner;
 	address mtds_root_address;
 	address mtds_revenue_accumulator_address;
 	address dex_root_address;
 	address wever_root;
 	address pending_owner;
 	address tip3_to_ever_address;
+
+	uint8 service_fee;
+	uint8 subscription_fee;
+	string[] public categories;
+
 	uint128 deploy_service_lock_value = 2 ever;
 	uint128 account_threshold = 10 ever;
 
@@ -158,6 +160,25 @@ contract EverduesRoot {
 	}
 
 	// Getters
+	function getServiceCodeHashes()
+		public
+		view
+		returns (uint256[] service_hashes)
+	{
+		uint256[] hashes;
+		for ((uint32 key, ): versions[PlatformTypes.Service]) {
+			// iteration over the mapping
+			for (uint256 i = 0; i < categories.length; i++) {
+				hashes.push(
+					tvm.hash(
+						_buildPublicServiceCodeByVersion(categories[i], key)
+					)
+				);
+			}
+		}
+		service_hashes = hashes;
+	}
+
 	function getPendingOwner()
 		external
 		view
@@ -1948,14 +1969,17 @@ contract EverduesRoot {
 		uint32 version,
 		TvmCell contract_code,
 		string contract_abi
-	) private view {
-		mapping(uint32 => ContractVersionParams) versions_ = versions[
+	) private {
+		mapping(uint32 => ContractVersionParams) contract_versions_ = versions[
 			contract_type
 		];
 		ContractVersionParams new_version_params;
 		new_version_params.contractCode = contract_code;
 		new_version_params.contractAbi = contract_abi;
-		versions_[version] = new_version_params;
+		contract_versions_[version] = new_version_params;
+		versions[
+			contract_type
+		] = contract_versions_;
 	}
 
 	function _buildPlatformParamsOwnerAddress(address account_owner)
@@ -2014,25 +2038,6 @@ contract EverduesRoot {
 				)
 			)
 		);
-	}
-
-	function getServiceCodeHashes()
-		public
-		view
-		returns (uint256[] service_hashes)
-	{
-		uint256[] hashes;
-		for ((uint32 key, ): versions[PlatformTypes.Service]) {
-			// iteration over the mapping
-			for (uint256 i = 0; i < categories.length; i++) {
-				hashes.push(
-					tvm.hash(
-						_buildPublicServiceCodeByVersion(categories[i], key)
-					)
-				);
-			}
-		}
-		service_hashes = hashes;
 	}
 
 	function subscriptionOf(address owner_address_, address service_address_)
