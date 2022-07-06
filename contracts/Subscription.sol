@@ -13,7 +13,7 @@ import "libraries/EverduesSubscriptionStatus.sol";
 import "interfaces/IEverduesAccount.sol";
 import "interfaces/IEverduesIndex.sol";
 import "interfaces/IEverduesFeeProxy.sol";
-import "interfaces/IEverduesSubscriptionService.sol";
+import "interfaces/IEverduesService.sol";
 import "interfaces/IEverduesSubscription.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
@@ -161,22 +161,23 @@ contract Subscription is IEverduesSubscription {
 			type_id,
 			platform_code,
 			platform_params,
-			contract_params, 
+			contract_params,
 			/*TvmCell code*/
+
 		) = abi.decode(
-				upgrade_data,
-				(
-					address,
-					address,
-					uint32,
-					uint32,
-					uint8,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell
-				)
-			);
+			upgrade_data,
+			(
+				address,
+				address,
+				uint32,
+				uint32,
+				uint8,
+				TvmCell,
+				TvmCell,
+				TvmCell,
+				TvmCell
+			)
+		);
 		tvm.resetStorage();
 
 		if (old_version == 0) {
@@ -206,7 +207,7 @@ contract Subscription is IEverduesSubscription {
 					uint8
 				)
 			);
-			IEverduesSubscriptionService(service_address).getParams{
+			IEverduesService(service_address).getParams{
 				value: 0,
 				bounce: true,
 				flag: MsgFlag.ALL_NOT_RESERVED,
@@ -282,7 +283,7 @@ contract Subscription is IEverduesSubscription {
 			2
 		);
 		subscription_plan = new_subscription_plan;
-		IEverduesSubscriptionService(service_address).getParams{
+		IEverduesService(service_address).getParams{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED,
@@ -291,7 +292,11 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function subscriptionStatus() public override returns (uint8) {
-		if (now < (subscription.payment_timestamp + svcparams.period) || (subscription.period == 0 && subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE)) {
+		if (
+			now < (subscription.payment_timestamp + svcparams.period) ||
+			(subscription.period == 0 &&
+				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE)
+		) {
 			return EverduesSubscriptionStatus.STATUS_ACTIVE;
 		} else if (
 			(now > (subscription.payment_timestamp + svcparams.period)) &&
@@ -314,7 +319,10 @@ contract Subscription is IEverduesSubscription {
 			subscription.status != EverduesSubscriptionStatus.STATUS_STOPPED,
 			EverduesErrors.error_subscription_is_stopped
 		);
-		if (subscription.period != 0 && subscription.status != EverduesSubscriptionStatus.STATUS_ACTIVE) {
+		if (
+			subscription.period != 0 &&
+			subscription.status != EverduesSubscriptionStatus.STATUS_ACTIVE
+		) {
 			if (
 				now >
 				(subscription.payment_timestamp +
@@ -323,14 +331,16 @@ contract Subscription is IEverduesSubscription {
 			) {
 				uint8 subcr_status = subscriptionStatus();
 				require(
-					subcr_status != EverduesSubscriptionStatus.STATUS_PROCESSING &&
-						subcr_status != EverduesSubscriptionStatus.STATUS_ACTIVE,
+					subcr_status !=
+						EverduesSubscriptionStatus.STATUS_PROCESSING &&
+						subcr_status !=
+						EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
 				);
 				tvm.accept();
 				subscription.pay_subscription_gas = paySubscriptionGas;
 				subscription.execution_timestamp = uint32(now);
-				IEverduesSubscriptionService(service_address).getInfo{
+				IEverduesService(service_address).getInfo{
 					value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 						subscription.pay_subscription_gas,
 					bounce: true,
@@ -474,12 +484,22 @@ contract Subscription is IEverduesSubscription {
 		(service_params, subscription_params) = abi.decode(
 			service_params_,
 			(TvmCell, TvmCell)
-		);		
-		(svcparams.to,
+		);
+		(
+			svcparams.to,
 			svcparams.name,
 			svcparams.description,
-			svcparams.image, svcparams.category) = abi.decode(service_params, (address,string,string,string,string));
-		(svcparams.service_value,svcparams.period,svcparams.currency_root) = abi.decode(subscription_params, (uint128,uint32,address));
+			svcparams.image,
+			svcparams.category
+		) = abi.decode(
+			service_params,
+			(address, string, string, string, string)
+		);
+		(
+			svcparams.service_value,
+			svcparams.period,
+			svcparams.currency_root
+		) = abi.decode(subscription_params, (uint128, uint32, address));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 subscription_fee_value = service_value_percentage *
 			subscription_fee;
