@@ -31,7 +31,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"service_hashes","type":"uint256[]"}
+				{"name":"service_hashes","type":"string[]"}
 			]
 		},
 		{
