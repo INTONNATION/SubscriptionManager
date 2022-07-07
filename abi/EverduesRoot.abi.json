@@ -27,11 +27,12 @@
 			]
 		},
 		{
-			"name": "getServiceCodeHashes",
+			"name": "getCodeHashes",
 			"inputs": [
+				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
-				{"name":"service_hashes","type":"string[]"}
+				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"account_address","type":"address"}],"name":"everdues_contracts_info","type":"tuple"}
 			]
 		},
 		{
@@ -546,19 +547,10 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"codePlatform","type":"cell"},
 		{"name":"abiPlatformContract","type":"string"},
 		{"name":"abiEverduesRootContract","type":"string"},
 		{"name":"abiTIP3RootContract","type":"string"},
 		{"name":"abiTIP3TokenWalletContract","type":"string"},
-		{"name":"codeEverduesAccount","type":"cell"},
-		{"name":"codeFeeProxy","type":"cell"},
-		{"name":"codeService","type":"cell"},
-		{"name":"codeServiceIndex","type":"cell"},
-		{"name":"codeServiceIdentificatorIndex","type":"cell"},
-		{"name":"codeSubscription","type":"cell"},
-		{"name":"codeSubscriptionIndex","type":"cell"},
-		{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},
 		{"name":"abiEverduesAccountContract","type":"string"},
 		{"name":"abiServiceContract","type":"string"},
 		{"name":"abiServiceIndexContract","type":"string"},
@@ -567,12 +559,17 @@
 		{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},
 		{"name":"abiFeeProxyContract","type":"string"},
 		{"name":"abiServiceIdentificatorIndexContract","type":"string"},
+		{"name":"codePlatform","type":"cell"},
+		{"name":"codeEverduesAccount","type":"cell"},
+		{"name":"codeFeeProxy","type":"cell"},
+		{"name":"codeService","type":"cell"},
+		{"name":"codeServiceIndex","type":"cell"},
+		{"name":"codeServiceIdentificatorIndex","type":"cell"},
+		{"name":"codeSubscription","type":"cell"},
+		{"name":"codeSubscriptionIndex","type":"cell"},
+		{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},
 		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"},
 		{"name":"has_platform_code","type":"bool"},
-		{"name":"service_version","type":"uint32"},
-		{"name":"account_version","type":"uint32"},
-		{"name":"subscription_version","type":"uint32"},
-		{"name":"fee_proxy_version","type":"uint32"},
 		{"name":"fee_proxy_address","type":"address"},
 		{"name":"owner","type":"address"},
 		{"name":"mtds_root_address","type":"address"},

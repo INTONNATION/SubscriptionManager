@@ -29,7 +29,7 @@ contract EverduesAccount is IEverduesAccount {
 	uint128 account_gas_threshold;
 	uint32 current_version;
 	uint8 type_id;
-
+	
 	struct BalanceWalletStruct {
 		address wallet;
 		uint128 balance;
