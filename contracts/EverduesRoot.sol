@@ -163,16 +163,17 @@ contract EverduesRoot {
 	function getServiceCodeHashes()
 		public
 		view
-		returns (uint256[] service_hashes)
+		returns (string[] service_hashes)
 	{
-		uint256[] hashes;
+		string[] hashes;
 		for ((uint32 key, ): versions[PlatformTypes.Service]) {
 			// iteration over the mapping
 			for (uint256 i = 0; i < categories.length; i++) {
-				hashes.push(
-					tvm.hash(
+				uint256 hash_ = tvm.hash(
 						_buildPublicServiceCodeByVersion(categories[i], key)
-					)
+				);
+				hashes.push(
+					format("{:x}", hash_)
 				);
 			}
 		}
