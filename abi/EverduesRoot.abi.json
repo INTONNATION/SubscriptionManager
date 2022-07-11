@@ -32,7 +32,7 @@
 				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
-				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"platform_abi","type":"string"},{"name":"account_address","type":"address"}],"name":"everdues_contracts_info","type":"tuple"}
+				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"account_versions","type":"map(uint32,tuple)"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"platform_abi","type":"string"},{"name":"account_address","type":"address"}],"name":"everdues_contracts_info","type":"tuple"}
 			]
 		},
 		{
