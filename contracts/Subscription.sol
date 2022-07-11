@@ -23,6 +23,7 @@ contract Subscription is IEverduesSubscription {
 	address public address_fee_proxy;
 	address public account_address;
 	uint256 public owner_pubkey;
+	uint256 public service_pubkey;
 	address public subscription_index_address;
 	address public subscription_index_identificator_address;
 	uint8 public service_fee;
@@ -99,6 +100,14 @@ contract Subscription is IEverduesSubscription {
 		_;
 	}
 
+	modifier onlyRootOrServiceOrOwner() {
+		require(
+			(msg.pubkey() == root_pubkey || msg.pubkey() == owner_pubkey || msg.pubkey() == service_pubkey),
+			1000
+		);
+		_;
+	}
+
 	modifier onlyRootOrOwner() {
 		require(
 			(msg.pubkey() == root_pubkey || msg.pubkey() == owner_pubkey),
@@ -135,7 +144,8 @@ contract Subscription is IEverduesSubscription {
 			subscription_wallet,
 			service_address,
 			owner_pubkey,
-			subscription_plan
+			subscription_plan,
+			service_pubkey
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -231,7 +241,8 @@ contract Subscription is IEverduesSubscription {
 				subscription_wallet,
 				service_address,
 				owner_pubkey,
-				subscription_plan
+				subscription_plan,
+				service_pubkey
 			) = abi.decode(
 				upgrade_data,
 				(
@@ -256,7 +267,8 @@ contract Subscription is IEverduesSubscription {
 					address,
 					address,
 					uint256,
-					uint8
+					uint8,
+					uint256
 				)
 			);
 			send_gas_to.transfer({
@@ -307,7 +319,7 @@ contract Subscription is IEverduesSubscription {
 	function executeSubscription(uint128 paySubscriptionGas)
 		external
 		override
-		onlyRootOrOwner // TODO: add serviceOwner
+		onlyRootOrServiceOrOwner // TODO: add serviceOwner
 	{
 		require(!service_params.toSlice().empty(), EverduesErrors.error_subscription_has_no_service_params);
 		require(
@@ -476,9 +488,9 @@ contract Subscription is IEverduesSubscription {
 
 	function onGetParams(TvmCell service_params_) external onlyService {
 		require(!service_params_.toSlice().empty(), EverduesErrors.error_subscription_has_no_service_params);
-		(service_params, subscription_params) = abi.decode(
+		(service_params, subscription_params, service_pubkey) = abi.decode(
 			service_params_,
-			(TvmCell, TvmCell)
+			(TvmCell, TvmCell, uint256)
 		);
 		(
 			svcparams.to,
