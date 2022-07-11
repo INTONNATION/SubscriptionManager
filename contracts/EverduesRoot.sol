@@ -68,7 +68,7 @@ contract EverduesRoot {
 		TvmCell platform_code;
 		string tip3_root_abi;
 		string tip3_wallet_abi;
-		// string platform_abi;
+		string platform_abi;
 		// string everdues_root_abi;
 		address account_address;
 	}
@@ -242,13 +242,11 @@ contract EverduesRoot {
 			(uint32 version, ContractParams contract_params):
 			versions[PlatformTypes.SubscriptionIndex]
 		) {
-			for (uint256 i = 0; i < categories.length; i++) {
-				uint256 hash_ = tvm.hash(contract_params.contractCode);
-				ContractVersionParams contract_info;
-				contract_info.contractVersion = version;
-				contract_info.contractAbi = contract_params.contractAbi;
-				contracts.add(hash_, contract_info);
-			}
+			uint256 hash_ = tvm.hash(contract_params.contractCode);
+			ContractVersionParams contract_info;
+			contract_info.contractVersion = version;
+			contract_info.contractAbi = contract_params.contractAbi;
+			contracts.add(hash_, contract_info);
 		}
 		external_data_structure.add(
 			PlatformTypes.SubscriptionIndex,
@@ -260,7 +258,7 @@ contract EverduesRoot {
 		everdues_contracts_info.tip3_root_abi = abiTIP3RootContract;
 		everdues_contracts_info.tip3_wallet_abi = abiTIP3TokenWalletContract;
 		everdues_contracts_info.account_address = account;
-		// everdues_contracts_info.platform_abi ?
+		everdues_contracts_info.platform_abi = abiPlatformContract;
 		// everdues_contracts_info.everdues_root_abi ?
 	}
 
@@ -447,9 +445,16 @@ contract EverduesRoot {
 			)
 		) {
 			if (!abiServiceIndexContract.empty()) {
+				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.ServiceIndex].max();
+				uint32 latest_version;
+				if (latest_version_opt.hasValue()) {
+					(latest_version,) = latest_version_opt.get();
+				} else {
+					latest_version = 1;
+				}			
 				addNewContractVersion_(
 					PlatformTypes.ServiceIndex,
-					1,
+					latest_version,
 					codeServiceIndexInput,
 					abiServiceIndexContract
 				);
@@ -483,9 +488,16 @@ contract EverduesRoot {
 			)
 		) {
 			if (!abiServiceIdentificatorIndexContract.empty()) {
+				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.ServiceIdentificatorIndex].max();
+				uint32 latest_version;
+				if (latest_version_opt.hasValue()) {
+					(latest_version,) = latest_version_opt.get();
+				} else {
+					latest_version = 1;
+				}		
 				addNewContractVersion_(
 					PlatformTypes.ServiceIdentificatorIndex,
-					1,
+					latest_version,
 					codeServiceIdentificatorIndexInput,
 					abiServiceIdentificatorIndexContract
 				);
@@ -520,9 +532,16 @@ contract EverduesRoot {
 			)
 		) {
 			if (!abiSubscriptionIndexContract.empty()) {
+				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.SubscriptionIndex].max();
+				uint32 latest_version;
+				if (latest_version_opt.hasValue()) {
+					(latest_version,) = latest_version_opt.get();
+				} else {
+					latest_version = 1;
+				}
 				addNewContractVersion_(
 					PlatformTypes.SubscriptionIndex,
-					1,
+					latest_version,
 					codeSubscriptionIndexInput,
 					abiSubscriptionIndexContract
 				);
@@ -556,9 +575,16 @@ contract EverduesRoot {
 			)
 		) {
 			if (!abiSubscriptionIdentificatorIndexContract.empty()) {
+				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.SubscriptionIdentificatorIndex].max();
+				uint32 latest_version;
+				if (latest_version_opt.hasValue()) {
+					(latest_version,) = latest_version_opt.get();
+				} else {
+					latest_version = 1;
+				}
 				addNewContractVersion_(
 					PlatformTypes.SubscriptionIdentificatorIndex,
-					1,
+					latest_version,
 					codeSubscriptionIdentificatorIndexInput,
 					abiSubscriptionIdentificatorIndexContract
 				);
@@ -790,9 +816,16 @@ contract EverduesRoot {
 			)
 		) {
 			if (!codeServiceIndex.toSlice().empty()) {
+				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.ServiceIndex].max();
+				uint32 latest_version;
+				if (latest_version_opt.hasValue()) {
+					(latest_version,) = latest_version_opt.get();
+				} else {
+					latest_version = 1;
+				}
 				addNewContractVersion_(
 					PlatformTypes.ServiceIndex,
-					1,
+					latest_version,
 					codeServiceIndex,
 					abiServiceIndexContractInput
 				);
@@ -826,9 +859,16 @@ contract EverduesRoot {
 			)
 		) {
 			if (!codeServiceIdentificatorIndex.toSlice().empty()) {
+				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.ServiceIdentificatorIndex].max();
+				uint32 latest_version;
+				if (latest_version_opt.hasValue()) {
+					(latest_version,) = latest_version_opt.get();
+				} else {
+					latest_version = 1;
+				}
 				addNewContractVersion_(
 					PlatformTypes.ServiceIdentificatorIndex,
-					1,
+					latest_version,
 					codeServiceIdentificatorIndex,
 					abiServiceIdentificatorIndexContractInput
 				);
@@ -907,9 +947,16 @@ contract EverduesRoot {
 			)
 		) {
 			if (!codeSubscriptionIndex.toSlice().empty()) {
+				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.SubscriptionIndex].max();
+				uint32 latest_version;
+				if (latest_version_opt.hasValue()) {
+					(latest_version,) = latest_version_opt.get();
+				} else {
+					latest_version = 1;
+				}
 				addNewContractVersion_(
 					PlatformTypes.SubscriptionIndex,
-					1,
+					latest_version,
 					codeSubscriptionIndex,
 					abiSubscriptionIndexContractInput
 				);
@@ -943,9 +990,16 @@ contract EverduesRoot {
 			)
 		) {
 			if (!codeSubscriptionIdentificatorIndex.toSlice().empty()) {
+				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.SubscriptionIndex].max();
+				uint32 latest_version;
+				if (latest_version_opt.hasValue()) {
+					(latest_version,) = latest_version_opt.get();
+				} else {
+					latest_version = 1;
+				}
 				addNewContractVersion_(
 					PlatformTypes.SubscriptionIdentificatorIndex,
-					1,
+					latest_version,
 					codeSubscriptionIdentificatorIndex,
 					abiSubscriptionIdentificatorIndexContractInput
 				);
