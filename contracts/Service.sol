@@ -13,7 +13,7 @@ contract Service is IEverduesService {
 	address public service_owner;
 	address public subscription_service_index_address;
 	address public subscription_service_index_identificator_address;
-	uint8   public status = 0;
+	uint8 public status = 0;
 	uint256 public registation_timestamp;
 	TvmCell public service_params;
 	mapping(uint8 => TvmCell) public subscription_plans;

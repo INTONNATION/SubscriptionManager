@@ -5,7 +5,7 @@ pragma AbiHeader pubkey;
 
 import "Platform.sol";
 import "libraries/EverduesErrors.sol";
-import "libraries/PlatformTypes.sol";
+import "libraries/ContractTypes.sol";
 import "libraries/MsgFlag.sol";
 import "libraries/EverduesGas.sol";
 import "libraries/DexOperationTypes.sol";
@@ -20,7 +20,7 @@ contract EverduesFeeProxy {
 	address public root;
 	address public mtds_root_address;
 	address public dex_root_address;
-	uint32  public current_version;
+	uint32 public current_version;
 	uint128 public account_threshold = 10 ever; // default value
 	address _tmp_swap_currency_root_;
 	TvmCell platform_code;
@@ -64,7 +64,7 @@ contract EverduesFeeProxy {
 		address subscription_contract_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Subscription,
+					ContractTypes.Subscription,
 					_buildSubscriptionParams(account_address, service_address)
 				)
 			)

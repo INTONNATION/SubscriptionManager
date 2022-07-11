@@ -8,7 +8,7 @@ import "Platform.sol";
 import "libraries/EverduesErrors.sol";
 import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
-import "libraries/PlatformTypes.sol";
+import "libraries/ContractTypes.sol";
 import "libraries/EverduesSubscriptionStatus.sol";
 import "interfaces/IEverduesAccount.sol";
 import "interfaces/IEverduesIndex.sol";
@@ -25,9 +25,9 @@ contract Subscription is IEverduesSubscription {
 	uint256 public owner_pubkey;
 	address public subscription_index_address;
 	address public subscription_index_identificator_address;
-	uint8   public service_fee;
-	uint8   public subscription_fee;
-	uint8   public subscription_plan;
+	uint8 public service_fee;
+	uint8 public subscription_fee;
+	uint8 public subscription_plan;
 	TvmCell public subscription_params;
 	TvmCell public service_params;
 	TvmCell platform_code;
@@ -113,7 +113,6 @@ contract Subscription is IEverduesSubscription {
 		address send_gas_to,
 		TvmCell contract_params_
 	) external onlyRoot {
-
 		TvmCell data = abi.encode(
 			root,
 			send_gas_to,
