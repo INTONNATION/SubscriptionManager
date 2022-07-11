@@ -8,7 +8,7 @@ import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 
 contract ServiceIndex {
-	string public static service_name;
+	string  public static service_name;
 	address public service_address;
 	address public service_owner;
 	address public root;

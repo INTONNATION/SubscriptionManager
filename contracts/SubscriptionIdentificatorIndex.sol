@@ -8,7 +8,7 @@ import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 
 contract SubscriptionIdentificatorIndex {
-	address static subscription_owner;
+	address public static subscription_owner;
 	address public subscription_address;
 	address public root;
 	TvmCell public identificator;
@@ -44,7 +44,7 @@ contract SubscriptionIdentificatorIndex {
 		});
 	}
 
-	function cancel() public onlyOwner {
+	function cancel() external onlyOwner {
 		selfdestruct(subscription_owner);
 	}
 

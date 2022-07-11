@@ -32,7 +32,7 @@
 				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
-				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"account_versions","type":"map(uint32,tuple)"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"platform_abi","type":"string"},{"name":"account_address","type":"address"}],"name":"everdues_contracts_info","type":"tuple"}
+				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"account_versions","type":"map(uint32,tuple)"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"platform_abi","type":"string"},{"name":"account_address","type":"address"},{"name":"categories","type":"string[]"}],"name":"everdues_contracts_info","type":"tuple"}
 			]
 		},
 		{
@@ -507,14 +507,6 @@
 			]
 		},
 		{
-			"name": "versions",
-			"inputs": [
-			],
-			"outputs": [
-				{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"}
-			]
-		},
-		{
 			"name": "fee_proxy_address",
 			"inputs": [
 			],
@@ -531,11 +523,75 @@
 			]
 		},
 		{
-			"name": "categories",
+			"name": "mtds_root_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"categories","type":"string[]"}
+				{"name":"mtds_root_address","type":"address"}
+			]
+		},
+		{
+			"name": "mtds_revenue_accumulator_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"mtds_revenue_accumulator_address","type":"address"}
+			]
+		},
+		{
+			"name": "dex_root_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"dex_root_address","type":"address"}
+			]
+		},
+		{
+			"name": "wever_root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"wever_root","type":"address"}
+			]
+		},
+		{
+			"name": "pending_owner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"pending_owner","type":"address"}
+			]
+		},
+		{
+			"name": "tip3_to_ever_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"tip3_to_ever_address","type":"address"}
+			]
+		},
+		{
+			"name": "service_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_fee","type":"uint8"}
+			]
+		},
+		{
+			"name": "subscription_fee",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_fee","type":"uint8"}
+			]
+		},
+		{
+			"name": "versions",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"}
 			]
 		}
 	],
@@ -547,6 +603,20 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
+		{"name":"fee_proxy_address","type":"address"},
+		{"name":"owner","type":"address"},
+		{"name":"mtds_root_address","type":"address"},
+		{"name":"mtds_revenue_accumulator_address","type":"address"},
+		{"name":"dex_root_address","type":"address"},
+		{"name":"wever_root","type":"address"},
+		{"name":"pending_owner","type":"address"},
+		{"name":"tip3_to_ever_address","type":"address"},
+		{"name":"service_fee","type":"uint8"},
+		{"name":"subscription_fee","type":"uint8"},
+		{"name":"categories","type":"string[]"},
+		{"name":"has_platform_code","type":"bool"},
+		{"name":"deploy_service_lock_value","type":"uint128"},
+		{"name":"account_threshold","type":"uint128"},
 		{"name":"abiPlatformContract","type":"string"},
 		{"name":"abiEverduesRootContract","type":"string"},
 		{"name":"abiTIP3RootContract","type":"string"},
@@ -568,20 +638,6 @@
 		{"name":"codeSubscription","type":"cell"},
 		{"name":"codeSubscriptionIndex","type":"cell"},
 		{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},
-		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"},
-		{"name":"has_platform_code","type":"bool"},
-		{"name":"fee_proxy_address","type":"address"},
-		{"name":"owner","type":"address"},
-		{"name":"mtds_root_address","type":"address"},
-		{"name":"mtds_revenue_accumulator_address","type":"address"},
-		{"name":"dex_root_address","type":"address"},
-		{"name":"wever_root","type":"address"},
-		{"name":"pending_owner","type":"address"},
-		{"name":"tip3_to_ever_address","type":"address"},
-		{"name":"service_fee","type":"uint8"},
-		{"name":"subscription_fee","type":"uint8"},
-		{"name":"categories","type":"string[]"},
-		{"name":"deploy_service_lock_value","type":"uint128"},
-		{"name":"account_threshold","type":"uint128"}
+		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"}
 	]
 }

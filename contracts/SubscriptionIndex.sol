@@ -8,7 +8,7 @@ import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 
 contract SubscriptionIndex {
-	address static subscription_owner;
+	address public static subscription_owner;
 	address public subscription_address;
 	address public root;
 	address public service_address;
