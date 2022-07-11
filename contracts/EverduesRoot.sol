@@ -65,6 +65,7 @@ contract EverduesRoot {
 
 	struct EverduesContractsInfo {
 		mapping(uint8 => mapping(uint256 => ContractVersionParams)) versions;
+		mapping(uint32 => ContractParams) account_versions;
 		TvmCell platform_code;
 		string tip3_root_abi;
 		string tip3_wallet_abi;
@@ -259,6 +260,7 @@ contract EverduesRoot {
 		everdues_contracts_info.tip3_wallet_abi = abiTIP3TokenWalletContract;
 		everdues_contracts_info.account_address = account;
 		everdues_contracts_info.platform_abi = abiPlatformContract;
+		everdues_contracts_info.account_versions = versions[PlatformTypes.Account];
 		// everdues_contracts_info.everdues_root_abi ?
 	}
 
