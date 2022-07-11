@@ -26,12 +26,27 @@ interface IPlatform {
 }
 
 contract EverduesRoot {
-	
+
+	address public fee_proxy_address;
+	address public owner;
+	address public mtds_root_address;
+	address public mtds_revenue_accumulator_address;
+	address public dex_root_address;
+	address public wever_root;
+	address public pending_owner;
+	address public tip3_to_ever_address;
+	uint8   public service_fee;
+	uint8   public subscription_fee;
+
+	string[] categories;
+	bool has_platform_code;
+	uint128 deploy_service_lock_value = 2 ever; // TODO: ???
+	uint128 account_threshold = 10 ever; // TODO: move to Gas.sol
+
 	string abiPlatformContract;
 	string abiEverduesRootContract;
 	string abiTIP3RootContract;
 	string abiTIP3TokenWalletContract;
-
 	string abiEverduesAccountContract;
 	string abiServiceContract;
 	string abiServiceIndexContract;
@@ -42,7 +57,6 @@ contract EverduesRoot {
 	string abiServiceIdentificatorIndexContract;
 
 	TvmCell codePlatform;
-
 	TvmCell codeEverduesAccount;
 	TvmCell codeFeeProxy;
 	TvmCell codeService;
@@ -51,7 +65,6 @@ contract EverduesRoot {
 	TvmCell codeSubscription;
 	TvmCell codeSubscriptionIndex;
 	TvmCell codeSubscriptionIdentificatorIndex;
-
 
 	struct ContractParams {
 		TvmCell contractCode;
@@ -72,27 +85,10 @@ contract EverduesRoot {
 		string platform_abi;
 		// string everdues_root_abi;
 		address account_address;
+		string[] categories;
 	}
 
 	mapping(uint8 => mapping(uint32 => ContractParams)) public versions;
-
-	bool has_platform_code;
-
-	address public fee_proxy_address;
-	address public owner;
-	address mtds_root_address;
-	address mtds_revenue_accumulator_address;
-	address dex_root_address;
-	address wever_root;
-	address pending_owner;
-	address tip3_to_ever_address;
-
-	uint8 service_fee;
-	uint8 subscription_fee;
-	string[] public categories;
-
-	uint128 deploy_service_lock_value = 2 ever;
-	uint128 account_threshold = 10 ever;
 
 	onBounce(TvmSlice slice) external view {
 		// revert change to initial msg.sender in case of failure during deploy
@@ -175,7 +171,7 @@ contract EverduesRoot {
 
 	// Getters
 	function getCodeHashes(uint256 owner_pubkey)
-		public
+		external
 		view
 		returns (EverduesContractsInfo everdues_contracts_info)
 	{
@@ -261,6 +257,7 @@ contract EverduesRoot {
 		everdues_contracts_info.account_address = account;
 		everdues_contracts_info.platform_abi = abiPlatformContract;
 		everdues_contracts_info.account_versions = versions[PlatformTypes.Account];
+		everdues_contracts_info.categories = categories;
 		// everdues_contracts_info.everdues_root_abi ?
 	}
 
@@ -2338,7 +2335,7 @@ contract EverduesRoot {
 	// Addresses calculations
 
 	function accountOf(uint256 owner_pubkey)
-		public
+		external
 		view
 		returns (address account)
 	{
@@ -2348,7 +2345,7 @@ contract EverduesRoot {
 	}
 
 	function serviceOf(address owner_address_, string service_name_)
-		public
+		external
 		view
 		returns (address service)
 	{
@@ -2363,7 +2360,7 @@ contract EverduesRoot {
 	}
 
 	function subscriptionOf(address owner_address_, address service_address_)
-		public
+		external
 		view
 		returns (address subscription)
 	{

@@ -10,17 +10,17 @@ import "interfaces/IEverduesIndex.sol";
 import "interfaces/IEverduesService.sol";
 
 contract Service is IEverduesService {
-	address public root;
 	address public service_owner;
 	address public subscription_service_index_address;
 	address public subscription_service_index_identificator_address;
-	uint8 public status = 0;
+	uint8   public status = 0;
 	uint256 public registation_timestamp;
-	mapping(uint8 => TvmCell) public subscription_plans;
 	TvmCell public service_params;
+	mapping(uint8 => TvmCell) public subscription_plans;
+
+	address root;
 	TvmCell platform_code;
 	TvmCell platform_params;
-	TvmCell code;
 	uint32 current_version;
 	uint8 type_id;
 
@@ -73,7 +73,7 @@ contract Service is IEverduesService {
 				.toCell();
 	}
 
-	function pause() public onlyRoot {
+	function pause() external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -89,7 +89,7 @@ contract Service is IEverduesService {
 		});
 	}
 
-	function resume() public onlyRoot {
+	function resume() external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -225,7 +225,7 @@ contract Service is IEverduesService {
 		}
 	}
 
-	function updateServiceParams(TvmCell new_service_params) public onlyRoot {
+	function updateServiceParams(TvmCell new_service_params) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,

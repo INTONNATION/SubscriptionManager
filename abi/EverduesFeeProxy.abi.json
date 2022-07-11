@@ -208,7 +208,7 @@
 		{"name":"dex_root_address","type":"address"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"account_threshold","type":"uint128"},
-		{"name":"swap_currency_root","type":"address"},
+		{"name":"_tmp_swap_currency_root_","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"type_id","type":"uint8"},

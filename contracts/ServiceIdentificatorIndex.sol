@@ -8,7 +8,7 @@ import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 
 contract ServiceIdentificatorIndex {
-	address static service_owner;
+	address public static service_owner;
 	address public static service_address;
 	address public root;
 	TvmCell public identificator;

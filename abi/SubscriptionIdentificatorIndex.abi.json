@@ -28,6 +28,14 @@
 			]
 		},
 		{
+			"name": "subscription_owner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_owner","type":"address"}
+			]
+		},
+		{
 			"name": "subscription_address",
 			"inputs": [
 			],

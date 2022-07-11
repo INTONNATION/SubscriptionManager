@@ -20,9 +20,9 @@ contract EverduesFeeProxy {
 	address public root;
 	address public mtds_root_address;
 	address public dex_root_address;
-	uint32 public current_version;
-	uint128 public account_threshold = 10 ever;
-	address swap_currency_root;
+	uint32  public current_version;
+	uint128 public account_threshold = 10 ever; // TODO: move to Gas.sol
+	address _tmp_swap_currency_root_;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	uint8 type_id;
@@ -115,10 +115,10 @@ contract EverduesFeeProxy {
 			2
 		);
 		require(
-			swap_currency_root == address(0),
+			_tmp_swap_currency_root_ == address(0),
 			EverduesErrors.error_address_is_empty
 		); // mutex
-		swap_currency_root = currency_root; // critical area
+		_tmp_swap_currency_root_ = currency_root; // critical area
 		_tmp_deploying_wallets[currency_root] = send_gas_to;
 		optional(
 			BalanceWalletStruct
@@ -159,8 +159,8 @@ contract EverduesFeeProxy {
 			EverduesErrors.error_message_low_value
 		);
 		require(
-			_tmp_deploying_wallets.exists(swap_currency_root) &&
-				!wallets_mapping.exists(swap_currency_root),
+			_tmp_deploying_wallets.exists(_tmp_swap_currency_root_) &&
+				!wallets_mapping.exists(_tmp_swap_currency_root_),
 			EverduesErrors.error_wallet_not_exist
 		);
 		TvmBuilder builder;
@@ -170,9 +170,9 @@ contract EverduesFeeProxy {
 		builder.store(uint128(0));
 
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
-			.fetch(swap_currency_root);
+			.fetch(_tmp_swap_currency_root_);
 		BalanceWalletStruct current_balance_key = current_balance_struct.get();
-		address send_gas_to = _tmp_deploying_wallets[swap_currency_root];
+		address send_gas_to = _tmp_deploying_wallets[_tmp_swap_currency_root_];
 		ITokenWallet(current_balance_key.wallet).transfer{
 			value: EverduesGas.TRANSFER_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
@@ -185,8 +185,8 @@ contract EverduesFeeProxy {
 			builder.toCell() // payload
 		);
 		current_balance_key.balance = 0;
-		wallets_mapping[swap_currency_root] = current_balance_key;
-		swap_currency_root = address(0); // free mutex
+		wallets_mapping[_tmp_swap_currency_root_] = current_balance_key;
+		_tmp_swap_currency_root_ = address(0); // free mutex
 		send_gas_to.transfer({
 			value: 0,
 			bounce: false,

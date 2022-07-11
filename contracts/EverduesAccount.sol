@@ -20,15 +20,14 @@ import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
 contract EverduesAccount is IEverduesAccount {
-	address public root;
-	address public dex_root_address;
-	address public wever_root;
-	TvmCell platform_code;
-	TvmCell platform_params;
-	address owner;
-	uint128 account_gas_threshold;
 	uint32 current_version;
 	uint8 type_id;
+	address root;
+	address dex_root_address;
+	address wever_root;
+	TvmCell platform_code;
+	TvmCell platform_params;
+	uint128 account_gas_threshold;
 	
 	struct BalanceWalletStruct {
 		address wallet;
@@ -55,9 +54,10 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	mapping(address => BalanceWalletStruct) public wallets_mapping;
-	mapping(address => address) public _tmp_sync_balance;
-	mapping(uint64 => GetDexPairOperation) public _tmp_get_pairs;
-	mapping(uint64 => ExchangeOperation) public _tmp_exchange_operations;
+
+	mapping(address => address) _tmp_sync_balance;
+	mapping(uint64 => GetDexPairOperation) _tmp_get_pairs;
+	mapping(uint64 => ExchangeOperation) _tmp_exchange_operations;
 	mapping(address => DepositTokens) tmp_deposit_tokens;
 
 	constructor() public {
@@ -89,6 +89,15 @@ contract EverduesAccount is IEverduesAccount {
 		_;
 	}
 
+    modifier onlyDexPair(address sender) {
+		for ((address tokenRoot, BalanceWalletStruct tokenBalance): wallets_mapping) {
+			if (tokenBalance.dex_ever_pair_address == sender) {
+				_;
+			}
+		}
+		revert(EverduesErrors.error_message_sender_is_not_dex_pair);
+    }
+
 	modifier onlyFeeProxy() {
 		address fee_proxy_address = address(
 			tvm.hash(
@@ -118,7 +127,7 @@ contract EverduesAccount is IEverduesAccount {
 		}
 	}
 
-	function upgradeAccount(uint128 additional_gas) public view onlyOwner {
+	function upgradeAccount(uint128 additional_gas) external view onlyOwner {
 		IEverduesRoot(root).upgradeAccount{
 			value: EverduesGas.UPGRADE_ACCOUNT_MIN_VALUE +
 				additional_gas +
@@ -301,7 +310,7 @@ contract EverduesAccount is IEverduesAccount {
 	function onExpectedExchange(
 		uint128 expected_amount,
 		uint128 /*expected_fee*/
-	) public {
+	) external onlyDexPair(msg.sender) {
 		TvmCell payload = abi.encode(expected_amount);
 		optional(uint64, ExchangeOperation) keyOpt = _tmp_exchange_operations
 			.min();
@@ -435,7 +444,7 @@ contract EverduesAccount is IEverduesAccount {
 	function upgradeSubscription(
 		address service_address,
 		uint128 additional_gas
-	) public view onlyOwner {
+	) external view onlyOwner {
 		IEverduesRoot(root).upgradeSubscription{
 			value: EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE +
 				additional_gas +
@@ -449,7 +458,7 @@ contract EverduesAccount is IEverduesAccount {
 		string service_name,
 		TvmCell identificator,
 		uint128 additional_gas
-	) public view onlyOwner {
+	) external view onlyOwner {
 		IEverduesRoot(root).updateServiceIdentificator{
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
@@ -461,7 +470,7 @@ contract EverduesAccount is IEverduesAccount {
 		address service_address,
 		TvmCell identificator,
 		uint128 additional_gas
-	) public view onlyOwner {
+	) external view onlyOwner {
 		IEverduesRoot(root).updateSubscriptionIdentificator{
 			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
 			bounce: true,
@@ -473,7 +482,7 @@ contract EverduesAccount is IEverduesAccount {
 		string service_name,
 		TvmCell new_service_params,
 		uint128 additional_gas
-	) public view onlyOwner {
+	) external view onlyOwner {
 		IEverduesRoot(root).updateServiceParams{
 			value: EverduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
 			bounce: true,
@@ -482,7 +491,7 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function cancelService(string service_name, uint128 additional_gas)
-		public
+		external
 		view
 		onlyOwner
 	{
@@ -499,7 +508,7 @@ contract EverduesAccount is IEverduesAccount {
 		bool publish_to_catalog,
 		uint128 deploy_value,
 		uint128 additional_gas
-	) public view onlyOwner {
+	) external view onlyOwner {
 		IEverduesRoot(root).deployService{
 			value: deploy_value,
 			bounce: true,
@@ -517,7 +526,7 @@ contract EverduesAccount is IEverduesAccount {
 		string service_name,
 		string category,
 		uint128 additional_gas
-	) public view onlyOwner {
+	) external view onlyOwner {
 		IEverduesRoot(root).upgradeService{
 			value: EverduesGas.UPGRADE_SERVICE_MIN_VALUE +
 				additional_gas +
@@ -531,7 +540,7 @@ contract EverduesAccount is IEverduesAccount {
 		uint8 new_subscription_plan,
 		address service_address,
 		uint128 additional_gas
-	) public view onlyOwner {
+	) external view onlyOwner {
 		IEverduesRoot(root).upgradeSubscriptionPlan{
 			value: EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE +
 				additional_gas +
@@ -546,7 +555,7 @@ contract EverduesAccount is IEverduesAccount {
 		TvmCell identificator,
 		uint8 subscription_plan,
 		uint128 additional_gas
-	) public view onlyOwner {
+	) external view onlyOwner {
 		IEverduesRoot(root).deploySubscription{
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
 				EverduesGas.INIT_SUBSCRIPTION_VALUE +
@@ -635,7 +644,7 @@ contract EverduesAccount is IEverduesAccount {
 	}
 
 	function destroyAccount(address send_gas_to)
-		public
+		external
 		onlyOwner /*onlyRoot*/
 	{
 		selfdestruct(send_gas_to);

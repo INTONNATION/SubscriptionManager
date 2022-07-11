@@ -25,9 +25,9 @@ contract Subscription is IEverduesSubscription {
 	uint256 public owner_pubkey;
 	address public subscription_index_address;
 	address public subscription_index_identificator_address;
-	uint8 public service_fee;
-	uint8 public subscription_fee;
-	uint8 public subscription_plan;
+	uint8   public service_fee;
+	uint8   public subscription_fee;
+	uint8   public subscription_plan;
 	TvmCell public subscription_params;
 	TvmCell public service_params;
 	TvmCell platform_code;
@@ -38,7 +38,6 @@ contract Subscription is IEverduesSubscription {
 	uint32 current_version;
 	uint32 preprocessing_window;
 	uint8 type_id;
-	uint8 debug;
 
 	struct serviceParams {
 		address to;
@@ -310,7 +309,7 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function executeSubscription(uint128 paySubscriptionGas)
-		public
+		external
 		override
 		onlyRootOrOwner // TODO: add serviceOwner
 	{
@@ -406,11 +405,11 @@ contract Subscription is IEverduesSubscription {
 		address, /*senderWallet*/
 		address, /*remainingGasTo*/
 		TvmCell payload
-	) public {
+	) external {
 		require(
 			amount >= svcparams.service_value,
 			EverduesErrors.error_not_enough_balance_in_message
-		);
+		); // TODO: send back ??
 		require(
 			msg.sender == subscription_wallet,
 			EverduesErrors.error_message_sender_is_not_subscription_wallet
@@ -539,17 +538,17 @@ contract Subscription is IEverduesSubscription {
 		}
 	}
 
-	function stopSubscribtion() public onlyRootOrOwner {
+	function stopSubscribtion() external onlyRootOrOwner {
 		tvm.accept();
 		subscription.status = EverduesSubscriptionStatus.STATUS_STOPPED;
 	}
 
-	function resumeSubscribtion() public onlyRootOrOwner {
+	function resumeSubscribtion() external onlyRootOrOwner {
 		tvm.accept();
 		subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
 	}
 
-	function cancel() public onlyRootOrOwner {
+	function cancel() external onlyRootOrOwner {
 		IEverduesIndex(subscription_index_address).cancel{
 			value: EverduesGas.CANCEL_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
