@@ -113,10 +113,7 @@ contract Subscription is IEverduesSubscription {
 		address send_gas_to,
 		TvmCell contract_params_
 	) external onlyRoot {
-		require(
-			msg.value > EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE,
-			EverduesErrors.error_message_low_value
-		);
+
 		TvmCell data = abi.encode(
 			root,
 			send_gas_to,
@@ -550,11 +547,11 @@ contract Subscription is IEverduesSubscription {
 
 	function cancel() external onlyRootOrOwner {
 		IEverduesIndex(subscription_index_address).cancel{
-			value: EverduesGas.CANCEL_MIN_VALUE,
+			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}();
 		IEverduesIndex(subscription_index_identificator_address).cancel{
-			value: EverduesGas.CANCEL_MIN_VALUE,
+			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}();
 		selfdestruct(account_address);

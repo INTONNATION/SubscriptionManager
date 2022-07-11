@@ -21,7 +21,7 @@ contract EverduesFeeProxy {
 	address public mtds_root_address;
 	address public dex_root_address;
 	uint32  public current_version;
-	uint128 public account_threshold = 10 ever; // TODO: move to Gas.sol
+	uint128 public account_threshold = 10 ever; // default value
 	address _tmp_swap_currency_root_;
 	TvmCell platform_code;
 	TvmCell platform_params;
@@ -155,7 +155,7 @@ contract EverduesFeeProxy {
 			2
 		);
 		require(
-			msg.value > EverduesGas.TRANSFER_MIN_VALUE,
+			msg.value > EverduesGas.MESSAGE_MIN_VALUE,
 			EverduesErrors.error_message_low_value
 		);
 		require(
@@ -174,7 +174,7 @@ contract EverduesFeeProxy {
 		BalanceWalletStruct current_balance_key = current_balance_struct.get();
 		address send_gas_to = _tmp_deploying_wallets[_tmp_swap_currency_root_];
 		ITokenWallet(current_balance_key.wallet).transfer{
-			value: EverduesGas.TRANSFER_MIN_VALUE,
+			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			current_balance_key.balance, // amount
@@ -257,6 +257,7 @@ contract EverduesFeeProxy {
 			),
 			2
 		);
+		// SWAP_TIP3_TO_EVER_MIN_VALUE
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		BalanceWalletStruct current_balance_key = current_balance_struct.get();
