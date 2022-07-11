@@ -405,7 +405,7 @@ contract Subscription is IEverduesSubscription {
 	) external {
 		require(
 			amount >= svcparams.service_value,
-			EverduesErrors.error_not_enough_balance_in_message
+			EverduesErrors.error_message_low_value
 		); // TODO: send back ??
 		require(
 			msg.sender == subscription_wallet,

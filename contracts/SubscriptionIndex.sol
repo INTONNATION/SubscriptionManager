@@ -16,7 +16,7 @@ contract SubscriptionIndex {
 	modifier onlyOwner() {
 		require(
 			msg.sender == subscription_address,
-			EverduesErrors.error_message_sender_is_not_my_owner
+			EverduesErrors.error_message_sender_is_not_owner
 		);
 		_;
 	}
@@ -29,7 +29,7 @@ contract SubscriptionIndex {
 		);
 		require(
 			msg.sender == root_,
-			EverduesErrors.error_message_sender_is_not_root
+			EverduesErrors.error_message_sender_is_not_everdues_root
 		);
 		tvm.rawReserve(EverduesGas.INDEX_INITIAL_BALANCE, 2);
 		root = root_;

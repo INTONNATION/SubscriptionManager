@@ -30,7 +30,7 @@ contract SubscriptionIdentificatorIndex {
 			.decode(address, TvmCell, address);
 		require(
 			msg.sender == root_,
-			EverduesErrors.error_message_sender_is_not_root
+			EverduesErrors.error_message_sender_is_not_everdues_root
 		);
 		tvm.rawReserve(EverduesGas.INDEX_INITIAL_BALANCE, 2);
 		service_address = service_;
