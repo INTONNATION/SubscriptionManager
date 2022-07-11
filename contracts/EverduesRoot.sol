@@ -110,7 +110,7 @@ contract EverduesRoot {
 	modifier onlyOwner() {
 		require(
 			msg.sender == owner,
-			EverduesErrors.error_message_sender_is_not_my_owner
+			EverduesErrors.error_message_sender_is_not_owner
 		);
 		tvm.accept();
 		_;

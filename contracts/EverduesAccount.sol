@@ -67,7 +67,7 @@ contract EverduesAccount is IEverduesAccount {
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,
-			EverduesErrors.error_message_sender_is_not_my_owner
+			EverduesErrors.error_message_sender_is_not_owner
 		);
 		_;
 	}
@@ -75,7 +75,7 @@ contract EverduesAccount is IEverduesAccount {
 	modifier onlyOwner() {
 		require(
 			msg.pubkey() == tvm.pubkey(),
-			EverduesErrors.error_message_sender_is_not_my_owner
+			EverduesErrors.error_message_sender_is_not_owner
 		);
 		tvm.accept();
 		_;

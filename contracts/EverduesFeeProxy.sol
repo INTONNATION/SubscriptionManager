@@ -44,7 +44,7 @@ contract EverduesFeeProxy {
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,
-			EverduesErrors.error_message_sender_is_not_root
+			EverduesErrors.error_message_sender_is_not_everdues_root
 		);
 		_;
 	}
