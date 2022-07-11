@@ -2027,7 +2027,8 @@ contract EverduesRoot {
 			);
 		TvmCell additional_params = abi.encode(
 			address(tvm.hash(serviceIndexStateInit)),
-			address(tvm.hash(serviceIdentificatorIndexStateInit))
+			address(tvm.hash(serviceIdentificatorIndexStateInit)),
+			owner_pubkey
 		);
 		TvmCell service_params_cell_with_additional_params = abi.encode(
 			service_params_cell,

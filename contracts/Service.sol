@@ -10,7 +10,8 @@ import "interfaces/IEverduesIndex.sol";
 import "interfaces/IEverduesService.sol";
 
 contract Service is IEverduesService {
-	address public service_owner;
+	address public account_address;
+	uint256 public owner_pubkey;
 	address public subscription_service_index_address;
 	address public subscription_service_index_identificator_address;
 	uint8 public status = 0;
@@ -52,7 +53,8 @@ contract Service is IEverduesService {
 		);
 		TvmCell response = abi.encode(
 			service_params,
-			subscription_plans[subscription_plan]
+			subscription_plans[subscription_plan],
+			owner_pubkey
 		);
 		return
 			{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} response;
@@ -82,7 +84,7 @@ contract Service is IEverduesService {
 			2
 		);
 		status = 1;
-		service_owner.transfer({
+		account_address.transfer({
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -98,7 +100,7 @@ contract Service is IEverduesService {
 			2
 		);
 		status = 0;
-		service_owner.transfer({
+		account_address.transfer({
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -124,7 +126,8 @@ contract Service is IEverduesService {
 			service_params,
 			subscription_service_index_address,
 			subscription_service_index_identificator_address,
-			status
+			status,
+			owner_pubkey
 		);
 		tvm.setcode(code_);
 		tvm.setCurrentCode(code_);
@@ -175,8 +178,9 @@ contract Service is IEverduesService {
 			);
 			(
 				subscription_service_index_address,
-				subscription_service_index_identificator_address
-			) = abi.decode(additional_params, (address, address));
+				subscription_service_index_identificator_address,
+				owner_pubkey
+			) = abi.decode(additional_params, (address, address, uint256));
 			emit ServiceDeployed(
 				subscription_service_index_address,
 				subscription_service_index_identificator_address
@@ -197,7 +201,8 @@ contract Service is IEverduesService {
 				subscription_plans,
 				subscription_service_index_address,
 				subscription_service_index_identificator_address,
-				status
+				status,
+				owner_pubkey
 			) = abi.decode(
 				upgrade_data,
 				(
@@ -214,7 +219,8 @@ contract Service is IEverduesService {
 					mapping(uint8 => TvmCell),
 					address,
 					address,
-					uint8
+					uint8,
+					uint256
 				)
 			);
 			send_gas_to.transfer({
@@ -242,7 +248,7 @@ contract Service is IEverduesService {
 			subscription_plans_cell,
 			mapping(uint8 => TvmCell)
 		);
-		service_owner.transfer({
+		account_address.transfer({
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
@@ -253,7 +259,7 @@ contract Service is IEverduesService {
 		IEverduesIndex(subscription_service_index_address).cancel();
 		IEverduesIndex(subscription_service_index_identificator_address)
 			.cancel();
-		selfdestruct(service_owner);
+		selfdestruct(account_address);
 	}
 
 	function updateIdentificator(TvmCell identificator_, address send_gas_to)
