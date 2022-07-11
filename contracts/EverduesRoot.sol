@@ -81,6 +81,7 @@ contract EverduesRoot {
 		TvmCell platform_code;
 		string tip3_root_abi;
 		string tip3_wallet_abi;
+		string everdues_root_abi;
 		string platform_abi;
 		// string everdues_root_abi;
 		address account_address;
@@ -250,6 +251,7 @@ contract EverduesRoot {
 		everdues_contracts_info.platform_code = codePlatform;
 		everdues_contracts_info.tip3_root_abi = abiTIP3RootContract;
 		everdues_contracts_info.tip3_wallet_abi = abiTIP3TokenWalletContract;
+		everdues_contracts_info.everdues_root_abi = abiEverduesRootContract;
 		everdues_contracts_info.account_address = account;
 		everdues_contracts_info.platform_abi = abiPlatformContract;
 		everdues_contracts_info.account_versions = versions[
@@ -258,7 +260,6 @@ contract EverduesRoot {
 		for (uint256 i = 0; i < categories.length; i++) {
 			everdues_contracts_info.categories.push(categories[i]);
 		}
-		// everdues_contracts_info.everdues_root_abi TODO: ?
 	}
 
 	function getPendingOwner()

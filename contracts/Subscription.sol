@@ -309,7 +309,7 @@ contract Subscription is IEverduesSubscription {
 		override
 		onlyRootOrOwner // TODO: add serviceOwner
 	{
-		// TODO: Add check that service_params exist
+		require(!service_params.toSlice().empty(), EverduesErrors.error_subscription_has_no_service_params);
 		require(
 			subscription.status != EverduesSubscriptionStatus.STATUS_STOPPED,
 			EverduesErrors.error_subscription_is_stopped
@@ -475,7 +475,7 @@ contract Subscription is IEverduesSubscription {
 	}
 
 	function onGetParams(TvmCell service_params_) external onlyService {
-		// TODO: validate service params
+		require(!service_params_.toSlice().empty(), EverduesErrors.error_subscription_has_no_service_params);
 		(service_params, subscription_params) = abi.decode(
 			service_params_,
 			(TvmCell, TvmCell)
