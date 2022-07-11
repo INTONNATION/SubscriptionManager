@@ -6,7 +6,7 @@ pragma AbiHeader pubkey;
 import "Platform.sol";
 import "EverduesRoot.sol";
 import "libraries/EverduesErrors.sol";
-import "libraries/PlatformTypes.sol";
+import "libraries/ContractTypes.sol";
 import "libraries/EverduesGas.sol";
 import "libraries/MsgFlag.sol";
 import "libraries/DexOperationTypes.sol";
@@ -28,7 +28,7 @@ contract EverduesAccount is IEverduesAccount {
 	TvmCell platform_code;
 	TvmCell platform_params;
 	uint128 account_gas_threshold;
-	
+
 	struct BalanceWalletStruct {
 		address wallet;
 		uint128 balance;
@@ -89,20 +89,23 @@ contract EverduesAccount is IEverduesAccount {
 		_;
 	}
 
-    modifier onlyDexPair(address sender) {
-		for ((address tokenRoot, BalanceWalletStruct tokenBalance): wallets_mapping) {
+	modifier onlyDexPair(address sender) {
+		for (
+			(address tokenRoot, BalanceWalletStruct tokenBalance):
+			wallets_mapping
+		) {
 			if (tokenBalance.dex_ever_pair_address == sender) {
 				_;
 			}
 		}
 		revert(EverduesErrors.error_message_sender_is_not_dex_pair);
-    }
+	}
 
 	modifier onlyFeeProxy() {
 		address fee_proxy_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.FeeProxy,
+					ContractTypes.FeeProxy,
 					_buildPlatformParamsOwnerAddress(root)
 				)
 			)
@@ -243,7 +246,7 @@ contract EverduesAccount is IEverduesAccount {
 		address subsciption_addr = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Subscription,
+					ContractTypes.Subscription,
 					_buildSubscriptionParams(address(this), service_address)
 				)
 			)

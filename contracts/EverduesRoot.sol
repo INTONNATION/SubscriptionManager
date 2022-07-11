@@ -5,7 +5,7 @@ pragma AbiHeader pubkey;
 
 import "Platform.sol";
 import "libraries/EverduesErrors.sol";
-import "libraries/PlatformTypes.sol";
+import "libraries/ContractTypes.sol";
 import "libraries/MsgFlag.sol";
 import "libraries/EverduesGas.sol";
 import "../contracts/SubscriptionIndex.sol";
@@ -26,7 +26,6 @@ interface IPlatform {
 }
 
 contract EverduesRoot {
-
 	address public fee_proxy_address;
 	address public owner;
 	address public mtds_root_address;
@@ -35,8 +34,8 @@ contract EverduesRoot {
 	address public wever_root;
 	address public pending_owner;
 	address public tip3_to_ever_address;
-	uint8   public service_fee;
-	uint8   public subscription_fee;
+	uint8 public service_fee;
+	uint8 public subscription_fee;
 
 	string[] categories;
 	bool has_platform_code;
@@ -118,7 +117,7 @@ contract EverduesRoot {
 
 	modifier onlyAccountContract(uint256 pubkey) {
 		address account_contract_address = address(
-			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
+			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
 		require(
 			msg.sender == account_contract_address,
@@ -178,11 +177,11 @@ contract EverduesRoot {
 		mapping(uint8 => mapping(uint256 => ContractVersionParams)) external_data_structure;
 		mapping(uint256 => ContractVersionParams) contracts;
 		address account = address(
-			tvm.hash(_buildAccountInitData(PlatformTypes.Account, owner_pubkey))
+			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
 		);
 		for (
-			(uint32 version, ContractParams contract_params) :
-			versions[PlatformTypes.Service]
+			(uint32 version, ContractParams contract_params):
+			versions[ContractTypes.Service]
 		) {
 			for (uint256 i = 0; i < categories.length; i++) {
 				uint256 hash_ = tvm.hash(
@@ -194,11 +193,11 @@ contract EverduesRoot {
 				contracts.add(hash_, contract_info);
 			}
 		}
-		external_data_structure.add(PlatformTypes.Service, contracts);
+		external_data_structure.add(ContractTypes.Service, contracts);
 		delete contracts;
 		for (
 			(uint32 version, ContractParams contract_params):
-			versions[PlatformTypes.Subscription]
+			versions[ContractTypes.Subscription]
 		) {
 			uint256 hash_ = tvm.hash(
 				_buildSubscriptionCodeByVersion(account, version)
@@ -208,11 +207,11 @@ contract EverduesRoot {
 			contract_info.contractAbi = contract_params.contractAbi;
 			contracts.add(hash_, contract_info);
 		}
-		external_data_structure.add(PlatformTypes.Subscription, contracts);
+		external_data_structure.add(ContractTypes.Subscription, contracts);
 		delete contracts;
 		for (
 			(uint32 version, ContractParams contract_params):
-			versions[PlatformTypes.Account]
+			versions[ContractTypes.Account]
 		) {
 			uint256 hash_ = tvm.hash(contract_params.contractCode);
 			ContractVersionParams contract_info;
@@ -220,24 +219,24 @@ contract EverduesRoot {
 			contract_info.contractAbi = contract_params.contractAbi;
 			contracts.add(hash_, contract_info);
 		}
-		external_data_structure.add(PlatformTypes.Account, contracts);
+		external_data_structure.add(ContractTypes.Account, contracts);
 		delete contracts;
 		for (
 			(uint32 version, ContractParams contract_params):
-			versions[PlatformTypes.ServiceIndex]
+			versions[ContractTypes.ServiceIndex]
 		) {
 			uint256 hash_ = tvm.hash(contract_params.contractCode);
 			ContractVersionParams contract_info;
 			contract_info.contractVersion = version;
 			contract_info.contractAbi = contract_params.contractAbi;
 			contracts.add(hash_, contract_info);
-			external_data_structure.add(PlatformTypes.ServiceIndex, contracts);
+			external_data_structure.add(ContractTypes.ServiceIndex, contracts);
 		}
-		external_data_structure.add(PlatformTypes.Account, contracts);
+		external_data_structure.add(ContractTypes.Account, contracts);
 		delete contracts;
 		for (
 			(uint32 version, ContractParams contract_params):
-			versions[PlatformTypes.SubscriptionIndex]
+			versions[ContractTypes.SubscriptionIndex]
 		) {
 			uint256 hash_ = tvm.hash(contract_params.contractCode);
 			ContractVersionParams contract_info;
@@ -245,10 +244,7 @@ contract EverduesRoot {
 			contract_info.contractAbi = contract_params.contractAbi;
 			contracts.add(hash_, contract_info);
 		}
-		external_data_structure.add(
-			PlatformTypes.SubscriptionIndex,
-			contracts
-		);
+		external_data_structure.add(ContractTypes.SubscriptionIndex, contracts);
 		delete contracts;
 		everdues_contracts_info.versions = external_data_structure;
 		everdues_contracts_info.platform_code = codePlatform;
@@ -256,10 +252,12 @@ contract EverduesRoot {
 		everdues_contracts_info.tip3_wallet_abi = abiTIP3TokenWalletContract;
 		everdues_contracts_info.account_address = account;
 		everdues_contracts_info.platform_abi = abiPlatformContract;
-		everdues_contracts_info.account_versions = versions[PlatformTypes.Account];
-	    for(uint256 i = 0; i<categories.length; i++){
-    	    everdues_contracts_info.categories.push(categories[i]);
-    	}
+		everdues_contracts_info.account_versions = versions[
+			ContractTypes.Account
+		];
+		for (uint256 i = 0; i < categories.length; i++) {
+			everdues_contracts_info.categories.push(categories[i]);
+		}
 		// everdues_contracts_info.everdues_root_abi TODO: ?
 	}
 
@@ -312,20 +310,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionCodeAlreadyExists(
-				PlatformTypes.Account,
+				ContractTypes.Account,
 				codeEverduesAccountInput
 			)
 		) {
 			if (!abiEverduesAccountContract.empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Account].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.Account
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.Account,
+					ContractTypes.Account,
 					latest_version++,
 					codeEverduesAccountInput,
 					abiEverduesAccountContract
@@ -353,20 +353,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionCodeAlreadyExists(
-				PlatformTypes.Service,
+				ContractTypes.Service,
 				codeServiceInput
 			)
 		) {
 			if (!abiServiceContract.empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Service].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.Service
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.Service,
+					ContractTypes.Service,
 					latest_version++,
 					codeServiceInput,
 					abiServiceContract
@@ -397,20 +399,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionCodeAlreadyExists(
-				PlatformTypes.Subscription,
+				ContractTypes.Subscription,
 				codeSubscriptionInput
 			)
 		) {
 			if (!abiSubscriptionContract.empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Subscription].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.Subscription
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.Subscription,
+					ContractTypes.Subscription,
 					latest_version++,
 					codeSubscriptionInput,
 					abiSubscriptionContract
@@ -441,20 +445,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionCodeAlreadyExists(
-				PlatformTypes.ServiceIndex,
+				ContractTypes.ServiceIndex,
 				codeServiceIndexInput
 			)
 		) {
 			if (!abiServiceIndexContract.empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.ServiceIndex].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.ServiceIndex
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
-				}			
+				}
 				addNewContractVersion_(
-					PlatformTypes.ServiceIndex,
+					ContractTypes.ServiceIndex,
 					latest_version,
 					codeServiceIndexInput,
 					abiServiceIndexContract
@@ -484,20 +490,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionCodeAlreadyExists(
-				PlatformTypes.ServiceIdentificatorIndex,
+				ContractTypes.ServiceIdentificatorIndex,
 				codeServiceIdentificatorIndexInput
 			)
 		) {
 			if (!abiServiceIdentificatorIndexContract.empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.ServiceIdentificatorIndex].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.ServiceIdentificatorIndex
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
-				}		
+				}
 				addNewContractVersion_(
-					PlatformTypes.ServiceIdentificatorIndex,
+					ContractTypes.ServiceIdentificatorIndex,
 					latest_version,
 					codeServiceIdentificatorIndexInput,
 					abiServiceIdentificatorIndexContract
@@ -528,20 +536,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionCodeAlreadyExists(
-				PlatformTypes.SubscriptionIndex,
+				ContractTypes.SubscriptionIndex,
 				codeSubscriptionIndexInput
 			)
 		) {
 			if (!abiSubscriptionIndexContract.empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.SubscriptionIndex].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.SubscriptionIndex
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.SubscriptionIndex,
+					ContractTypes.SubscriptionIndex,
 					latest_version,
 					codeSubscriptionIndexInput,
 					abiSubscriptionIndexContract
@@ -571,20 +581,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionCodeAlreadyExists(
-				PlatformTypes.ServiceIdentificatorIndex,
+				ContractTypes.ServiceIdentificatorIndex,
 				codeSubscriptionIdentificatorIndexInput
 			)
 		) {
 			if (!abiSubscriptionIdentificatorIndexContract.empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.SubscriptionIdentificatorIndex].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.SubscriptionIdentificatorIndex
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.SubscriptionIdentificatorIndex,
+					ContractTypes.SubscriptionIdentificatorIndex,
 					latest_version,
 					codeSubscriptionIdentificatorIndexInput,
 					abiSubscriptionIdentificatorIndexContract
@@ -612,13 +624,13 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionCodeAlreadyExists(
-				PlatformTypes.FeeProxy,
+				ContractTypes.FeeProxy,
 				codeFeeProxyInput
 			)
 		) {
 			if (!abiFeeProxyContract.empty()) {
 				addNewContractVersion_(
-					PlatformTypes.FeeProxy,
+					ContractTypes.FeeProxy,
 					1,
 					codeFeeProxyInput,
 					abiFeeProxyContract
@@ -668,20 +680,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionAbiAlreadyExists(
-				PlatformTypes.Account,
+				ContractTypes.Account,
 				abiEverduesAccountContractInput
 			)
 		) {
 			if (!codeEverduesAccount.toSlice().empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Account].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.Account
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.Account,
+					ContractTypes.Account,
 					latest_version++,
 					codeEverduesAccount,
 					abiEverduesAccountContractInput
@@ -768,20 +782,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionAbiAlreadyExists(
-				PlatformTypes.Service,
+				ContractTypes.Service,
 				abiServiceContractInput
 			)
 		) {
 			if (!codeService.toSlice().empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Service].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.Service
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.Service,
+					ContractTypes.Service,
 					latest_version++,
 					codeService,
 					abiServiceContractInput
@@ -812,20 +828,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionAbiAlreadyExists(
-				PlatformTypes.ServiceIndex,
+				ContractTypes.ServiceIndex,
 				abiServiceIndexContractInput
 			)
 		) {
 			if (!codeServiceIndex.toSlice().empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.ServiceIndex].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.ServiceIndex
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.ServiceIndex,
+					ContractTypes.ServiceIndex,
 					latest_version,
 					codeServiceIndex,
 					abiServiceIndexContractInput
@@ -855,20 +873,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionAbiAlreadyExists(
-				PlatformTypes.ServiceIdentificatorIndex,
+				ContractTypes.ServiceIdentificatorIndex,
 				abiServiceIdentificatorIndexContractInput
 			)
 		) {
 			if (!codeServiceIdentificatorIndex.toSlice().empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.ServiceIdentificatorIndex].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.ServiceIdentificatorIndex
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.ServiceIdentificatorIndex,
+					ContractTypes.ServiceIdentificatorIndex,
 					latest_version,
 					codeServiceIdentificatorIndex,
 					abiServiceIdentificatorIndexContractInput
@@ -899,21 +919,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionAbiAlreadyExists(
-				PlatformTypes.Subscription,
+				ContractTypes.Subscription,
 				abiSubscriptionContractInput
 			)
 		) {
 			if (!codeSubscription.toSlice().empty()) {
 				uint32 latest_version;
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Subscription].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.Subscription
+				].max();
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
-				}
-				else {
+					(latest_version, ) = latest_version_opt.get();
+				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.Subscription,
+					ContractTypes.Subscription,
 					latest_version++,
 					codeSubscription,
 					abiSubscriptionContractInput
@@ -943,20 +964,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionAbiAlreadyExists(
-				PlatformTypes.SubscriptionIndex,
+				ContractTypes.SubscriptionIndex,
 				abiSubscriptionIndexContractInput
 			)
 		) {
 			if (!codeSubscriptionIndex.toSlice().empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.SubscriptionIndex].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.SubscriptionIndex
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.SubscriptionIndex,
+					ContractTypes.SubscriptionIndex,
 					latest_version,
 					codeSubscriptionIndex,
 					abiSubscriptionIndexContractInput
@@ -986,20 +1009,22 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionAbiAlreadyExists(
-				PlatformTypes.SubscriptionIdentificatorIndex,
+				ContractTypes.SubscriptionIdentificatorIndex,
 				abiSubscriptionIdentificatorIndexContractInput
 			)
 		) {
 			if (!codeSubscriptionIdentificatorIndex.toSlice().empty()) {
-				optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.SubscriptionIndex].max();
+				optional(uint32, ContractParams) latest_version_opt = versions[
+					ContractTypes.SubscriptionIndex
+				].max();
 				uint32 latest_version;
 				if (latest_version_opt.hasValue()) {
-					(latest_version,) = latest_version_opt.get();
+					(latest_version, ) = latest_version_opt.get();
 				} else {
 					latest_version = 1;
 				}
 				addNewContractVersion_(
-					PlatformTypes.SubscriptionIdentificatorIndex,
+					ContractTypes.SubscriptionIdentificatorIndex,
 					latest_version,
 					codeSubscriptionIdentificatorIndex,
 					abiSubscriptionIdentificatorIndexContractInput
@@ -1030,13 +1055,13 @@ contract EverduesRoot {
 		);
 		if (
 			!checkVersionAbiAlreadyExists(
-				PlatformTypes.FeeProxy,
+				ContractTypes.FeeProxy,
 				abiFeeProxyContractInput
 			)
 		) {
 			if (!codeFeeProxy.toSlice().empty()) {
 				addNewContractVersion_(
-					PlatformTypes.FeeProxy,
+					ContractTypes.FeeProxy,
 					1,
 					codeFeeProxy,
 					abiFeeProxyContractInput
@@ -1338,18 +1363,13 @@ contract EverduesRoot {
 		);
 		TvmCell upgrade_data;
 		EverduesRoot.ContractParams latestVersion = versions[
-			PlatformTypes.FeeProxy
+			ContractTypes.FeeProxy
 		][1];
 		EverduesFeeProxy(fee_proxy_address).upgrade{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(
-			latestVersion.contractCode,
-			1,
-			msg.sender,
-			upgrade_data
-		);
+		}(latestVersion.contractCode, 1, msg.sender, upgrade_data);
 	}
 
 	function forceUpgradeAccount(address account_address)
@@ -1365,8 +1385,13 @@ contract EverduesRoot {
 			2
 		);
 		TvmCell update_data = abi.encode(wever_root, tip3_to_ever_address);
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Account].max();
-		(uint32 latest_version, ContractParams latest_params) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Account
+		].max();
+		(
+			uint32 latest_version,
+			ContractParams latest_params
+		) = latest_version_opt.get();
 		EverduesAccount(account_address).upgrade{
 			value: 0,
 			bounce: false,
@@ -1387,15 +1412,20 @@ contract EverduesRoot {
 			2
 		);
 		address account_address = address(
-			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
+			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
 		TvmCell update_data = abi.encode(dex_root_address, wever_root);
 		require(
 			msg.sender == account_address,
 			EverduesErrors.error_message_sender_is_not_account_address
 		);
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Account].max();
-		(uint32 latest_version, ContractParams latest_params) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Account
+		].max();
+		(
+			uint32 latest_version,
+			ContractParams latest_params
+		) = latest_version_opt.get();
 		EverduesAccount(account_address).upgrade{
 			value: 0,
 			bounce: false,
@@ -1422,7 +1452,7 @@ contract EverduesRoot {
 		address subscription_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Subscription,
+					ContractTypes.Subscription,
 					_buildSubscriptionPlatformParams(
 						msg.sender,
 						service_address
@@ -1457,7 +1487,7 @@ contract EverduesRoot {
 		address subscription_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Subscription,
+					ContractTypes.Subscription,
 					_buildSubscriptionPlatformParams(
 						msg.sender,
 						service_address
@@ -1466,18 +1496,15 @@ contract EverduesRoot {
 			)
 		);
 		TvmCell upgrade_data;
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Subscription].max();
-		(uint32 latest_version,) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Subscription
+		].max();
+		(uint32 latest_version, ) = latest_version_opt.get();
 		Subscription(subscription_address).upgrade{
 			value: 0,
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(
-			subscription_code_salt,
-			latest_version,
-			msg.sender,
-			upgrade_data
-		);
+		}(subscription_code_salt, latest_version, msg.sender, upgrade_data);
 	}
 
 	function forceUpgradeSubscription(
@@ -1495,18 +1522,15 @@ contract EverduesRoot {
 			subscription_owner
 		);
 		TvmCell upgrade_data;
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Subscription].max();
-		(uint32 latest_version,) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Subscription
+		].max();
+		(uint32 latest_version, ) = latest_version_opt.get();
 		Subscription(subscription_address).upgrade{
 			value: 0,
 			bounce: true, // TODO: need to revert balance back to current msg.sender in case of failure
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(
-			subscription_code_salt,
-			latest_version,
-			address(this),
-			upgrade_data
-		);
+		}(subscription_code_salt, latest_version, address(this), upgrade_data);
 	}
 
 	function updateSubscriptionIdentificator(
@@ -1528,7 +1552,7 @@ contract EverduesRoot {
 		address subscription_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Subscription,
+					ContractTypes.Subscription,
 					_buildSubscriptionPlatformParams(
 						msg.sender,
 						service_address
@@ -1566,14 +1590,16 @@ contract EverduesRoot {
 		address service_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Service,
+					ContractTypes.Service,
 					_buildServicePlatformParams(msg.sender, service_name)
 				)
 			)
 		);
 		TvmCell upgrade_data;
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Service].max();
-		(uint32 latest_version,) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(uint32 latest_version, ) = latest_version_opt.get();
 		Service(service_address).upgrade{
 			value: 0,
 			bounce: true,
@@ -1601,8 +1627,10 @@ contract EverduesRoot {
 			service_code_salt = _buildPrivateServiceCode(nonce);
 		}
 		TvmCell upgrade_data;
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Service].max();
-		(uint32 latest_version,) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(uint32 latest_version, ) = latest_version_opt.get();
 		Service(service_address).upgrade{
 			value: 0,
 			bounce: true,
@@ -1625,7 +1653,7 @@ contract EverduesRoot {
 		address service_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Service,
+					ContractTypes.Service,
 					_buildServicePlatformParams(msg.sender, service_name)
 				)
 			)
@@ -1652,7 +1680,7 @@ contract EverduesRoot {
 		address service_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Service,
+					ContractTypes.Service,
 					_buildServicePlatformParams(msg.sender, service_name)
 				)
 			)
@@ -1665,7 +1693,6 @@ contract EverduesRoot {
 	}
 
 	function upgrade(TvmCell code) external onlyOwner {
-
 		TvmCell upgrade_data = abi.encode(
 			owner,
 			versions,
@@ -1751,11 +1778,11 @@ contract EverduesRoot {
 		);
 		TvmCell fee_proxy_contract_params = abi.encode(currencies);
 		EverduesRoot.ContractParams latestVersion = versions[
-			PlatformTypes.FeeProxy
+			ContractTypes.FeeProxy
 		][1];
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
-				PlatformTypes.FeeProxy,
+				ContractTypes.FeeProxy,
 				_buildPlatformParamsOwnerAddress(address(this))
 			),
 			value: 0,
@@ -1785,7 +1812,7 @@ contract EverduesRoot {
 		address service_address = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Service,
+					ContractTypes.Service,
 					_buildServicePlatformParams(msg.sender, service_name)
 				)
 			)
@@ -1799,7 +1826,7 @@ contract EverduesRoot {
 
 	function deployAccount(uint256 pubkey) external view {
 		address account_address = address(
-			tvm.hash(_buildAccountInitData(PlatformTypes.Account, pubkey))
+			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
 		require(
 			msg.sender == account_address,
@@ -1819,8 +1846,13 @@ contract EverduesRoot {
 			tip3_to_ever_address,
 			account_threshold
 		);
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Service].max();
-		(uint32 latest_version, ContractParams latest_params) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(
+			uint32 latest_version,
+			ContractParams latest_params
+		) = latest_version_opt.get();
 		IPlatform(msg.sender).initializeByRoot{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
@@ -1871,7 +1903,7 @@ contract EverduesRoot {
 			);
 		TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
 		address owner_account_address = address(
-			tvm.hash(_buildAccountInitData(PlatformTypes.Account, owner_pubkey))
+			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
 		);
 		address subs_index = address(tvm.hash(subsIndexStateInit));
 		address subs_index_identificator = address(
@@ -1889,11 +1921,13 @@ contract EverduesRoot {
 			owner_pubkey,
 			subscription_plan
 		);
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Subscription].max();
-		(uint32 latest_version,) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Subscription
+		].max();
+		(uint32 latest_version, ) = latest_version_opt.get();
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
-				PlatformTypes.Subscription,
+				ContractTypes.Subscription,
 				_buildSubscriptionPlatformParams(msg.sender, service_address)
 			),
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
@@ -1981,7 +2015,7 @@ contract EverduesRoot {
 				address(
 					tvm.hash(
 						_buildInitData(
-							PlatformTypes.Service,
+							ContractTypes.Service,
 							_buildServicePlatformParams(
 								msg.sender,
 								service_name
@@ -1998,11 +2032,13 @@ contract EverduesRoot {
 			service_params_cell,
 			additional_params
 		);
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Service].max();
-		(uint32 latest_version,) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(uint32 latest_version, ) = latest_version_opt.get();
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
-				PlatformTypes.Service,
+				ContractTypes.Service,
 				_buildServicePlatformParams(msg.sender, service_name)
 			),
 			value: 0,
@@ -2048,8 +2084,10 @@ contract EverduesRoot {
 	{
 		TvmBuilder saltBuilder;
 		saltBuilder.store(subscription_owner, address(this));
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Subscription].max();
-		(,ContractParams latest_params) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Subscription
+		].max();
+		(, ContractParams latest_params) = latest_version_opt.get();
 		TvmCell code = tvm.setCodeSalt(
 			latest_params.contractCode,
 			saltBuilder.toCell()
@@ -2064,7 +2102,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(subscription_owner, address(this));
 		EverduesRoot.ContractParams selectedVersion = versions[
-			PlatformTypes.Subscription
+			ContractTypes.Subscription
 		][contract_version];
 		TvmCell code = tvm.setCodeSalt(
 			selectedVersion.contractCode,
@@ -2080,8 +2118,10 @@ contract EverduesRoot {
 	{
 		TvmBuilder saltBuilder;
 		saltBuilder.store(category, address(this));
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Service].max();
-		(,ContractParams latest_params) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(, ContractParams latest_params) = latest_version_opt.get();
 		TvmCell code = tvm.setCodeSalt(
 			latest_params.contractCode,
 			saltBuilder.toCell()
@@ -2096,7 +2136,7 @@ contract EverduesRoot {
 	{
 		TvmBuilder saltBuilder;
 		saltBuilder.store(category, address(this));
-		ContractParams latestVersion = versions[PlatformTypes.Service][
+		ContractParams latestVersion = versions[ContractTypes.Service][
 			version_
 		];
 		TvmCell code = tvm.setCodeSalt(
@@ -2113,8 +2153,10 @@ contract EverduesRoot {
 	{
 		TvmBuilder saltBuilder;
 		saltBuilder.store(nonce, address(this));
-		optional(uint32, ContractParams) latest_version_opt = versions[PlatformTypes.Service].max();
-		(,ContractParams latest_params) = latest_version_opt.get();
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(, ContractParams latest_params) = latest_version_opt.get();
 		TvmCell code = tvm.setCodeSalt(
 			latest_params.contractCode,
 			saltBuilder.toCell()
@@ -2130,7 +2172,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(service_address, identificator, address(this));
 		EverduesRoot.ContractParams latestVersion = versions[
-			PlatformTypes.SubscriptionIdentificatorIndex
+			ContractTypes.SubscriptionIdentificatorIndex
 		][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,
@@ -2152,7 +2194,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(service_address, address(this));
 		EverduesRoot.ContractParams latestVersion = versions[
-			PlatformTypes.SubscriptionIndex
+			ContractTypes.SubscriptionIndex
 		][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,
@@ -2175,7 +2217,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(serviceOwner, address(this));
 		EverduesRoot.ContractParams latestVersion = versions[
-			PlatformTypes.ServiceIndex
+			ContractTypes.ServiceIndex
 		][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,
@@ -2198,7 +2240,7 @@ contract EverduesRoot {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(identificator_, address(this));
 		EverduesRoot.ContractParams latestVersion = versions[
-			PlatformTypes.ServiceIdentificatorIndex
+			ContractTypes.ServiceIdentificatorIndex
 		][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,
@@ -2338,7 +2380,7 @@ contract EverduesRoot {
 		returns (address account)
 	{
 		account = address(
-			tvm.hash(_buildAccountInitData(PlatformTypes.Account, owner_pubkey))
+			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
 		);
 	}
 
@@ -2350,7 +2392,7 @@ contract EverduesRoot {
 		service = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Service,
+					ContractTypes.Service,
 					_buildServicePlatformParams(owner_address_, service_name_)
 				)
 			)
@@ -2365,7 +2407,7 @@ contract EverduesRoot {
 		subscription = address(
 			tvm.hash(
 				_buildInitData(
-					PlatformTypes.Subscription,
+					ContractTypes.Subscription,
 					_buildSubscriptionPlatformParams(
 						owner_address_,
 						service_address_
