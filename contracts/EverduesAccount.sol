@@ -129,9 +129,9 @@ contract EverduesAccount is IEverduesAccount {
 
 	function upgradeAccount(uint128 additional_gas) external view onlyOwner {
 		IEverduesRoot(root).upgradeAccount{
-			value: EverduesGas.UPGRADE_ACCOUNT_MIN_VALUE +
+			value: EverduesGas.UPGRADE_MIN_VALUE +
 				additional_gas +
-				EverduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
 			flag: 0
 		}(tvm.pubkey());
@@ -298,7 +298,7 @@ contract EverduesAccount is IEverduesAccount {
 				);
 				IDexPair(current_balance_key_value.dex_ever_pair_address)
 					.expectedSpendAmount{
-					value: EverduesGas.TRANSFER_MIN_VALUE,
+					value: EverduesGas.MESSAGE_MIN_VALUE,
 					bounce: true,
 					flag: MsgFlag.SENDER_PAYS_FEES,
 					callback: EverduesAccount.onExpectedExchange
@@ -368,14 +368,14 @@ contract EverduesAccount is IEverduesAccount {
 					address(this)
 				);
 				IDexRoot(dex_root_address).getExpectedPairAddress{
-					value: EverduesGas.INIT_MESSAGE_VALUE,
+					value: EverduesGas.MESSAGE_MIN_VALUE,
 					flag: 0,
 					bounce: false,
 					callback: EverduesAccount.onGetExpectedPairAddress
 				}(wever_root, currency_root);
 			}
 			TIP3TokenWallet(account_wallet).balance{
-				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
+				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 				bounce: true,
 				flag: 0,
 				callback: EverduesAccount.onBalanceOf
@@ -383,7 +383,7 @@ contract EverduesAccount is IEverduesAccount {
 		} else {
 			_tmp_sync_balance[currency_root] = address(0);
 			ITokenRoot(currency_root).walletOf{
-				value: EverduesGas.TRANSFER_MIN_VALUE + additional_gas,
+				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 				bounce: true,
 				flag: 0,
 				callback: EverduesAccount.onWalletOf
@@ -410,7 +410,7 @@ contract EverduesAccount is IEverduesAccount {
 		wallets_mapping[msg.sender] = current_balance_struct_;
 		_tmp_get_pairs[now] = GetDexPairOperation(msg.sender, address(this));
 		IDexRoot(dex_root_address).getExpectedPairAddress{
-			value: EverduesGas.INIT_MESSAGE_VALUE,
+			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: 0,
 			bounce: false,
 			callback: EverduesAccount.onGetExpectedPairAddress
@@ -446,9 +446,9 @@ contract EverduesAccount is IEverduesAccount {
 		uint128 additional_gas
 	) external view onlyOwner {
 		IEverduesRoot(root).upgradeSubscription{
-			value: EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE +
+			value: EverduesGas.UPGRADE_MIN_VALUE +
 				additional_gas +
-				EverduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
 			flag: 0
 		}(service_address, tvm.pubkey());
@@ -460,7 +460,7 @@ contract EverduesAccount is IEverduesAccount {
 		uint128 additional_gas
 	) external view onlyOwner {
 		IEverduesRoot(root).updateServiceIdentificator{
-			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
+			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_name, identificator, tvm.pubkey());
@@ -472,7 +472,7 @@ contract EverduesAccount is IEverduesAccount {
 		uint128 additional_gas
 	) external view onlyOwner {
 		IEverduesRoot(root).updateSubscriptionIdentificator{
-			value: EverduesGas.UPDATE_INDEX_VALUE + additional_gas,
+			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_address, identificator, tvm.pubkey());
@@ -484,7 +484,7 @@ contract EverduesAccount is IEverduesAccount {
 		uint128 additional_gas
 	) external view onlyOwner {
 		IEverduesRoot(root).updateServiceParams{
-			value: EverduesGas.UPDADE_SERVICE_PARAMS_VALUE + additional_gas,
+			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_name, new_service_params, tvm.pubkey());
@@ -496,7 +496,7 @@ contract EverduesAccount is IEverduesAccount {
 		onlyOwner
 	{
 		IEverduesRoot(root).cancelService{
-			value: EverduesGas.CANCEL_MIN_VALUE + additional_gas,
+			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			bounce: true,
 			flag: 0
 		}(service_name, tvm.pubkey());
@@ -528,9 +528,9 @@ contract EverduesAccount is IEverduesAccount {
 		uint128 additional_gas
 	) external view onlyOwner {
 		IEverduesRoot(root).upgradeService{
-			value: EverduesGas.UPGRADE_SERVICE_MIN_VALUE +
+			value: EverduesGas.UPGRADE_MIN_VALUE +
 				additional_gas +
-				EverduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
 			flag: 0
 		}(service_name, category, tvm.pubkey());
@@ -542,9 +542,9 @@ contract EverduesAccount is IEverduesAccount {
 		uint128 additional_gas
 	) external view onlyOwner {
 		IEverduesRoot(root).upgradeSubscriptionPlan{
-			value: EverduesGas.UPGRADE_SUBSCRIPTION_MIN_VALUE +
+			value: EverduesGas.MESSAGE_MIN_VALUE +
 				additional_gas +
-				EverduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
 			flag: 0
 		}(service_address, new_subscription_plan, tvm.pubkey());
@@ -558,12 +558,12 @@ contract EverduesAccount is IEverduesAccount {
 	) external view onlyOwner {
 		IEverduesRoot(root).deploySubscription{
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
-				EverduesGas.INIT_SUBSCRIPTION_VALUE +
+				EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +
 				EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 				EverduesGas.INDEX_INITIAL_BALANCE *
 				2 +
 				additional_gas +
-				EverduesGas.INIT_MESSAGE_VALUE,
+				EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
 			flag: 0
 		}(
@@ -610,7 +610,7 @@ contract EverduesAccount is IEverduesAccount {
 					address(this)
 				);
 				IDexRoot(dex_root_address).getExpectedPairAddress{
-					value: EverduesGas.INIT_MESSAGE_VALUE,
+					value: EverduesGas.MESSAGE_MIN_VALUE,
 					flag: 0,
 					bounce: false,
 					callback: EverduesAccount.onGetExpectedPairAddress
@@ -675,7 +675,7 @@ contract EverduesAccount is IEverduesAccount {
 					remainingGasTo
 				);
 				IDexRoot(dex_root_address).getExpectedPairAddress{
-					value: EverduesGas.INIT_MESSAGE_VALUE,
+					value: EverduesGas.MESSAGE_MIN_VALUE,
 					flag: 0,
 					bounce: false,
 					callback: EverduesAccount.onGetExpectedPairAddress
@@ -690,7 +690,7 @@ contract EverduesAccount is IEverduesAccount {
 		} else {
 			tmp_deposit_tokens[tokenRoot] = DepositTokens(msg.sender, amount);
 			ITokenRoot(tokenRoot).walletOf{
-				value: EverduesGas.INIT_MESSAGE_VALUE,
+				value: EverduesGas.MESSAGE_MIN_VALUE,
 				bounce: true,
 				flag: 0,
 				callback: EverduesAccount.onAcceptTokensWalletOf

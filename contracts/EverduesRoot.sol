@@ -41,7 +41,7 @@ contract EverduesRoot {
 	string[] categories;
 	bool has_platform_code;
 	uint128 deploy_service_lock_value = 2 ever; // TODO: ???
-	uint128 account_threshold = 10 ever; // TODO: move to Gas.sol
+	uint128 account_threshold = 10 ever; // default value
 
 	string abiPlatformContract;
 	string abiEverduesRootContract;
@@ -1665,10 +1665,6 @@ contract EverduesRoot {
 	}
 
 	function upgrade(TvmCell code) external onlyOwner {
-		require(
-			msg.value >= EverduesGas.UPGRADE_ROOT_MIN_VALUE,
-			EverduesErrors.error_message_low_value
-		);
 
 		TvmCell upgrade_data = abi.encode(
 			owner,
@@ -1849,7 +1845,7 @@ contract EverduesRoot {
 		require(
 			msg.value >=
 				(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
-					EverduesGas.INIT_SUBSCRIPTION_VALUE +
+					EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +
 					EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 					EverduesGas.INDEX_INITIAL_BALANCE *
 					2 +
@@ -1901,7 +1897,7 @@ contract EverduesRoot {
 				_buildSubscriptionPlatformParams(msg.sender, service_address)
 			),
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
-				EverduesGas.INIT_SUBSCRIPTION_VALUE +
+				EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +
 				EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 				(additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES
@@ -2020,7 +2016,7 @@ contract EverduesRoot {
 		);
 		new ServiceIndex{
 			value: EverduesGas.INDEX_INITIAL_BALANCE +
-				EverduesGas.INIT_MESSAGE_VALUE +
+				EverduesGas.MESSAGE_MIN_VALUE +
 				(additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
@@ -2029,7 +2025,7 @@ contract EverduesRoot {
 		if (!identificator.toSlice().empty()) {
 			new ServiceIdentificatorIndex{
 				value: EverduesGas.INDEX_INITIAL_BALANCE +
-					EverduesGas.INIT_MESSAGE_VALUE +
+					EverduesGas.MESSAGE_MIN_VALUE +
 					(additional_gas / 3),
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
