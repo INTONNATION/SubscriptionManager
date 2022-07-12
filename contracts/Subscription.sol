@@ -319,7 +319,7 @@ contract Subscription is IEverduesSubscription {
 	function executeSubscription(uint128 paySubscriptionGas)
 		external
 		override
-		onlyRootOrServiceOrOwner // TODO: add serviceOwner
+		onlyRootOrServiceOrOwner
 	{
 		require(!service_params.toSlice().empty(), EverduesErrors.error_subscription_has_no_service_params);
 		require(
