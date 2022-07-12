@@ -231,9 +231,9 @@ contract EverduesRoot {
 			contract_info.contractVersion = version;
 			contract_info.contractAbi = contract_params.contractAbi;
 			contracts.add(hash_, contract_info);
-			external_data_structure.add(ContractTypes.ServiceIndex, contracts);
+			
 		}
-		external_data_structure.add(ContractTypes.Account, contracts);
+		external_data_structure.add(ContractTypes.ServiceIndex, contracts);
 		delete contracts;
 		for (
 			(uint32 version, ContractParams contract_params):
@@ -1848,7 +1848,7 @@ contract EverduesRoot {
 			account_threshold
 		);
 		optional(uint32, ContractParams) latest_version_opt = versions[
-			ContractTypes.Service
+			ContractTypes.Account
 		].max();
 		(
 			uint32 latest_version,
