@@ -39,7 +39,7 @@ contract EverduesRoot {
 
 	string[] categories;
 	bool has_platform_code;
-	uint128 deploy_service_lock_value = 2 ever; // TODO: ???
+	uint128 deploy_service_lock_value = 2 ever; // TODO: Finalize deploy service requrements
 	uint128 account_threshold = 10 ever; // default value
 
 	string abiPlatformContract;
