@@ -225,7 +225,7 @@ contract EverduesRoot {
 			(uint32 version, ContractParams contract_params):
 			versions[ContractTypes.ServiceIndex]
 		) {
-			uint256 hash_ = tvm.hash(contract_params.contractCode);
+			uint256 hash_ = tvm.hash(_buildServiceIndexCode(contract_params.contractCode, account));
 			ContractVersionParams contract_info;
 			contract_info.contractVersion = version;
 			contract_info.contractAbi = contract_params.contractAbi;
@@ -234,18 +234,18 @@ contract EverduesRoot {
 		}
 		external_data_structure.add(ContractTypes.ServiceIndex, contracts);
 		delete contracts;
-		for (
+		/*for (
 			(uint32 version, ContractParams contract_params):
 			versions[ContractTypes.SubscriptionIndex]
 		) {
-			uint256 hash_ = tvm.hash(contract_params.contractCode);
+			uint256 hash_ = tvm.hash(_buildSubscriptionIndex(contract_params.contractCode);
 			ContractVersionParams contract_info;
 			contract_info.contractVersion = version;
 			contract_info.contractAbi = contract_params.contractAbi;
 			contracts.add(hash_, contract_info);
 		}
 		external_data_structure.add(ContractTypes.SubscriptionIndex, contracts);
-		delete contracts;
+		delete contracts;*/
 		everdues_contracts_info.versions = external_data_structure;
 		everdues_contracts_info.platform_code = codePlatform;
 		everdues_contracts_info.tip3_root_abi = abiTIP3RootContract;
@@ -2218,6 +2218,20 @@ contract EverduesRoot {
 			contr: SubscriptionIndex
 		});
 		return stateInit;
+	}
+
+	function _buildServiceIndexCode(TvmCell contractCode, address serviceOwner)
+		private
+		pure
+		returns (TvmCell)
+	{
+		TvmBuilder saltBuilder;
+		saltBuilder.store(serviceOwner, address(this));
+		TvmCell code = tvm.setCodeSalt(
+			contractCode,
+			saltBuilder.toCell()
+		);
+		return code;
 	}
 
 	function _buildServiceIndex(address serviceOwner, string service_name)
