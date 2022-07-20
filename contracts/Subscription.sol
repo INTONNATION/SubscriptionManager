@@ -108,9 +108,9 @@ contract Subscription is IEverduesSubscription {
 		_;
 	}
 
-	modifier onlyRootOrOwner() {
+	modifier onlyOwner() {
 		require(
-			(msg.pubkey() == root_pubkey || msg.pubkey() == owner_pubkey),
+			(msg.pubkey() == owner_pubkey),
 			1000
 		);
 		_;
@@ -280,20 +280,14 @@ contract Subscription is IEverduesSubscription {
 
 	function upgradeSubscriptionPlan(uint8 new_subscription_plan)
 		external
-		onlyAccount
+		onlyOwner
 	{
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
+		tvm.accept();
 		subscription_plan = new_subscription_plan;
 		IEverduesService(service_address).getParams{
-			value: 0,
+			value: EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
-			flag: MsgFlag.ALL_NOT_RESERVED,
+			flag: 0,
 			callback: Subscription.onGetParams
 		}(new_subscription_plan);
 	}
@@ -546,17 +540,19 @@ contract Subscription is IEverduesSubscription {
 		}
 	}
 
-	function stopSubscribtion() external onlyRootOrOwner {
+	function stopSubscribtion() external onlyOwner {
 		tvm.accept();
 		subscription.status = EverduesSubscriptionStatus.STATUS_STOPPED;
 	}
 
-	function resumeSubscribtion() external onlyRootOrOwner {
+	function resumeSubscribtion() external onlyOwner {
 		tvm.accept();
 		subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
 	}
 
-	function cancel() external onlyRootOrOwner {
+	function cancel() external onlyOwner {
+		tvm.accept();
+		emit SubscriptionDeleted();
 		IEverduesIndex(subscription_index_address).cancel{
 			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
@@ -568,23 +564,17 @@ contract Subscription is IEverduesSubscription {
 		selfdestruct(account_address);
 	}
 
-	function updateIdentificator(TvmCell identificator_, address send_gas_to)
+	function updateIdentificator(TvmCell identificator_)
 		external
 		view
-		onlyRoot
+		onlyOwner
 	{
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
+		tvm.accept();
 		IEverduesIndex(subscription_index_identificator_address)
 			.updateIdentificator{
-			value: 0,
+			value: EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}(identificator_, send_gas_to);
+			flag: 0
+		}(identificator_, address(this));
 	}
 }

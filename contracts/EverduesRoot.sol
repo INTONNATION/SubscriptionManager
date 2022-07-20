@@ -1543,40 +1543,6 @@ contract EverduesRoot {
 		}(subscription_code_salt, latest_version, address(this), upgrade_data);
 	}
 
-	function updateSubscriptionIdentificator(
-		address service_address,
-		TvmCell identificator,
-		uint256 owner_pubkey
-	) external view onlyAccountContract(owner_pubkey) {
-		require(
-			service_address != address(0),
-			EverduesErrors.error_address_is_empty
-		);
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ROOT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
-		address subscription_address = address(
-			tvm.hash(
-				_buildInitData(
-					ContractTypes.Subscription,
-					_buildSubscriptionPlatformParams(
-						msg.sender,
-						service_address
-					)
-				)
-			)
-		);
-		Subscription(subscription_address).updateIdentificator{
-			value: 0,
-			bounce: true,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}(identificator, msg.sender);
-	}
-
 	function upgradeService(
 		string service_name,
 		string category,
@@ -1646,60 +1612,6 @@ contract EverduesRoot {
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(service_code_salt, latest_version, address(this), upgrade_data);
-	}
-
-	function updateServiceParams(
-		string service_name,
-		TvmCell new_service_params,
-		uint256 owner_pubkey
-	) external view onlyAccountContract(owner_pubkey) {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ROOT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
-		address service_address = address(
-			tvm.hash(
-				_buildInitData(
-					ContractTypes.Service,
-					_buildServicePlatformParams(msg.sender, service_name)
-				)
-			)
-		);
-		Service(service_address).updateServiceParams{
-			value: 0,
-			bounce: true,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}(new_service_params);
-	}
-
-	function updateServiceIdentificator(
-		string service_name,
-		TvmCell identificator,
-		uint256 owner_pubkey
-	) external view onlyAccountContract(owner_pubkey) {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ROOT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
-		address service_address = address(
-			tvm.hash(
-				_buildInitData(
-					ContractTypes.Service,
-					_buildServicePlatformParams(msg.sender, service_name)
-				)
-			)
-		);
-		Service(service_address).updateIdentificator{
-			value: 0,
-			bounce: true,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}(identificator, msg.sender);
 	}
 
 	function upgrade(TvmCell code) external onlyOwner {
@@ -1805,33 +1717,6 @@ contract EverduesRoot {
 			0
 		);
 		fee_proxy_address = address(platform);
-	}
-
-	function cancelService(string service_name, uint256 owner_pubkey)
-		external
-		view
-		onlyAccountContract(owner_pubkey)
-	{
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ROOT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
-		address service_address = address(
-			tvm.hash(
-				_buildInitData(
-					ContractTypes.Service,
-					_buildServicePlatformParams(msg.sender, service_name)
-				)
-			)
-		);
-		IEverduesService(service_address).cancel{
-			value: 0,
-			bounce: true,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}();
 	}
 
 	function deployAccount(uint256 pubkey) external view {
