@@ -457,54 +457,6 @@ contract EverduesAccount is IEverduesAccount {
 		}(service_address, tvm.pubkey());
 	}
 
-	function updateServiceIdentificator(
-		string service_name,
-		TvmCell identificator,
-		uint128 additional_gas
-	) external view onlyOwner {
-		IEverduesRoot(root).updateServiceIdentificator{
-			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
-			bounce: true,
-			flag: 0
-		}(service_name, identificator, tvm.pubkey());
-	}
-
-	function updateSubscriptionIdentificator(
-		address service_address,
-		TvmCell identificator,
-		uint128 additional_gas
-	) external view onlyOwner {
-		IEverduesRoot(root).updateSubscriptionIdentificator{
-			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
-			bounce: true,
-			flag: 0
-		}(service_address, identificator, tvm.pubkey());
-	}
-
-	function updateServiceParams(
-		string service_name,
-		TvmCell new_service_params,
-		uint128 additional_gas
-	) external view onlyOwner {
-		IEverduesRoot(root).updateServiceParams{
-			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
-			bounce: true,
-			flag: 0
-		}(service_name, new_service_params, tvm.pubkey());
-	}
-
-	function cancelService(string service_name, uint128 additional_gas)
-		external
-		view
-		onlyOwner
-	{
-		IEverduesRoot(root).cancelService{
-			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
-			bounce: true,
-			flag: 0
-		}(service_name, tvm.pubkey());
-	}
-
 	function deployService(
 		TvmCell service_params,
 		TvmCell identificator,

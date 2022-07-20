@@ -37,6 +37,14 @@ contract Service is IEverduesService {
 		_;
 	}
 
+	modifier onlyOwner() {
+		require(
+			msg.pubkey() == owner_pubkey,
+			EverduesErrors.error_message_sender_is_not_owner
+		);
+		_;
+	}
+
 	function getParams(uint8 subscription_plan)
 		external
 		view
@@ -75,36 +83,14 @@ contract Service is IEverduesService {
 				.toCell();
 	}
 
-	function pause() external onlyRoot {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.SERVICE_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
+	function pause() external onlyOwner {
+		tvm.accept();
 		status = 1;
-		account_address.transfer({
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-		});
 	}
 
-	function resume() external onlyRoot {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.SERVICE_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
+	function resume() external onlyOwner {
+		tvm.accept();
 		status = 0;
-		account_address.transfer({
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-		});
 	}
 
 	function upgrade(
@@ -231,14 +217,8 @@ contract Service is IEverduesService {
 		}
 	}
 
-	function updateServiceParams(TvmCell new_service_params) external onlyRoot {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.SERVICE_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
+	function updateServiceParams(TvmCell new_service_params) external onlyOwner {
+		tvm.accept();
 		TvmCell subscription_plans_cell;
 		(service_params, subscription_plans_cell) = abi.decode(
 			new_service_params,
@@ -248,29 +228,25 @@ contract Service is IEverduesService {
 			subscription_plans_cell,
 			mapping(uint8 => TvmCell)
 		);
-		account_address.transfer({
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-		});
 	}
 
-	function cancel() external override onlyRoot {
+	function cancel() external override onlyOwner {
+		emit ServiceDeleted();
 		IEverduesIndex(subscription_service_index_address).cancel();
 		IEverduesIndex(subscription_service_index_identificator_address)
 			.cancel();
 		selfdestruct(account_address);
 	}
 
-	function updateIdentificator(TvmCell identificator_, address send_gas_to)
+	function updateIdentificator(TvmCell identificator_)
 		external
 		view
-		onlyRoot
+		onlyOwner
 	{
 		IEverduesIndex(subscription_service_index_identificator_address)
 			.updateIdentificator{value: 0, flag: MsgFlag.REMAINING_GAS}(
 			identificator_,
-			send_gas_to
+			address(this)
 		);
 	}
 }

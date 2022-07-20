@@ -6,6 +6,8 @@ interface IEverduesService {
 		address subscription_service_index_identificator_address
 	);
 
+	event ServiceDeleted();
+
 	function getParams(uint8 subscription_plan)
 		external
 		view
