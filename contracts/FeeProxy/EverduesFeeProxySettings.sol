@@ -1,6 +1,5 @@
 pragma ton-solidity >=0.56.0;
 
-import "../Platform.sol";
 import "./EverduesFeeProxyStorage.sol";
 import "../libraries/ContractTypes.sol";
 import "../libraries/EverduesErrors.sol";
@@ -97,34 +96,5 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		});
-	}
-
-	function _buildSubscriptionParams(
-		address subscription_owner,
-		address service_address
-	) private inline pure returns (TvmCell) {
-		TvmBuilder builder;
-		builder.store(subscription_owner);
-		builder.store(service_address);
-		return builder.toCell();
-	}
-
-	function _buildInitData(uint8 type_id_, TvmCell params)
-		private
-		inline
-		view
-		returns (TvmCell)
-	{
-		return
-			tvm.buildStateInit({
-				contr: Platform,
-				varInit: {
-					root: root,
-					type_id: type_id_,
-					platform_params: params
-				},
-				pubkey: 0,
-				code: platform_code
-			});
 	}
 }

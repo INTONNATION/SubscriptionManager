@@ -44,7 +44,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		uint8 status;
 		uint128 pay_subscription_gas;
 	}
-    
+
 	serviceParams public svcparams;
 	paymentStatus public subscription;
 

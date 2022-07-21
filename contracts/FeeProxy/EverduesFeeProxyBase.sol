@@ -9,10 +9,8 @@ import "../interfaces/IDexRoot.sol";
 import "../libraries/DexOperationTypes.sol";
 import "../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
-import "../../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
 
 abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
-	
 	constructor() public {
 		revert();
 	}

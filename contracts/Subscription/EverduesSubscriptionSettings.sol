@@ -47,22 +47,22 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 			(msg.pubkey() == root_pubkey ||
 				msg.pubkey() == owner_pubkey ||
 				msg.pubkey() == service_pubkey),
-			1000
+			EverduesErrors.error_message_sender_is_not_owner
 		);
 		_;
 	}
 
 	modifier onlyOwner() {
-		require(msg.pubkey() == owner_pubkey, 1000);
+		require(msg.pubkey() == owner_pubkey, EverduesErrors.error_message_sender_is_not_owner);
 		_;
 	}
 
-	function stopSubscribtion() external onlyOwner {
+	function stopSubscription() external onlyOwner {
 		tvm.accept();
 		subscription.status = EverduesSubscriptionStatus.STATUS_STOPPED;
 	}
 
-	function resumeSubscribtion() external onlyOwner {
+	function resumeSubscription() external onlyOwner {
 		tvm.accept();
 		subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
 	}
@@ -81,11 +81,7 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 		selfdestruct(account_address);
 	}
 
-	function updateIdentificator(TvmCell index_data)
-		external
-		view
-		onlyOwner
-	{
+	function updateIdentificator(TvmCell index_data) external view onlyOwner {
 		tvm.accept();
 		IEverduesIndex(subscription_index_identificator_address)
 			.updateIndexData{
