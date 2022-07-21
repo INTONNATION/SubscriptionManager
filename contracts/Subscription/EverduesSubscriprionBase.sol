@@ -89,7 +89,7 @@ abstract contract EverduesSubscriprionBase is
 		uint8 status = svc_info.toSlice().decode(uint8);
 		require(
 			subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING,
-			1000
+			EverduesErrors.error_subscription_status_is_not_processed
 		);
 		if (status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;

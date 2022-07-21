@@ -431,7 +431,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			uint32 latest_version,
 			ContractParams latest_params
 		) = latest_version_opt.get();
-		IPlatform(msg.sender).initializeByRoot{
+		Platform(msg.sender).initializeByRoot{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(latest_params.contractCode, account_params, latest_version);

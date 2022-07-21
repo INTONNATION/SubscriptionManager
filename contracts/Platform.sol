@@ -4,26 +4,13 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import "libraries/MsgFlag.sol";
-
-interface IEverduesRootContract {
-	function deployAccount(uint256 pubkey) external;
-}
-
-interface IPlatform {
-	function initializeByRoot(
-		TvmCell code,
-		TvmCell contract_params,
-		uint32 version
-	) external;
-}
+import "libraries/PlatformConstants.sol";
+import "interfaces/IEverduesRoot.sol";
 
 contract Platform {
 	address static root;
 	uint8 static type_id;
 	TvmCell static platform_params;
-	uint128 constant DEPLOY_ACCOUNT_MIN_VALUE = 1 ton;
-	uint8 constant ERROR_MESSAGE_SENDER_IS_NOT_EVERDUES_ROOT = 113;
-	uint8 constant ERROR_MESSAGE_SENDER_IS_NOT_OWNER = 112;
 
 	constructor(
 		TvmCell code,
@@ -44,10 +31,14 @@ contract Platform {
 			}
 		} else if (msg.isExternal) {
 			uint256 pubkey = tvm.pubkey();
-			require(msg.pubkey() == pubkey, ERROR_MESSAGE_SENDER_IS_NOT_OWNER);
+			require(
+				msg.pubkey() == pubkey,
+				PlatformConstants.ERROR_MESSAGE_SENDER_IS_NOT_OWNER
+			);
 			tvm.accept();
-			IEverduesRootContract(root).deployAccount{
-				value: DEPLOY_ACCOUNT_MIN_VALUE + additional_gas,
+			IEverduesRoot(root).deployAccount{
+				value: PlatformConstants.DEPLOY_ACCOUNT_MIN_VALUE +
+					additional_gas,
 				bounce: false,
 				flag: 0
 			}(pubkey);
@@ -59,7 +50,10 @@ contract Platform {
 		TvmCell contract_params,
 		uint32 version
 	) external {
-		require(msg.sender == root, ERROR_MESSAGE_SENDER_IS_NOT_EVERDUES_ROOT);
+		require(
+			msg.sender == root,
+			PlatformConstants.ERROR_MESSAGE_SENDER_IS_NOT_EVERDUES_ROOT
+		);
 		TvmCell data = abi.encode(
 			root,
 			uint32(0),
@@ -83,7 +77,10 @@ contract Platform {
 		uint32 version,
 		address send_gas_to
 	) private {
-		require(msg.sender == root, ERROR_MESSAGE_SENDER_IS_NOT_EVERDUES_ROOT);
+		require(
+			msg.sender == root,
+			PlatformConstants.ERROR_MESSAGE_SENDER_IS_NOT_EVERDUES_ROOT
+		);
 		TvmCell data = abi.encode(
 			root,
 			send_gas_to,

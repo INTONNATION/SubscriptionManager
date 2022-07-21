@@ -16,6 +16,7 @@ library EverduesErrors {
 	uint8 constant error_message_sender_is_not_account_address = 113;
 	uint8 constant error_wallet_not_exist = 114;
 	uint8 constant error_subscription_status_already_active = 115;
+	uint8 constant error_subscription_status_is_not_processed = 125;
 	uint8 constant error_subscription_already_executed = 116;
 	uint8 constant error_subscription_is_stopped = 117;
 	uint8 constant error_subscription_has_no_service_params = 118;
