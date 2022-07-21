@@ -1,0 +1,130 @@
+pragma ton-solidity >=0.56.0;
+
+import "../Platform.sol";
+import "./EverduesFeeProxyStorage.sol";
+import "../libraries/ContractTypes.sol";
+import "../libraries/EverduesErrors.sol";
+import "../libraries/EverduesGas.sol";
+
+abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
+	modifier onlyRoot() {
+		require(
+			msg.sender == root,
+			EverduesErrors.error_message_sender_is_not_everdues_root
+		);
+		_;
+	}
+
+	modifier onlyDexRoot() {
+		require(
+			msg.sender == dex_root_address,
+			EverduesErrors.error_message_sender_is_not_dex_root
+		);
+		_;
+	}
+
+	modifier onlySubscriptionContract(
+		address account_address,
+		address service_address
+	) {
+		address subscription_contract_address = address(
+			tvm.hash(
+				_buildInitData(
+					ContractTypes.Subscription,
+					_buildSubscriptionParams(account_address, service_address)
+				)
+			)
+		);
+		require(
+			msg.sender == subscription_contract_address,
+			EverduesErrors.error_message_sender_is_not_my_subscription
+		);
+		_;
+	}
+
+	function setMTDSRootAddress(address mtds_root, address send_gas_to)
+		external
+		onlyRoot
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		mtds_root_address = mtds_root;
+		send_gas_to.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
+	function setDexRootAddress(address dex_root, address send_gas_to)
+		external
+		onlyRoot
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		dex_root_address = dex_root;
+		send_gas_to.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
+	function setAccountGasThreshold(
+		uint128 account_threshold_,
+		address send_gas_to
+	) external onlyRoot {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		account_threshold = account_threshold_;
+		send_gas_to.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
+	function _buildSubscriptionParams(
+		address subscription_owner,
+		address service_address
+	) private inline pure returns (TvmCell) {
+		TvmBuilder builder;
+		builder.store(subscription_owner);
+		builder.store(service_address);
+		return builder.toCell();
+	}
+
+	function _buildInitData(uint8 type_id_, TvmCell params)
+		private
+		inline
+		view
+		returns (TvmCell)
+	{
+		return
+			tvm.buildStateInit({
+				contr: Platform,
+				varInit: {
+					root: root,
+					type_id: type_id_,
+					platform_params: params
+				},
+				pubkey: 0,
+				code: platform_code
+			});
+	}
+}

@@ -122,8 +122,7 @@
 		{
 			"name": "updateIdentificator",
 			"inputs": [
-				{"name":"identificator_","type":"cell"},
-				{"name":"send_gas_to","type":"address"}
+				{"name":"identificator_","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -248,6 +247,13 @@
 			"name": "paramsRecieved",
 			"inputs": [
 				{"name":"service_params_","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "SubscriptionDeleted",
+			"inputs": [
 			],
 			"outputs": [
 			]

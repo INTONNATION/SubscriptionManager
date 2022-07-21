@@ -18,4 +18,10 @@ interface IEverduesAccount {
 		uint128 value,
 		address currency_root
 	) external responsible returns (uint8, uint128);
+
+	function upgrade(
+		TvmCell code,
+		uint32 version,
+		TvmCell contract_params
+	) external;
 }

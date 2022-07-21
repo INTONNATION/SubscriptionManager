@@ -96,45 +96,6 @@
 			]
 		},
 		{
-			"name": "updateServiceIdentificator",
-			"inputs": [
-				{"name":"service_name","type":"string"},
-				{"name":"identificator","type":"cell"},
-				{"name":"additional_gas","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "updateSubscriptionIdentificator",
-			"inputs": [
-				{"name":"service_address","type":"address"},
-				{"name":"identificator","type":"cell"},
-				{"name":"additional_gas","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "updateServiceParams",
-			"inputs": [
-				{"name":"service_name","type":"string"},
-				{"name":"new_service_params","type":"cell"},
-				{"name":"additional_gas","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "cancelService",
-			"inputs": [
-				{"name":"service_name","type":"string"},
-				{"name":"additional_gas","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "deployService",
 			"inputs": [
 				{"name":"service_params","type":"cell"},

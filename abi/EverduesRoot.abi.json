@@ -370,16 +370,6 @@
 			]
 		},
 		{
-			"name": "updateSubscriptionIdentificator",
-			"inputs": [
-				{"name":"service_address","type":"address"},
-				{"name":"identificator","type":"cell"},
-				{"name":"owner_pubkey","type":"uint256"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "upgradeService",
 			"inputs": [
 				{"name":"service_name","type":"string"},
@@ -401,26 +391,6 @@
 			]
 		},
 		{
-			"name": "updateServiceParams",
-			"inputs": [
-				{"name":"service_name","type":"string"},
-				{"name":"new_service_params","type":"cell"},
-				{"name":"owner_pubkey","type":"uint256"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "updateServiceIdentificator",
-			"inputs": [
-				{"name":"service_name","type":"string"},
-				{"name":"identificator","type":"cell"},
-				{"name":"owner_pubkey","type":"uint256"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "upgrade",
 			"inputs": [
 				{"name":"code","type":"cell"}
@@ -432,15 +402,6 @@
 			"name": "deployFeeProxy",
 			"inputs": [
 				{"name":"currencies","type":"address[]"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "cancelService",
-			"inputs": [
-				{"name":"service_name","type":"string"},
-				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
 			]
