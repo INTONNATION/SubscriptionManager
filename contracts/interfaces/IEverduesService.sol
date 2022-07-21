@@ -17,4 +17,11 @@ interface IEverduesService {
 	function getInfo() external view responsible returns (TvmCell);
 
 	function cancel() external;
+
+	function upgrade(
+		TvmCell code_,
+		uint32 version,
+		address send_gas_to,
+		TvmCell contract_params
+	) external;
 }

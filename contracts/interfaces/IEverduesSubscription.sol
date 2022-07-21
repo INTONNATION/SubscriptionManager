@@ -9,4 +9,13 @@ interface IEverduesSubscription {
 	function executeSubscription(uint128 paySubscriptionGas) external;
 
 	function replenishGas() external;
+
+	function upgradeSubscriptionPlan(uint8 new_subscription_plan) external;
+
+	function upgrade(
+		TvmCell code,
+		uint32 version,
+		address send_gas_to,
+		TvmCell contract_params_
+	) external;
 }

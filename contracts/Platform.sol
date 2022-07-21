@@ -5,8 +5,16 @@ pragma AbiHeader pubkey;
 
 import "libraries/MsgFlag.sol";
 
-interface IPlatformRoot {
+interface IEverduesRootContract {
 	function deployAccount(uint256 pubkey) external;
+}
+
+interface IPlatform {
+	function initializeByRoot(
+		TvmCell code,
+		TvmCell contract_params,
+		uint32 version
+	) external;
 }
 
 contract Platform {
@@ -38,7 +46,7 @@ contract Platform {
 			uint256 pubkey = tvm.pubkey();
 			require(msg.pubkey() == pubkey, ERROR_MESSAGE_SENDER_IS_NOT_OWNER);
 			tvm.accept();
-			IPlatformRoot(root).deployAccount{
+			IEverduesRootContract(root).deployAccount{
 				value: DEPLOY_ACCOUNT_MIN_VALUE + additional_gas,
 				bounce: false,
 				flag: 0

@@ -1,120 +1,13 @@
 pragma ton-solidity >=0.56.0;
-pragma AbiHeader expire;
-pragma AbiHeader time;
-pragma AbiHeader pubkey;
 
-import "Platform.sol";
-import "EverduesRoot.sol";
-import "libraries/EverduesErrors.sol";
-import "libraries/ContractTypes.sol";
-import "libraries/EverduesGas.sol";
-import "libraries/MsgFlag.sol";
-import "libraries/DexOperationTypes.sol";
-import "interfaces/IEverduesRoot.sol";
-import "interfaces/IEverduesAccount.sol";
-import "interfaces/IEverduesSubscription.sol";
-import "interfaces/IDexRoot.sol";
-import "interfaces/IDexPair.sol";
-import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
-import "../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
-import "../ton-eth-bridge-token-contracts/contracts/interfaces/TIP3TokenWallet.sol";
+import "./EverduesAccountSettings.sol";
 
-contract EverduesAccount is IEverduesAccount {
-	uint32 current_version;
-	uint8 type_id;
-	address root;
-	address dex_root_address;
-	address wever_root;
-	TvmCell platform_code;
-	TvmCell platform_params;
-	uint128 account_gas_threshold;
-
-	struct BalanceWalletStruct {
-		address wallet;
-		uint128 balance;
-		address dex_ever_pair_address;
-	}
-
-	struct GetDexPairOperation {
-		address currency_root;
-		address send_gas_to;
-	}
-
-	struct ExchangeOperation {
-		address currency_root;
-		uint128 value;
-		address subscription_wallet;
-		uint128 pay_subscription_gas;
-		address subscription_contract;
-	}
-
-	struct DepositTokens {
-		address wallet;
-		uint128 amount;
-	}
-
-	mapping(address => BalanceWalletStruct) public wallets_mapping;
-
-	mapping(address => address) _tmp_sync_balance;
-	mapping(uint64 => GetDexPairOperation) _tmp_get_pairs;
-	mapping(uint64 => ExchangeOperation) _tmp_exchange_operations;
-	mapping(address => DepositTokens) tmp_deposit_tokens;
-
+abstract contract EverduesAccountBase is
+	IEverduesAccount,
+	EverduesAccountSettings
+{
 	constructor() public {
 		revert();
-	}
-
-	modifier onlyRoot() {
-		require(
-			msg.sender == root,
-			EverduesErrors.error_message_sender_is_not_owner
-		);
-		_;
-	}
-
-	modifier onlyOwner() {
-		require(
-			msg.pubkey() == tvm.pubkey(),
-			EverduesErrors.error_message_sender_is_not_owner
-		);
-		tvm.accept();
-		_;
-	}
-
-	modifier onlyDexRoot() {
-		require(
-			msg.sender == dex_root_address,
-			EverduesErrors.error_message_sender_is_not_dex_root
-		);
-		_;
-	}
-
-	modifier onlyDexPair(address sender) {
-		for (
-			(address tokenRoot, BalanceWalletStruct tokenBalance):
-			wallets_mapping
-		) {
-			if (tokenBalance.dex_ever_pair_address == sender) {
-				_;
-			}
-		}
-		revert(EverduesErrors.error_message_sender_is_not_dex_pair);
-	}
-
-	modifier onlyFeeProxy() {
-		address fee_proxy_address = address(
-			tvm.hash(
-				_buildInitData(
-					ContractTypes.FeeProxy,
-					_buildPlatformParamsOwnerAddress(root)
-				)
-			)
-		);
-		require(
-			msg.sender == fee_proxy_address,
-			EverduesErrors.error_message_sender_is_not_dex_root
-		);
-		_;
 	}
 
 	onBounce(TvmSlice slice) external pure {
@@ -138,97 +31,6 @@ contract EverduesAccount is IEverduesAccount {
 			bounce: true,
 			flag: 0
 		}(tvm.pubkey());
-	}
-
-	function upgrade(
-		TvmCell code,
-		uint32 version,
-		TvmCell contract_params
-	) external onlyRoot {
-		TvmCell wallets_mapping_cell = abi.encode(wallets_mapping);
-		TvmCell data = abi.encode(
-			root,
-			current_version,
-			version,
-			type_id,
-			platform_code,
-			platform_params,
-			contract_params,
-			code,
-			wallets_mapping_cell,
-			dex_root_address,
-			wever_root
-		);
-		tvm.setcode(code);
-		tvm.setCurrentCode(code);
-		onCodeUpgrade(data);
-	}
-
-	function onCodeUpgrade(TvmCell data) private {
-		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
-		tvm.resetStorage();
-		uint32 old_version;
-		TvmCell contract_params;
-		TvmCell code;
-		(
-			root,
-			old_version,
-			current_version,
-			type_id,
-			platform_code,
-			platform_params,
-			contract_params,
-			code
-		) = abi.decode(
-			data,
-			(address, uint32, uint32, uint8, TvmCell, TvmCell, TvmCell, TvmCell)
-		);
-		if (old_version > 0 && contract_params.toSlice().empty()) {
-			TvmCell wallets_mapping_cell;
-			(
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				wallets_mapping_cell,
-				dex_root_address,
-				wever_root
-			) = abi.decode(
-				data,
-				(
-					address,
-					uint32,
-					uint32,
-					uint8,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					address,
-					address
-				)
-			);
-			wallets_mapping = abi.decode(
-				wallets_mapping_cell,
-				(mapping(address => BalanceWalletStruct))
-			);
-		} else if (old_version == 0) {
-			(
-				dex_root_address,
-				wever_root, /*address tip3_to_ever_address*/
-				,
-				account_gas_threshold
-			) = abi.decode(
-				contract_params,
-				(address, address, address, uint128)
-			);
-		}
-		emit AccountDeployed(current_version);
 	}
 
 	function getNextPaymentStatus(
@@ -304,7 +106,7 @@ contract EverduesAccount is IEverduesAccount {
 					value: EverduesGas.MESSAGE_MIN_VALUE,
 					bounce: true,
 					flag: MsgFlag.SENDER_PAYS_FEES,
-					callback: EverduesAccount.onExpectedExchange
+					callback: EverduesAccountBase.onExpectedExchange
 				}(msg.value, wever_root);
 			}
 		}
@@ -353,47 +155,6 @@ contract EverduesAccount is IEverduesAccount {
 		}
 	}
 
-	function syncBalance(address currency_root, uint128 additional_gas)
-		external
-		onlyOwner
-	{
-		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
-		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
-			.fetch(currency_root);
-		if (current_balance_struct.hasValue()) {
-			BalanceWalletStruct current_balance_key = current_balance_struct
-				.get();
-			address account_wallet = current_balance_key.wallet;
-			_tmp_sync_balance[account_wallet] = currency_root;
-			if (current_balance_key.dex_ever_pair_address == address(0)) {
-				_tmp_get_pairs[now] = GetDexPairOperation(
-					currency_root,
-					address(this)
-				);
-				IDexRoot(dex_root_address).getExpectedPairAddress{
-					value: EverduesGas.MESSAGE_MIN_VALUE,
-					flag: 0,
-					bounce: false,
-					callback: EverduesAccount.onGetExpectedPairAddress
-				}(wever_root, currency_root);
-			}
-			TIP3TokenWallet(account_wallet).balance{
-				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
-				bounce: true,
-				flag: 0,
-				callback: EverduesAccount.onBalanceOf
-			}();
-		} else {
-			_tmp_sync_balance[currency_root] = address(0);
-			ITokenRoot(currency_root).walletOf{
-				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
-				bounce: true,
-				flag: 0,
-				callback: EverduesAccount.onWalletOf
-			}(address(this));
-		}
-	}
-
 	function onAcceptTokensWalletOf(address account_wallet) external {
 		tvm.rawReserve(
 			math.max(
@@ -416,10 +177,51 @@ contract EverduesAccount is IEverduesAccount {
 			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: 0,
 			bounce: false,
-			callback: EverduesAccount.onGetExpectedPairAddress
+			callback: EverduesAccountBase.onGetExpectedPairAddress
 		}(wever_root, msg.sender);
 		emit Deposit(msg.sender, deposit.amount);
 		delete tmp_deposit_tokens[msg.sender];
+	}
+
+	function syncBalance(address currency_root, uint128 additional_gas)
+		external
+		onlyOwner
+	{
+		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
+		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
+			.fetch(currency_root);
+		if (current_balance_struct.hasValue()) {
+			BalanceWalletStruct current_balance_key = current_balance_struct
+				.get();
+			address account_wallet = current_balance_key.wallet;
+			_tmp_sync_balance[account_wallet] = currency_root;
+			if (current_balance_key.dex_ever_pair_address == address(0)) {
+				_tmp_get_pairs[now] = GetDexPairOperation(
+					currency_root,
+					address(this)
+				);
+				IDexRoot(dex_root_address).getExpectedPairAddress{
+					value: EverduesGas.MESSAGE_MIN_VALUE,
+					flag: 0,
+					bounce: false,
+					callback: EverduesAccountBase.onGetExpectedPairAddress
+				}(wever_root, currency_root);
+			}
+			TIP3TokenWallet(account_wallet).balance{
+				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
+				bounce: true,
+				flag: 0,
+				callback: EverduesAccountBase.onBalanceOf
+			}();
+		} else {
+			_tmp_sync_balance[currency_root] = address(0);
+			ITokenRoot(currency_root).walletOf{
+				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
+				bounce: true,
+				flag: 0,
+				callback: EverduesAccountBase.onWalletOf
+			}(address(this));
+		}
 	}
 
 	function onWalletOf(address account_wallet) external {
@@ -440,21 +242,8 @@ contract EverduesAccount is IEverduesAccount {
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED,
-			callback: EverduesAccount.onBalanceOf
+			callback: EverduesAccountBase.onBalanceOf
 		}();
-	}
-
-	function upgradeSubscription(
-		address service_address,
-		uint128 additional_gas
-	) external view onlyOwner {
-		IEverduesRoot(root).upgradeSubscription{
-			value: EverduesGas.UPGRADE_MIN_VALUE +
-				additional_gas +
-				EverduesGas.MESSAGE_MIN_VALUE,
-			bounce: true,
-			flag: 0
-		}(service_address, tvm.pubkey());
 	}
 
 	function deployService(
@@ -489,6 +278,19 @@ contract EverduesAccount is IEverduesAccount {
 			bounce: true,
 			flag: 0
 		}(service_name, category, tvm.pubkey());
+	}
+
+	function upgradeSubscription(
+		address service_address,
+		uint128 additional_gas
+	) external view onlyOwner {
+		IEverduesRoot(root).upgradeSubscription{
+			value: EverduesGas.UPGRADE_MIN_VALUE +
+				additional_gas +
+				EverduesGas.MESSAGE_MIN_VALUE,
+			bounce: true,
+			flag: 0
+		}(service_address, tvm.pubkey());
 	}
 
 	function upgradeSubscriptionPlan(
@@ -568,7 +370,7 @@ contract EverduesAccount is IEverduesAccount {
 					value: EverduesGas.MESSAGE_MIN_VALUE,
 					flag: 0,
 					bounce: false,
-					callback: EverduesAccount.onGetExpectedPairAddress
+					callback: EverduesAccountBase.onGetExpectedPairAddress
 				}(wever_root, _tmp_sync_balance[msg.sender]);
 				emit BalanceSynced(balance_);
 			}
@@ -596,13 +398,6 @@ contract EverduesAccount is IEverduesAccount {
 			bounce: false,
 			flag: 0
 		}(withdraw_value, withdraw_to, 0, address(this), true, payload);
-	}
-
-	function destroyAccount(address send_gas_to)
-		external
-		onlyOwner /*onlyRoot*/
-	{
-		selfdestruct(send_gas_to);
 	}
 
 	function onAcceptTokensTransfer(
@@ -633,7 +428,7 @@ contract EverduesAccount is IEverduesAccount {
 					value: EverduesGas.MESSAGE_MIN_VALUE,
 					flag: 0,
 					bounce: false,
-					callback: EverduesAccount.onGetExpectedPairAddress
+					callback: EverduesAccountBase.onGetExpectedPairAddress
 				}(wever_root, tokenRoot);
 			}
 			emit Deposit(msg.sender, amount);
@@ -648,7 +443,7 @@ contract EverduesAccount is IEverduesAccount {
 				value: EverduesGas.MESSAGE_MIN_VALUE,
 				bounce: true,
 				flag: 0,
-				callback: EverduesAccount.onAcceptTokensWalletOf
+				callback: EverduesAccountBase.onAcceptTokensWalletOf
 			}(address(this));
 		}
 	}
@@ -681,45 +476,5 @@ contract EverduesAccount is IEverduesAccount {
 				});
 			}
 		}
-	}
-
-	function _buildSubscriptionParams(
-		address subscription_owner,
-		address service_address
-	) private inline pure returns (TvmCell) {
-		TvmBuilder builder;
-		builder.store(subscription_owner);
-		builder.store(service_address);
-		return builder.toCell();
-	}
-
-	function _buildPlatformParamsOwnerAddress(address account_owner)
-		private
-		inline
-		pure
-		returns (TvmCell)
-	{
-		TvmBuilder builder;
-		builder.store(account_owner);
-		return builder.toCell();
-	}
-
-	function _buildInitData(uint8 type_id_, TvmCell params)
-		private
-		inline
-		view
-		returns (TvmCell)
-	{
-		return
-			tvm.buildStateInit({
-				contr: Platform,
-				varInit: {
-					root: root,
-					type_id: type_id_,
-					platform_params: params
-				},
-				pubkey: 0,
-				code: platform_code
-			});
 	}
 }
