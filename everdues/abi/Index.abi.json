@@ -1,0 +1,88 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"index_constructor_data_","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateIndexData",
+			"inputs": [
+				{"name":"index_data","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "cancel",
+			"inputs": [
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "index_static_data",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"index_static_data","type":"cell"}
+			]
+		},
+		{
+			"name": "index_salt_data",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"index_salt_data","type":"cell"}
+			]
+		},
+		{
+			"name": "index_constructor_data",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"index_constructor_data","type":"cell"}
+			]
+		},
+		{
+			"name": "index_owner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"index_owner","type":"address"}
+			]
+		},
+		{
+			"name": "root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root","type":"address"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"index_static_data","type":"cell"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"index_static_data","type":"cell"},
+		{"name":"index_salt_data","type":"cell"},
+		{"name":"index_constructor_data","type":"cell"},
+		{"name":"index_owner","type":"address"},
+		{"name":"root","type":"address"}
+	]
+}

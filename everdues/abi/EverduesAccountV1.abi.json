@@ -1,0 +1,255 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"version","type":"uint32"},
+				{"name":"contract_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeAccount",
+			"inputs": [
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getNextPaymentStatus",
+			"inputs": [
+				{"name":"answerId","type":"uint32"},
+				{"name":"service_address","type":"address"},
+				{"name":"value","type":"uint128"},
+				{"name":"currency_root","type":"address"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"},
+				{"name":"value1","type":"uint128"}
+			]
+		},
+		{
+			"name": "paySubscription",
+			"inputs": [
+				{"name":"value","type":"uint128"},
+				{"name":"currency_root","type":"address"},
+				{"name":"subscription_wallet","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onExpectedExchange",
+			"inputs": [
+				{"name":"expected_amount","type":"uint128"},
+				{"name":"value1","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onAcceptTokensWalletOf",
+			"inputs": [
+				{"name":"account_wallet","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "syncBalance",
+			"inputs": [
+				{"name":"currency_root","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onWalletOf",
+			"inputs": [
+				{"name":"account_wallet","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deployService",
+			"inputs": [
+				{"name":"currency_root","type":"address"},
+				{"name":"deploy_value","type":"uint128"},
+				{"name":"service_params","type":"cell"},
+				{"name":"identificator","type":"cell"},
+				{"name":"publish_to_catalog","type":"bool"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeService",
+			"inputs": [
+				{"name":"service_name","type":"string"},
+				{"name":"category","type":"string"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeSubscription",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgradeSubscriptionPlan",
+			"inputs": [
+				{"name":"new_subscription_plan","type":"uint8"},
+				{"name":"service_address","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deploySubscription",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"identificator","type":"cell"},
+				{"name":"subscription_plan","type":"uint8"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onBalanceOf",
+			"inputs": [
+				{"name":"balance_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "withdrawFunds",
+			"inputs": [
+				{"name":"currency_root","type":"address"},
+				{"name":"withdraw_value","type":"uint128"},
+				{"name":"withdraw_to","type":"address"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onAcceptTokensTransfer",
+			"inputs": [
+				{"name":"tokenRoot","type":"address"},
+				{"name":"amount","type":"uint128"},
+				{"name":"value2","type":"address"},
+				{"name":"value3","type":"address"},
+				{"name":"remainingGasTo","type":"address"},
+				{"name":"value5","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onGetExpectedPairAddress",
+			"inputs": [
+				{"name":"dex_pair_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "destroyAccount",
+			"inputs": [
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "wallets_mapping",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"},{"name":"dex_ever_pair_address","type":"address"}],"name":"wallets_mapping","type":"map(address,tuple)"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+		{
+			"name": "AccountDeployed",
+			"inputs": [
+				{"name":"current_version","type":"uint32"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "Deposit",
+			"inputs": [
+				{"name":"walletAddress","type":"address"},
+				{"name":"amount","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "Withdraw",
+			"inputs": [
+				{"name":"walletAddress","type":"address"},
+				{"name":"amount","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "BalanceSynced",
+			"inputs": [
+				{"name":"balance","type":"uint128"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"current_version","type":"uint32"},
+		{"name":"type_id","type":"uint8"},
+		{"name":"root","type":"address"},
+		{"name":"dex_root_address","type":"address"},
+		{"name":"wever_root","type":"address"},
+		{"name":"platform_code","type":"cell"},
+		{"name":"platform_params","type":"cell"},
+		{"name":"account_gas_threshold","type":"uint128"},
+		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"},{"name":"dex_ever_pair_address","type":"address"}],"name":"wallets_mapping","type":"map(address,tuple)"},
+		{"name":"_tmp_sync_balance","type":"map(address,address)"},
+		{"components":[{"name":"currency_root","type":"address"},{"name":"send_gas_to","type":"address"}],"name":"_tmp_get_pairs","type":"map(uint64,tuple)"},
+		{"components":[{"name":"currency_root","type":"address"},{"name":"value","type":"uint128"},{"name":"subscription_wallet","type":"address"},{"name":"pay_subscription_gas","type":"uint128"},{"name":"subscription_contract","type":"address"}],"name":"_tmp_exchange_operations","type":"map(uint64,tuple)"},
+		{"components":[{"name":"wallet","type":"address"},{"name":"amount","type":"uint128"}],"name":"tmp_deposit_tokens","type":"map(address,tuple)"}
+	]
+}
