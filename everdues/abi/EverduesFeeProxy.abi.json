@@ -4,8 +4,12 @@
 	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
-			"name": "constructor",
+			"name": "upgrade",
 			"inputs": [
+				{"name":"code","type":"cell"},
+				{"name":"version","type":"uint32"},
+				{"name":"send_gas_to","type":"address"},
+				{"name":"contract_params","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -36,15 +40,6 @@
 			"name": "onGetExpectedPairAddress",
 			"inputs": [
 				{"name":"dex_pair_address","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAccountGasThreshold",
-			"inputs": [
-				{"name":"account_threshold_","type":"uint128"},
-				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -84,6 +79,40 @@
 			]
 		},
 		{
+			"name": "onBalanceOf",
+			"inputs": [
+				{"name":"balance_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "transferRevenue",
+			"inputs": [
+				{"name":"revenue_to","type":"address"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setSupportedCurrencies",
+			"inputs": [
+				{"name":"fee_proxy_contract_params","type":"cell"},
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onDeployWallet",
+			"inputs": [
+				{"name":"wallet_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setMTDSRootAddress",
 			"inputs": [
 				{"name":"mtds_root","type":"address"},
@@ -102,46 +131,17 @@
 			]
 		},
 		{
-			"name": "onBalanceOf",
+			"name": "setAccountGasThreshold",
 			"inputs": [
-				{"name":"balance_","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "transferRevenue",
-			"inputs": [
-				{"name":"revenue_to","type":"address"},
+				{"name":"account_threshold_","type":"uint128"},
 				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "upgrade",
+			"name": "constructor",
 			"inputs": [
-				{"name":"code","type":"cell"},
-				{"name":"version","type":"uint32"},
-				{"name":"send_gas_to","type":"address"},
-				{"name":"contract_params","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setSupportedCurrencies",
-			"inputs": [
-				{"name":"fee_proxy_contract_params","type":"cell"},
-				{"name":"send_gas_to","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "onDeployWallet",
-			"inputs": [
-				{"name":"wallet_address","type":"address"}
 			],
 			"outputs": [
 			]

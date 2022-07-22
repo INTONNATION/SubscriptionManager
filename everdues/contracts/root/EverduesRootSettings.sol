@@ -476,7 +476,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setAbiContract(string abiIndexContractInput) external onlyOwner {
+	function setAbiIndexContract(string abiIndexContractInput) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,

@@ -1,8 +1,8 @@
 pragma ton-solidity >=0.56.0;
 
-import "../libraries/EverduesGas.sol";
-import "../libraries/MsgFlag.sol";
-import "../interfaces/IEverduesService.sol";
+import "../../libraries/EverduesGas.sol";
+import "../../libraries/MsgFlag.sol";
+import "../../interfaces/IEverduesService.sol";
 
 abstract contract EverduesServiceStorage is IEverduesService {
 	address public account_address;
