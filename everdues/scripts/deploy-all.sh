@@ -7,6 +7,8 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$MAINNET
 
+tonos-cli config --url $NETWORK
+
 if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
@@ -81,8 +83,8 @@ feeProxyCode=$(tvm_linker decode --tvc  ../abi/EverduesFeeProxy.tvc | grep code:
 abiPlatformContract=$(cat ../abi/Platform.abi.json | jq -c .| base64 $prefix)
 abiEverduesAccountContract=$(cat ../abi/EverduesAccountV1.abi.json | jq -c .| base64 $prefix)
 abiEverduesRootContract=$(cat ../abi/EverduesRoot.abi.json  | jq 'del(.fields)' | jq -c .| base64 $prefix)
-abiTIP3RootContract=$(cat ../ton-eth-bridge-token-contracts/build/TokenRoot.abi.json | jq -c .| base64 $prefix)
-abiTIP3TokenWalletContract=$(cat ../ton-eth-bridge-token-contracts/build/TokenWallet.abi.json | jq -c .| base64 $prefix)
+abiTIP3RootContract=$(cat ../../ton-eth-bridge-token-contracts/build/TokenRoot.abi.json | jq -c .| base64 $prefix)
+abiTIP3TokenWalletContract=$(cat ../../ton-eth-bridge-token-contracts/build/TokenWallet.abi.json | jq -c .| base64 $prefix)
 abiServiceContract=$(cat ../abi/ServiceV1.abi.json | jq -c .| base64 $prefix)
 abiIndexContract=$(cat ../abi/Index.abi.json | jq -c .| base64 $prefix)
 abiSubscriptionContract=$(cat ../abi/SubscriptionV1.abi.json | jq -c .| base64 $prefix)
