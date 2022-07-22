@@ -12,6 +12,14 @@
 			]
 		},
 		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "transferOwner",
 			"inputs": [
 				{"name":"new_owner","type":"address"}
@@ -22,275 +30,6 @@
 		{
 			"name": "acceptOwner",
 			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "getCodeHashes",
-			"inputs": [
-				{"name":"owner_pubkey","type":"uint256"}
-			],
-			"outputs": [
-				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"account_versions","type":"map(uint32,tuple)"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"everdues_root_abi","type":"string"},{"name":"platform_abi","type":"string"},{"name":"account_address","type":"address"},{"name":"categories","type":"string[]"}],"name":"everdues_contracts_info","type":"tuple"}
-			]
-		},
-		{
-			"name": "getPendingOwner",
-			"inputs": [
-				{"name":"answerId","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"dex_pending_owner","type":"address"}
-			]
-		},
-		{
-			"name": "setCodePlatform",
-			"inputs": [
-				{"name":"codePlatformInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCodeEverduesAccount",
-			"inputs": [
-				{"name":"codeEverduesAccountInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCodeService",
-			"inputs": [
-				{"name":"codeServiceInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCodeSubscription",
-			"inputs": [
-				{"name":"codeSubscriptionInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCodeServiceIndex",
-			"inputs": [
-				{"name":"codeServiceIndexInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCodeServiceIdentificatorIndex",
-			"inputs": [
-				{"name":"codeServiceIdentificatorIndexInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCodeSubscriptionIndex",
-			"inputs": [
-				{"name":"codeSubscriptionIndexInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCodeSubscriptionIdentificatorIndex",
-			"inputs": [
-				{"name":"codeSubscriptionIdentificatorIndexInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCodeFeeProxy",
-			"inputs": [
-				{"name":"codeFeeProxyInput","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiPlatformContract",
-			"inputs": [
-				{"name":"abiPlatformContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiEverduesAccountContract",
-			"inputs": [
-				{"name":"abiEverduesAccountContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiEverduesRootContract",
-			"inputs": [
-				{"name":"abiEverduesRootContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiTIP3RootContract",
-			"inputs": [
-				{"name":"abiTIP3RootContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiTIP3TokenWalletContract",
-			"inputs": [
-				{"name":"abiTIP3TokenWalletContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiServiceContract",
-			"inputs": [
-				{"name":"abiServiceContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiServiceIndexContract",
-			"inputs": [
-				{"name":"abiServiceIndexContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiServiceIdentificatorIndexContract",
-			"inputs": [
-				{"name":"abiServiceIdentificatorIndexContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiSubscriptionContract",
-			"inputs": [
-				{"name":"abiSubscriptionContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiSubscriptionIndexContract",
-			"inputs": [
-				{"name":"abiSubscriptionIndexContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiSubscriptionIdentificatorIndexContract",
-			"inputs": [
-				{"name":"abiSubscriptionIdentificatorIndexContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAbiFeeProxyContract",
-			"inputs": [
-				{"name":"abiFeeProxyContractInput","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "deleteVersion",
-			"inputs": [
-				{"name":"contract_type","type":"uint8"},
-				{"name":"version_","type":"uint8"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setCategories",
-			"inputs": [
-				{"name":"categoriesInput","type":"string[]"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setDeployServiceLockValue",
-			"inputs": [
-				{"name":"deploy_service_lock_value_","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setAccountGasThreshold",
-			"inputs": [
-				{"name":"account_threshold_","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setFees",
-			"inputs": [
-				{"name":"service_fee_","type":"uint8"},
-				{"name":"subscription_fee_","type":"uint8"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
-			"inputs": [
-				{"name":"revenue_to","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "installOrUpgradeWEVERRoot",
-			"inputs": [
-				{"name":"wever_root_","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "installOrUpdateFeeProxyParams",
-			"inputs": [
-				{"name":"currencies","type":"address[]"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "installOrUpgradeMTDSRootAddress",
-			"inputs": [
-				{"name":"mtds_root_","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "installOrUpgradeDexRootAddresses",
-			"inputs": [
-				{"name":"dex_root","type":"address"},
-				{"name":"tip3_to_ever","type":"address"}
 			],
 			"outputs": [
 			]
@@ -391,14 +130,6 @@
 			]
 		},
 		{
-			"name": "upgrade",
-			"inputs": [
-				{"name":"code","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "deployFeeProxy",
 			"inputs": [
 				{"name":"currencies","type":"address[]"}
@@ -427,15 +158,246 @@
 			]
 		},
 		{
-			"name": "deployService",
+			"name": "onAcceptTokensTransfer",
 			"inputs": [
-				{"name":"service_params_cell","type":"cell"},
-				{"name":"identificator","type":"cell"},
-				{"name":"owner_pubkey","type":"uint256"},
-				{"name":"publish_to_catalog","type":"bool"},
-				{"name":"additional_gas","type":"uint128"}
+				{"name":"tokenRoot","type":"address"},
+				{"name":"amount","type":"uint128"},
+				{"name":"sender","type":"address"},
+				{"name":"value3","type":"address"},
+				{"name":"remainingGasTo","type":"address"},
+				{"name":"payload","type":"cell"}
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "setCodePlatform",
+			"inputs": [
+				{"name":"codePlatformInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setCodeEverduesAccount",
+			"inputs": [
+				{"name":"codeEverduesAccountInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setCodeService",
+			"inputs": [
+				{"name":"codeServiceInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setCodeSubscription",
+			"inputs": [
+				{"name":"codeSubscriptionInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setCodeIndex",
+			"inputs": [
+				{"name":"codeIndexInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setCodeFeeProxy",
+			"inputs": [
+				{"name":"codeFeeProxyInput","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiPlatformContract",
+			"inputs": [
+				{"name":"abiPlatformContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiEverduesAccountContract",
+			"inputs": [
+				{"name":"abiEverduesAccountContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiEverduesRootContract",
+			"inputs": [
+				{"name":"abiEverduesRootContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiTIP3RootContract",
+			"inputs": [
+				{"name":"abiTIP3RootContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiTIP3TokenWalletContract",
+			"inputs": [
+				{"name":"abiTIP3TokenWalletContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiServiceContract",
+			"inputs": [
+				{"name":"abiServiceContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiSubscriptionContract",
+			"inputs": [
+				{"name":"abiSubscriptionContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiIndexContract",
+			"inputs": [
+				{"name":"abiIndexContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAbiFeeProxyContract",
+			"inputs": [
+				{"name":"abiFeeProxyContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "deleteVersion",
+			"inputs": [
+				{"name":"contract_type","type":"uint8"},
+				{"name":"version_","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setCategories",
+			"inputs": [
+				{"name":"categoriesInput","type":"string[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setDeployServiceParams",
+			"inputs": [
+				{"name":"currency_root","type":"address"},
+				{"name":"lock_amount","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onDeployWallet",
+			"inputs": [
+				{"name":"wallet_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setAccountGasThreshold",
+			"inputs": [
+				{"name":"account_threshold_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setFees",
+			"inputs": [
+				{"name":"service_fee_","type":"uint8"},
+				{"name":"subscription_fee_","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
+			"inputs": [
+				{"name":"revenue_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpgradeWEVERRoot",
+			"inputs": [
+				{"name":"wever_root_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpdateFeeProxyParams",
+			"inputs": [
+				{"name":"currencies","type":"address[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpgradeMTDSRootAddress",
+			"inputs": [
+				{"name":"mtds_root_","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "installOrUpgradeDexRootAddresses",
+			"inputs": [
+				{"name":"dex_root","type":"address"},
+				{"name":"tip3_to_ever","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getCodeHashes",
+			"inputs": [
+				{"name":"owner_pubkey","type":"uint256"}
+			],
+			"outputs": [
+				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"account_versions","type":"map(uint32,tuple)"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"everdues_root_abi","type":"string"},{"name":"platform_abi","type":"string"},{"name":"account_address","type":"address"},{"name":"categories","type":"string[]"}],"name":"everdues_contracts_info","type":"tuple"}
+			]
+		},
+		{
+			"name": "getPendingOwner",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"dex_pending_owner","type":"address"}
 			]
 		},
 		{
@@ -554,6 +516,14 @@
 			"outputs": [
 				{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"}
 			]
+		},
+		{
+			"name": "wallets_mapping",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
+			]
 		}
 	],
 	"data": [
@@ -576,7 +546,6 @@
 		{"name":"subscription_fee","type":"uint8"},
 		{"name":"categories","type":"string[]"},
 		{"name":"has_platform_code","type":"bool"},
-		{"name":"deploy_service_lock_value","type":"uint128"},
 		{"name":"account_threshold","type":"uint128"},
 		{"name":"abiPlatformContract","type":"string"},
 		{"name":"abiEverduesRootContract","type":"string"},
@@ -584,21 +553,16 @@
 		{"name":"abiTIP3TokenWalletContract","type":"string"},
 		{"name":"abiEverduesAccountContract","type":"string"},
 		{"name":"abiServiceContract","type":"string"},
-		{"name":"abiServiceIndexContract","type":"string"},
+		{"name":"abiIndexContract","type":"string"},
 		{"name":"abiSubscriptionContract","type":"string"},
-		{"name":"abiSubscriptionIndexContract","type":"string"},
-		{"name":"abiSubscriptionIdentificatorIndexContract","type":"string"},
 		{"name":"abiFeeProxyContract","type":"string"},
-		{"name":"abiServiceIdentificatorIndexContract","type":"string"},
 		{"name":"codePlatform","type":"cell"},
 		{"name":"codeEverduesAccount","type":"cell"},
 		{"name":"codeFeeProxy","type":"cell"},
 		{"name":"codeService","type":"cell"},
-		{"name":"codeServiceIndex","type":"cell"},
-		{"name":"codeServiceIdentificatorIndex","type":"cell"},
+		{"name":"codeIndex","type":"cell"},
 		{"name":"codeSubscription","type":"cell"},
-		{"name":"codeSubscriptionIndex","type":"cell"},
-		{"name":"codeSubscriptionIdentificatorIndex","type":"cell"},
-		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"}
+		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"},
+		{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 	]
 }

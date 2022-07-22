@@ -1,11 +1,11 @@
 pragma ton-solidity >=0.56.0;
 
 import "./EverduesServiceStorage.sol";
-import "../libraries/EverduesErrors.sol";
-import "../interfaces/IEverduesIndex.sol";
+import "../../libraries/EverduesErrors.sol";
+import "../../interfaces/IEverduesIndex.sol";
 
-import "../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
-import "../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
+import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
+import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
 abstract contract EverduesServiceBase is
 	IEverduesService,
