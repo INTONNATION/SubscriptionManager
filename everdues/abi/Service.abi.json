@@ -1,0 +1,183 @@
+{
+	"ABI version": 2,
+	"version": "2.2",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getParams",
+			"inputs": [
+				{"name":"answerId","type":"uint32"},
+				{"name":"subscription_plan","type":"uint8"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "getInfo",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "pause",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "resume",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "upgrade",
+			"inputs": [
+				{"name":"code_","type":"cell"},
+				{"name":"version","type":"uint32"},
+				{"name":"send_gas_to","type":"address"},
+				{"name":"contract_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateServiceParams",
+			"inputs": [
+				{"name":"new_service_params","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "cancel",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateIdentificator",
+			"inputs": [
+				{"name":"identificator_","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "account_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"account_address","type":"address"}
+			]
+		},
+		{
+			"name": "owner_pubkey",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"owner_pubkey","type":"uint256"}
+			]
+		},
+		{
+			"name": "subscription_service_index_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_service_index_address","type":"address"}
+			]
+		},
+		{
+			"name": "subscription_service_index_identificator_address",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_service_index_identificator_address","type":"address"}
+			]
+		},
+		{
+			"name": "status",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"status","type":"uint8"}
+			]
+		},
+		{
+			"name": "registation_timestamp",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"registation_timestamp","type":"uint256"}
+			]
+		},
+		{
+			"name": "service_params",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"service_params","type":"cell"}
+			]
+		},
+		{
+			"name": "subscription_plans",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"subscription_plans","type":"map(uint8,cell)"}
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+		{
+			"name": "ServiceDeployed",
+			"inputs": [
+				{"name":"subscription_service_index_address","type":"address"},
+				{"name":"subscription_service_index_identificator_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "ServiceDeleted",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		}
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"account_address","type":"address"},
+		{"name":"owner_pubkey","type":"uint256"},
+		{"name":"subscription_service_index_address","type":"address"},
+		{"name":"subscription_service_index_identificator_address","type":"address"},
+		{"name":"status","type":"uint8"},
+		{"name":"registation_timestamp","type":"uint256"},
+		{"name":"service_params","type":"cell"},
+		{"name":"subscription_plans","type":"map(uint8,cell)"},
+		{"name":"root","type":"address"},
+		{"name":"platform_code","type":"cell"},
+		{"name":"platform_params","type":"cell"},
+		{"name":"current_version","type":"uint32"},
+		{"name":"type_id","type":"uint8"}
+	]
+}
