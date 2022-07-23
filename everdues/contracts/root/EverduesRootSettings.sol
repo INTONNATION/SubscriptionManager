@@ -826,13 +826,23 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		TvmCell contract_code,
 		string contract_abi
 	) private {
-		mapping(uint32 => ContractParams) contract_versions_ = versions[
-			contract_type
-		];
-		ContractParams new_version_params;
-		new_version_params.contractCode = contract_code;
-		new_version_params.contractAbi = contract_abi;
-		contract_versions_.add(version, new_version_params);
-		versions.replace(contract_type, contract_versions_);
+		optional(
+			mapping(uint32 => ContractParams)
+		) contract_versions_opt = versions.fetch(contract_type);
+		if (contract_versions_opt.hasValue()) {
+			mapping(uint32 => ContractParams) contract_versions = contract_versions_opt.get();
+			ContractParams new_version_params;
+			new_version_params.contractCode = contract_code;
+			new_version_params.contractAbi = contract_abi;
+			contract_versions.add(version, new_version_params);
+			versions.replace(contract_type, contract_versions);
+		} else {
+			mapping(uint32 => ContractParams) contract_versions;
+			ContractParams new_version_params;
+			new_version_params.contractCode = contract_code;
+			new_version_params.contractAbi = contract_abi;
+			contract_versions[version] = new_version_params;
+			versions.add(contract_type, contract_versions);			
+		}
 	}
 }
