@@ -35,7 +35,8 @@ contract EverduesRoot is EverduesRootBase {
 			abiTIP3RootContract,
 			abiTIP3TokenWalletContract,
 			wever_root,
-			tip3_to_ever_address
+			tip3_to_ever_address,
+			wallets_mapping
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -62,7 +63,8 @@ contract EverduesRoot is EverduesRootBase {
 			abiTIP3RootContract,
 			abiTIP3TokenWalletContract,
 			wever_root,
-			tip3_to_ever_address
+			tip3_to_ever_address,
+			wallets_mapping
 		) = abi.decode(
 			upgrade_data,
 			(
@@ -82,7 +84,8 @@ contract EverduesRoot is EverduesRootBase {
 				string,
 				string,
 				address,
-				address
+				address,
+				mapping(address => ServiceDeployParams)
 			)
 		);
 		owner.transfer({

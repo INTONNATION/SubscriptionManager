@@ -13,6 +13,7 @@ library EverduesGas {
     uint128 constant EXECUTE_SUBSCRIPTION_VALUE             = 0.5 ever;
     uint128 constant DEPLOY_SUBSCRIPTION_VALUE              = 0.5 ever;
     uint128 constant DEPLOY_SERVICE_VALUE                   =  4 ever;
+    uint128 constant DEPLOY_SERVICE_VALUE2                   =  1 ever;
 
     uint128 constant UPGRADE_MIN_VALUE                      = 1 ever;
 
