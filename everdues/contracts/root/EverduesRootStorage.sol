@@ -312,7 +312,7 @@ abstract contract EverduesRootStorage {
 		address subscription_owner
 	) internal view returns (TvmCell) {
 		TvmBuilder saltBuilder;
-		saltBuilder.store(service_address, address(this));
+		saltBuilder.store(abi.encode(service_address), address(this));
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,
@@ -334,7 +334,7 @@ abstract contract EverduesRootStorage {
 		returns (TvmCell)
 	{
 		TvmBuilder saltBuilder;
-		saltBuilder.store(serviceOwner, address(this));
+		saltBuilder.store(abi.encode(serviceOwner), address(this));
 		TvmCell code = tvm.setCodeSalt(contractCode, saltBuilder.toCell());
 		return code;
 	}
@@ -345,7 +345,7 @@ abstract contract EverduesRootStorage {
 		returns (TvmCell)
 	{
 		TvmBuilder saltBuilder;
-		saltBuilder.store(serviceOwner, address(this));
+		saltBuilder.store(abi.encode(serviceOwner), address(this));
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,

@@ -707,7 +707,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 					value: 0,
 					bounce: true,
 					flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-				}(amount, sender, 0, remainingGasTo, false, payload);
+				}(amount, sender, EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS, remainingGasTo, false, payload);
 			}
 		}
 	}
