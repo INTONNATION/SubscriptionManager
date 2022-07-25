@@ -547,6 +547,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function deployService(
+		address owner_address,
 		TvmCell service_params_cell,
 		TvmCell identificator,
 		uint256 owner_pubkey,
@@ -576,18 +577,18 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			service_code_salt = _buildPrivateServiceCode(nonce);
 		}
 		TvmCell serviceIndexStateInit = _buildServiceIndex(
-			msg.sender,
+			owner_address,
 			service_name
 		);
 		TvmCell serviceIdentificatorIndexStateInit = _buildServiceIdentificatorIndex(
-				msg.sender,
+				owner_address,
 				identificator,
 				address(
 					tvm.hash(
 						_buildInitData(
 							ContractTypes.Service,
 							_buildServicePlatformParams(
-								msg.sender,
+								owner_address,
 								service_name
 							)
 						)
@@ -610,7 +611,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
 				ContractTypes.Service,
-				_buildServicePlatformParams(msg.sender, service_name)
+				_buildServicePlatformParams(owner_address, service_name)
 			),
 			value: EverduesGas.DEPLOY_SERVICE_VALUE2,
 			flag: MsgFlag.SENDER_PAYS_FEES
@@ -618,7 +619,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			service_code_salt,
 			service_params_cell_with_additional_params,
 			latest_version,
-			msg.sender,
+			owner_address,
 			0
 		);
 		TvmCell index_owner = abi.encode(address(platform));
@@ -629,7 +630,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: serviceIndexStateInit
-		}(index_owner, msg.sender);
+		}(index_owner, owner_address);
 		if (!identificator.toSlice().empty()) {
 			new Index{
 				value: EverduesGas.INDEX_INITIAL_BALANCE +
@@ -638,7 +639,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: serviceIdentificatorIndexStateInit
-			}(index_owner, msg.sender);
+			}(index_owner, owner_address);
 		}
 		return address(platform);
 	}
@@ -688,6 +689,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 					EverduesErrors.error_message_sender_is_not_account_address
 				);
 				address service_address = deployService(
+					sender,
 					service_params,
 					identificator,
 					pubkey,
