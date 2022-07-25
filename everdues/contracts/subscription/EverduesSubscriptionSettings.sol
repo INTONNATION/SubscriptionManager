@@ -72,11 +72,11 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 		IEverduesIndex(subscription_index_address).cancel{
 			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
-		}();
+		}(account_address);
 		IEverduesIndex(subscription_index_identificator_address).cancel{
 			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
-		}();
+		}(account_address);
 		selfdestruct(account_address);
 	}
 
