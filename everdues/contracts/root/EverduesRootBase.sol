@@ -612,8 +612,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				ContractTypes.Service,
 				_buildServicePlatformParams(msg.sender, service_name)
 			),
-			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED
+			value: EverduesGas.DEPLOY_SERVICE_VALUE2,
+			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			service_code_salt,
 			service_params_cell_with_additional_params,
