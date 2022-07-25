@@ -700,14 +700,14 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 					value: 0,
 					bounce: true,
 					flag: MsgFlag.ALL_NOT_RESERVED
-				}(amount, service_address, 0, remainingGasTo, true, payload);
+				}(amount, service_address, EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS, remainingGasTo, true, payload);
 			} else {
 				// TODO rewrite payload to add error code - unsupported tip3 root
 				ITokenWallet(service_deploy_params.wallet_address).transfer{
 					value: 0,
 					bounce: true,
 					flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-				}(amount, sender, EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS, remainingGasTo, false, payload);
+				}(amount, sender, 0, remainingGasTo, false, payload);
 			}
 		}
 	}
