@@ -270,7 +270,7 @@ abstract contract EverduesAccountBase is
 		TvmCell identificator,
 		bool publish_to_catalog,
 		uint128 additional_gas
-	) external view onlyOwner {
+	) external onlyOwner {
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		if (current_balance_struct.hasValue()) {
@@ -284,6 +284,8 @@ abstract contract EverduesAccountBase is
 				publish_to_catalog,
 				additional_gas
 			);
+			current_balance_key.balance -= deploy_value;
+			wallets_mapping[currency_root] = current_balance_key;
 			ITokenWallet(account_wallet).transfer{
 				value: EverduesGas.DEPLOY_SERVICE_VALUE + additional_gas,
 				bounce: true,
