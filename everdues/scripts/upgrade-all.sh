@@ -7,7 +7,7 @@ MAINNET=https://main.ton.dev
 FLD=https://gql.custler.net
 NETWORK=$MAINNET
 
-tonos-cli config --url $NETWORK --lifetime 3600
+tonos-cli config --url $NETWORK --lifetime 60
 
 if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
