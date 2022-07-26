@@ -59,6 +59,7 @@ abstract contract EverduesRootStorage {
 		// string everdues_root_abi;
 		address account_address;
 		string[] categories;
+		string everdues_fee_proxy_abi;
 	}
 
 	struct ServiceDeployParams {
@@ -149,11 +150,12 @@ abstract contract EverduesRootStorage {
 		delete contracts;*/
 		everdues_contracts_info.versions = external_data_structure;
 		everdues_contracts_info.platform_code = codePlatform;
+		everdues_contracts_info.platform_abi = abiPlatformContract;
 		everdues_contracts_info.tip3_root_abi = abiTIP3RootContract;
 		everdues_contracts_info.tip3_wallet_abi = abiTIP3TokenWalletContract;
 		everdues_contracts_info.everdues_root_abi = abiEverduesRootContract;
+		everdues_contracts_info.everdues_fee_proxy_abi = versions[ContractTypes.FeeProxy][1].contractAbi;
 		everdues_contracts_info.account_address = account;
-		everdues_contracts_info.platform_abi = abiPlatformContract;
 		everdues_contracts_info.account_versions = versions[
 			ContractTypes.Account
 		];
