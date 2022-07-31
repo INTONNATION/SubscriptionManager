@@ -287,7 +287,7 @@ abstract contract EverduesAccountBase is
 			current_balance_key.balance -= deploy_value;
 			wallets_mapping[currency_root] = current_balance_key;
 			ITokenWallet(account_wallet).transfer{
-				value: EverduesGas.DEPLOY_SERVICE_VALUE + additional_gas,
+				value: EverduesGas.DEPLOY_SERVICE_VALUE_ACCOUNT + additional_gas,
 				bounce: true,
 				flag: 0
 			}(deploy_value, root, 0, address(this), true, payload);
