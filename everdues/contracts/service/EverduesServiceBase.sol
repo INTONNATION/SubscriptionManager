@@ -43,13 +43,7 @@ abstract contract EverduesServiceBase is
 			wallet_balance.wallet == address(0),
 			EverduesErrors.error_service_tokens_already_locked
 		);
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.SERVICE_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
+		tvm.rawReserve(EverduesGas.SERVICE_INITIAL_BALANCE, 2);
 		wallet_balance.wallet = msg.sender;
 		wallet_balance.tokens = amount;
 		wallet_balance.currency_root = tokenRoot;

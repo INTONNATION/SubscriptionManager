@@ -15,7 +15,7 @@ library EverduesGas {
 
     uint128 constant DEPLOY_SERVICE_VALUE_ACCOUNT           =  2 ever;
     uint128 constant DEPLOY_SERVICE_VALUE_ROOT              =  1 ever;
-    uint128 constant SERVICE_INITIAL_BALANCE                = 0.5 ever;
+    uint128 constant SERVICE_INITIAL_BALANCE                =  1 ever;
     
     uint128 constant INDEX_INITIAL_BALANCE                  = 0.1 ever; // TODO calculate storage fee and reduce
 
