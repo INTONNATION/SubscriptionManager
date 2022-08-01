@@ -294,6 +294,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Account,
 				abiEverduesAccountContractInput
+			) || !checkVersionCodeAlreadyExists(
+				ContractTypes.Account,
+				codeEverduesAccount
 			)
 		) {
 			if (!codeEverduesAccount.toSlice().empty()) {
@@ -397,6 +400,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Service,
 				abiServiceContractInput
+			) || !checkVersionCodeAlreadyExists(
+				ContractTypes.Service,
+				codeService
 			)
 		) {
 			if (!codeService.toSlice().empty()) {
@@ -444,6 +450,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Subscription,
 				abiSubscriptionContractInput
+			) || !checkVersionCodeAlreadyExists(
+				ContractTypes.Subscription,
+				codeSubscription
 			)
 		) {
 			if (!codeSubscription.toSlice().empty()) {
@@ -488,6 +497,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Index,
 				abiIndexContractInput
+			) || !checkVersionCodeAlreadyExists(
+				ContractTypes.Index,
+				codeIndex
 			)
 		) {
 			if (!codeIndex.toSlice().empty()) {
@@ -535,6 +547,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.FeeProxy,
 				abiFeeProxyContractInput
+			) || !checkVersionCodeAlreadyExists(
+				ContractTypes.FeeProxy,
+				codeFeeProxy
 			)
 		) {
 			if (!codeFeeProxy.toSlice().empty()) {
@@ -831,12 +846,14 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		) contract_versions_opt = versions.fetch(contract_type);
 		if (contract_versions_opt.hasValue()) {
 			mapping(uint32 => ContractParams) contract_versions = contract_versions_opt.get();
+			debug = true;
 			ContractParams new_version_params;
 			new_version_params.contractCode = contract_code;
 			new_version_params.contractAbi = contract_abi;
 			contract_versions.add(version, new_version_params);
 			versions.replace(contract_type, contract_versions);
 		} else {
+			debug = true;
 			mapping(uint32 => ContractParams) contract_versions;
 			ContractParams new_version_params;
 			new_version_params.contractCode = contract_code;

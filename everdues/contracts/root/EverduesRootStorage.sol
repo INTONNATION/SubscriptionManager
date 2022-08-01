@@ -26,7 +26,7 @@ abstract contract EverduesRootStorage {
 	string abiTIP3RootContract;
 	string abiTIP3TokenWalletContract;
 	string abiEverduesAccountContract;
-	string abiServiceContract;
+	string public abiServiceContract;
 	string abiIndexContract;
 	string abiSubscriptionContract;
 	string abiFeeProxyContract;
@@ -34,7 +34,7 @@ abstract contract EverduesRootStorage {
 	TvmCell codePlatform;
 	TvmCell codeEverduesAccount;
 	TvmCell codeFeeProxy;
-	TvmCell codeService;
+	TvmCell public codeService;
 	TvmCell codeIndex;
 	TvmCell codeSubscription;
 
@@ -70,6 +70,7 @@ abstract contract EverduesRootStorage {
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
 
+	bool public debug;
 	function getCodeHashes(uint256 owner_pubkey)
 		external
 		view
