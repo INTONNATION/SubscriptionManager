@@ -127,7 +127,7 @@ abstract contract EverduesAccountBase is
 	function onExpectedExchange(
 		uint128 expected_amount,
 		uint128 /*expected_fee*/
-	) external onlyDexPair(msg.sender) {
+	) external {
 		TvmCell payload = abi.encode(expected_amount);
 		optional(uint64, ExchangeOperation) keyOpt = _tmp_exchange_operations
 			.min();

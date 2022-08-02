@@ -50,18 +50,6 @@ abstract contract EverduesAccountSettings is EverduesAccountStorage {
 		_;
 	}
 
-	modifier onlyDexPair(address sender) {
-		for (
-			(address tokenRoot, BalanceWalletStruct tokenBalance):
-			wallets_mapping
-		) {
-			if (tokenBalance.dex_ever_pair_address == sender) {
-				_;
-			}
-		}
-		revert(EverduesErrors.error_message_sender_is_not_dex_pair);
-	}
-
 	function destroyAccount(address send_gas_to)
 		external
 		onlyOwner /*onlyRoot*/
