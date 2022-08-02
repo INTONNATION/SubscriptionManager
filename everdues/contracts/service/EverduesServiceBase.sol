@@ -109,11 +109,13 @@ abstract contract EverduesServiceBase is
 			bounce: false,
 			flag: 0
 		}(account_address);
-		IEverduesIndex(subscription_service_index_identificator_address).cancel{
-			value: EverduesGas.MESSAGE_MIN_VALUE,
-			bounce: false,
-			flag: 0
-		}(account_address);
+		if(subscription_service_index_identificator_address != address(0)){
+			IEverduesIndex(subscription_service_index_identificator_address).cancel{
+				value: EverduesGas.MESSAGE_MIN_VALUE,
+				bounce: false,
+				flag: 0
+			}(account_address);
+		}
 		selfdestruct(account_address);
 		emit ServiceDeleted();
 	}

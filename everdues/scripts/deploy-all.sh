@@ -43,11 +43,11 @@ tonos-cli genpubkey "$1" > $2.pub
 }
 
 function genkeypair {
-tonos-cli getkeypair $1.keys.json "$2"
+tonos-cli getkeypair -o $1.keys.json -p "$2"
 }
 
 function genaddr {
-tonos-cli genaddr ../abi/$1.tvc ../abi/$1.abi.json --setkey $1.keys.json > log.log
+tonos-cli genaddr ../abi/$1.tvc --abi ../abi/$1.abi.json --setkey $1.keys.json > log.log
 }
 
 function deploy {
