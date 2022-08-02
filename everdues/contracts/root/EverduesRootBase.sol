@@ -570,7 +570,6 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				(address, string, string, string, string)
 			);
 		TvmCell service_code_salt;
-		TvmCell additional_params;
 		if (publish_to_catalog) {
 			service_code_salt = _buildPublicServiceCode(category);
 		} else {
@@ -581,34 +580,29 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			owner_address,
 			service_name
 		);
-		TvmCell serviceIdentificatorIndexStateInit = _buildServiceIdentificatorIndex(
-				owner_address,
-				identificator,
-				address(
-					tvm.hash(
-						_buildInitData(
-							ContractTypes.Service,
-							_buildServicePlatformParams(
-								owner_address,
-								service_name
+		TvmCell serviceIdentificatorIndexStateInit;
+		if (!identificator.toSlice().empty()) {
+			serviceIdentificatorIndexStateInit = _buildServiceIdentificatorIndex(
+					owner_address,
+					identificator,
+					address(
+						tvm.hash(
+							_buildInitData(
+								ContractTypes.Service,
+								_buildServicePlatformParams(
+									owner_address,
+									service_name
+								)
 							)
 						)
 					)
-				)
-			);
-		if (!identificator.toSlice().empty()) {
-			additional_params = abi.encode(
+				);
+		}
+		TvmCell	additional_params = abi.encode(
 				address(tvm.hash(serviceIndexStateInit)),
 				address(tvm.hash(serviceIdentificatorIndexStateInit)),
 				owner_pubkey
-			);
-		} else {
-			additional_params = abi.encode(
-				address(tvm.hash(serviceIndexStateInit)),
-				address(0),
-				owner_pubkey
 			);			
-		}
 		TvmCell service_params_cell_with_additional_params = abi.encode(
 			service_params_cell,
 			additional_params
