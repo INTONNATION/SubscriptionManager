@@ -10,8 +10,7 @@ jobs:
   image: 'build/Dockerfile'
   args:
     - ROOT_ENV: "dev"
-
-    steps:
+  steps:
     - uses: actions/checkout@v2
     - name: Update everdues root
       run: |
