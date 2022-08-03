@@ -6,12 +6,16 @@ on:
       - 'ci/cd'
 
 jobs:
-  using: 'docker'
-  image: 'build/Dockerfile'
-  args:
-    - ROOT_ENV: "dev"
-  steps:
-    - uses: actions/checkout@v2
-    - name: Update everdues root
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.digitalocean.com/everdues/everdues-deployer:latest
+      credentials:
+        username: ${{ secrets.DIGITAL_OCEAN_TOKEN }}
+        password: ${{ secrets.DIGITAL_OCEAN_TOKEN }}
+    steps:
+    - name: Git Checkout
+      uses: actions/checkout@v1
+    - name: Run an upgrade of the Everdues root
       run: |
-        cd everdues/scripts && bash upgrade-all.sh ${{ ROOT_ENV }}
+        cd everdues/scripts && bash upgrade-all.sh dev
