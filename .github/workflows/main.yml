@@ -1,0 +1,19 @@
+name: Update everdues root
+
+on:
+  push:
+    branches:
+      - 'ci/cd'
+
+jobs:
+  build:
+    using: 'docker'
+  image: 'build/Dockerfile'
+  args:
+    - ROOT_ENV: "dev"
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Update everdues root
+      run: |
+        cd everdues/scripts && bash upgrade-all.sh ${{ ROOT_ENV }}
