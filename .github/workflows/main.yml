@@ -6,8 +6,7 @@ on:
       - 'ci/cd'
 
 jobs:
-  build:
-    using: 'docker'
+  using: 'docker'
   image: 'build/Dockerfile'
   args:
     - ROOT_ENV: "dev"
