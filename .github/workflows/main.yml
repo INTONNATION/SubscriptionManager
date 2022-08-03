@@ -15,7 +15,9 @@ jobs:
         password: ${{ secrets.DIGITAL_OCEAN_TOKEN }}
     steps:
     - name: Git Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
+      with:
+        submodules: 'true'
     - name: Run an upgrade of the Everdues root
       run: |
         cd everdues/scripts && bash upgrade-all.sh dev
