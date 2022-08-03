@@ -22,15 +22,6 @@ RUN     apt -y update &&\
         everdev sol set --compiler $EVERDEV_SOL_COMPILER_VERSION &&\
         everdev sol set --linker $EVERDEV_TVM_LINKER_VERSION &&\
         everdev tonos-cli set --version $EVERDEV_TONOS_CLI_VERSION
-
-RUN     addgroup --gid 1000 jenkins &&\
-        adduser --home /home/jenkins --shell /bin/bash --uid 1000 --ingroup jenkins jenkins --disabled-password &&\
-        mkdir -p /home/jenkins/.jenkins && \
-        mkdir -p /home/jenkins/agent &&\
-        usermod -aG docker jenkins &&\
-        chown -R jenkins: /home/jenkins
-
-USER    jenkins
 RUN     everdev sol set --compiler $EVERDEV_SOL_COMPILER_VERSION &&\
         everdev sol set --linker $EVERDEV_TVM_LINKER_VERSION
 USER    root
