@@ -1,9 +1,7 @@
 name: Build & Push to Digital Ocean Registry
 
 on:
-  push:
-    branches:
-      - 'ci/cd'
+  workflow_dispatch:
 
 jobs:
   build:
