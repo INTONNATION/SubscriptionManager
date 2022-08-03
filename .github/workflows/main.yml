@@ -1,4 +1,4 @@
-name: Update everdues root
+name: Build & Update everdues root
 
 on:
   push:
