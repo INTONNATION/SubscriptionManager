@@ -3,7 +3,8 @@ name: Build & Update everdues root
 on:
   push:
     branches:
-      - 'ci/cd'
+      - 'test'
+      - 'dev'
 
 jobs:
   build:
@@ -26,4 +27,4 @@ jobs:
         git submodule update --init --recursive
     - name: Run an upgrade of the Everdues root
       run: |
-        cd everdues/scripts && bash upgrade-all.sh dev
+        cd everdues/scripts && bash upgrade-all.sh ${{ GITHUB_REF_NAME }}

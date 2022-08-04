@@ -66,7 +66,12 @@ echo -n $CONTRACT_ADDRESS > $params.addr
 echo GIVER $1 ------------------------------------------------
 giver $CONTRACT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
-owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`
+if [[ `$2` = "main" ]]; 
+then
+    owner=`cat prod-multisig.msig.addr| grep "Raw address" | awk '{print $3}'`
+else
+    owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`    
+fi
 tonos-cli --url $NETWORK deploy ../abi/$1.tvc "{\"initial_owner\":\"$owner\"}" --sign $params.keys.json --abi ../abi/$1.abi.json
 giver $CONTRACT_ADDRESS
 # Categories

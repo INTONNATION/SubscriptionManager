@@ -118,6 +118,6 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 }
 
 deploy $CONTRACT_NAME $1
-CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
+CONTRACT_ADDRESS=$(cat $1-$CONTRACT_NAME.addr)
 
 echo $CONTRACT_ADDRESS
