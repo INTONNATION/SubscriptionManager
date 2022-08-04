@@ -5,6 +5,7 @@ on:
     branches:
       - 'test'
       - 'dev'
+      - 'prod'
 
 jobs:
   build:
