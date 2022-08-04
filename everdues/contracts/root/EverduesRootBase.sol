@@ -454,16 +454,6 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			fee_proxy_address != address(0),
 			EverduesErrors.error_address_is_empty
 		);
-		require(
-			msg.value >=
-				(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
-					EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +
-					EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-					EverduesGas.INDEX_INITIAL_BALANCE *
-					2 +
-					additional_gas),
-			EverduesErrors.error_message_low_value
-		);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -471,16 +461,21 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			),
 			2
 		);
-
+		if (additional_gas != 0) {
+			additional_gas = additional_gas / 3;
+		}
 		TvmCell subsIndexStateInit = _buildSubscriptionIndex(
 			service_address,
 			msg.sender
 		);
-		TvmCell subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
+		TvmCell subsIndexIdentificatorStateInit;
+		if (!identificator.toSlice().empty()) {
+			subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
 				service_address,
 				identificator,
 				msg.sender
 			);
+		}
 		TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
 		address owner_account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
@@ -513,7 +508,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
 				EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +
 				EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-				(additional_gas / 3),
+				additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			subscription_code_salt,
@@ -524,16 +519,16 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		);
 		TvmCell index_owner = abi.encode(address(platform));
 		new Index{
-			value: EverduesGas.INDEX_INITIAL_BALANCE +
-				(additional_gas / 3 - 100),
+			value: EverduesGas.MESSAGE_MIN_VALUE +
+				additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: subsIndexStateInit
 		}(index_owner, msg.sender);
 		if (!identificator.toSlice().empty()) {
 			new Index{
-				value: EverduesGas.INDEX_INITIAL_BALANCE +
-					(additional_gas / 3 - 100),
+				value: EverduesGas.MESSAGE_MIN_VALUE +
+					additional_gas,
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: subsIndexIdentificatorStateInit
@@ -583,26 +578,26 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		TvmCell serviceIdentificatorIndexStateInit;
 		if (!identificator.toSlice().empty()) {
 			serviceIdentificatorIndexStateInit = _buildServiceIdentificatorIndex(
-					owner_address,
-					identificator,
-					address(
-						tvm.hash(
-							_buildInitData(
-								ContractTypes.Service,
-								_buildServicePlatformParams(
-									owner_address,
-									service_name
-								)
+				owner_address,
+				identificator,
+				address(
+					tvm.hash(
+						_buildInitData(
+							ContractTypes.Service,
+							_buildServicePlatformParams(
+								owner_address,
+								service_name
 							)
 						)
 					)
-				);
+				)
+			);
 		}
-		TvmCell	additional_params = abi.encode(
-				address(tvm.hash(serviceIndexStateInit)),
-				address(tvm.hash(serviceIdentificatorIndexStateInit)),
-				owner_pubkey
-			);			
+		TvmCell additional_params = abi.encode(
+			address(tvm.hash(serviceIndexStateInit)),
+			address(tvm.hash(serviceIdentificatorIndexStateInit)),
+			owner_pubkey
+		);
 		TvmCell service_params_cell_with_additional_params = abi.encode(
 			service_params_cell,
 			additional_params
@@ -627,16 +622,14 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		);
 		TvmCell index_owner = abi.encode(address(platform));
 		new Index{
-			value: EverduesGas.MESSAGE_MIN_VALUE +
-				(additional_gas / 3),
+			value: EverduesGas.MESSAGE_MIN_VALUE + (additional_gas / 3),
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: serviceIndexStateInit
 		}(index_owner, owner_address);
 		if (!identificator.toSlice().empty()) {
 			new Index{
-				value: EverduesGas.MESSAGE_MIN_VALUE +
-					(additional_gas / 3),
+				value: EverduesGas.MESSAGE_MIN_VALUE + (additional_gas / 3),
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: serviceIdentificatorIndexStateInit
@@ -701,7 +694,14 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 					value: 0,
 					bounce: true,
 					flag: MsgFlag.ALL_NOT_RESERVED
-				}(amount, service_address, EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS, remainingGasTo, true, payload);
+				}(
+					amount,
+					service_address,
+					EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS,
+					remainingGasTo,
+					true,
+					payload
+				);
 			} else {
 				// TODO rewrite payload to add error code - unsupported tip3 root
 				ITokenWallet(service_deploy_params.wallet_address).transfer{

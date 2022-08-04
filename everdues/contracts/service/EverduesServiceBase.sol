@@ -109,8 +109,8 @@ abstract contract EverduesServiceBase is
 			bounce: false,
 			flag: 0
 		}(account_address);
-		TvmCell emptycell;
-		if(subscription_service_index_identificator_address != address(tvm.hash(emptycell))){
+		TvmCell empty;
+		if(subscription_service_index_identificator_address != address(tvm.hash(empty))){
 			IEverduesIndex(subscription_service_index_identificator_address).cancel{
 				value: EverduesGas.MESSAGE_MIN_VALUE,
 				bounce: false,
