@@ -35,7 +35,7 @@ echo $(cat log.log | grep "Raw address:" | cut -d ' ' -f 3)
 }
 
 function genseed {
-tonos-cli genphrase > $1.seed
+tonos-cli genphrase > ./envs/$1.seed
 }
 
 function genpubkey {
@@ -43,17 +43,17 @@ tonos-cli genpubkey "$1" > $2.pub
 }
 
 function genkeypair {
-tonos-cli getkeypair -o $1.keys.json -p "$2"
+tonos-cli getkeypair -o ./envs/$1.keys.json -p "$2"
 }
 
 function genaddr {
-tonos-cli genaddr ../abi/$1.tvc --abi ../abi/$1.abi.json --setkey $2.keys.json > log.log
+tonos-cli genaddr ../abi/$1.tvc --abi ../abi/$1.abi.json --setkey ./envs/$2.keys.json > log.log
 }
 
 function deploy {
 params=$2-$1
 genseed $params
-seed=`cat $params.seed | grep -o '".*"' | tr -d '"'`
+seed=`cat ./envs/$params.seed | grep -o '".*"' | tr -d '"'`
 echo "DeBot seed - $seed"
 genpubkey "$seed" "client"
 pub=`cat $params.pub | grep "Public key" | awk '{print $3}'`
@@ -62,17 +62,18 @@ genkeypair "$params" "$seed"
 echo GENADDR $1 ----------------------------------------------
 genaddr $1 $params
 CONTRACT_ADDRESS=$(get_address)
-echo -n $CONTRACT_ADDRESS > $params.addr
+echo -n $CONTRACT_ADDRESS > ./envs/$params.addr
 echo GIVER $1 ------------------------------------------------
 giver $CONTRACT_ADDRESS
 echo DEPLOY $1 -----------------------------------------------
-if [[ `$2` = "main" ]]; 
-then
-    owner=`cat prod-multisig.msig.addr| grep "Raw address" | awk '{print $3}'`
-else
-    owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`    
-fi
-tonos-cli --url $NETWORK deploy ../abi/$1.tvc "{\"initial_owner\":\"$owner\"}" --sign $params.keys.json --abi ../abi/$1.abi.json
+# if [[ `$2` = "main" ]]; 
+# then
+#     owner=`cat prod-multisig.msig.addr| grep "Raw address" | awk '{print $3}'`
+# else
+#     owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`    
+# fi
+owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`    
+tonos-cli --url $NETWORK deploy ../abi/$1.tvc "{\"initial_owner\":\"$owner\"}" --sign ./envs/$params.keys.json --abi ../abi/$1.abi.json
 giver $CONTRACT_ADDRESS
 # Categories
 categories=[\"Telegram\",\"Gambling\",\"Rentals\",\"Content\",\"Media\",\"Music\",\"Goods\",\"Education\",\"Software\",\"Membership\",\"DeFi\",\"NFT\",\"Games\",\"Other\"]
@@ -149,6 +150,6 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 }
 
 deploy $CONTRACT_NAME $1
-CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
+CONTRACT_ADDRESS=$(cat ./envs/$1-$CONTRACT_NAME.addr)
 
 echo $CONTRACT_ADDRESS
