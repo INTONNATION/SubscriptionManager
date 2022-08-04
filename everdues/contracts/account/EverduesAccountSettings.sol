@@ -49,11 +49,16 @@ abstract contract EverduesAccountSettings is EverduesAccountStorage {
 		);
 		_;
 	}
+	modifier onlyOwnerOrRoot() {
+		require(
+			(msg.pubkey() == tvm.pubkey() || msg.sender == root),
+			EverduesErrors.error_message_sender_is_not_owner
+		);
+		tvm.accept();
+		_;
+	}
 
-	function destroyAccount(address send_gas_to)
-		external
-		onlyOwner /*onlyRoot*/
-	{
+	function destroyAccount(address send_gas_to) external onlyOwnerOrRoot {
 		selfdestruct(send_gas_to);
 	}
 }

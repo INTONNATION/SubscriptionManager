@@ -73,10 +73,13 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(account_address);
-		IEverduesIndex(subscription_index_identificator_address).cancel{
-			value: EverduesGas.MESSAGE_MIN_VALUE,
-			flag: MsgFlag.SENDER_PAYS_FEES
-		}(account_address);
+		TvmCell empty;
+		if(subscription_index_identificator_address != address(tvm.hash(empty))){
+			IEverduesIndex(subscription_index_identificator_address).cancel{
+				value: EverduesGas.MESSAGE_MIN_VALUE,
+				flag: MsgFlag.SENDER_PAYS_FEES
+			}(account_address);
+		}
 		selfdestruct(account_address);
 	}
 
