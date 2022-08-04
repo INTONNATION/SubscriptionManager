@@ -49,23 +49,16 @@ abstract contract EverduesAccountSettings is EverduesAccountStorage {
 		);
 		_;
 	}
-
-	modifier onlyDexPair(address sender) {
-		for (
-			(address tokenRoot, BalanceWalletStruct tokenBalance):
-			wallets_mapping
-		) {
-			if (tokenBalance.dex_ever_pair_address == sender) {
-				_;
-			}
-		}
-		revert(EverduesErrors.error_message_sender_is_not_dex_pair);
+	modifier onlyOwnerOrRoot() {
+		require(
+			(msg.pubkey() == tvm.pubkey() || msg.sender == root),
+			EverduesErrors.error_message_sender_is_not_owner
+		);
+		tvm.accept();
+		_;
 	}
 
-	function destroyAccount(address send_gas_to)
-		external
-		onlyOwner /*onlyRoot*/
-	{
+	function destroyAccount(address send_gas_to) external onlyOwnerOrRoot {
 		selfdestruct(send_gas_to);
 	}
 }

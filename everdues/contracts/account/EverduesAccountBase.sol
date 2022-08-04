@@ -127,7 +127,7 @@ abstract contract EverduesAccountBase is
 	function onExpectedExchange(
 		uint128 expected_amount,
 		uint128 /*expected_fee*/
-	) external onlyDexPair(msg.sender) {
+	) external {
 		TvmCell payload = abi.encode(expected_amount);
 		optional(uint64, ExchangeOperation) keyOpt = _tmp_exchange_operations
 			.min();
@@ -347,10 +347,9 @@ abstract contract EverduesAccountBase is
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
 				EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +
 				EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-				EverduesGas.INDEX_INITIAL_BALANCE *
-				2 +
-				additional_gas +
-				EverduesGas.MESSAGE_MIN_VALUE,
+				EverduesGas.MESSAGE_MIN_VALUE *
+				3 +
+				additional_gas,
 			bounce: true,
 			flag: 0
 		}(
@@ -462,11 +461,13 @@ abstract contract EverduesAccountBase is
 				}(wever_root, tokenRoot);
 			}
 			emit Deposit(msg.sender, amount);
-			remainingGasTo.transfer({
-				value: 0,
-				bounce: false,
-				flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
-			});
+			if (remainingGasTo != address(this)){
+				remainingGasTo.transfer({
+					value: 0,
+					bounce: false,
+					flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
+				});
+			}
 		} else {
 			tmp_deposit_tokens[tokenRoot] = DepositTokens(msg.sender, amount);
 			ITokenRoot(tokenRoot).walletOf{
@@ -475,11 +476,14 @@ abstract contract EverduesAccountBase is
 				flag: 0,
 				callback: EverduesAccountBase.onAcceptTokensWalletOf
 			}(address(this));
-			remainingGasTo.transfer({
-				value: 0,
-				bounce: false,
-				flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
-			});
+			if (remainingGasTo != address(this)){
+				remainingGasTo.transfer({
+					value: 0,
+					bounce: false,
+					flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
+				});
+			}
+
 		}
 	}
 
