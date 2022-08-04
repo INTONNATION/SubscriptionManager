@@ -27,4 +27,4 @@ jobs:
         git submodule update --init --recursive
     - name: Run an upgrade of the Everdues root
       run: |
-        cd everdues/scripts && bash upgrade-all.sh ${{ env.GITHUB_REF_NAME }}
+        cd everdues/scripts && bash upgrade-all.sh ${GITHUB_REF_NAME}
