@@ -36,6 +36,18 @@ abstract contract EverduesSubscriprionBase is
 		}(new_subscription_plan);
 	}
 
+	function executeSubscription_(uint128 paySubscriptionGas) private {
+		tvm.accept();
+		subscription.pay_subscription_gas = paySubscriptionGas;
+		subscription.execution_timestamp = uint32(now);
+		IEverduesService(service_address).getInfo{
+			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + paySubscriptionGas,
+			bounce: true,
+			flag: 0,
+			callback: EverduesSubscriprionBase.onGetInfo
+		}();
+	}
+
 	function executeSubscription(uint128 paySubscriptionGas)
 		external
 		override
@@ -49,10 +61,7 @@ abstract contract EverduesSubscriprionBase is
 			subscription.status != EverduesSubscriptionStatus.STATUS_STOPPED,
 			EverduesErrors.error_subscription_is_stopped
 		);
-		if (
-			subscription.period != 0 &&
-			subscription.status != EverduesSubscriptionStatus.STATUS_ACTIVE
-		) {
+		if (subscription.period != 0) {
 			if (
 				now >
 				(subscription.payment_timestamp +
@@ -67,21 +76,23 @@ abstract contract EverduesSubscriprionBase is
 						EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
 				);
-				tvm.accept();
-				subscription.pay_subscription_gas = paySubscriptionGas;
-				subscription.execution_timestamp = uint32(now);
-				IEverduesService(service_address).getInfo{
-					value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-						subscription.pay_subscription_gas,
-					bounce: true,
-					flag: 0,
-					callback: EverduesSubscriprionBase.onGetInfo
-				}();
+				executeSubscription_(paySubscriptionGas);
 			} else {
 				revert(EverduesErrors.error_subscription_status_already_active);
 			}
 		} else {
-			revert(EverduesErrors.error_subscription_status_already_active);
+			if (
+				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE
+			) {
+				revert(EverduesErrors.error_subscription_status_already_active);
+			} else if (
+				subscription.status ==
+				EverduesSubscriptionStatus.STATUS_PROCESSING
+			) {
+				revert(EverduesErrors.error_subscription_already_executed);
+			} else {
+				executeSubscription_(paySubscriptionGas);
+			}
 		}
 	}
 
@@ -108,7 +119,7 @@ abstract contract EverduesSubscriprionBase is
 		}
 	}
 
-	function executeSubscription_() private inline {
+	function executeSubscriptionOnDeploy() private inline {
 		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		subscription.execution_timestamp = uint32(now);
 		subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
@@ -262,7 +273,7 @@ abstract contract EverduesSubscriprionBase is
 	{
 		subscription_wallet = subscription_wallet_;
 		if (subscription.payment_timestamp == 0) {
-			executeSubscription_();
+			executeSubscriptionOnDeploy();
 		} else {
 			account_address.transfer({
 				value: 0,

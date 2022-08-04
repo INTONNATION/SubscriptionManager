@@ -65,6 +65,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 			)
 		);
 		if (old_version == 0) {
+			(account_address) = abi.decode(platform_params, (address));
 			(TvmCell service_params_cell, TvmCell additional_params) = abi
 				.decode(contract_params, (TvmCell, TvmCell));
 			TvmCell subscription_plans_cell;
