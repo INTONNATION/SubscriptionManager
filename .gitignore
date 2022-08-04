@@ -1,9 +1,6 @@
-*.addr
 *.code
 *.tvc
-*.keys.json
 *.pub
-*.seed
 *.key
 *.log
 *.conf.json

@@ -16,9 +16,14 @@ If you have problems with Solidity compiler, tvm_linker or stdlib versions(after
 
 ### Installation:
 
-First you need to find the deploy-all.sh file (located in the scipts folder).
+First you need to find the deploy-all.sh file (located in the scripts folder).
 
-Then uncomment the ./deploy-TIP-3.sh USDT and ./deploy-TIP-3.sh EUPI lines and run the `./deploy-all.sh` script itself.
+Then uncomment the ./deploy-TIP-3.sh USDT and ./deploy-TIP-3.sh EUPI lines and run the `./deploy-all.sh $ENVIRONMENT_NAME` script itself.
+The list of environments you can find in the envs/ folder.
+The current list:
+- dev
+- test
+- prod
 
 This script deploys TIP-3 tokens(emulation of main net), main smart contract subscription manager, config versions and convert system(which includes mTIP-3 and TIP-3 convert system wallets and mTIP-3 root) with configs.
 
