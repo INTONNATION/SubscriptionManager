@@ -1,0 +1,31 @@
+name: Build & Update everdues root
+
+on:
+  push:
+    branches:
+      - 'test'
+      - 'dev'
+      - 'prod'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.digitalocean.com/everdues/everdues-deployer:latest
+      credentials:
+        username: ${{ secrets.DIGITAL_OCEAN_TOKEN }}
+        password: ${{ secrets.DIGITAL_OCEAN_TOKEN }}
+    steps:
+    - name: Git Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+    - name: Get safe cloning of submodules
+      run: |
+        git config --global --add safe.directory /__w/SubscriptionManager/SubscriptionManager
+    - name: Checkout submodules
+      run: |
+        git submodule update --init --recursive
+    - name: Run an upgrade of the Everdues root
+      run: |
+        cd everdues/scripts && bash upgrade-all.sh ${GITHUB_REF_NAME}
