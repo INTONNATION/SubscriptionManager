@@ -430,6 +430,15 @@
 			]
 		},
 		{
+			"name": "subscribersOf",
+			"inputs": [
+				{"name":"service_address","type":"address"}
+			],
+			"outputs": [
+				{"name":"subscribers_code_hash","type":"uint256"}
+			]
+		},
+		{
 			"name": "fee_proxy_address",
 			"inputs": [
 			],
@@ -510,22 +519,6 @@
 			]
 		},
 		{
-			"name": "abiServiceContract",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"abiServiceContract","type":"string"}
-			]
-		},
-		{
-			"name": "codeService",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"codeService","type":"cell"}
-			]
-		},
-		{
 			"name": "versions",
 			"inputs": [
 			],
@@ -539,14 +532,6 @@
 			],
 			"outputs": [
 				{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
-			]
-		},
-		{
-			"name": "debug",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"debug","type":"bool"}
 			]
 		}
 	],
@@ -587,7 +572,6 @@
 		{"name":"codeIndex","type":"cell"},
 		{"name":"codeSubscription","type":"cell"},
 		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"},
-		{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
-		{"name":"debug","type":"bool"}
+		{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 	]
 }
