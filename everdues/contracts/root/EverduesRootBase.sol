@@ -560,9 +560,10 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			,
 			,
 			string category
+			,
 		) = abi.decode(
 				service_params,
-				(address, string, string, string, string)
+				(address, string, string, string, string, uint256)
 			);
 		TvmCell service_code_salt;
 		if (publish_to_catalog) {
