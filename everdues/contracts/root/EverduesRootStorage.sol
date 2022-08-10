@@ -26,7 +26,7 @@ abstract contract EverduesRootStorage {
 	string abiTIP3RootContract;
 	string abiTIP3TokenWalletContract;
 	string abiEverduesAccountContract;
-	string public abiServiceContract;
+	string abiServiceContract;
 	string abiIndexContract;
 	string abiSubscriptionContract;
 	string abiFeeProxyContract;
@@ -34,7 +34,7 @@ abstract contract EverduesRootStorage {
 	TvmCell codePlatform;
 	TvmCell codeEverduesAccount;
 	TvmCell codeFeeProxy;
-	TvmCell public codeService;
+	TvmCell codeService;
 	TvmCell codeIndex;
 	TvmCell codeSubscription;
 
@@ -70,7 +70,6 @@ abstract contract EverduesRootStorage {
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
 
-	bool public debug;
 	function getCodeHashes(uint256 owner_pubkey)
 		external
 		view
@@ -155,7 +154,9 @@ abstract contract EverduesRootStorage {
 		everdues_contracts_info.tip3_root_abi = abiTIP3RootContract;
 		everdues_contracts_info.tip3_wallet_abi = abiTIP3TokenWalletContract;
 		everdues_contracts_info.everdues_root_abi = abiEverduesRootContract;
-		everdues_contracts_info.everdues_fee_proxy_abi = versions[ContractTypes.FeeProxy][1].contractAbi;
+		everdues_contracts_info.everdues_fee_proxy_abi = versions[
+			ContractTypes.FeeProxy
+		][1].contractAbi;
 		everdues_contracts_info.account_address = account;
 		everdues_contracts_info.account_versions = versions[
 			ContractTypes.Account
@@ -478,6 +479,16 @@ abstract contract EverduesRootStorage {
 					)
 				)
 			)
+		);
+	}
+
+	function subscribersOf(address service_address)
+		external
+		view
+		returns (uint256 subscribers_code_hash)
+	{
+		subscribers_code_hash = tvm.hash(
+			_buildSubscriptionIndex(service_address, address(this))
 		);
 	}
 }

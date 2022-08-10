@@ -79,13 +79,13 @@ abstract contract EverduesAccountBase is
 				return
 					{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} (
 						1,
-						address(this).balance
+						address(this).balance - msg.value
 					);
 			} else {
 				return
 					{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} (
 						0,
-						address(this).balance
+						address(this).balance - msg.value
 					);
 			}
 		}
