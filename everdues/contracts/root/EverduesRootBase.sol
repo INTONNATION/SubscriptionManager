@@ -519,16 +519,14 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		);
 		TvmCell index_owner = abi.encode(address(platform));
 		new Index{
-			value: EverduesGas.MESSAGE_MIN_VALUE +
-				additional_gas,
+			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: subsIndexStateInit
 		}(index_owner, msg.sender);
 		if (!identificator.toSlice().empty()) {
 			new Index{
-				value: EverduesGas.MESSAGE_MIN_VALUE +
-					additional_gas,
+				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: subsIndexIdentificatorStateInit
@@ -562,8 +560,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			string service_name, /*string description*/ /*string image*/
 			,
 			,
-			string category
-			,
+			string category,
+
 		) = abi.decode(
 				service_params,
 				(address, string, string, string, string, uint256)

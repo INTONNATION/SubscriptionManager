@@ -176,15 +176,15 @@ abstract contract EverduesSubscriprionBase is
 		ITokenWallet(msg.sender).transfer{
 			value: EverduesGas.TRANSFER_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
-		}(protocol_fee, address_fee_proxy, 0, address(this), true, payload);
+		}(protocol_fee, address_fee_proxy, 0, address_fee_proxy, true, payload);
 		ITokenWallet(msg.sender).transfer{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
 			pay_value,
 			svcparams.to,
-			EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS,
-			account_address,
+			0, // TODO: add EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS or fix in case multicurrencies support
+			address_fee_proxy,
 			true,
 			payload
 		);
@@ -234,8 +234,8 @@ abstract contract EverduesSubscriprionBase is
 			svcparams.name,
 			svcparams.description,
 			svcparams.image,
-			svcparams.category
-			,
+			svcparams.category,
+
 		) = abi.decode(
 			service_params,
 			(address, string, string, string, string, uint256)
@@ -243,8 +243,8 @@ abstract contract EverduesSubscriprionBase is
 		(
 			svcparams.service_value,
 			svcparams.period,
-			svcparams.currency_root
-			,
+			svcparams.currency_root,
+
 		) = abi.decode(subscription_params, (uint128, uint32, address, string));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 subscription_fee_value = service_value_percentage *
