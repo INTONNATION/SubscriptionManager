@@ -190,12 +190,6 @@ abstract contract EverduesSubscriprionBase is
 		);
 	}
 
-	function replenishGas() external override {
-		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
-		TvmCell body;
-		msg.sender.transfer(0, false, MsgFlag.REMAINING_GAS, body);
-	}
-
 	function onGetNextPaymentStatus(
 		uint8 next_payment_status,
 		uint128 account_gas_balance
