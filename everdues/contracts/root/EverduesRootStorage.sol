@@ -311,17 +311,23 @@ abstract contract EverduesRootStorage {
 		return stateInit;
 	}
 
+	function _buildSubscriptionIndexCode(
+		address service_address
+	) internal view returns (TvmCell code) {
+		TvmBuilder saltBuilder;
+		saltBuilder.store(abi.encode(service_address), address(this));
+		ContractParams latestVersion = versions[ContractTypes.Index][1];
+		code = tvm.setCodeSalt(
+			latestVersion.contractCode,
+			saltBuilder.toCell()
+		);
+	}
+
 	function _buildSubscriptionIndex(
 		address service_address,
 		address subscription_owner
 	) internal view returns (TvmCell) {
-		TvmBuilder saltBuilder;
-		saltBuilder.store(abi.encode(service_address), address(this));
-		ContractParams latestVersion = versions[ContractTypes.Index][1];
-		TvmCell code = tvm.setCodeSalt(
-			latestVersion.contractCode,
-			saltBuilder.toCell()
-		);
+		TvmCell code = _buildSubscriptionIndexCode(service_address);
 		TvmCell index_data_static = abi.encode(subscription_owner);
 		TvmCell stateInit = tvm.buildStateInit({
 			code: code,
@@ -488,7 +494,7 @@ abstract contract EverduesRootStorage {
 		returns (uint256 subscribers_code_hash)
 	{
 		subscribers_code_hash = tvm.hash(
-			_buildSubscriptionIndex(service_address, address(this))
+			_buildSubscriptionIndexCode(service_address)
 		);
 	}
 }
