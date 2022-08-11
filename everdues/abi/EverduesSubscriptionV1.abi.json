@@ -52,13 +52,6 @@
 			]
 		},
 		{
-			"name": "replenishGas",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "onGetNextPaymentStatus",
 			"inputs": [
 				{"name":"next_payment_status","type":"uint8"},

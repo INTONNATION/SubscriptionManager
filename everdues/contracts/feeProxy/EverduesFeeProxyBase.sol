@@ -35,11 +35,13 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			current_balance_key.balance += amount;
 			wallets_mapping[tokenRoot] = current_balance_key;
 		}
-		remainingGasTo.transfer({
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
-		});
+		if (remainingGasTo != address(this)){
+			remainingGasTo.transfer({
+				value: 0,
+				bounce: false,
+				flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
+			});
+		}
 	}
 
 	function swapRevenueToMTDS(address currency_root, address send_gas_to)
@@ -157,11 +159,6 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			bounce: true,
 			flag: 0
 		}(value, currency_root, subscription_wallet, additional_gas);
-		IEverduesSubscription(msg.sender).replenishGas{
-			value: 1 ever,
-			bounce: true,
-			flag: 0
-		}();
 	}
 
 	function swapTIP3ToEver(
