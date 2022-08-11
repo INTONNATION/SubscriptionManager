@@ -36,19 +36,19 @@ abstract contract EverduesSubscriprionBase is
 		}(new_subscription_plan);
 	}
 
-	function executeSubscription_(uint128 paySubscriptionGas) private {
+	function executeSubscription_(uint128 additional_gas) private {
 		tvm.accept();
-		subscription.pay_subscription_gas = paySubscriptionGas;
+		subscription.pay_subscription_gas = additional_gas;
 		subscription.execution_timestamp = uint32(now);
 		IEverduesService(service_address).getInfo{
-			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + paySubscriptionGas,
+			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + additional_gas,
 			bounce: true,
 			flag: 0,
 			callback: EverduesSubscriprionBase.onGetInfo
 		}();
 	}
 
-	function executeSubscription(uint128 paySubscriptionGas)
+	function executeSubscription(uint128 additional_gas)
 		external
 		override
 		onlyRootOrServiceOrOwner
@@ -75,8 +75,8 @@ abstract contract EverduesSubscriprionBase is
 						subcr_status !=
 						EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
-				);
-				executeSubscription_(paySubscriptionGas);
+				); // optinal(add processing timeout (e.q 1 day))
+				executeSubscription_(additional_gas);
 			} else {
 				revert(EverduesErrors.error_subscription_status_already_active);
 			}
@@ -89,9 +89,9 @@ abstract contract EverduesSubscriprionBase is
 				subscription.status ==
 				EverduesSubscriptionStatus.STATUS_PROCESSING
 			) {
-				revert(EverduesErrors.error_subscription_already_executed);
+				revert(EverduesErrors.error_subscription_already_executed); // optinal(add processing timeout (e.q 1 day))
 			} else {
-				executeSubscription_(paySubscriptionGas);
+				executeSubscription_(additional_gas);
 			}
 		}
 	}
@@ -235,15 +235,17 @@ abstract contract EverduesSubscriprionBase is
 			svcparams.description,
 			svcparams.image,
 			svcparams.category
+			,
 		) = abi.decode(
 			service_params,
-			(address, string, string, string, string)
+			(address, string, string, string, string, uint256)
 		);
 		(
 			svcparams.service_value,
 			svcparams.period,
 			svcparams.currency_root
-		) = abi.decode(subscription_params, (uint128, uint32, address));
+			,
+		) = abi.decode(subscription_params, (uint128, uint32, address, string));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 subscription_fee_value = service_value_percentage *
 			subscription_fee;
