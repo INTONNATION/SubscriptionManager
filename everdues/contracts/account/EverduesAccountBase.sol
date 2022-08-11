@@ -97,6 +97,13 @@ abstract contract EverduesAccountBase is
 		address subscription_wallet,
 		uint128 additional_gas
 	) external override onlyFeeProxy {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ACCOUNT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		if (current_balance_struct.hasValue()) {
@@ -104,7 +111,7 @@ abstract contract EverduesAccountBase is
 					.get();
 			uint128 current_balance = current_balance_key_value.balance;
 			if (value > current_balance) {
-				revert(1111);
+				revert(EverduesErrors.error_tip3_low_value);
 			} else {
 				_tmp_exchange_operations[now] = ExchangeOperation(
 					currency_root,
@@ -115,9 +122,9 @@ abstract contract EverduesAccountBase is
 				);
 				IDexPair(current_balance_key_value.dex_ever_pair_address)
 					.expectedSpendAmount{
-					value: EverduesGas.MESSAGE_MIN_VALUE,
+					value: 0,
 					bounce: true,
-					flag: MsgFlag.SENDER_PAYS_FEES,
+					flag: MsgFlag.ALL_NOT_RESERVED,
 					callback: EverduesAccountBase.onExpectedExchange
 				}(msg.value, wever_root);
 			}
@@ -128,6 +135,13 @@ abstract contract EverduesAccountBase is
 		uint128 expected_amount,
 		uint128 /*expected_fee*/
 	) external {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ACCOUNT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		TvmCell payload = abi.encode(expected_amount);
 		optional(uint64, ExchangeOperation) keyOpt = _tmp_exchange_operations
 			.min();
@@ -147,11 +161,9 @@ abstract contract EverduesAccountBase is
 			);
 			address account_wallet = current_balance_key.wallet;
 			ITokenWallet(account_wallet).transferToWallet{
-				value: EverduesGas.TRANSFER_MIN_VALUE *
-					2 +
-					last_operation.pay_subscription_gas,
+				value: 0,
 				bounce: false,
-				flag: MsgFlag.SENDER_PAYS_FEES
+				flag: MsgFlag.ALL_NOT_RESERVED
 			}(
 				last_operation.value,
 				last_operation.subscription_wallet,
@@ -287,7 +299,8 @@ abstract contract EverduesAccountBase is
 			current_balance_key.balance -= deploy_value;
 			wallets_mapping[currency_root] = current_balance_key;
 			ITokenWallet(account_wallet).transfer{
-				value: EverduesGas.DEPLOY_SERVICE_VALUE_ACCOUNT + additional_gas,
+				value: EverduesGas.DEPLOY_SERVICE_VALUE_ACCOUNT +
+					additional_gas,
 				bounce: true,
 				flag: 0
 			}(deploy_value, root, 0, address(this), true, payload);
@@ -461,7 +474,7 @@ abstract contract EverduesAccountBase is
 				}(wever_root, tokenRoot);
 			}
 			emit Deposit(msg.sender, amount);
-			if (remainingGasTo != address(this)){
+			if (remainingGasTo != address(this)) {
 				remainingGasTo.transfer({
 					value: 0,
 					bounce: false,
@@ -476,14 +489,13 @@ abstract contract EverduesAccountBase is
 				flag: 0,
 				callback: EverduesAccountBase.onAcceptTokensWalletOf
 			}(address(this));
-			if (remainingGasTo != address(this)){
+			if (remainingGasTo != address(this)) {
 				remainingGasTo.transfer({
 					value: 0,
 					bounce: false,
 					flag: MsgFlag.REMAINING_GAS + MsgFlag.IGNORE_ERRORS
 				});
 			}
-
 		}
 	}
 

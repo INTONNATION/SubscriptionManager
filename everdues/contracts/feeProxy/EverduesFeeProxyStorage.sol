@@ -11,6 +11,7 @@ abstract contract EverduesFeeProxyStorage {
 	TvmCell platform_code;
 	TvmCell platform_params;
 	uint8 type_id;
+	uint256 debug22;
 
 	struct BalanceWalletStruct {
 		address wallet;

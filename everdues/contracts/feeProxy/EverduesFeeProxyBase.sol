@@ -148,9 +148,9 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 				account_threshold -
 				account_gas_balance +
 				additional_gas +
-				0.5 ever;
+				1 ever;
 		} else {
-			gas_ = additional_gas + 0.5 ever;
+			gas_ = additional_gas + 1 ever;
 		}
 		IEverduesAccount(account_address).paySubscription{
 			value: gas_,

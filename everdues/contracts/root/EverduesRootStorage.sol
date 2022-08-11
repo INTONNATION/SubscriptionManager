@@ -37,7 +37,6 @@ abstract contract EverduesRootStorage {
 	TvmCell codeService;
 	TvmCell codeIndex;
 	TvmCell codeSubscription;
-
 	struct ContractParams {
 		TvmCell contractCode;
 		string contractAbi;
@@ -311,9 +310,11 @@ abstract contract EverduesRootStorage {
 		return stateInit;
 	}
 
-	function _buildSubscriptionIndexCode(
-		address service_address
-	) internal view returns (TvmCell code) {
+	function _buildSubscriptionIndexCode(address service_address)
+		internal
+		view
+		returns (TvmCell code)
+	{
 		TvmBuilder saltBuilder;
 		saltBuilder.store(abi.encode(service_address), address(this));
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
