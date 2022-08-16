@@ -16,6 +16,8 @@ abstract contract EverduesRootStorage {
 	address public tip3_to_ever_address;
 	uint8 public service_fee;
 	uint8 public subscription_fee;
+	uint8 service_gas_compenstation;
+	uint8 subscription_gas_compenstation;
 
 	string[] categories;
 	bool has_platform_code;
@@ -442,6 +444,24 @@ abstract contract EverduesRootStorage {
 		builder.store(service_owner);
 		builder.store(service_name);
 		return builder.toCell();
+	}
+
+	// Getters
+
+	function getGasCompenstationProportion()
+		external
+		view
+		responsible
+		returns (uint8, uint8)
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		return { value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED } (service_gas_compenstation, subscription_gas_compenstation);
 	}
 
 	// Addresses calculations

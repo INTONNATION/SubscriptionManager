@@ -598,7 +598,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		TvmCell additional_params = abi.encode(
 			address(tvm.hash(serviceIndexStateInit)),
 			address(tvm.hash(serviceIdentificatorIndexStateInit)),
-			owner_pubkey
+			owner_pubkey,
+			service_gas_compenstation,
+			subscription_gas_compenstation
 		);
 		TvmCell service_params_cell_with_additional_params = abi.encode(
 			service_params_cell,

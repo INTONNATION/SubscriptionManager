@@ -149,9 +149,9 @@ abstract contract EverduesSubscriprionBase is
 		TvmCell payload
 	) external {
 		require(
-			amount >= svcparams.service_value,
+			amount >= svcparams.subscription_value,
 			EverduesErrors.error_message_low_value
-		); // TODO: send back ??
+		);
 		require(
 			msg.sender == subscription_wallet,
 			EverduesErrors.error_message_sender_is_not_subscription_wallet
@@ -166,28 +166,44 @@ abstract contract EverduesSubscriprionBase is
 		uint128 account_compensation_fee = abi.decode(payload, (uint128));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 service_fee_value = service_value_percentage * service_fee;
-		uint128 protocol_fee = (svcparams.subscription_value -
-			svcparams.service_value +
+		uint128 protocol_fee = ((svcparams.subscription_value -
+			svcparams.service_value) +
+			(amount - svcparams.subscription_value) +
 			service_fee_value +
 			account_compensation_fee);
-		uint128 pay_value = svcparams.subscription_value - protocol_fee;
+		if (protocol_fee > amount) {
+			ITokenWallet(msg.sender).transfer{
+				value: EverduesGas.TRANSFER_MIN_VALUE,
+				flag: MsgFlag.SENDER_PAYS_FEES
+			}(amount, address_fee_proxy, 0, address_fee_proxy, true, payload);
+		} else {
+			uint128 pay_value = svcparams.subscription_value - protocol_fee;
+			ITokenWallet(msg.sender).transfer{
+				value: EverduesGas.TRANSFER_MIN_VALUE,
+				flag: MsgFlag.SENDER_PAYS_FEES
+			}(
+				protocol_fee,
+				address_fee_proxy,
+				0,
+				address_fee_proxy,
+				true,
+				payload
+			);
+			ITokenWallet(msg.sender).transfer{
+				value: 0,
+				flag: MsgFlag.ALL_NOT_RESERVED
+			}(
+				pay_value,
+				svcparams.to,
+				0, // TODO: add EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS or fix in case multicurrencies support
+				address_fee_proxy,
+				true,
+				payload
+			);
+		}
 		subscription.payment_timestamp = uint32(now) + subscription.period;
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
-		ITokenWallet(msg.sender).transfer{
-			value: EverduesGas.TRANSFER_MIN_VALUE,
-			flag: MsgFlag.SENDER_PAYS_FEES
-		}(protocol_fee, address_fee_proxy, 0, address_fee_proxy, true, payload);
-		ITokenWallet(msg.sender).transfer{
-			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}(
-			pay_value,
-			svcparams.to,
-			0, // TODO: add EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS or fix in case multicurrencies support
-			address_fee_proxy,
-			true,
-			payload
-		);
+		compensate_subscription_deploy = false;
 	}
 
 	function onGetNextPaymentStatus(
@@ -209,6 +225,7 @@ abstract contract EverduesSubscriprionBase is
 				svcparams.currency_root,
 				subscription_wallet,
 				account_gas_balance,
+				compensate_subscription_deploy,
 				subscription.pay_subscription_gas
 			);
 		}
