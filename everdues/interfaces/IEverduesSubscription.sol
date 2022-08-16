@@ -8,8 +8,6 @@ interface IEverduesSubscription {
 
 	function executeSubscription(uint128 paySubscriptionGas) external;
 
-	function replenishGas() external;
-
 	function upgradeSubscriptionPlan(uint8 new_subscription_plan) external;
 
 	function upgrade(

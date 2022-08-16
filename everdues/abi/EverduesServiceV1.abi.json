@@ -36,6 +36,15 @@
 			]
 		},
 		{
+			"name": "updateGasCompenstationProportion",
+			"inputs": [
+				{"name":"service_gas_compenstation_","type":"uint8"},
+				{"name":"subscription_gas_compenstation_","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "updateIdentificator",
 			"inputs": [
 				{"name":"index_data","type":"cell"}
@@ -81,6 +90,16 @@
 			],
 			"outputs": [
 				{"name":"value0","type":"cell"}
+			]
+		},
+		{
+			"name": "getGasCompenstationProportion",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"},
+				{"name":"value1","type":"uint8"}
 			]
 		},
 		{
@@ -194,6 +213,8 @@
 		{"name":"status","type":"uint8"},
 		{"name":"registation_timestamp","type":"uint256"},
 		{"name":"service_params","type":"cell"},
+		{"name":"service_gas_compenstation","type":"uint8"},
+		{"name":"subscription_gas_compenstation","type":"uint8"},
 		{"name":"subscription_plans","type":"map(uint8,cell)"},
 		{"name":"root","type":"address"},
 		{"name":"platform_code","type":"cell"},

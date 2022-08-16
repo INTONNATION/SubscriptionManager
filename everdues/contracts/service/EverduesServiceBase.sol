@@ -24,8 +24,16 @@ abstract contract EverduesServiceBase is
 	}
 
 	modifier onlyOwner() {
+		require((
+			msg.pubkey() == owner_pubkey),
+			EverduesErrors.error_message_sender_is_not_owner
+		);
+		_;
+	}
+	
+	modifier onlyAccount() {
 		require(
-			msg.pubkey() == owner_pubkey,
+			msg.sender == account_address,
 			EverduesErrors.error_message_sender_is_not_owner
 		);
 		_;
@@ -68,6 +76,15 @@ abstract contract EverduesServiceBase is
 			subscription_plans_cell,
 			mapping(uint8 => TvmCell)
 		);
+	}
+
+	function updateGasCompenstationProportion(uint8 service_gas_compenstation_, uint8 subscription_gas_compenstation_)
+		external
+		onlyOwner
+	{
+		tvm.accept();
+		service_gas_compenstation = service_gas_compenstation_;
+		subscription_gas_compenstation = subscription_gas_compenstation_;
 	}
 
 	function updateIdentificator(TvmCell index_data) external view onlyOwner {

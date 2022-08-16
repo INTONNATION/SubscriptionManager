@@ -519,16 +519,14 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		);
 		TvmCell index_owner = abi.encode(address(platform));
 		new Index{
-			value: EverduesGas.MESSAGE_MIN_VALUE +
-				additional_gas,
+			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: subsIndexStateInit
 		}(index_owner, msg.sender);
 		if (!identificator.toSlice().empty()) {
 			new Index{
-				value: EverduesGas.MESSAGE_MIN_VALUE +
-					additional_gas,
+				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: subsIndexIdentificatorStateInit
@@ -549,6 +547,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		bool publish_to_catalog,
 		uint128 additional_gas
 	) private view returns (address) {
+		if (additional_gas != 0) {
+			additional_gas = additional_gas / 3;
+		}
 		(
 			TvmCell service_params, /*TvmCell subscription_plans*/
 
@@ -559,8 +560,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			string service_name, /*string description*/ /*string image*/
 			,
 			,
-			string category
-			,
+			string category,
+
 		) = abi.decode(
 				service_params,
 				(address, string, string, string, string, uint256)
@@ -597,7 +598,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		TvmCell additional_params = abi.encode(
 			address(tvm.hash(serviceIndexStateInit)),
 			address(tvm.hash(serviceIdentificatorIndexStateInit)),
-			owner_pubkey
+			owner_pubkey,
+			service_gas_compenstation,
+			subscription_gas_compenstation
 		);
 		TvmCell service_params_cell_with_additional_params = abi.encode(
 			service_params_cell,
@@ -612,7 +615,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				ContractTypes.Service,
 				_buildServicePlatformParams(owner_address, service_name)
 			),
-			value: EverduesGas.DEPLOY_SERVICE_VALUE_ROOT + (additional_gas / 3),
+			value: EverduesGas.DEPLOY_SERVICE_VALUE_ROOT + additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			service_code_salt,
@@ -623,14 +626,14 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		);
 		TvmCell index_owner = abi.encode(address(platform));
 		new Index{
-			value: EverduesGas.MESSAGE_MIN_VALUE + (additional_gas / 3),
+			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES,
 			bounce: false,
 			stateInit: serviceIndexStateInit
 		}(index_owner, owner_address);
 		if (!identificator.toSlice().empty()) {
 			new Index{
-				value: EverduesGas.MESSAGE_MIN_VALUE + (additional_gas / 3),
+				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
 				stateInit: serviceIdentificatorIndexStateInit

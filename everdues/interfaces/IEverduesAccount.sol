@@ -9,7 +9,9 @@ interface IEverduesAccount {
 	function paySubscription(
 		uint128 value,
 		address currency_root,
+		address service_address,
 		address subscription_wallet,
+		bool subscription_deploy,
 		uint128 pay_subscription_gas
 	) external;
 

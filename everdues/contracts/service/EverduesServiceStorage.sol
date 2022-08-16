@@ -12,6 +12,8 @@ abstract contract EverduesServiceStorage is IEverduesService {
 	uint8 public status = 0;
 	uint256 public registation_timestamp;
 	TvmCell public service_params;
+	uint8 service_gas_compenstation;
+	uint8 subscription_gas_compenstation;
 	mapping(uint8 => TvmCell) public subscription_plans;
 
 	address root;
@@ -65,4 +67,22 @@ abstract contract EverduesServiceStorage is IEverduesService {
 			{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} info
 				.toCell();
 	}
+
+	function getGasCompenstationProportion()
+		external
+		override
+		view
+		responsible
+		returns (uint8, uint8)
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		return { value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED } (service_gas_compenstation, subscription_gas_compenstation);
+	}
+
 }
