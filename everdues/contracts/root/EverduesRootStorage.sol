@@ -16,6 +16,8 @@ abstract contract EverduesRootStorage {
 	address public tip3_to_ever_address;
 	uint8 public service_fee;
 	uint8 public subscription_fee;
+	uint8 service_gas_compenstation;
+	uint8 subscription_gas_compenstation;
 
 	string[] categories;
 	bool has_platform_code;
@@ -37,7 +39,6 @@ abstract contract EverduesRootStorage {
 	TvmCell codeService;
 	TvmCell codeIndex;
 	TvmCell codeSubscription;
-
 	struct ContractParams {
 		TvmCell contractCode;
 		string contractAbi;
@@ -311,17 +312,25 @@ abstract contract EverduesRootStorage {
 		return stateInit;
 	}
 
+	function _buildSubscriptionIndexCode(address service_address)
+		internal
+		view
+		returns (TvmCell code)
+	{
+		TvmBuilder saltBuilder;
+		saltBuilder.store(abi.encode(service_address), address(this));
+		ContractParams latestVersion = versions[ContractTypes.Index][1];
+		code = tvm.setCodeSalt(
+			latestVersion.contractCode,
+			saltBuilder.toCell()
+		);
+	}
+
 	function _buildSubscriptionIndex(
 		address service_address,
 		address subscription_owner
 	) internal view returns (TvmCell) {
-		TvmBuilder saltBuilder;
-		saltBuilder.store(abi.encode(service_address), address(this));
-		ContractParams latestVersion = versions[ContractTypes.Index][1];
-		TvmCell code = tvm.setCodeSalt(
-			latestVersion.contractCode,
-			saltBuilder.toCell()
-		);
+		TvmCell code = _buildSubscriptionIndexCode(service_address);
 		TvmCell index_data_static = abi.encode(subscription_owner);
 		TvmCell stateInit = tvm.buildStateInit({
 			code: code,
@@ -437,6 +446,24 @@ abstract contract EverduesRootStorage {
 		return builder.toCell();
 	}
 
+	// Getters
+
+	function getGasCompenstationProportion()
+		external
+		view
+		responsible
+		returns (uint8, uint8)
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		return { value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED } (service_gas_compenstation, subscription_gas_compenstation);
+	}
+
 	// Addresses calculations
 
 	function accountOf(uint256 owner_pubkey)
@@ -488,7 +515,7 @@ abstract contract EverduesRootStorage {
 		returns (uint256 subscribers_code_hash)
 	{
 		subscribers_code_hash = tvm.hash(
-			_buildSubscriptionIndex(service_address, address(this))
+			_buildSubscriptionIndexCode(service_address)
 		);
 	}
 }

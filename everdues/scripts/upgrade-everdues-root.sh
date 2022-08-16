@@ -16,14 +16,13 @@ fi
 CONTRACT_NAME=EverduesRoot
 
 function deploy {
-CONTRACT_ADDRESS=`cat EverduesRoot.addr`
-owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
+CONTRACT_ADDRESS=`cat ./envs/$2-EverduesRoot.addr`
+owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`
 code=`tvm_linker decode --tvc ../abi/EverduesRoot.tvc | grep code: | awk '{ print $2 }'`
 message=`tonos-cli -j body upgrade "{\"code\":\"$code\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
-tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 5T --bounce true --allBalance false --payload "$message"
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 5T --bounce true --allBalance false --payload "$message"
 }
 
 deploy $CONTRACT_NAME
-CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
 
 echo $CONTRACT_ADDRESS
