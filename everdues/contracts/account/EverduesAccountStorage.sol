@@ -22,12 +22,16 @@ abstract contract EverduesAccountStorage {
 		address send_gas_to;
 	}
 
-	struct ExchangeOperation {
+	struct SubscriptionOperation {
 		address currency_root;
 		uint128 value;
 		address subscription_wallet;
 		uint128 pay_subscription_gas;
 		address subscription_contract;
+		uint128 gas_value;
+		bool subscription_deploy;
+		uint8 service_gas_compenstation;
+		uint8 subscription_gas_compenstation;
 	}
 
 	struct DepositTokens {
@@ -38,7 +42,7 @@ abstract contract EverduesAccountStorage {
 	mapping(address => BalanceWalletStruct) public wallets_mapping;
 	mapping(address => address) _tmp_sync_balance;
 	mapping(uint64 => GetDexPairOperation) _tmp_get_pairs;
-	mapping(uint64 => ExchangeOperation) _tmp_exchange_operations;
+	mapping(uint64 => SubscriptionOperation) _tmp_subscription_operations;
 	mapping(address => DepositTokens) tmp_deposit_tokens;
 
 	function _buildSubscriptionParams(

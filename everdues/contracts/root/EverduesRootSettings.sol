@@ -697,6 +697,26 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
+	function setGasCompenstationProportion(uint8 service_gas_compenstation_, uint8 subscription_gas_compenstation_)
+		external
+		onlyOwner
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		service_gas_compenstation = service_gas_compenstation_;
+		subscription_fee = subscription_gas_compenstation_;
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
 	function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to)
 		external
 		onlyOwner

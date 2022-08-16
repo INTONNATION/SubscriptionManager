@@ -342,6 +342,15 @@
 			]
 		},
 		{
+			"name": "setGasCompenstationProportion",
+			"inputs": [
+				{"name":"service_gas_compenstation_","type":"uint8"},
+				{"name":"subscription_gas_compenstation_","type":"uint8"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
 			"inputs": [
 				{"name":"revenue_to","type":"address"}
@@ -398,6 +407,16 @@
 			],
 			"outputs": [
 				{"name":"dex_pending_owner","type":"address"}
+			]
+		},
+		{
+			"name": "getGasCompenstationProportion",
+			"inputs": [
+				{"name":"answerId","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint8"},
+				{"name":"value1","type":"uint8"}
 			]
 		},
 		{
@@ -553,6 +572,8 @@
 		{"name":"tip3_to_ever_address","type":"address"},
 		{"name":"service_fee","type":"uint8"},
 		{"name":"subscription_fee","type":"uint8"},
+		{"name":"service_gas_compenstation","type":"uint8"},
+		{"name":"subscription_gas_compenstation","type":"uint8"},
 		{"name":"categories","type":"string[]"},
 		{"name":"has_platform_code","type":"bool"},
 		{"name":"account_threshold","type":"uint128"},

@@ -35,7 +35,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriprionBase {
 			service_address,
 			owner_pubkey,
 			subscription_plan,
-			service_pubkey
+			service_pubkey,
+			compensate_subscription_deploy
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -102,6 +103,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriprionBase {
 					uint8
 				)
 			);
+			compensate_subscription_deploy = true;
 			IEverduesService(service_address).getParams{
 				value: 0,
 				bounce: true,
@@ -132,7 +134,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriprionBase {
 				service_address,
 				owner_pubkey,
 				subscription_plan,
-				service_pubkey
+				service_pubkey,
+				compensate_subscription_deploy
 			) = abi.decode(
 				upgrade_data,
 				(
@@ -158,7 +161,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriprionBase {
 					address,
 					uint256,
 					uint8,
-					uint256
+					uint256,
+					bool
 				)
 			);
 			send_gas_to.transfer({

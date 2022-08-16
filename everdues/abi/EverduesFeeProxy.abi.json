@@ -53,6 +53,7 @@
 				{"name":"currency_root","type":"address"},
 				{"name":"subscription_wallet","type":"address"},
 				{"name":"account_gas_balance","type":"uint128"},
+				{"name":"subscription_deploy","type":"bool"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [

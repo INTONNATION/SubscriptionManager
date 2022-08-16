@@ -8,6 +8,8 @@ interface IEverduesService {
 
 	event ServiceDeleted();
 
+	function getGasCompenstationProportion() external view responsible returns(uint8 service_gas_compenstation,uint8 subscription_gas_compenstation);
+	
 	function getParams(uint8 subscription_plan)
 		external
 		view

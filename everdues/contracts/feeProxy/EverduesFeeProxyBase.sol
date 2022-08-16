@@ -142,6 +142,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		address currency_root,
 		address subscription_wallet,
 		uint128 account_gas_balance,
+		bool subscription_deploy,
 		uint128 additional_gas
 	) external view onlySubscriptionContract(account_address, service_address) {
 		uint128 gas_;
@@ -158,7 +159,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			value: gas_,
 			bounce: true,
 			flag: 0
-		}(value, currency_root, subscription_wallet, additional_gas);
+		}(value, currency_root, service_address, subscription_wallet, subscription_deploy, additional_gas);
 	}
 
 	function swapTIP3ToEver(

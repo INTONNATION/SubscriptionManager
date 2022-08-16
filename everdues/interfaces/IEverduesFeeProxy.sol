@@ -8,6 +8,7 @@ interface IEverduesFeeProxy {
 		address currency_root,
 		address subscription_wallet,
 		uint128 account_gas_balance,
+		bool subscription_deploy,
 		uint128 additional_gas
 	) external;
 
