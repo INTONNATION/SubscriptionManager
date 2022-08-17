@@ -125,7 +125,8 @@ abstract contract EverduesAccountBase is
 					msg.value,
 					subscription_deploy,
 					0,
-					0
+					0,
+					service_address
 				);
 				if (subscription_deploy) {
 					IEverduesService(service_address).getGasCompenstationProportion{
@@ -151,7 +152,14 @@ abstract contract EverduesAccountBase is
 	function onGetGasCompenstationProportion(
 		uint8 service_gas_compenstation,
 		uint8 subscription_gas_compenstation
-	) external view onlyRoot {
+	) external view {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ACCOUNT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		optional(
 			uint64,
 			SubscriptionOperation
@@ -160,6 +168,7 @@ abstract contract EverduesAccountBase is
 			(uint64 call_id, SubscriptionOperation last_operation) = keyOpt
 				.get();
 			call_id;
+			require(msg.sender == last_operation.service_address, EverduesErrors.error_message_sender_is_not_service_address);
 			last_operation
 				.service_gas_compenstation = service_gas_compenstation;
 			last_operation
