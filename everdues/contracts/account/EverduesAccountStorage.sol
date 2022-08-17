@@ -32,6 +32,7 @@ abstract contract EverduesAccountStorage {
 		bool subscription_deploy;
 		uint8 service_gas_compenstation;
 		uint8 subscription_gas_compenstation;
+		address service_address;
 	}
 
 	struct DepositTokens {
