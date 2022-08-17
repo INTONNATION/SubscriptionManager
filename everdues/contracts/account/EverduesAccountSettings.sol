@@ -57,7 +57,7 @@ abstract contract EverduesAccountSettings is EverduesAccountStorage {
 		tvm.accept();
 		_;
 	}
-
+	
 	function destroyAccount(address send_gas_to) external onlyOwnerOrRoot {
 		selfdestruct(send_gas_to);
 	}

@@ -44,10 +44,10 @@ function deploy {
 #genseed $1
 #seed=`cat $1.seed | grep -o '".*"' | tr -d '"'`
 #genkeypair "$1" "$seed"
-CONTRACT_ADDRESS=`cat EverduesRoot.addr`
+CONTRACT_ADDRESS=`cat ./envs/$2-EverduesRoot.addr`
 #giver $CONTRACT_ADDRESS
 #echo DEPLOY $1 -----------------------------------------------
-owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
+owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`
 
 # TVC
 feeProxyCode=$(tvm_linker decode --tvc  ../abi/EverduesFeeProxy.tvc | grep code: | awk '{ print $2 }')
@@ -56,16 +56,14 @@ abiFeeProxyContract=$(cat ../abi/EverduesFeeProxy.abi.json | jq -c .| base64 $pr
 
 # Set TVCs
 message=`tonos-cli -j body setCodeFeeProxy "{\"codeFeeProxyInput\":\"$feeProxyCode\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
-tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 #
 ## SET ABIs
 message=`tonos-cli -j body setAbiFeeProxyContract "{\"abiFeeProxyContractInput\":\"$abiFeeProxyContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
-tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body upgradeFeeProxy "{}"  --abi ../abi/EverduesRoot.abi.json | jq -r .Message`
-tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+echo $CONTRACT_ADDRESS
 }
 
-deploy $CONTRACT_NAME
-CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
-
-echo $CONTRACT_ADDRESS
+deploy $CONTRACT_NAME $1
