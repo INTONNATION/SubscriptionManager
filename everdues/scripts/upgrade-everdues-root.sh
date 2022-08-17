@@ -23,6 +23,6 @@ message=`tonos-cli -j body upgrade "{\"code\":\"$code\"}"  --abi ../abi/$1.abi.j
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 5T --bounce true --allBalance false --payload "$message"
 }
 
-deploy $CONTRACT_NAME
+deploy $CONTRACT_NAME $1
 
 echo $CONTRACT_ADDRESS
