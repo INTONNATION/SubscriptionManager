@@ -151,6 +151,8 @@ message=`tonos-cli -j body setAccountGasThreshold "{\"account_threshold_\": \"10
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body setCategories "{\"categoriesInput\": $categories}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+message=`tonos-cli -j body setGasCompenstationProportion "{\"service_gas_compenstation_\": \"100\", \"subscription_gas_compenstation_\":\"0\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 }
 
 deploy $CONTRACT_NAME $1
