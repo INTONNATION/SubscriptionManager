@@ -294,7 +294,8 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Account,
 				abiEverduesAccountContractInput
-			) || !checkVersionCodeAlreadyExists(
+			) ||
+			!checkVersionCodeAlreadyExists(
 				ContractTypes.Account,
 				codeEverduesAccount
 			)
@@ -400,10 +401,8 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Service,
 				abiServiceContractInput
-			) || !checkVersionCodeAlreadyExists(
-				ContractTypes.Service,
-				codeService
-			)
+			) ||
+			!checkVersionCodeAlreadyExists(ContractTypes.Service, codeService)
 		) {
 			if (!codeService.toSlice().empty()) {
 				optional(uint32, ContractParams) latest_version_opt = versions[
@@ -450,7 +449,8 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Subscription,
 				abiSubscriptionContractInput
-			) || !checkVersionCodeAlreadyExists(
+			) ||
+			!checkVersionCodeAlreadyExists(
 				ContractTypes.Subscription,
 				codeSubscription
 			)
@@ -485,7 +485,10 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setAbiIndexContract(string abiIndexContractInput) external onlyOwner {
+	function setAbiIndexContract(string abiIndexContractInput)
+		external
+		onlyOwner
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -497,10 +500,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Index,
 				abiIndexContractInput
-			) || !checkVersionCodeAlreadyExists(
-				ContractTypes.Index,
-				codeIndex
-			)
+			) || !checkVersionCodeAlreadyExists(ContractTypes.Index, codeIndex)
 		) {
 			if (!codeIndex.toSlice().empty()) {
 				optional(uint32, ContractParams) latest_version_opt = versions[
@@ -547,10 +547,8 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.FeeProxy,
 				abiFeeProxyContractInput
-			) || !checkVersionCodeAlreadyExists(
-				ContractTypes.FeeProxy,
-				codeFeeProxy
-			)
+			) ||
+			!checkVersionCodeAlreadyExists(ContractTypes.FeeProxy, codeFeeProxy)
 		) {
 			if (!codeFeeProxy.toSlice().empty()) {
 				addNewContractVersion_(
@@ -692,6 +690,26 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		);
 		service_fee = service_fee_;
 		subscription_fee = subscription_fee_;
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
+	function setGasCompenstationProportion(uint8 service_gas_compenstation_, uint8 subscription_gas_compenstation_)
+		external
+		onlyOwner
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		service_gas_compenstation = service_gas_compenstation_;
+		subscription_fee = subscription_gas_compenstation_;
 		owner.transfer({
 			value: 0,
 			bounce: false,
@@ -845,21 +863,20 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			mapping(uint32 => ContractParams)
 		) contract_versions_opt = versions.fetch(contract_type);
 		if (contract_versions_opt.hasValue()) {
-			mapping(uint32 => ContractParams) contract_versions = contract_versions_opt.get();
-			debug = true;
+			mapping(uint32 => ContractParams) contract_versions = contract_versions_opt
+					.get();
 			ContractParams new_version_params;
 			new_version_params.contractCode = contract_code;
 			new_version_params.contractAbi = contract_abi;
-			contract_versions.add(version, new_version_params);
+			contract_versions[version] = new_version_params;
 			versions.replace(contract_type, contract_versions);
 		} else {
-			debug = true;
 			mapping(uint32 => ContractParams) contract_versions;
 			ContractParams new_version_params;
 			new_version_params.contractCode = contract_code;
 			new_version_params.contractAbi = contract_abi;
 			contract_versions[version] = new_version_params;
-			versions.add(contract_type, contract_versions);			
+			versions.add(contract_type, contract_versions);
 		}
 	}
 }

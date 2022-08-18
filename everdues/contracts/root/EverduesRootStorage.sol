@@ -16,6 +16,8 @@ abstract contract EverduesRootStorage {
 	address public tip3_to_ever_address;
 	uint8 public service_fee;
 	uint8 public subscription_fee;
+	uint8 service_gas_compenstation;
+	uint8 subscription_gas_compenstation;
 
 	string[] categories;
 	bool has_platform_code;
@@ -26,7 +28,7 @@ abstract contract EverduesRootStorage {
 	string abiTIP3RootContract;
 	string abiTIP3TokenWalletContract;
 	string abiEverduesAccountContract;
-	string public abiServiceContract;
+	string abiServiceContract;
 	string abiIndexContract;
 	string abiSubscriptionContract;
 	string abiFeeProxyContract;
@@ -34,10 +36,9 @@ abstract contract EverduesRootStorage {
 	TvmCell codePlatform;
 	TvmCell codeEverduesAccount;
 	TvmCell codeFeeProxy;
-	TvmCell public codeService;
+	TvmCell codeService;
 	TvmCell codeIndex;
 	TvmCell codeSubscription;
-
 	struct ContractParams {
 		TvmCell contractCode;
 		string contractAbi;
@@ -70,7 +71,6 @@ abstract contract EverduesRootStorage {
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
 
-	bool public debug;
 	function getCodeHashes(uint256 owner_pubkey)
 		external
 		view
@@ -155,7 +155,9 @@ abstract contract EverduesRootStorage {
 		everdues_contracts_info.tip3_root_abi = abiTIP3RootContract;
 		everdues_contracts_info.tip3_wallet_abi = abiTIP3TokenWalletContract;
 		everdues_contracts_info.everdues_root_abi = abiEverduesRootContract;
-		everdues_contracts_info.everdues_fee_proxy_abi = versions[ContractTypes.FeeProxy][1].contractAbi;
+		everdues_contracts_info.everdues_fee_proxy_abi = versions[
+			ContractTypes.FeeProxy
+		][1].contractAbi;
 		everdues_contracts_info.account_address = account;
 		everdues_contracts_info.account_versions = versions[
 			ContractTypes.Account
@@ -310,17 +312,25 @@ abstract contract EverduesRootStorage {
 		return stateInit;
 	}
 
+	function _buildSubscriptionIndexCode(address service_address)
+		internal
+		view
+		returns (TvmCell code)
+	{
+		TvmBuilder saltBuilder;
+		saltBuilder.store(abi.encode(service_address), address(this));
+		ContractParams latestVersion = versions[ContractTypes.Index][1];
+		code = tvm.setCodeSalt(
+			latestVersion.contractCode,
+			saltBuilder.toCell()
+		);
+	}
+
 	function _buildSubscriptionIndex(
 		address service_address,
 		address subscription_owner
 	) internal view returns (TvmCell) {
-		TvmBuilder saltBuilder;
-		saltBuilder.store(abi.encode(service_address), address(this));
-		ContractParams latestVersion = versions[ContractTypes.Index][1];
-		TvmCell code = tvm.setCodeSalt(
-			latestVersion.contractCode,
-			saltBuilder.toCell()
-		);
+		TvmCell code = _buildSubscriptionIndexCode(service_address);
 		TvmCell index_data_static = abi.encode(subscription_owner);
 		TvmCell stateInit = tvm.buildStateInit({
 			code: code,
@@ -436,6 +446,24 @@ abstract contract EverduesRootStorage {
 		return builder.toCell();
 	}
 
+	// Getters
+
+	function getGasCompenstationProportion()
+		external
+		view
+		responsible
+		returns (uint8, uint8)
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		return { value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED } (service_gas_compenstation, subscription_gas_compenstation);
+	}
+
 	// Addresses calculations
 
 	function accountOf(uint256 owner_pubkey)
@@ -478,6 +506,16 @@ abstract contract EverduesRootStorage {
 					)
 				)
 			)
+		);
+	}
+
+	function subscribersOf(address service_address)
+		external
+		view
+		returns (uint256 subscribers_code_hash)
+	{
+		subscribers_code_hash = tvm.hash(
+			_buildSubscriptionIndexCode(service_address)
 		);
 	}
 }

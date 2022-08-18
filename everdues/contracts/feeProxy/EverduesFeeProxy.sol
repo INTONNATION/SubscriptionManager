@@ -33,6 +33,7 @@ contract EverduesFeeProxy is EverduesFeeProxyBase {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
+		tvm.resetStorage();
 		address send_gas_to;
 		uint32 old_version;
 		TvmCell contract_params;
@@ -61,7 +62,6 @@ contract EverduesFeeProxy is EverduesFeeProxyBase {
 				TvmCell
 			)
 		);
-		tvm.resetStorage();
 		if (old_version == 0) {
 			address[] supportedCurrencies = abi.decode(
 				contract_params,

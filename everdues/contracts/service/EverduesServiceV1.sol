@@ -26,7 +26,10 @@ contract EverduesService_V1 is EverduesServiceBase {
 			subscription_service_index_address,
 			subscription_service_index_identificator_address,
 			status,
-			owner_pubkey
+			owner_pubkey,
+			account_address,
+			service_gas_compenstation,
+			subscription_gas_compenstation
 		);
 		tvm.setcode(code_);
 		tvm.setCurrentCode(code_);
@@ -65,6 +68,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 			)
 		);
 		if (old_version == 0) {
+			(account_address) = abi.decode(platform_params, (address));
 			(TvmCell service_params_cell, TvmCell additional_params) = abi
 				.decode(contract_params, (TvmCell, TvmCell));
 			TvmCell subscription_plans_cell;
@@ -79,8 +83,10 @@ contract EverduesService_V1 is EverduesServiceBase {
 			(
 				subscription_service_index_address,
 				subscription_service_index_identificator_address,
-				owner_pubkey
-			) = abi.decode(additional_params, (address, address, uint256));
+				owner_pubkey,
+				service_gas_compenstation,
+				subscription_gas_compenstation
+			) = abi.decode(additional_params, (address, address, uint256, uint8, uint8));
 			emit ServiceDeployed(
 				subscription_service_index_address,
 				subscription_service_index_identificator_address
@@ -102,7 +108,10 @@ contract EverduesService_V1 is EverduesServiceBase {
 				subscription_service_index_address,
 				subscription_service_index_identificator_address,
 				status,
-				owner_pubkey
+				owner_pubkey,
+				account_address,
+				service_gas_compenstation,
+				subscription_gas_compenstation
 			) = abi.decode(
 				upgrade_data,
 				(
@@ -120,7 +129,10 @@ contract EverduesService_V1 is EverduesServiceBase {
 					address,
 					address,
 					uint8,
-					uint256
+					uint256,
+					address,
+					uint8,
+					uint8
 				)
 			);
 			send_gas_to.transfer({

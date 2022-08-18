@@ -24,8 +24,16 @@ abstract contract EverduesServiceBase is
 	}
 
 	modifier onlyOwner() {
+		require((
+			msg.pubkey() == owner_pubkey),
+			EverduesErrors.error_message_sender_is_not_owner
+		);
+		_;
+	}
+	
+	modifier onlyAccount() {
 		require(
-			msg.pubkey() == owner_pubkey,
+			msg.sender == account_address,
 			EverduesErrors.error_message_sender_is_not_owner
 		);
 		_;
@@ -70,6 +78,15 @@ abstract contract EverduesServiceBase is
 		);
 	}
 
+	function updateGasCompenstationProportion(uint8 service_gas_compenstation_, uint8 subscription_gas_compenstation_)
+		external
+		onlyOwner
+	{
+		tvm.accept();
+		service_gas_compenstation = service_gas_compenstation_;
+		subscription_gas_compenstation = subscription_gas_compenstation_;
+	}
+
 	function updateIdentificator(TvmCell index_data) external view onlyOwner {
 		tvm.accept();
 		IEverduesIndex(subscription_service_index_identificator_address)
@@ -109,11 +126,14 @@ abstract contract EverduesServiceBase is
 			bounce: false,
 			flag: 0
 		}(account_address);
-		IEverduesIndex(subscription_service_index_identificator_address).cancel{
-			value: EverduesGas.MESSAGE_MIN_VALUE,
-			bounce: false,
-			flag: 0
-		}(account_address);
+		TvmCell empty;
+		if(subscription_service_index_identificator_address != address(tvm.hash(empty))){
+			IEverduesIndex(subscription_service_index_identificator_address).cancel{
+				value: EverduesGas.MESSAGE_MIN_VALUE,
+				bounce: false,
+				flag: 0
+			}(account_address);
+		}
 		selfdestruct(account_address);
 		emit ServiceDeleted();
 	}

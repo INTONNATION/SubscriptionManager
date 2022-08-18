@@ -52,7 +52,10 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 	}
 
 	modifier onlyOwner() {
-		require(msg.pubkey() == owner_pubkey, EverduesErrors.error_message_sender_is_not_owner);
+		require(
+			msg.pubkey() == owner_pubkey,
+			EverduesErrors.error_message_sender_is_not_owner
+		);
 		_;
 	}
 
@@ -73,10 +76,15 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 			value: EverduesGas.MESSAGE_MIN_VALUE,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(account_address);
-		IEverduesIndex(subscription_index_identificator_address).cancel{
-			value: EverduesGas.MESSAGE_MIN_VALUE,
-			flag: MsgFlag.SENDER_PAYS_FEES
-		}(account_address);
+		TvmCell empty;
+		if (
+			subscription_index_identificator_address != address(tvm.hash(empty))
+		) {
+			IEverduesIndex(subscription_index_identificator_address).cancel{
+				value: EverduesGas.MESSAGE_MIN_VALUE,
+				flag: MsgFlag.SENDER_PAYS_FEES
+			}(account_address);
+		}
 		selfdestruct(account_address);
 	}
 

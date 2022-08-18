@@ -36,7 +36,18 @@ abstract contract EverduesSubscriprionBase is
 		}(new_subscription_plan);
 	}
 
-	function executeSubscription(uint128 paySubscriptionGas)
+	function executeSubscription_(uint128 additional_gas) private {
+		subscription.pay_subscription_gas = additional_gas;
+		subscription.execution_timestamp = uint32(now);
+		IEverduesService(service_address).getInfo{
+			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + additional_gas,
+			bounce: true,
+			flag: 0,
+			callback: EverduesSubscriprionBase.onGetInfo
+		}();
+	}
+
+	function executeSubscription(uint128 additional_gas)
 		external
 		override
 		onlyRootOrServiceOrOwner
@@ -49,16 +60,14 @@ abstract contract EverduesSubscriprionBase is
 			subscription.status != EverduesSubscriptionStatus.STATUS_STOPPED,
 			EverduesErrors.error_subscription_is_stopped
 		);
-		if (
-			subscription.period != 0 &&
-			subscription.status != EverduesSubscriptionStatus.STATUS_ACTIVE
-		) {
+		if (subscription.period != 0) {
 			if (
 				now >
 				(subscription.payment_timestamp +
 					svcparams.period -
 					preprocessing_window)
 			) {
+				tvm.accept(); // DEBUG
 				uint8 subcr_status = subscriptionStatus();
 				require(
 					subcr_status !=
@@ -66,22 +75,24 @@ abstract contract EverduesSubscriprionBase is
 						subcr_status !=
 						EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
-				);
-				tvm.accept();
-				subscription.pay_subscription_gas = paySubscriptionGas;
-				subscription.execution_timestamp = uint32(now);
-				IEverduesService(service_address).getInfo{
-					value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
-						subscription.pay_subscription_gas,
-					bounce: true,
-					flag: 0,
-					callback: EverduesSubscriprionBase.onGetInfo
-				}();
+				); // optinal(add processing timeout (e.q 1 day))
+				executeSubscription_(additional_gas);
 			} else {
 				revert(EverduesErrors.error_subscription_status_already_active);
 			}
 		} else {
-			revert(EverduesErrors.error_subscription_status_already_active);
+			if (
+				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE
+			) {
+				revert(EverduesErrors.error_subscription_status_already_active);
+			} else if (
+				subscription.status ==
+				EverduesSubscriptionStatus.STATUS_PROCESSING
+			) {
+				revert(EverduesErrors.error_subscription_already_executed); // optinal(add processing timeout (e.q 1 day))
+			} else {
+				executeSubscription_(additional_gas);
+			}
 		}
 	}
 
@@ -108,7 +119,7 @@ abstract contract EverduesSubscriprionBase is
 		}
 	}
 
-	function executeSubscription_() private inline {
+	function executeSubscriptionOnDeploy() private inline {
 		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		subscription.execution_timestamp = uint32(now);
 		subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
@@ -138,51 +149,62 @@ abstract contract EverduesSubscriprionBase is
 		TvmCell payload
 	) external {
 		require(
-			amount >= svcparams.service_value,
+			amount >= svcparams.subscription_value,
 			EverduesErrors.error_message_low_value
-		); // TODO: send back ??
+		);
 		require(
 			msg.sender == subscription_wallet,
 			EverduesErrors.error_message_sender_is_not_subscription_wallet
 		);
 		tvm.rawReserve(
 			math.max(
-				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
+				EverduesGas.ACCOUNT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
+		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 2);
 		uint128 account_compensation_fee = abi.decode(payload, (uint128));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 service_fee_value = service_value_percentage * service_fee;
-		uint128 protocol_fee = (svcparams.subscription_value -
-			svcparams.service_value +
+		uint128 protocol_fee = ((svcparams.subscription_value -
+			svcparams.service_value) +
+			(amount - svcparams.subscription_value) +
 			service_fee_value +
 			account_compensation_fee);
-		uint128 pay_value = svcparams.subscription_value - protocol_fee;
+		if (protocol_fee > amount) {
+			ITokenWallet(msg.sender).transfer{
+				value: EverduesGas.TRANSFER_MIN_VALUE,
+				flag: MsgFlag.SENDER_PAYS_FEES
+			}(amount, address_fee_proxy, 0, address_fee_proxy, true, payload);
+		} else {
+			uint128 pay_value = svcparams.subscription_value - protocol_fee;
+			ITokenWallet(msg.sender).transfer{
+				value: EverduesGas.TRANSFER_MIN_VALUE,
+				flag: MsgFlag.SENDER_PAYS_FEES
+			}(
+				protocol_fee,
+				address_fee_proxy,
+				0,
+				address_fee_proxy,
+				true,
+				payload
+			);
+			ITokenWallet(msg.sender).transfer{
+				value: 0,
+				flag: MsgFlag.ALL_NOT_RESERVED
+			}(
+				pay_value,
+				svcparams.to,
+				0, // TODO: add EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS or fix in case multicurrencies support
+				address_fee_proxy,
+				true,
+				payload
+			);
+		}
 		subscription.payment_timestamp = uint32(now) + subscription.period;
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
-		ITokenWallet(msg.sender).transfer{
-			value: EverduesGas.TRANSFER_MIN_VALUE,
-			flag: MsgFlag.SENDER_PAYS_FEES
-		}(protocol_fee, address_fee_proxy, 0, address(this), true, payload);
-		ITokenWallet(msg.sender).transfer{
-			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		}(
-			pay_value,
-			svcparams.to,
-			EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS,
-			account_address,
-			true,
-			payload
-		);
-	}
-
-	function replenishGas() external override {
-		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
-		TvmCell body;
-		msg.sender.transfer(0, false, MsgFlag.REMAINING_GAS, body);
+		compensate_subscription_deploy = false;
 	}
 
 	function onGetNextPaymentStatus(
@@ -204,6 +226,7 @@ abstract contract EverduesSubscriprionBase is
 				svcparams.currency_root,
 				subscription_wallet,
 				account_gas_balance,
+				compensate_subscription_deploy,
 				subscription.pay_subscription_gas
 			);
 		}
@@ -223,16 +246,18 @@ abstract contract EverduesSubscriprionBase is
 			svcparams.name,
 			svcparams.description,
 			svcparams.image,
-			svcparams.category
+			svcparams.category,
+
 		) = abi.decode(
 			service_params,
-			(address, string, string, string, string)
+			(address, string, string, string, string, uint256)
 		);
 		(
 			svcparams.service_value,
 			svcparams.period,
-			svcparams.currency_root
-		) = abi.decode(subscription_params, (uint128, uint32, address));
+			svcparams.currency_root,
+
+		) = abi.decode(subscription_params, (uint128, uint32, address, string));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 subscription_fee_value = service_value_percentage *
 			subscription_fee;
@@ -262,7 +287,7 @@ abstract contract EverduesSubscriprionBase is
 	{
 		subscription_wallet = subscription_wallet_;
 		if (subscription.payment_timestamp == 0) {
-			executeSubscription_();
+			executeSubscriptionOnDeploy();
 		} else {
 			account_address.transfer({
 				value: 0,
