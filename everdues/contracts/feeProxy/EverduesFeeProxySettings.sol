@@ -79,6 +79,24 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 		});
 	}
 
+	function setRecurringPaymentGas(
+		uint128 recurring_payment_gas_
+	) external onlyRoot {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		recurring_payment_gas = recurring_payment_gas_;
+		msg.sender.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
 	function setAccountGasThreshold(
 		uint128 account_threshold_,
 		address send_gas_to

@@ -12,7 +12,8 @@ interface IEverduesAccount {
 		address service_address,
 		address subscription_wallet,
 		bool subscription_deploy,
-		uint128 pay_subscription_gas
+		uint128 recurring_payment_gas,
+		uint128 additional_gas
 	) external;
 
 	function getNextPaymentStatus(

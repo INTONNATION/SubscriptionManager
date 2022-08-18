@@ -159,7 +159,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			value: gas_,
 			bounce: true,
 			flag: 0
-		}(value, currency_root, subscription_wallet, service_address, subscription_deploy, additional_gas);
+		}(value, currency_root, subscription_wallet, service_address, subscription_deploy, recurring_payment_gas, additional_gas);
 	}
 
 	function swapTIP3ToEver(

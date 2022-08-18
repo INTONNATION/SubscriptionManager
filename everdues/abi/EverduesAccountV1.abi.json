@@ -42,6 +42,7 @@
 				{"name":"subscription_wallet","type":"address"},
 				{"name":"service_address","type":"address"},
 				{"name":"subscription_deploy","type":"bool"},
+				{"name":"recurring_payment_gas_","type":"uint128"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [

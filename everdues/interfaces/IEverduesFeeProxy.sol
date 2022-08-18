@@ -17,6 +17,10 @@ interface IEverduesFeeProxy {
 		address send_gas_to
 	) external;
 
+	function setRecurringPaymentGas(
+		uint128 recurring_payment_gas_
+	) external;
+
 	function setSupportedCurrencies(
 		TvmCell fee_proxy_contract_params,
 		address send_gas_to
