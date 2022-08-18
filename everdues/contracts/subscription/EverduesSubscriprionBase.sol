@@ -37,7 +37,6 @@ abstract contract EverduesSubscriprionBase is
 	}
 
 	function executeSubscription_(uint128 additional_gas) private {
-		tvm.accept();
 		subscription.pay_subscription_gas = additional_gas;
 		subscription.execution_timestamp = uint32(now);
 		IEverduesService(service_address).getInfo{
@@ -68,6 +67,7 @@ abstract contract EverduesSubscriprionBase is
 					svcparams.period -
 					preprocessing_window)
 			) {
+				tvm.accept(); // DEBUG
 				uint8 subcr_status = subscriptionStatus();
 				require(
 					subcr_status !=
@@ -158,11 +158,12 @@ abstract contract EverduesSubscriprionBase is
 		);
 		tvm.rawReserve(
 			math.max(
-				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
+				EverduesGas.ACCOUNT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
 		);
+		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 2);
 		uint128 account_compensation_fee = abi.decode(payload, (uint128));
 		uint128 service_value_percentage = svcparams.service_value / 100;
 		uint128 service_fee_value = service_value_percentage * service_fee;
