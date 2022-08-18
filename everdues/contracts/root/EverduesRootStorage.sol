@@ -22,6 +22,7 @@ abstract contract EverduesRootStorage {
 	string[] categories;
 	bool has_platform_code;
 	uint128 account_threshold = 10 ever; // default value
+	uint128 recurring_payment_gas = 0.4 ever; // default value
 
 	string abiPlatformContract;
 	string abiEverduesRootContract;

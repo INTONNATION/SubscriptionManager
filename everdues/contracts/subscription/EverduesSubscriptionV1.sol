@@ -74,8 +74,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriprionBase {
 				TvmCell
 			)
 		);
-		tvm.resetStorage();
-
+		
 		if (old_version == 0) {
 			(
 				address_fee_proxy,

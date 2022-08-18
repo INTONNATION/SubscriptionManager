@@ -67,7 +67,7 @@ abstract contract EverduesSubscriprionBase is
 					svcparams.period -
 					preprocessing_window)
 			) {
-				tvm.accept(); // DEBUG
+				tvm.accept();
 				uint8 subcr_status = subscriptionStatus();
 				require(
 					subcr_status !=
@@ -75,7 +75,7 @@ abstract contract EverduesSubscriprionBase is
 						subcr_status !=
 						EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
-				); // optinal(add processing timeout (e.q 1 day))
+				); // optinal(add processing timeout (e.q few hours))
 				executeSubscription_(additional_gas);
 			} else {
 				revert(EverduesErrors.error_subscription_status_already_active);
@@ -91,6 +91,7 @@ abstract contract EverduesSubscriprionBase is
 			) {
 				revert(EverduesErrors.error_subscription_already_executed); // optinal(add processing timeout (e.q 1 day))
 			} else {
+				tvm.accept();
 				executeSubscription_(additional_gas);
 			}
 		}
