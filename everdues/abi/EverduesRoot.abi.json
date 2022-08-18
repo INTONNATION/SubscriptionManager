@@ -333,6 +333,14 @@
 			]
 		},
 		{
+			"name": "setRecurringPaymentGas",
+			"inputs": [
+				{"name":"recurring_payment_gas_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setFees",
 			"inputs": [
 				{"name":"service_fee_","type":"uint8"},
@@ -577,6 +585,7 @@
 		{"name":"categories","type":"string[]"},
 		{"name":"has_platform_code","type":"bool"},
 		{"name":"account_threshold","type":"uint128"},
+		{"name":"recurring_payment_gas","type":"uint128"},
 		{"name":"abiPlatformContract","type":"string"},
 		{"name":"abiEverduesRootContract","type":"string"},
 		{"name":"abiTIP3RootContract","type":"string"},

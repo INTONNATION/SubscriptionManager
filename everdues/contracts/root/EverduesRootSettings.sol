@@ -677,6 +677,25 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		}(account_threshold, owner);
 	}
 
+	function setRecurringPaymentGas(uint128 recurring_payment_gas_)
+		external
+		onlyOwner
+	{
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		recurring_payment_gas = recurring_payment_gas_;
+		IEverduesFeeProxy(fee_proxy_address).setRecurringPaymentGas{
+			value: 0,
+			bounce: true,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(recurring_payment_gas);
+	}
+
 	function setFees(uint8 service_fee_, uint8 subscription_fee_)
 		external
 		onlyOwner
