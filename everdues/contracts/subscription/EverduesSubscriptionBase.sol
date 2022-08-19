@@ -205,6 +205,7 @@ abstract contract EverduesSubscriptionBase is
 		subscription.payment_timestamp = uint32(now) + subscription.period;
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		compensate_subscription_deploy = false;
+		emit subscriptionExecuted();
 	}
 
 	function onGetNextPaymentStatus(
