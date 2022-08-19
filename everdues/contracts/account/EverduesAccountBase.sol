@@ -98,7 +98,6 @@ abstract contract EverduesAccountBase is
 		address subscription_wallet,
 		address service_address,
 		bool subscription_deploy,
-		uint128 recurring_payment_gas_,
 		uint128 additional_gas
 	) external override onlyFeeProxy {
 		tvm.rawReserve(
@@ -108,12 +107,6 @@ abstract contract EverduesAccountBase is
 			),
 			2
 		);
-		uint128 recurring_payment_gas;
-		if (msg.value > 1 ever) {
-			recurring_payment_gas = msg.value - 1 ever;
-		} else {
-			recurring_payment_gas = recurring_payment_gas_;
-		}
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		if (current_balance_struct.hasValue()) {
@@ -129,15 +122,14 @@ abstract contract EverduesAccountBase is
 					subscription_wallet,
 					additional_gas,
 					msg.sender,
-					recurring_payment_gas,
+					msg.value,
 					subscription_deploy,
 					0,
 					0,
 					service_address
 				);
 				if (subscription_deploy) {
-					IEverduesService(service_address)
-						.getGasCompenstationProportion{
+					IEverduesService(service_address).getGasCompenstationProportion{
 						value: 0,
 						bounce: true,
 						flag: MsgFlag.ALL_NOT_RESERVED,
@@ -151,7 +143,7 @@ abstract contract EverduesAccountBase is
 						bounce: true,
 						flag: MsgFlag.ALL_NOT_RESERVED,
 						callback: EverduesAccountBase.onExpectedExchange
-					}(recurring_payment_gas, wever_root);
+					}(msg.value, wever_root);
 				}
 			}
 		}
@@ -176,10 +168,7 @@ abstract contract EverduesAccountBase is
 			(uint64 call_id, SubscriptionOperation last_operation) = keyOpt
 				.get();
 			call_id;
-			require(
-				msg.sender == last_operation.service_address,
-				EverduesErrors.error_message_sender_is_not_service_address
-			);
+			require(msg.sender == last_operation.service_address, EverduesErrors.error_message_sender_is_not_service_address);
 			last_operation
 				.service_gas_compenstation = service_gas_compenstation;
 			last_operation
@@ -238,7 +227,16 @@ abstract contract EverduesAccountBase is
 				if (last_operation.service_gas_compenstation == 0) {
 					payload = abi.encode(uint128(0));
 					value_gas_compensation = expected_amount;
-				} else if (last_operation.subscription_gas_compenstation == 0) {
+				} else {
+					payload = abi.encode(
+						(expected_amount * 100) /
+							last_operation.service_gas_compenstation
+					);
+					value_gas_compensation =
+						(expected_amount * 100) /
+						last_operation.subscription_gas_compenstation;
+				}
+				if (last_operation.subscription_gas_compenstation == 0) {
 					payload = abi.encode(expected_amount);
 					expected_amount = 0;
 				} else {
