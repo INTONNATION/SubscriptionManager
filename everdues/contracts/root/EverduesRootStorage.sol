@@ -62,6 +62,7 @@ abstract contract EverduesRootStorage {
 		address account_address;
 		string[] categories;
 		string everdues_fee_proxy_abi;
+		string index_abi;
 	}
 
 	struct ServiceDeployParams {
@@ -166,6 +167,7 @@ abstract contract EverduesRootStorage {
 		for (uint256 i = 0; i < categories.length; i++) {
 			everdues_contracts_info.categories.push(categories[i]);
 		}
+		everdues_contracts_info.index_abi = versions[ContractTypes.Index][1].contractAbi;
 	}
 
 	function getPendingOwner()
