@@ -2,33 +2,56 @@
 
 - nodejs (used version v17.x)
 - npm (used version 8.3.0)
-- tondev (used version 0.11.2)
-- solidity compiler(used version 0.57.3)
-- tonos-cli(used version 0.24.12)
-- tvm_linker(used version 0.14.9)
-- stdlib(used version 0.57.3)
+- everdev (used version 1.2.2)
 - jq
 - curl
 
-If you have problems with Solidity compiler, tvm_linker or stdlib versions(after installation higher versions were installed) use the following command to install the optimal versions:
+Before do any action please install Everdev utility and use the following command to install the optimal versions:
 
-`$tondev sol set --compiler 0.57.3 --linker 0.14.37 --stdlib 0.57.3`
+ - Everdev installation guide: 
+    https://github.com/tonlabs/everdev
 
-### Installation:
+ - Use this command to configure expected versions:
+   `$everdev sol set --compiler 0.61.2 --linker 0.14.37 --stdlib 0.57.3`
 
-First you need to find the deploy-all.sh file (located in the scripts folder).
+###### JUST NOTE you must have cloned all git submodules of this repo, check this point in other case use this command: 
 
-Then uncomment the ./deploy-TIP-3.sh USDT and ./deploy-TIP-3.sh EUPI lines and run the `./deploy-all.sh $ENVIRONMENT_NAME` script itself.
+`git pull --recurse-submodules`
+
+###### To checkout proper commits in your submodules you should update them after pulling using
+
+`git submodule update --recursive`
+
+### Deploy:
+
+Find the deployment script in `everdues/scripts` folder and run the script:
+
+`./deploy-all.sh $ENVIRONMENT_NAME`
+
 The list of environments you can find in the envs/ folder.
-The current list:
+#### Existing list of environments:
 - dev
 - test
 - prod
 
-This script deploys TIP-3 tokens(emulation of main net), main smart contract subscription manager, config versions and convert system(which includes mTIP-3 and TIP-3 convert system wallets and mTIP-3 root) with configs.
+###### Just note that in current stage deployment script have a lot hard-coded values, please check it before you want to configure the new root contract.
 
-### Required external repositories 
+### Upgrade existing root contract:
 
-https://github.com/broxus/ton-eth-bridge-token-contracts.git
+Find the deployment script in `everdues/scripts` folder and run the script:
 
-https://github.com/broxus/ton-labs-contracts.git
+`./upgrade-all.sh $ENVIRONMENT_NAME`
+
+The list of environments you can find in the envs/ folder.
+#### Existing list of environments:
+- dev
+- test
+- prod
+
+##### Public/Private keys and owner address for root contract you can find in `everdues/scripts` folder. Just note that production environment use multisig owner account. Someone from the team have to sign every transaction during deploy/upgrade process:
+ - Owner address for development environments: 
+     `dev-single.msig.addr`
+ - Owner address for prod environment: 
+    `prod-multisig.msig.addr`
+
+Keys: `owner.msig.keys.json `
