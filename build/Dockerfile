@@ -12,11 +12,6 @@ ENV     DEBIAN_FRONTEND=noninteractive
 RUN     apt -y update &&\
         apt -y install make cmake curl build-essential openssl pkg-config libssl-dev libtool gcc-mingw-w64 jq git &&\
         curl -fsSL https://deb.nodesource.com/setup_18.x | sh &&\
-        mkdir -m777 /opt/rust /opt/cargo &&\
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y  &&\ 
-        rustup target add aarch64-apple-darwin &&\
-        rustup target add x86_64-pc-windows-gnu &&\
-        curl https://get.docker.com | bash &&\
         apt-get install -y nodejs &&\
         npm i -g everdev@$EVERDEV_VERSION &&\
         everdev sol set --compiler $EVERDEV_SOL_COMPILER_VERSION &&\
