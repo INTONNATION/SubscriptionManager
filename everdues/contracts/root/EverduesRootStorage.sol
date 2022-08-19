@@ -299,7 +299,7 @@ abstract contract EverduesRootStorage {
 		address subscription_owner
 	) internal view returns (TvmCell) {
 		TvmBuilder saltBuilder;
-		saltBuilder.store(service_address, identificator, address(this));
+		saltBuilder.store(service_address, address(this), identificator);
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,
