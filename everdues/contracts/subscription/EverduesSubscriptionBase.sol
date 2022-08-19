@@ -248,10 +248,10 @@ abstract contract EverduesSubscriptionBase is
 			svcparams.description,
 			svcparams.image,
 			svcparams.category,
-
+			,
 		) = abi.decode(
 			service_params,
-			(address, string, string, string, string, uint256)
+			(address, string, string, string, string, uint256, string)
 		);
 		(
 			svcparams.service_value,

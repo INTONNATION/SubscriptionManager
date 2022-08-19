@@ -519,4 +519,18 @@ abstract contract EverduesRootStorage {
 			_buildSubscriptionIndexCode(service_address)
 		);
 	}
+
+	function getSubscriberIndexById(
+		address service_address,
+		TvmCell identificator
+	) external view returns (uint256) {
+		TvmBuilder saltBuilder;
+		saltBuilder.store(service_address, identificator, address(this));
+		ContractParams latestVersion = versions[ContractTypes.Index][1];
+		TvmCell code = tvm.setCodeSalt(
+			latestVersion.contractCode,
+			saltBuilder.toCell()
+		);
+		return tvm.hash(code);
+	}
 }
