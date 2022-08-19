@@ -13,7 +13,7 @@ import "../../interfaces/IEverduesSubscription.sol";
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
-abstract contract EverduesSubscriprionBase is
+abstract contract EverduesSubscriptionBase is
 	IEverduesSubscription,
 	EverduesSubscriptionSettings
 {
@@ -32,7 +32,7 @@ abstract contract EverduesSubscriprionBase is
 			value: EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
 			flag: 0,
-			callback: EverduesSubscriprionBase.onGetParams
+			callback: EverduesSubscriptionBase.onGetParams
 		}(new_subscription_plan);
 	}
 
@@ -43,7 +43,7 @@ abstract contract EverduesSubscriprionBase is
 			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + additional_gas,
 			bounce: true,
 			flag: 0,
-			callback: EverduesSubscriprionBase.onGetInfo
+			callback: EverduesSubscriptionBase.onGetInfo
 		}();
 	}
 
@@ -109,7 +109,7 @@ abstract contract EverduesSubscriprionBase is
 				value: 0,
 				bounce: true,
 				flag: MsgFlag.REMAINING_GAS,
-				callback: EverduesSubscriprionBase.onGetNextPaymentStatus
+				callback: EverduesSubscriptionBase.onGetNextPaymentStatus
 			}(
 				service_address,
 				svcparams.subscription_value,
@@ -128,7 +128,7 @@ abstract contract EverduesSubscriprionBase is
 			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE,
 			bounce: true,
 			flag: MsgFlag.SENDER_PAYS_FEES,
-			callback: EverduesSubscriprionBase.onGetNextPaymentStatus
+			callback: EverduesSubscriptionBase.onGetNextPaymentStatus
 		}(
 			service_address,
 			svcparams.subscription_value,
@@ -277,7 +277,7 @@ abstract contract EverduesSubscriprionBase is
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.REMAINING_GAS,
-			callback: EverduesSubscriprionBase.onDeployWallet
+			callback: EverduesSubscriptionBase.onDeployWallet
 		}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
 	}
 

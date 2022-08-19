@@ -3,9 +3,9 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import "./EverduesSubscriprionBase.sol";
+import "./EverduesSubscriptionBase.sol";
 
-contract EverduesSubscriprion_V1 is EverduesSubscriprionBase {
+contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 	function upgrade(
 		TvmCell code,
 		uint32 version,
@@ -107,7 +107,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriprionBase {
 				value: 0,
 				bounce: true,
 				flag: MsgFlag.ALL_NOT_RESERVED,
-				callback: EverduesSubscriprionBase.onGetParams
+				callback: EverduesSubscriptionBase.onGetParams
 			}(subscription_plan);
 		} else if (old_version > 0) {
 			(
