@@ -466,6 +466,16 @@
 			]
 		},
 		{
+			"name": "getSubscriberIndexById",
+			"inputs": [
+				{"name":"service_address","type":"address"},
+				{"name":"identificator","type":"cell"}
+			],
+			"outputs": [
+				{"name":"value0","type":"uint256"}
+			]
+		},
+		{
 			"name": "fee_proxy_address",
 			"inputs": [
 			],
