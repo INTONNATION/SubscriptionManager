@@ -299,7 +299,8 @@ abstract contract EverduesRootStorage {
 		address subscription_owner
 	) internal view returns (TvmCell) {
 		TvmBuilder saltBuilder;
-		saltBuilder.store(service_address, address(this), identificator);
+		TvmCell index_salt_data = abi.encode(service_address, identificator);
+		saltBuilder.store(index_salt_data, address(this));
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,
@@ -527,7 +528,8 @@ abstract contract EverduesRootStorage {
 		TvmCell identificator
 	) external view returns (uint256) {
 		TvmBuilder saltBuilder;
-		saltBuilder.store(service_address, identificator, address(this));
+		TvmCell index_salt_data = abi.encode(service_address, identificator); 
+		saltBuilder.store(index_salt_data, address(this));
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
 		TvmCell code = tvm.setCodeSalt(
 			latestVersion.contractCode,
