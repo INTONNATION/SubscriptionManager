@@ -1,5 +1,8 @@
 pragma ton-solidity >=0.56.0;
 
+pragma AbiHeader expire;
+pragma AbiHeader pubkey;
+
 import "../../libraries/EverduesGas.sol";
 import "../../libraries/MsgFlag.sol";
 import "../../interfaces/IEverduesService.sol";

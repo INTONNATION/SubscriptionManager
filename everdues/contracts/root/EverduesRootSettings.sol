@@ -1,5 +1,8 @@
 pragma ton-solidity >=0.56.0;
 
+pragma AbiHeader expire;
+pragma AbiHeader pubkey;
+
 import "./EverduesRootStorage.sol";
 import "../../libraries/EverduesErrors.sol";
 import "../../interfaces/IEverduesFeeProxy.sol";
