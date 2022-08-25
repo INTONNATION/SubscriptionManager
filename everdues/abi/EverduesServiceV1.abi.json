@@ -174,6 +174,14 @@
 			]
 		},
 		{
+			"name": "abi_hash",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"abi_hash","type":"uint256"}
+			]
+		},
+		{
 			"name": "subscription_plans",
 			"inputs": [
 			],
@@ -222,6 +230,7 @@
 		{"name":"registation_timestamp","type":"uint256"},
 		{"name":"service_params","type":"cell"},
 		{"name":"identificator","type":"cell"},
+		{"name":"abi_hash","type":"uint256"},
 		{"name":"service_gas_compenstation","type":"uint8"},
 		{"name":"subscription_gas_compenstation","type":"uint8"},
 		{"name":"subscription_plans","type":"map(uint8,cell)"},
