@@ -12,7 +12,6 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 		uint32 version,
 		TvmCell contract_params
 	) external override onlyRoot {
-		TvmCell wallets_mapping_cell = abi.encode(wallets_mapping);
 		TvmCell data = abi.encode(
 			root,
 			current_version,
@@ -22,9 +21,9 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 			platform_params,
 			contract_params,
 			code,
-			wallets_mapping_cell,
 			dex_root_address,
-			wever_root
+			wever_root,
+			wallets_mapping
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -51,7 +50,6 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 			(address, uint32, uint32, uint8, TvmCell, TvmCell, TvmCell, TvmCell)
 		);
 		if (old_version > 0 && contract_params.toSlice().empty()) {
-			TvmCell wallets_mapping_cell;
 			(
 				,
 				,
@@ -61,9 +59,9 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 				,
 				,
 				,
-				wallets_mapping_cell,
 				dex_root_address,
-				wever_root
+				wever_root,
+				wallets_mapping
 			) = abi.decode(
 				data,
 				(
@@ -75,14 +73,10 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 					TvmCell,
 					TvmCell,
 					TvmCell,
-					TvmCell,
 					address,
-					address
+					address,
+                    mapping(address => BalanceWalletStruct)
 				)
-			);
-			wallets_mapping = abi.decode(
-				wallets_mapping_cell,
-				(mapping(address => BalanceWalletStruct))
 			);
 		} else if (old_version == 0) {
 			(
