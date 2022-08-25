@@ -1,5 +1,8 @@
 pragma ton-solidity >=0.56.0;
 
+pragma AbiHeader expire;
+pragma AbiHeader pubkey;
+
 import "./EverduesRootSettings.sol";
 import "../../interfaces/IEverduesService.sol";
 import "../../interfaces/IEverduesAccount.sol";
