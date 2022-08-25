@@ -166,6 +166,14 @@
 			]
 		},
 		{
+			"name": "identificator",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"identificator","type":"cell"}
+			]
+		},
+		{
 			"name": "subscription_plans",
 			"inputs": [
 			],
@@ -213,6 +221,7 @@
 		{"name":"status","type":"uint8"},
 		{"name":"registation_timestamp","type":"uint256"},
 		{"name":"service_params","type":"cell"},
+		{"name":"identificator","type":"cell"},
 		{"name":"service_gas_compenstation","type":"uint8"},
 		{"name":"subscription_gas_compenstation","type":"uint8"},
 		{"name":"subscription_plans","type":"map(uint8,cell)"},

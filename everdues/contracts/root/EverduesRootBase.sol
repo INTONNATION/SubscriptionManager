@@ -494,7 +494,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			service_address,
 			owner_account_address,
 			owner_pubkey,
-			subscription_plan
+			subscription_plan,
+			identificator
 		);
 		optional(uint32, ContractParams) latest_version_opt = versions[
 			ContractTypes.Subscription
@@ -600,7 +601,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			address(tvm.hash(serviceIdentificatorIndexStateInit)),
 			owner_pubkey,
 			service_gas_compenstation,
-			subscription_gas_compenstation
+			subscription_gas_compenstation,
+			identificator
 		);
 		TvmCell service_params_cell_with_additional_params = abi.encode(
 			service_params_cell,
