@@ -18,5 +18,6 @@ RUN     apt -y update &&\
         everdev sol set --linker $EVERDEV_TVM_LINKER_VERSION &&\
         everdev tonos-cli set --version $EVERDEV_TONOS_CLI_VERSION
 RUN     everdev sol set --compiler $EVERDEV_SOL_COMPILER_VERSION &&\
-        everdev sol set --linker $EVERDEV_TVM_LINKER_VERSION
+        everdev sol set --linker $EVERDEV_TVM_LINKER_VERSION &&\
+        ln -s /root/.everdev/solidity/tvm_linker /usr/bin/tvm_linker
 USER    root

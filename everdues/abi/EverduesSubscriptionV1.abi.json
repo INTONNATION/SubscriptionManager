@@ -217,6 +217,22 @@
 			]
 		},
 		{
+			"name": "identificator",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"identificator","type":"cell"}
+			]
+		},
+		{
+			"name": "abi_hash",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"abi_hash","type":"uint256"}
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
@@ -275,6 +291,8 @@
 		{"name":"subscription_plan","type":"uint8"},
 		{"name":"subscription_params","type":"cell"},
 		{"name":"service_params","type":"cell"},
+		{"name":"identificator","type":"cell"},
+		{"name":"abi_hash","type":"uint256"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},

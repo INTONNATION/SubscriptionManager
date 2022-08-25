@@ -16,6 +16,8 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	uint8 public subscription_plan;
 	TvmCell public subscription_params;
 	TvmCell public service_params;
+	TvmCell public identificator;
+	uint256 public abi_hash;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address subscription_wallet;
