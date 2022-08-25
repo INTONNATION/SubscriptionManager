@@ -26,6 +26,16 @@ jobs:
     - name: Checkout submodules
       run: |
         git submodule update --init --recursive
-    - name: Run an upgrade of the Everdues root
-      run: |
-        cd everdues/scripts && bash upgrade-all.sh ${GITHUB_REF_NAME}
+    # - name: Run an upgrade of the Everdues root
+    #   run: |
+    #     cd everdues/scripts && bash upgrade-all.sh ${GITHUB_REF_NAME}
+    - uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.REPO_TOKEN }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: 'INTONNATION',
+            repo: 'everdues-sdk',
+            workflow_id: 'main.yml',
+            ref: 'master'
+          })
