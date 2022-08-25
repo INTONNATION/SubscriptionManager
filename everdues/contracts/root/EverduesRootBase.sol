@@ -484,6 +484,10 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		address subs_index_identificator = address(
 			tvm.hash(subsIndexIdentificatorStateInit)
 		);
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Subscription
+		].max();
+		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
 		TvmCell subscription_params = abi.encode(
 			fee_proxy_address,
 			service_fee,
@@ -495,12 +499,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			owner_account_address,
 			owner_pubkey,
 			subscription_plan,
-			identificator
+			identificator,
+			tvm.hash(latest_version_params.contractAbi)
 		);
-		optional(uint32, ContractParams) latest_version_opt = versions[
-			ContractTypes.Subscription
-		].max();
-		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
 				ContractTypes.Subscription,
@@ -518,7 +519,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			msg.sender,
 			0
 		);
-		TvmCell index_owner = abi.encode(address(platform), tvm.hash(latest_version_params.contractAbi));
+		TvmCell index_owner = abi.encode(address(platform));
 		new Index{
 			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES,
@@ -596,22 +597,24 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				)
 			);
 		}
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
 		TvmCell additional_params = abi.encode(
 			address(tvm.hash(serviceIndexStateInit)),
 			address(tvm.hash(serviceIdentificatorIndexStateInit)),
 			owner_pubkey,
 			service_gas_compenstation,
 			subscription_gas_compenstation,
-			identificator
+			identificator,
+			tvm.hash(latest_version_params.contractAbi)
 		);
 		TvmCell service_params_cell_with_additional_params = abi.encode(
 			service_params_cell,
 			additional_params
 		);
-		optional(uint32, ContractParams) latest_version_opt = versions[
-			ContractTypes.Service
-		].max();
-		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
+
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
 				ContractTypes.Service,
@@ -626,7 +629,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			owner_address,
 			0
 		);
-		TvmCell index_owner = abi.encode(address(platform), tvm.hash(latest_version_params.contractAbi));
+		TvmCell index_owner = abi.encode(address(platform));
 		new Index{
 			value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES,

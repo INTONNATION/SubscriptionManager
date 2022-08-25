@@ -87,8 +87,9 @@ contract EverduesService_V1 is EverduesServiceBase {
 				owner_pubkey,
 				service_gas_compenstation,
 				subscription_gas_compenstation,
-				identificator
-			) = abi.decode(additional_params, (address, address, uint256, uint8, uint8, TvmCell));
+				identificator,
+				abi_hash
+			) = abi.decode(additional_params, (address, address, uint256, uint8, uint8, TvmCell, uint256));
 			emit ServiceDeployed(
 				subscription_service_index_address,
 				subscription_service_index_identificator_address
@@ -114,7 +115,8 @@ contract EverduesService_V1 is EverduesServiceBase {
 				account_address,
 				service_gas_compenstation,
 				subscription_gas_compenstation,
-				identificator
+				identificator,
+				abi_hash
 			) = abi.decode(
 				upgrade_data,
 				(
@@ -136,7 +138,8 @@ contract EverduesService_V1 is EverduesServiceBase {
 					address,
 					uint8,
 					uint8,
-					TvmCell
+					TvmCell,
+					uint256
 				)
 			);
 			send_gas_to.transfer({

@@ -87,7 +87,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				account_address,
 				owner_pubkey,
 				subscription_plan,
-				identificator
+				identificator,
+				abi_hash
 			) = abi.decode(
 				contract_params,
 				(
@@ -101,7 +102,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					address,
 					uint256,
 					uint8,
-					TvmCell
+					TvmCell,
+					uint256
 				)
 			);
 			compensate_subscription_deploy = true;
@@ -137,7 +139,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				subscription_plan,
 				service_pubkey,
 				compensate_subscription_deploy,
-				identificator
+				identificator,
+				abi_hash
 			) = abi.decode(
 				upgrade_data,
 				(
@@ -165,7 +168,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					uint8,
 					uint256,
 					bool,
-					TvmCell
+					TvmCell,
+					uint256
 				)
 			);
 			send_gas_to.transfer({
