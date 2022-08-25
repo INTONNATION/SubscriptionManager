@@ -31,7 +31,7 @@ contract Index {
 			EverduesErrors.error_message_sender_is_not_everdues_root
 		);
 		tvm.rawReserve(EverduesGas.INDEX_INITIAL_BALANCE, 2);
-		index_owner = abi.decode(index_constructor_data_, (address));
+		index_owner = index_constructor_data_.toSlice().decode(address);
 		index_constructor_data = index_constructor_data_;
 		send_gas_to.transfer({
 			value: 0,
