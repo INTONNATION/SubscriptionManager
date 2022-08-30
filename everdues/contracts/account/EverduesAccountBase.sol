@@ -104,13 +104,6 @@ abstract contract EverduesAccountBase is
 		uint128 recurring_payment_gas_,
 		uint128 additional_gas
 	) external override onlyFeeProxy {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ACCOUNT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
 		uint128 recurring_payment_gas;
 		if (msg.value > 1 ever) {
 			recurring_payment_gas = msg.value - 1 ever;
@@ -141,18 +134,18 @@ abstract contract EverduesAccountBase is
 				if (subscription_deploy) {
 					IEverduesService(service_address)
 						.getGasCompenstationProportion{
-						value: 0,
+						value: 1 ever,
 						bounce: true,
-						flag: MsgFlag.ALL_NOT_RESERVED,
+						flag: MsgFlag.SENDER_PAYS_FEES,
 						callback: EverduesAccountBase
 							.onGetGasCompenstationProportion
 					}();
 				} else {
 					IDexPair(current_balance_key_value.dex_ever_pair_address)
 						.expectedSpendAmount{
-						value: 0,
+						value: 1 ever,
 						bounce: true,
-						flag: MsgFlag.ALL_NOT_RESERVED,
+						flag: MsgFlag.SENDER_PAYS_FEES,
 						callback: EverduesAccountBase.onExpectedExchange
 					}(recurring_payment_gas, wever_root);
 				}

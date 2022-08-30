@@ -10,7 +10,7 @@ abstract contract EverduesFeeProxyStorage {
 	address public mtds_root_address;
 	address public dex_root_address;
 	uint32 public current_version;
-	uint128 public account_threshold = 10 ever; // default value
+	uint128 public account_threshold = 4 ever; // default value
 	address _tmp_swap_currency_root_;
 	TvmCell platform_code;
 	TvmCell platform_params;
