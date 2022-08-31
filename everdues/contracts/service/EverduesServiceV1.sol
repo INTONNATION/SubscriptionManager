@@ -7,11 +7,23 @@ import "./EverduesServiceBase.sol";
 
 contract EverduesService_V1 is EverduesServiceBase {
 	function upgrade(
-		TvmCell code_,
+		TvmCell code,
 		uint32 version,
 		address send_gas_to,
-		TvmCell contract_params
+		TvmCell upgrade_params
 	) external override onlyRoot {
+		TvmCell contract_params = abi.encode(
+			service_params,
+			subscription_service_index_address,
+			subscription_service_index_identificator_address,
+			status,
+			owner_pubkey,
+			account_address,
+			service_gas_compenstation,
+			subscription_gas_compenstation,
+			identificator,
+			upgrade_params
+		);
 		TvmCell data = abi.encode(
 			root,
 			send_gas_to,
@@ -21,19 +33,10 @@ contract EverduesService_V1 is EverduesServiceBase {
 			platform_code,
 			platform_params,
 			contract_params,
-			code_,
-			service_params,
-			subscription_service_index_address,
-			subscription_service_index_identificator_address,
-			status,
-			owner_pubkey,
-			account_address,
-			service_gas_compenstation,
-			subscription_gas_compenstation,
-			identificator
+			code
 		);
-		tvm.setcode(code_);
-		tvm.setCurrentCode(code_);
+		tvm.setcode(code);
+		tvm.setCurrentCode(code);
 		onCodeUpgrade(data);
 	}
 
@@ -89,23 +92,18 @@ contract EverduesService_V1 is EverduesServiceBase {
 				subscription_gas_compenstation,
 				identificator,
 				abi_hash
-			) = abi.decode(additional_params, (address, address, uint256, uint8, uint8, TvmCell, uint256));
+			) = abi.decode(
+				additional_params,
+				(address, address, uint256, uint8, uint8, TvmCell, uint256)
+			);
 			emit ServiceDeployed(
 				subscription_service_index_address,
 				subscription_service_index_identificator_address
 			);
 			registation_timestamp = now;
 		} else if (old_version > 0) {
+			TvmCell upgrade_params;
 			(
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				,
 				service_params,
 				subscription_plans,
 				subscription_service_index_address,
@@ -116,19 +114,11 @@ contract EverduesService_V1 is EverduesServiceBase {
 				service_gas_compenstation,
 				subscription_gas_compenstation,
 				identificator,
-				abi_hash
+				abi_hash,
+				upgrade_params
 			) = abi.decode(
-				upgrade_data,
+				contract_params,
 				(
-					address,
-					address,
-					uint32,
-					uint32,
-					uint8,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
 					TvmCell,
 					mapping(uint8 => TvmCell),
 					address,
@@ -139,9 +129,13 @@ contract EverduesService_V1 is EverduesServiceBase {
 					uint8,
 					uint8,
 					TvmCell,
-					uint256
+					uint256,
+					TvmCell
 				)
 			);
+			if (!upgrade_params.toSlice().empty()) {
+				// parse upgrade data
+			}
 			send_gas_to.transfer({
 				value: 0,
 				bounce: false,
