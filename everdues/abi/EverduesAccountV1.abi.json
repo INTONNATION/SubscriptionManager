@@ -8,7 +8,7 @@
 			"inputs": [
 				{"name":"code","type":"cell"},
 				{"name":"version","type":"uint32"},
-				{"name":"contract_params","type":"cell"}
+				{"name":"upgrade_params","type":"cell"}
 			],
 			"outputs": [
 			]

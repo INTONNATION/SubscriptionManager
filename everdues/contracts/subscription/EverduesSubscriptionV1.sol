@@ -10,18 +10,9 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 		TvmCell code,
 		uint32 version,
 		address send_gas_to,
-		TvmCell contract_params_
+		TvmCell upgrade_params
 	) external override onlyRoot {
-		TvmCell data = abi.encode(
-			root,
-			send_gas_to,
-			current_version,
-			version,
-			type_id,
-			platform_code,
-			platform_params,
-			contract_params_,
-			code,
+		TvmCell contract_params = abi.encode(
 			subscription,
 			address_fee_proxy,
 			account_address,
@@ -36,7 +27,19 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			owner_pubkey,
 			subscription_plan,
 			service_pubkey,
-			compensate_subscription_deploy
+			compensate_subscription_deploy,
+			upgrade_params
+		);
+		TvmCell data = abi.encode(
+			root,
+			send_gas_to,
+			current_version,
+			version,
+			type_id,
+			platform_code,
+			platform_params,
+			contract_params,
+			code
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -74,7 +77,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				TvmCell
 			)
 		);
-		
+
 		if (old_version == 0) {
 			(
 				address_fee_proxy,
@@ -114,16 +117,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				callback: EverduesSubscriptionBase.onGetParams
 			}(subscription_plan);
 		} else if (old_version > 0) {
+			TvmCell upgrade_params;
 			(
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				,
 				subscription,
 				address_fee_proxy,
 				account_address,
@@ -140,19 +135,11 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				service_pubkey,
 				compensate_subscription_deploy,
 				identificator,
-				abi_hash
+				abi_hash,
+				upgrade_params
 			) = abi.decode(
 				upgrade_data,
 				(
-					address,
-					address,
-					uint32,
-					uint32,
-					uint8,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
 					EverduesSubscriptionStorage.paymentStatus,
 					address,
 					address,
@@ -169,9 +156,13 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					uint256,
 					bool,
 					TvmCell,
-					uint256
+					uint256,
+					TvmCell
 				)
 			);
+			if (!upgrade_params.toSlice().empty()) {
+				// parse upgrade data
+			}
 			send_gas_to.transfer({
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS

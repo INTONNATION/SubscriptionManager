@@ -10,8 +10,14 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 	function upgrade(
 		TvmCell code,
 		uint32 version,
-		TvmCell contract_params
+		TvmCell upgrade_params
 	) external override onlyRoot {
+		TvmCell contract_params = abi.encode(
+			dex_root_address,
+			wever_root,
+			wallets_mapping,
+			upgrade_params
+		);
 		TvmCell data = abi.encode(
 			root,
 			current_version,
@@ -20,10 +26,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 			platform_code,
 			platform_params,
 			contract_params,
-			code,
-			dex_root_address,
-			wever_root,
-			wallets_mapping
+			code
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -49,35 +52,25 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 			data,
 			(address, uint32, uint32, uint8, TvmCell, TvmCell, TvmCell, TvmCell)
 		);
-		if (old_version > 0 && contract_params.toSlice().empty()) {
+		if (old_version > 0) {
+			TvmCell upgrade_params;
 			(
-				,
-				,
-				,
-				,
-				,
-				,
-				,
-				,
 				dex_root_address,
 				wever_root,
-				wallets_mapping
+				wallets_mapping,
+				upgrade_params
 			) = abi.decode(
 				data,
 				(
 					address,
-					uint32,
-					uint32,
-					uint8,
-					TvmCell,
-					TvmCell,
-					TvmCell,
-					TvmCell,
 					address,
-					address,
-                    mapping(address => BalanceWalletStruct)
+					mapping(address => BalanceWalletStruct),
+					TvmCell
 				)
 			);
+			if (!upgrade_params.toSlice().empty()) {
+				// parse upgrade data
+			}
 		} else if (old_version == 0) {
 			(
 				dex_root_address,
