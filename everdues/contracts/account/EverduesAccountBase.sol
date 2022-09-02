@@ -402,6 +402,7 @@ abstract contract EverduesAccountBase is
 	function upgradeService(
 		string service_name,
 		string category,
+		bool publish_to_catalog,
 		uint128 additional_gas
 	) external view onlyOwner {
 		IEverduesRoot(root).upgradeService{
@@ -410,7 +411,7 @@ abstract contract EverduesAccountBase is
 				EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
 			flag: 0
-		}(service_name, category, tvm.pubkey());
+		}(service_name, category, publish_to_catalog, tvm.pubkey());
 	}
 
 	function upgradeSubscription(

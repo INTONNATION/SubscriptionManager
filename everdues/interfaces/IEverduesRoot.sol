@@ -24,6 +24,7 @@ interface IEverduesRoot {
 	function upgradeService(
 		string service_name,
 		string category,
+		bool publish_to_catalog,
 		uint256 owner_pubkey
 	) external;
 

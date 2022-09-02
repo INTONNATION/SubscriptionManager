@@ -14,6 +14,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 	) external override onlyRoot {
 		TvmCell contract_params = abi.encode(
 			service_params,
+			subscription_plans,
 			subscription_service_index_address,
 			subscription_service_index_identificator_address,
 			status,
@@ -22,6 +23,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 			service_gas_compenstation,
 			subscription_gas_compenstation,
 			identificator,
+			abi_hash,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -41,11 +43,11 @@ contract EverduesService_V1 is EverduesServiceBase {
 	}
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
+		tvm.rawReserve(EverduesGas.SERVICE_INITIAL_BALANCE, 0);
 		tvm.resetStorage();
 		address send_gas_to;
 		uint32 old_version;
 		TvmCell contract_params;
-		// check that contract deployed from root
 		(
 			root,
 			send_gas_to,

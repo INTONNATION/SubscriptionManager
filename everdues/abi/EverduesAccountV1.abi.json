@@ -109,6 +109,7 @@
 			"inputs": [
 				{"name":"service_name","type":"string"},
 				{"name":"category","type":"string"},
+				{"name":"publish_to_catalog","type":"bool"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
