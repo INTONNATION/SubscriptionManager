@@ -233,6 +233,14 @@
 			]
 		},
 		{
+			"name": "root_pubkey",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root_pubkey","type":"uint256"}
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
@@ -293,11 +301,11 @@
 		{"name":"service_params","type":"cell"},
 		{"name":"identificator","type":"cell"},
 		{"name":"abi_hash","type":"uint256"},
+		{"name":"root_pubkey","type":"uint256"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},
 		{"name":"service_address","type":"address"},
-		{"name":"root_pubkey","type":"uint256"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"preprocessing_window","type":"uint32"},
 		{"name":"type_id","type":"uint8"},
