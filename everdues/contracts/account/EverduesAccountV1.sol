@@ -60,7 +60,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 				wallets_mapping,
 				upgrade_params
 			) = abi.decode(
-				data,
+				contract_params,
 				(
 					address,
 					address,

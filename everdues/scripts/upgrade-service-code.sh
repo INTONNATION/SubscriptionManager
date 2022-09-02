@@ -16,8 +16,8 @@ fi
 CONTRACT_NAME=EverduesRoot
 
 function deploy {
-CONTRACT_ADDRESS=`cat EverduesRoot.addr`
-owner=`cat single.msig.addr| grep "Raw address" | awk '{print $3}'`
+CONTRACT_ADDRESS=`cat ./envs/$2-EverduesRoot.addr`
+owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`
 
 # TVC
 subscriptionServiceCode=$(tvm_linker decode --tvc  ../abi/EverduesServiceV1.tvc | grep code: | awk '{ print $2 }')
@@ -29,18 +29,18 @@ abiIndexContract=$(cat ../abi/Index.abi.json | jq -c .| base64 $prefix)
 
 # Set TVCs
 message=`tonos-cli -j body setCodeService "{\"codeServiceInput\":\"$subscriptionServiceCode\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
-tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body setCodeIndex "{\"codeIndexInput\":\"$indexCode\"}"  --abi ../abi/$1.abi.json  | jq -r .Message`
-tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
 #
 ## SET ABIs
 message=`tonos-cli -j body setAbiServiceContract "{\"abiServiceContractInput\":\"$abiServiceContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
-tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body setAbiIndexContract "{\"abiIndexContractInput\":\"$abiIndexContract\"}" --abi ../abi/$1.abi.json | jq -r .Message`
-tonos-cli callex submitTransaction $owner ../abi/SafeMultisigWallet.abi.json devnet.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 }
-deploy $CONTRACT_NAME
+deploy $CONTRACT_NAME $1
 CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
 
-echo $CONTRACT_ADDRESS
+echo $CONTRACT_ADDRESS $1

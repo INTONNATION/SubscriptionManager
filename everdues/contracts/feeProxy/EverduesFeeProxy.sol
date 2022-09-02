@@ -79,7 +79,7 @@ contract EverduesFeeProxy is EverduesFeeProxyBase {
 				wallets_mapping,
 				upgrade_params
 			) = abi.decode(
-				upgrade_data,
+				contract_params,
 				(
 					address,
 					address,

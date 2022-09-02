@@ -28,6 +28,10 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			subscription_plan,
 			service_pubkey,
 			compensate_subscription_deploy,
+			identificator,
+			abi_hash,
+			service_params,
+			subscription_params,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -136,9 +140,11 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				compensate_subscription_deploy,
 				identificator,
 				abi_hash,
+				service_params,
+				subscription_params,
 				upgrade_params
 			) = abi.decode(
-				upgrade_data,
+				contract_params,
 				(
 					EverduesSubscriptionStorage.paymentStatus,
 					address,
@@ -157,6 +163,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					bool,
 					TvmCell,
 					uint256,
+					TvmCell,
+					TvmCell,
 					TvmCell
 				)
 			);
