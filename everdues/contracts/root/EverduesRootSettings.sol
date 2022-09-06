@@ -268,6 +268,10 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		external
 		onlyOwner
 	{
+		require(
+			!has_platform_abi,
+			EverduesErrors.error_platform_code_is_not_empty
+		);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
