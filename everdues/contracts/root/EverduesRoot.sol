@@ -22,6 +22,7 @@ contract EverduesRoot is EverduesRootBase {
 			owner,
 			versions,
 			has_platform_code,
+			has_platform_abi,
 			fee_proxy_address,
 			categories,
 			service_fee,
@@ -52,6 +53,7 @@ contract EverduesRoot is EverduesRootBase {
 			owner,
 			versions,
 			has_platform_code,
+			has_platform_abi,
 			fee_proxy_address,
 			categories,
 			service_fee,
@@ -74,6 +76,7 @@ contract EverduesRoot is EverduesRootBase {
 			(
 				address,
 				mapping(uint8 => mapping(uint32 => ContractParams)),
+				bool,
 				bool,
 				address,
 				string[],
