@@ -280,7 +280,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			2
 		);
 		abiPlatformContract = abiPlatformContractInput;
-		has_platform_code = true;
+		has_platform_abi = true;
 		owner.transfer({
 			value: 0,
 			bounce: false,
