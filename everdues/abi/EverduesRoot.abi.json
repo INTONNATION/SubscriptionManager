@@ -593,8 +593,6 @@
 		{"name":"service_gas_compenstation","type":"uint8"},
 		{"name":"subscription_gas_compenstation","type":"uint8"},
 		{"name":"categories","type":"string[]"},
-		{"name":"has_platform_code","type":"bool"},
-		{"name":"has_platform_abi","type":"bool"},
 		{"name":"account_threshold","type":"uint128"},
 		{"name":"recurring_payment_gas","type":"uint128"},
 		{"name":"abiPlatformContract","type":"string"},

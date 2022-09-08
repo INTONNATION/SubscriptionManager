@@ -623,7 +623,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				ContractTypes.Service,
 				_buildServicePlatformParams(owner_address, service_name)
 			),
-			value: EverduesGas.DEPLOY_SERVICE_VALUE_ROOT + additional_gas,
+			value: EverduesGas.SERVICE_INITIAL_BALANCE + EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			service_code_salt,
