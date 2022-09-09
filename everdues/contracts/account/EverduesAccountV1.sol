@@ -16,6 +16,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 			dex_root_address,
 			wever_root,
 			wallets_mapping,
+			abi_hash,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -58,6 +59,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 				dex_root_address,
 				wever_root,
 				wallets_mapping,
+				abi_hash,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -65,6 +67,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 					address,
 					address,
 					mapping(address => BalanceWalletStruct),
+					uint256,
 					TvmCell
 				)
 			);
@@ -74,12 +77,13 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 		} else if (old_version == 0) {
 			(
 				dex_root_address,
-				wever_root, /*address tip3_to_ever_address*/
-				,
-				account_gas_threshold
+				wever_root,
+				/*address tip3_to_ever_address*/,
+				account_gas_threshold,
+				abi_hash
 			) = abi.decode(
 				contract_params,
-				(address, address, address, uint128)
+				(address, address, address, uint128, uint256)
 			);
 		}
 		emit AccountDeployed(current_version);

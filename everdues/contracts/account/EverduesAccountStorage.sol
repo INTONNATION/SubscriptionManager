@@ -14,6 +14,7 @@ abstract contract EverduesAccountStorage {
 	TvmCell platform_code;
 	TvmCell platform_params;
 	uint128 account_gas_threshold;
+	uint256 public abi_hash;
 
 	struct BalanceWalletStruct {
 		address wallet;

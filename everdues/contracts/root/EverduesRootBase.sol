@@ -422,13 +422,6 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			),
 			2
 		);
-
-		TvmCell account_params = abi.encode(
-			dex_root_address,
-			wever_root,
-			tip3_to_ever_address,
-			account_threshold
-		);
 		optional(uint32, ContractParams) latest_version_opt = versions[
 			ContractTypes.Account
 		].max();
@@ -436,6 +429,13 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			uint32 latest_version,
 			ContractParams latest_params
 		) = latest_version_opt.get();
+		TvmCell account_params = abi.encode(
+			dex_root_address,
+			wever_root,
+			tip3_to_ever_address,
+			account_threshold,
+			tvm.hash(latest_params.contractAbi)
+		);
 		Platform(msg.sender).initializeByRoot{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
