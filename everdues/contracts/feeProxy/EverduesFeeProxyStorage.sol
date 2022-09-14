@@ -7,7 +7,7 @@ import "../Platform.sol";
 
 abstract contract EverduesFeeProxyStorage {
 	address public root;
-	address public mtds_root_address;
+	address public dues_root_address;
 	address public dex_root_address;
 	uint32 public current_version;
 	uint128 public account_threshold = 4 ever; // default value

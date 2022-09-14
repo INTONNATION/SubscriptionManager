@@ -14,7 +14,7 @@ contract EverduesFeeProxy is EverduesFeeProxyBase {
 	) external onlyRoot {
 		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
 		TvmCell contract_params = abi.encode(
-			mtds_root_address,
+			dues_root_address,
 			dex_root_address,
 			wallets_mapping,
 			upgrade_params
@@ -74,7 +74,7 @@ contract EverduesFeeProxy is EverduesFeeProxyBase {
 		} else if (old_version > 0) {
 			TvmCell upgrade_params;
 			(
-				mtds_root_address,
+				dues_root_address,
 				dex_root_address,
 				wallets_mapping,
 				upgrade_params

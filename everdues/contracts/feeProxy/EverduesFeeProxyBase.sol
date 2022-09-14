@@ -47,7 +47,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		}
 	}
 
-	function swapRevenueToMTDS(address currency_root, address send_gas_to)
+	function swapRevenueToDUES(address currency_root, address send_gas_to)
 		external
 		onlyRoot
 	{
@@ -76,7 +76,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 					flag: MsgFlag.ALL_NOT_RESERVED,
 					bounce: false,
 					callback: EverduesFeeProxyBase.onGetExpectedPairAddress
-				}(mtds_root_address, currency_root);
+				}(dues_root_address, currency_root);
 			}
 		} else {
 			send_gas_to.transfer({
@@ -263,7 +263,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			2
 		);
 		optional(BalanceWalletStruct) currency_root_wallet_opt = wallets_mapping
-			.fetch(mtds_root_address);
+			.fetch(dues_root_address);
 		if (!currency_root_wallet_opt.hasValue()) {
 			BalanceWalletStruct currency_root_wallet_struct = currency_root_wallet_opt
 					.get();

@@ -28,7 +28,7 @@
 			]
 		},
 		{
-			"name": "swapRevenueToMTDS",
+			"name": "swapRevenueToDUES",
 			"inputs": [
 				{"name":"currency_root","type":"address"},
 				{"name":"send_gas_to","type":"address"}
@@ -114,9 +114,9 @@
 			]
 		},
 		{
-			"name": "setMTDSRootAddress",
+			"name": "setDUESRootAddress",
 			"inputs": [
-				{"name":"mtds_root","type":"address"},
+				{"name":"dues_root","type":"address"},
 				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
@@ -164,11 +164,11 @@
 			]
 		},
 		{
-			"name": "mtds_root_address",
+			"name": "dues_root_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"mtds_root_address","type":"address"}
+				{"name":"dues_root_address","type":"address"}
 			]
 		},
 		{
@@ -221,7 +221,7 @@
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"root","type":"address"},
-		{"name":"mtds_root_address","type":"address"},
+		{"name":"dues_root_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"current_version","type":"uint32"},
 		{"name":"account_threshold","type":"uint128"},
