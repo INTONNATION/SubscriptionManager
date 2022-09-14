@@ -11,4 +11,3 @@ debots/tests/*.conf.json
 *.name
 .vscode
 .DS_Store
-abi/*.abi.json

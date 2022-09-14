@@ -21,7 +21,6 @@ contract EverduesRoot is EverduesRootBase {
 		TvmCell upgrade_data = abi.encode(
 			owner,
 			versions,
-			has_platform_code,
 			fee_proxy_address,
 			categories,
 			service_fee,
@@ -51,7 +50,6 @@ contract EverduesRoot is EverduesRootBase {
 		(
 			owner,
 			versions,
-			has_platform_code,
 			fee_proxy_address,
 			categories,
 			service_fee,
@@ -74,7 +72,6 @@ contract EverduesRoot is EverduesRootBase {
 			(
 				address,
 				mapping(uint8 => mapping(uint32 => ContractParams)),
-				bool,
 				address,
 				string[],
 				uint8,

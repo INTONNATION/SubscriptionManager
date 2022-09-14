@@ -23,7 +23,6 @@ abstract contract EverduesRootStorage {
 	uint8 subscription_gas_compenstation;
 
 	string[] categories;
-	bool has_platform_code;
 	uint128 account_threshold = 4 ever; // default value
 	uint128 recurring_payment_gas = 0.4 ever; // default value
 
