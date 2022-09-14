@@ -76,7 +76,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(mtds_revenue_accumulator_address, owner);
+		}(dues_revenue_accumulator_address, owner);
 	}
 
 	function swapRevenue(address currency_root) external view onlyOwner {
@@ -91,7 +91,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			),
 			2
 		);
-		IEverduesFeeProxy(fee_proxy_address).swapRevenueToMTDS{
+		IEverduesFeeProxy(fee_proxy_address).swapRevenueToDUES{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED

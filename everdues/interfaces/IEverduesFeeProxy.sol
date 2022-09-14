@@ -26,14 +26,14 @@ interface IEverduesFeeProxy {
 		address send_gas_to
 	) external;
 
-	function setMTDSRootAddress(address mtds_root, address send_gas_to)
+	function setDUESRootAddress(address dues_root, address send_gas_to)
 		external;
 
 	function setDexRootAddress(address dex_root, address send_gas_to) external;
 
 	function transferRevenue(address revenue_to, address send_gas_to) external;
 
-	function swapRevenueToMTDS(address currency_root, address send_gas_to)
+	function swapRevenueToDUES(address currency_root, address send_gas_to)
 		external;
 
 	function syncBalance(address currency_root, address send_gas_to) external;
