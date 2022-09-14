@@ -32,7 +32,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 
 	function setCodePlatform(TvmCell codePlatformInput) external onlyOwner {
 		require(
-			!has_platform_code,
+			codePlatform.toSlice().empty(),
 			EverduesErrors.error_platform_code_is_not_empty
 		);
 		tvm.rawReserve(
@@ -43,7 +43,6 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			2
 		);
 		codePlatform = codePlatformInput;
-		has_platform_code = true;
 		owner.transfer({
 			value: 0,
 			bounce: false,
@@ -268,6 +267,10 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		external
 		onlyOwner
 	{
+		require(
+			abiPlatformContract.empty(),
+			EverduesErrors.error_platform_code_is_not_empty
+		);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
