@@ -796,7 +796,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		TvmBuilder currencies_cell;
 		currencies_cell.store(currencies);
 		TvmCell fee_proxy_contract_params = currencies_cell.toCell();
-		IEverduesFeeProxy(fee_proxy_address).setSupportedCurrencies{
+		IEverduesFeeProxy(fee_proxy_address).updateSupportedCurrencies{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED

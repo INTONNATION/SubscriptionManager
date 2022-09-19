@@ -1,6 +1,6 @@
 {
 	"ABI version": 2,
-	"version": "2.3",
+	"version": "2.2",
 	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
@@ -37,6 +37,16 @@
 		{
 			"name": "transferRevenueFromFeeProxy",
 			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "swapRevenueToEver",
+			"inputs": [
+				{"name":"amount","type":"uint128"},
+				{"name":"currency_root","type":"address"},
+				{"name":"dex_ever_pair_address","type":"address"}
 			],
 			"outputs": [
 			]
