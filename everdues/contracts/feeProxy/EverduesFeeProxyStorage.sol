@@ -20,12 +20,16 @@ abstract contract EverduesFeeProxyStorage {
 	struct BalanceWalletStruct {
 		address wallet;
 		uint128 balance;
-		address dex_ever_pair_address;
+	}
+	struct SyncWalletBalanceStruct {
+		address send_gas_to;
+		address currency_root;
 	}
 
 	mapping(address => BalanceWalletStruct) public wallets_mapping;
 	// token_root -> send_gas_to
 	mapping(address => address) _tmp_deploying_wallets;
+	mapping(address => SyncWalletBalanceStruct) _tmp_sync_wallets;
 
 	function _buildSubscriptionParams(
 		address subscription_owner,

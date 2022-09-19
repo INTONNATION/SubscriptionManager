@@ -79,6 +79,25 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(dues_revenue_accumulator_address, owner);
 	}
 
+	function swapRevenueToEver(uint128 amount, address currency_root, address dex_ever_pair_address) external view onlyOwner {
+		require(
+			fee_proxy_address != address(0),
+			EverduesErrors.error_address_is_empty
+		);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		IEverduesFeeProxy(fee_proxy_address).swapTIP3ToEver{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(amount, currency_root, dex_ever_pair_address, tip3_to_ever_address);		
+	}
+
 	function swapRevenue(address currency_root) external view onlyOwner {
 		require(
 			fee_proxy_address != address(0),
