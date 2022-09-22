@@ -8,7 +8,7 @@ import "../Platform.sol";
 abstract contract EverduesAccountStorage {
 	uint32 current_version;
 	uint8 type_id;
-	address root;
+	address public root;
 	address dex_root_address;
 	address wever_root;
 	TvmCell platform_code;
