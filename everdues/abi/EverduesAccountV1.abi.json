@@ -201,6 +201,14 @@
 			]
 		},
 		{
+			"name": "root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root","type":"address"}
+			]
+		},
+		{
 			"name": "abi_hash",
 			"inputs": [
 			],
