@@ -8,6 +8,7 @@ FLD=https://gql.custler.net
 NETWORK=$MAINNET
 
 tonos-cli config --url $NETWORK --lifetime 60
+everdev sol version
 
 if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
