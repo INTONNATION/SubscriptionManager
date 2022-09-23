@@ -9,6 +9,12 @@ NETWORK=$MAINNET
 
 tonos-cli config --url $NETWORK
 
+everdev sol set --compiler 0.64.0
+everdev sol set --linker 0.16.4
+
+everdev sol version
+everdev tonos-cli version
+
 if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
