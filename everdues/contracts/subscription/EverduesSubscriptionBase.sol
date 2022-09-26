@@ -21,6 +21,14 @@ abstract contract EverduesSubscriptionBase is
 		revert();
 	}
 
+	onBounce(TvmSlice slice) external {
+		uint32 functionId = slice.decode(uint32);
+
+		if (functionId == tvm.functionId(IEverduesService.getInfo)) {
+			subscription.status = EverduesSubscriptionStatus.STATUS_STOPPED;
+		}
+	}
+
 	function upgradeSubscriptionPlan(uint8 new_subscription_plan)
 		external
 		override
