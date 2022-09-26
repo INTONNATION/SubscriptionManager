@@ -63,8 +63,7 @@ abstract contract EverduesSubscriptionBase is
 		if (subscription.period != 0) {
 			if (
 				now >
-				(subscription.payment_timestamp +
-					svcparams.period -
+				(subscription.payment_timestamp -
 					preprocessing_window)
 			) {
 				tvm.accept();
