@@ -82,7 +82,7 @@ abstract contract EverduesServiceStorage is IEverduesService {
 	{
 		tvm.rawReserve(
 			math.max(
-				EverduesGas.SERVICE_INITIAL_BALANCE,
+				EverduesGas.ROOT_INITIAL_BALANCE,
 				address(this).balance - msg.value
 			),
 			2
