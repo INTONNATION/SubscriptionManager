@@ -105,8 +105,8 @@ abstract contract EverduesAccountBase is
 		uint128 additional_gas
 	) external override onlyFeeProxy {
 		uint128 recurring_payment_gas;
-		if (msg.value > 1 ever) {
-			recurring_payment_gas = msg.value - 1 ever;
+		if (msg.value > 2 ever) {
+			recurring_payment_gas = msg.value - 2 ever;
 		} else {
 			recurring_payment_gas = recurring_payment_gas_;
 		}
@@ -134,7 +134,7 @@ abstract contract EverduesAccountBase is
 				if (subscription_deploy) {
 					IEverduesService(service_address)
 						.getGasCompenstationProportion{
-						value: 1 ever,
+						value: 2 ever,
 						bounce: true,
 						flag: MsgFlag.SENDER_PAYS_FEES,
 						callback: EverduesAccountBase
@@ -143,7 +143,7 @@ abstract contract EverduesAccountBase is
 				} else {
 					IDexPair(current_balance_key_value.dex_ever_pair_address)
 						.expectedSpendAmount{
-						value: 1 ever,
+						value: 2 ever,
 						bounce: true,
 						flag: MsgFlag.SENDER_PAYS_FEES,
 						callback: EverduesAccountBase.onExpectedExchange
