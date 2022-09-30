@@ -42,6 +42,16 @@
 			]
 		},
 		{
+			"name": "swapRevenueToEver",
+			"inputs": [
+				{"name":"amount","type":"uint128"},
+				{"name":"currency_root","type":"address"},
+				{"name":"dex_ever_pair_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "swapRevenue",
 			"inputs": [
 				{"name":"currency_root","type":"address"}
@@ -60,6 +70,14 @@
 		{
 			"name": "upgradeFeeProxy",
 			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "forceDestroyAccount",
+			"inputs": [
+				{"name":"account_address","type":"address"}
 			],
 			"outputs": [
 			]
@@ -359,7 +377,7 @@
 			]
 		},
 		{
-			"name": "installOrUpgradeMTDSRevenueDelegationAddress",
+			"name": "installOrUpgradeDUESRevenueDelegationAddress",
 			"inputs": [
 				{"name":"revenue_to","type":"address"}
 			],
@@ -383,9 +401,9 @@
 			]
 		},
 		{
-			"name": "installOrUpgradeMTDSRootAddress",
+			"name": "installOrUpgradeDUESRootAddress",
 			"inputs": [
-				{"name":"mtds_root_","type":"address"}
+				{"name":"dues_root","type":"address"}
 			],
 			"outputs": [
 			]
@@ -492,19 +510,19 @@
 			]
 		},
 		{
-			"name": "mtds_root_address",
+			"name": "dues_root_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"mtds_root_address","type":"address"}
+				{"name":"dues_root_address","type":"address"}
 			]
 		},
 		{
-			"name": "mtds_revenue_accumulator_address",
+			"name": "dues_revenue_accumulator_address",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"mtds_revenue_accumulator_address","type":"address"}
+				{"name":"dues_revenue_accumulator_address","type":"address"}
 			]
 		},
 		{
@@ -582,8 +600,8 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"fee_proxy_address","type":"address"},
 		{"name":"owner","type":"address"},
-		{"name":"mtds_root_address","type":"address"},
-		{"name":"mtds_revenue_accumulator_address","type":"address"},
+		{"name":"dues_root_address","type":"address"},
+		{"name":"dues_revenue_accumulator_address","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"wever_root","type":"address"},
 		{"name":"pending_owner","type":"address"},

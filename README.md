@@ -12,7 +12,7 @@ Before do any action please install Everdev utility and use the following comman
     https://github.com/tonlabs/everdev
 
  - Use this command to configure expected versions:
-   `$everdev sol set --compiler 0.61.2 --linker 0.14.37 --stdlib 0.57.3`
+   `$everdev sol set --compiler 0.64.0 --linker 0.16.4`
 
 ###### JUST NOTE you must have cloned all git submodules of this repo, check this point in other case use this command: 
 

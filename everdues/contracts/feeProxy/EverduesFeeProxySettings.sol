@@ -44,7 +44,7 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 		_;
 	}
 
-	function setMTDSRootAddress(address mtds_root, address send_gas_to)
+	function setDUESRootAddress(address dues_root, address send_gas_to)
 		external
 		onlyRoot
 	{
@@ -55,7 +55,7 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 			),
 			2
 		);
-		mtds_root_address = mtds_root;
+		dues_root_address = dues_root;
 		send_gas_to.transfer({
 			value: 0,
 			bounce: false,
@@ -82,9 +82,10 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 		});
 	}
 
-	function setRecurringPaymentGas(
-		uint128 recurring_payment_gas_
-	) external onlyRoot {
+	function setRecurringPaymentGas(uint128 recurring_payment_gas_)
+		external
+		onlyRoot
+	{
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,

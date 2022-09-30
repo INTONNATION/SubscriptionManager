@@ -3,7 +3,7 @@ set -xe
 
 LOCALNET=http://127.0.0.1
 DEVNET=net.ton.dev
-MAINNET=https://main.ton.dev
+MAINNET=https://mainnet.evercloud.dev/a0b43df808ec4afe8d75ef8bdc3054d3
 FLD=https://gql.custler.net
 NETWORK=$MAINNET
 

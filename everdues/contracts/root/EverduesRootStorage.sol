@@ -11,8 +11,8 @@ import "../../libraries/ContractTypes.sol";
 abstract contract EverduesRootStorage {
 	address public fee_proxy_address;
 	address public owner;
-	address public mtds_root_address;
-	address public mtds_revenue_accumulator_address;
+	address public dues_root_address;
+	address public dues_revenue_accumulator_address;
 	address public dex_root_address;
 	address public wever_root;
 	address public pending_owner;

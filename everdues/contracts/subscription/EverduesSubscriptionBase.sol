@@ -21,6 +21,14 @@ abstract contract EverduesSubscriptionBase is
 		revert();
 	}
 
+	onBounce(TvmSlice slice) external {
+		uint32 functionId = slice.decode(uint32);
+
+		if (functionId == tvm.functionId(IEverduesService.getInfo)) {
+			subscription.status = EverduesSubscriptionStatus.STATUS_STOPPED;
+		}
+	}
+
 	function upgradeSubscriptionPlan(uint8 new_subscription_plan)
 		external
 		override
@@ -63,8 +71,7 @@ abstract contract EverduesSubscriptionBase is
 		if (subscription.period != 0) {
 			if (
 				now >
-				(subscription.payment_timestamp +
-					svcparams.period -
+				(subscription.payment_timestamp -
 					preprocessing_window)
 			) {
 				tvm.accept();
@@ -202,7 +209,11 @@ abstract contract EverduesSubscriptionBase is
 				payload
 			);
 		}
-		subscription.payment_timestamp = uint32(now) + subscription.period;
+		if (subscription.payment_timestamp == 0) {
+			subscription.payment_timestamp = uint32(now) + subscription.period;
+		} else {
+			subscription.payment_timestamp = subscription.payment_timestamp + subscription.period;
+		}
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		compensate_subscription_deploy = false;
 		emit subscriptionExecuted();
