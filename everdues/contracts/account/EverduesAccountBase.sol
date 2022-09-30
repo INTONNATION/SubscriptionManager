@@ -262,7 +262,7 @@ abstract contract EverduesAccountBase is
 				payload
 			);
 			uint128 balance_after_pay = current_balance_key.balance -
-				last_operation.value;
+				last_operation.value - value_gas_compensation;
 			current_balance_key.balance = balance_after_pay;
 			wallets_mapping[last_operation.currency_root] = current_balance_key;
 			_tmp_subscription_operations.delMin();
