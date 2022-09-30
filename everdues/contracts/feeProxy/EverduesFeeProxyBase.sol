@@ -21,8 +21,8 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 	function onAcceptTokensTransfer(
 		address tokenRoot,
 		uint128 amount,
-		address, /*sender*/
-		address, /*senderWallet*/
+		address /*sender*/,
+		address /*senderWallet*/,
 		address remainingGasTo,
 		TvmCell /*payload*/
 	) external {
@@ -38,7 +38,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			current_balance_key.balance += amount;
 			wallets_mapping[tokenRoot] = current_balance_key;
 		}
-		if (remainingGasTo != address(this)){
+		if (remainingGasTo != address(this)) {
 			remainingGasTo.transfer({
 				value: 0,
 				bounce: false,
@@ -47,7 +47,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		}
 	}
 
-	function swapRevenueToMTDS(address currency_root, address send_gas_to)
+	function swapRevenueToDUES(address currency_root, address send_gas_to)
 		external
 		onlyRoot
 	{
@@ -63,7 +63,6 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			EverduesErrors.error_address_is_empty
 		); // mutex
 		_tmp_swap_currency_root_ = currency_root; // critical area
-		_tmp_deploying_wallets[currency_root] = send_gas_to;
 		optional(
 			BalanceWalletStruct
 		) current_balance_struct_opt = wallets_mapping.fetch(currency_root);
@@ -76,7 +75,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 					flag: MsgFlag.ALL_NOT_RESERVED,
 					bounce: false,
 					callback: EverduesFeeProxyBase.onGetExpectedPairAddress
-				}(mtds_root_address, currency_root);
+				}(dues_root_address, currency_root);
 			}
 		} else {
 			send_gas_to.transfer({
@@ -99,12 +98,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			2
 		);
 		require(
-			msg.value > EverduesGas.MESSAGE_MIN_VALUE,
-			EverduesErrors.error_message_low_value
-		);
-		require(
-			_tmp_deploying_wallets.exists(_tmp_swap_currency_root_) &&
-				!wallets_mapping.exists(_tmp_swap_currency_root_),
+			wallets_mapping.exists(_tmp_swap_currency_root_),
 			EverduesErrors.error_wallet_not_exist
 		);
 		TvmBuilder builder;
@@ -116,26 +110,20 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(_tmp_swap_currency_root_);
 		BalanceWalletStruct current_balance_key = current_balance_struct.get();
-		address send_gas_to = _tmp_deploying_wallets[_tmp_swap_currency_root_];
 		ITokenWallet(current_balance_key.wallet).transfer{
-			value: EverduesGas.MESSAGE_MIN_VALUE,
-			flag: MsgFlag.SENDER_PAYS_FEES
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED
 		}(
 			current_balance_key.balance, // amount
 			dex_pair_address, // recipient
 			0, // deployWalletValue
-			send_gas_to, // remainingGasTo
+			address(this), // remainingGasTo
 			true, // notify
 			builder.toCell() // payload
 		);
 		current_balance_key.balance = 0;
 		wallets_mapping[_tmp_swap_currency_root_] = current_balance_key;
 		_tmp_swap_currency_root_ = address(0); // free mutex
-		send_gas_to.transfer({
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.ALL_NOT_RESERVED
-		});
 	}
 
 	function executePaySubscription(
@@ -162,7 +150,15 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			value: gas_,
 			bounce: true,
 			flag: 0
-		}(value, currency_root, subscription_wallet, service_address, subscription_deploy, recurring_payment_gas, additional_gas);
+		}(
+			value,
+			currency_root,
+			subscription_wallet,
+			service_address,
+			subscription_deploy,
+			recurring_payment_gas,
+			additional_gas
+		);
 	}
 
 	function swapTIP3ToEver(
@@ -193,7 +189,14 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		ITokenWallet(current_balance_key.wallet).transfer{
 			value: 0,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(amount, tip3_to_ever_address, 0, root, true, payload.toCell());
+		}(
+			amount,
+			tip3_to_ever_address,
+			0,
+			address(this),
+			true,
+			payload.toCell()
+		);
 	}
 
 	function syncBalance(address currency_root, address send_gas_to)
@@ -207,11 +210,15 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			),
 			2
 		);
-		_tmp_deploying_wallets[currency_root] = send_gas_to;
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
 		BalanceWalletStruct current_balance_key = current_balance_struct.get();
 		address proxy_wallet = current_balance_key.wallet;
+		// currency root to struct
+		SyncWalletBalanceStruct _tmp_sync;
+		_tmp_sync.send_gas_to = send_gas_to;
+		_tmp_sync.currency_root = currency_root;
+		_tmp_sync_wallets[proxy_wallet] = _tmp_sync;
 		TIP3TokenWallet(proxy_wallet).balance{
 			value: MsgFlag.SENDER_PAYS_FEES,
 			flag: MsgFlag.ALL_NOT_RESERVED,
@@ -222,7 +229,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 
 	function onBalanceOf(uint128 balance_) external {
 		require(
-			_tmp_deploying_wallets.exists(msg.sender),
+			_tmp_sync_wallets.exists(msg.sender),
 			EverduesErrors.error_wallet_not_exist
 		);
 		tvm.rawReserve(
@@ -232,29 +239,24 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			),
 			2
 		);
-		address send_gas_to = _tmp_deploying_wallets[msg.sender];
-		uint128 balance_wallet = balance_;
+		SyncWalletBalanceStruct _tmp_sync = _tmp_sync_wallets[msg.sender];
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
-			.fetch(msg.sender);
+			.fetch(_tmp_sync.currency_root);
 		BalanceWalletStruct current_balance_key = current_balance_struct.get();
-		current_balance_key.balance = balance_wallet;
-		wallets_mapping[msg.sender] = current_balance_key;
-		send_gas_to.transfer({
+		current_balance_key.balance = balance_;
+		wallets_mapping[_tmp_sync.currency_root] = current_balance_key;
+		_tmp_sync.send_gas_to.transfer({
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
+		delete _tmp_sync_wallets[msg.sender];
 	}
 
 	function transferRevenue(address revenue_to, address send_gas_to)
 		external
-		view
 		onlyRoot
 	{
-		require(
-			msg.value >= (EverduesGas.TRANSFER_MIN_VALUE),
-			EverduesErrors.error_message_low_value
-		);
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -263,8 +265,8 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			2
 		);
 		optional(BalanceWalletStruct) currency_root_wallet_opt = wallets_mapping
-			.fetch(mtds_root_address);
-		if (!currency_root_wallet_opt.hasValue()) {
+			.fetch(dues_root_address);
+		if (currency_root_wallet_opt.hasValue()) {
 			BalanceWalletStruct currency_root_wallet_struct = currency_root_wallet_opt
 					.get();
 			TvmCell payload;
@@ -279,13 +281,15 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 				true,
 				payload
 			);
+			currency_root_wallet_struct.balance = 0;
+			wallets_mapping[dues_root_address] = currency_root_wallet_struct;
 		}
 	}
 
-	function updateSupportedCurrencies(
-		address[] currencies,
-		address send_gas_to
-	) internal inline {
+	function setSupportedCurrencies(address[] currencies, address send_gas_to)
+		internal
+		inline
+	{
 		for (address currency_root: currencies) {
 			// iteration over the array
 			optional(
@@ -308,7 +312,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		});
 	}
 
-	function setSupportedCurrencies(
+	function updateSupportedCurrencies(
 		TvmCell fee_proxy_contract_params,
 		address send_gas_to
 	) external onlyRoot {
@@ -370,5 +374,6 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
 		});
+		delete _tmp_deploying_wallets[msg.sender];
 	}
 }

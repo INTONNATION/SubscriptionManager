@@ -6,6 +6,8 @@ interface IEverduesAccount {
 	event Withdraw(address walletAddress, uint128 amount);
 	event BalanceSynced(uint128 balance);
 
+	function destroyAccount(address send_gas_to) external;
+	
 	function paySubscription(
 		uint128 value,
 		address currency_root,

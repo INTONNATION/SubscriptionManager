@@ -742,7 +742,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function installOrUpgradeMTDSRevenueDelegationAddress(address revenue_to)
+	function installOrUpgradeDUESRevenueDelegationAddress(address revenue_to)
 		external
 		onlyOwner
 	{
@@ -753,7 +753,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		mtds_revenue_accumulator_address = revenue_to;
+		dues_revenue_accumulator_address = revenue_to;
 		owner.transfer({
 			value: 0,
 			bounce: false,
@@ -796,14 +796,14 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		TvmBuilder currencies_cell;
 		currencies_cell.store(currencies);
 		TvmCell fee_proxy_contract_params = currencies_cell.toCell();
-		IEverduesFeeProxy(fee_proxy_address).setSupportedCurrencies{
+		IEverduesFeeProxy(fee_proxy_address).updateSupportedCurrencies{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(fee_proxy_contract_params, owner);
 	}
 
-	function installOrUpgradeMTDSRootAddress(address mtds_root_)
+	function installOrUpgradeDUESRootAddress(address dues_root)
 		external
 		onlyOwner
 	{
@@ -818,12 +818,12 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		mtds_root_address = mtds_root_;
-		IEverduesFeeProxy(fee_proxy_address).setMTDSRootAddress{
+		dues_root_address = dues_root;
+		IEverduesFeeProxy(fee_proxy_address).setDUESRootAddress{
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(mtds_root_address, owner);
+		}(dues_root_address, owner);
 	}
 
 	function installOrUpgradeDexRootAddresses(

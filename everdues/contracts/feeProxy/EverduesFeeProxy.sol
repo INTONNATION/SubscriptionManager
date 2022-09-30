@@ -12,11 +12,19 @@ contract EverduesFeeProxy is EverduesFeeProxyBase {
 		address send_gas_to,
 		TvmCell upgrade_params
 	) external onlyRoot {
-		tvm.rawReserve(EverduesGas.FEE_PROXY_INITIAL_BALANCE, 2);
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		TvmCell contract_params = abi.encode(
-			mtds_root_address,
+			dues_root_address,
 			dex_root_address,
 			wallets_mapping,
+			account_threshold,
+			recurring_payment_gas,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -70,13 +78,15 @@ contract EverduesFeeProxy is EverduesFeeProxyBase {
 				contract_params,
 				(address[])
 			);
-			updateSupportedCurrencies(supportedCurrencies, send_gas_to);
+			setSupportedCurrencies(supportedCurrencies, send_gas_to);
 		} else if (old_version > 0) {
 			TvmCell upgrade_params;
 			(
-				mtds_root_address,
+				dues_root_address,
 				dex_root_address,
 				wallets_mapping,
+				account_threshold,
+				recurring_payment_gas,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -84,6 +94,8 @@ contract EverduesFeeProxy is EverduesFeeProxyBase {
 					address,
 					address,
 					mapping(address => BalanceWalletStruct),
+					uint128,
+					uint128,
 					TvmCell
 				)
 			);

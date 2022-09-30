@@ -17,26 +17,31 @@ interface IEverduesFeeProxy {
 		address send_gas_to
 	) external;
 
-	function setRecurringPaymentGas(
-		uint128 recurring_payment_gas_
-	) external;
+	function setRecurringPaymentGas(uint128 recurring_payment_gas_) external;
 
-	function setSupportedCurrencies(
+	function updateSupportedCurrencies(
 		TvmCell fee_proxy_contract_params,
 		address send_gas_to
 	) external;
 
-	function setMTDSRootAddress(address mtds_root, address send_gas_to)
+	function setDUESRootAddress(address dues_root, address send_gas_to)
 		external;
 
 	function setDexRootAddress(address dex_root, address send_gas_to) external;
 
 	function transferRevenue(address revenue_to, address send_gas_to) external;
 
-	function swapRevenueToMTDS(address currency_root, address send_gas_to)
+	function swapRevenueToDUES(address currency_root, address send_gas_to)
 		external;
 
 	function syncBalance(address currency_root, address send_gas_to) external;
+
+	function swapTIP3ToEver(
+		uint128 amount,
+		address currency_root,
+		address dex_ever_pair_address,
+		address tip3_to_ever_address
+	) external;
 
 	function upgrade(
 		TvmCell code,

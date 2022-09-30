@@ -11,7 +11,7 @@ import "../../libraries/EverduesErrors.sol";
 import "../../interfaces/IEverduesAccount.sol";
 import "../../interfaces/IEverduesSubscription.sol";
 
-abstract contract EverduesAccountSettings is EverduesAccountStorage {
+abstract contract EverduesAccountSettings is EverduesAccountStorage, IEverduesAccount {
 	modifier onlyFeeProxy() {
 		address fee_proxy_address = address(
 			tvm.hash(
@@ -61,7 +61,7 @@ abstract contract EverduesAccountSettings is EverduesAccountStorage {
 		_;
 	}
 	
-	function destroyAccount(address send_gas_to) external onlyOwnerOrRoot {
+	function destroyAccount(address send_gas_to) external override onlyOwnerOrRoot {
 		selfdestruct(send_gas_to);
 	}
 }
