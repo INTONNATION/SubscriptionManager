@@ -156,7 +156,7 @@ abstract contract EverduesAccountBase is
 	function onGetGasCompenstationProportion(
 		uint8 service_gas_compenstation,
 		uint8 subscription_gas_compenstation
-	) external view {
+	) external {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ACCOUNT_INITIAL_BALANCE,
@@ -171,7 +171,6 @@ abstract contract EverduesAccountBase is
 		if (keyOpt.hasValue()) {
 			(uint64 call_id, SubscriptionOperation last_operation) = keyOpt
 				.get();
-			call_id;
 			require(
 				msg.sender == last_operation.service_address,
 				EverduesErrors.error_message_sender_is_not_service_address
@@ -187,6 +186,7 @@ abstract contract EverduesAccountBase is
 				);
 			BalanceWalletStruct current_balance_key = current_balance_struct
 				.get();
+			_tmp_subscription_operations[call_id] = last_operation;
 			IDexPair(current_balance_key.dex_ever_pair_address)
 				.expectedSpendAmount{
 				value: 0,
@@ -236,7 +236,6 @@ abstract contract EverduesAccountBase is
 					value_gas_compensation = expected_amount;
 				} else if (last_operation.subscription_gas_compenstation == 0) {
 					payload = abi.encode(expected_amount);
-					expected_amount = 0;
 				} else {
 					payload = abi.encode(
 						(expected_amount * 100) /
@@ -262,7 +261,7 @@ abstract contract EverduesAccountBase is
 				payload
 			);
 			uint128 balance_after_pay = current_balance_key.balance -
-				last_operation.value;
+				last_operation.value - value_gas_compensation;
 			current_balance_key.balance = balance_after_pay;
 			wallets_mapping[last_operation.currency_root] = current_balance_key;
 			_tmp_subscription_operations.delMin();
