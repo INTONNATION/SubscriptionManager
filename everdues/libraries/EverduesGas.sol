@@ -9,11 +9,11 @@ library EverduesGas {
 
     uint128 constant ACCOUNT_INITIAL_BALANCE                = 0.5 ever;
     uint128 constant SUBSCRIPTION_INITIAL_BALANCE           = 0.5 ever;
-    uint128 constant SERVICE_INITIAL_BALANCE                = 0.5 ever;
+    uint128 constant SERVICE_INITIAL_BALANCE                = 1 ever;
     uint128 constant INDEX_INITIAL_BALANCE                  = 0.1 ever;
 
     uint128 constant DEPLOY_SUBSCRIPTION_VALUE              = 0.5 ever;
-    uint128 constant DEPLOY_SERVICE_VALUE                   = 1.5 ever;
+    uint128 constant DEPLOY_SERVICE_VALUE                   = 2 ever;
     uint128 constant DEPLOY_EMPTY_WALLET_VALUE              = 0.5 ever;
     uint128 constant DEPLOY_EMPTY_WALLET_GRAMS              = 0.1 ever;
 
