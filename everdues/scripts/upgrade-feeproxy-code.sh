@@ -47,7 +47,7 @@ function deploy {
 CONTRACT_ADDRESS=`cat ./envs/$2-EverduesRoot.addr`
 #giver $CONTRACT_ADDRESS
 #echo DEPLOY $1 -----------------------------------------------
-owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`
+owner=`cat dev-single.msig.addr`
 
 # TVC
 feeProxyCode=$(tvm_linker decode --tvc  ../abi/EverduesFeeProxy.tvc | grep code: | awk '{ print $2 }')

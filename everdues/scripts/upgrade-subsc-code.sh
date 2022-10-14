@@ -17,7 +17,7 @@ CONTRACT_NAME=EverduesRoot
 
 function deploy {
 CONTRACT_ADDRESS=`cat ./envs/$2-EverduesRoot.addr`
-owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`
+owner=`cat dev-single.msig.addr`
 
 # TVC
 platformCode=$(tvm_linker decode --tvc ../abi/Platform.tvc | grep code: | awk '{ print $2 }')
@@ -49,3 +49,4 @@ echo $CONTRACT_ADDRESS
 }
 
 deploy $CONTRACT_NAME $1
+node upgrade-all-subscription-contracts.js $1
