@@ -1,0 +1,30 @@
+{
+  "name": "everdues-sdk",
+  "version": "1.1.0",
+  "files": [
+    "lib/**/*"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/INTONNATION/SubscriptionManager.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/INTONNATION/SubscriptionManager/issues"
+  },
+  "homepage": "https://github.com/INTONNATION/SubscriptionManager#readme",
+  "description": "",
+  "dependencies": {
+    "@eversdk/appkit": "0.3.1",
+    "@eversdk/core": "1.37.2",
+    "@eversdk/lib-node": "1.37.2",
+    "@eversdk/lib-web": "1.37.2"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+  }
+}
