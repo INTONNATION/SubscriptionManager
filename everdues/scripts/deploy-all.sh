@@ -78,7 +78,7 @@ echo DEPLOY $1 -----------------------------------------------
 # else
 #     owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`    
 # fi
-owner=`cat dev-single.msig.addr| grep "Raw address" | awk '{print $3}'`    
+owner=`cat dev-single.msig.addr`
 tonos-cli --url $NETWORK deploy ../abi/$1.tvc "{\"initial_owner\":\"$owner\"}" --sign ./envs/$params.keys.json --abi ../abi/$1.abi.json
 giver $CONTRACT_ADDRESS
 # Categories
@@ -102,7 +102,6 @@ abiServiceContract=$(cat ../abi/EverduesServiceV1.abi.json | jq -c .| base64 $pr
 abiIndexContract=$(cat ../abi/Index.abi.json | jq -c .| base64 $prefix)
 abiSubscriptionContract=$(cat ../abi/EverduesSubscriptionV1.abi.json | jq -c .| base64 $prefix)
 abiFeeProxyContract=$(cat ../abi/EverduesFeeProxy.abi.json | jq -c .| base64 $prefix)
-
 
 # Set TVCs
 message=`tonos-cli -j body setCodePlatform "{\"codePlatformInput\":\"$platformCode\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
@@ -163,6 +162,14 @@ message=`tonos-cli -j body setGasCompenstationProportion "{\"service_gas_compens
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body setRecurringPaymentGas "{\"recurring_payment_gas_\":\"400000000\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+# Deploy user contracts (service, account, subscription)
+cp owner.msig.keys.json ../../../everdues-sdk/test/keys.json
+cd ../../../everdues-sdk/deploy
+python3 make-local-config.py $2 $1
+cd ..
+npm i
+cd test
+npm run test-deploy-contracts-$1
 }
 
 deploy $CONTRACT_NAME $1
