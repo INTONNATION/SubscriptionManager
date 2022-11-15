@@ -152,7 +152,7 @@ message=`tonos-cli -j body installOrUpgradeDexRootAddresses "{\"dex_root\":\"0:5
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body installOrUpgradeWEVERRoot "{\"wever_root_\":\"0:a49cd4e158a9a15555e624759e2e4e766d22600b7800d891e46f9291f044a93d\"}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
-message=`tonos-cli -j body setDeployServiceParams "{\"currency_root\": \"0:a519f99bb5d6d51ef958ed24d337ad75a1c770885dcd42d51d6663f9fcdacfb2\", \"lock_amount\":\"100\"}" --abi ../abi/$1.abi.json | jq -r .Message`
+message=`tonos-cli -j body setDeployServiceParams "{\"currency_root\": \"0:a519f99bb5d6d51ef958ed24d337ad75a1c770885dcd42d51d6663f9fcdacfb2\", \"lock_amount\":\"1000000\"}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body setAccountGasThreshold "{\"account_threshold_\": \"4000000000\"}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
@@ -161,6 +161,10 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 message=`tonos-cli -j body setGasCompenstationProportion "{\"service_gas_compenstation_\": \"100\", \"subscription_gas_compenstation_\":\"0\"}" --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body setRecurringPaymentGas "{\"recurring_payment_gas_\":\"400000000\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"56\",\"contract_address\":\"0x3908b9B230FAcb6A2eA8c5F0af9a1BbC89F2b0F3\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+message=`tonos-cli -j body installOrUpgradeEverDuesWrappedTokens "{\"tip3_root\":\"0:0875c55fb8453636d78d65f471ce1aa0e2c2cc71cba7eab17dfdefd3706bd57d\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 # Deploy user contracts (service, account, subscription)
 cp owner.msig.keys.json ../../../everdues-sdk/test/keys.json
