@@ -14,6 +14,7 @@ interface IEverduesAccount {
 		address service_address,
 		address subscription_wallet,
 		bool subscription_deploy,
+		bool external_subscription,
 		uint128 recurring_payment_gas,
 		uint128 additional_gas
 	) external;

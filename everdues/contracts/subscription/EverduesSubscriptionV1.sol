@@ -32,6 +32,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			abi_hash,
 			service_params,
 			subscription_params,
+			external_subscription,
+			cross_chain_token,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -95,7 +97,10 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				owner_pubkey,
 				subscription_plan,
 				identificator,
-				abi_hash
+				abi_hash,
+				external_subscription,
+				cross_chain_token
+				
 			) = abi.decode(
 				contract_params,
 				(
@@ -110,7 +115,9 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					uint256,
 					uint8,
 					TvmCell,
-					uint256
+					uint256,
+					bool,
+					address
 				)
 			);
 			compensate_subscription_deploy = true;
@@ -142,6 +149,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				abi_hash,
 				service_params,
 				subscription_params,
+				external_subscription,
+				cross_chain_token,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -165,6 +174,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					uint256,
 					TvmCell,
 					TvmCell,
+					bool,
+					address,
 					TvmCell
 				)
 			);

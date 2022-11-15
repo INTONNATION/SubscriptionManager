@@ -50,10 +50,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setCodeEverduesAccount(TvmCell codeEverduesAccountInput)
-		external
-		onlyOwner
-	{
+	function setCodeEverduesAccount(
+		TvmCell codeEverduesAccountInput
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -141,10 +140,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setCodeSubscription(TvmCell codeSubscriptionInput)
-		external
-		onlyOwner
-	{
+	function setCodeSubscription(
+		TvmCell codeSubscriptionInput
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -263,10 +261,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 	}
 
 	// Set ABIs
-	function setAbiPlatformContract(string abiPlatformContractInput)
-		external
-		onlyOwner
-	{
+	function setAbiPlatformContract(
+		string abiPlatformContractInput
+	) external onlyOwner {
 		require(
 			abiPlatformContract.empty(),
 			EverduesErrors.error_platform_code_is_not_empty
@@ -336,10 +333,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setAbiEverduesRootContract(string abiEverduesRootContractInput)
-		external
-		onlyOwner
-	{
+	function setAbiEverduesRootContract(
+		string abiEverduesRootContractInput
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -355,10 +351,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setAbiTIP3RootContract(string abiTIP3RootContractInput)
-		external
-		onlyOwner
-	{
+	function setAbiTIP3RootContract(
+		string abiTIP3RootContractInput
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -392,10 +387,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setAbiServiceContract(string abiServiceContractInput)
-		external
-		onlyOwner
-	{
+	function setAbiServiceContract(
+		string abiServiceContractInput
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -440,10 +434,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setAbiSubscriptionContract(string abiSubscriptionContractInput)
-		external
-		onlyOwner
-	{
+	function setAbiSubscriptionContract(
+		string abiSubscriptionContractInput
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -491,10 +484,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setAbiIndexContract(string abiIndexContractInput)
-		external
-		onlyOwner
-	{
+	function setAbiIndexContract(
+		string abiIndexContractInput
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -538,10 +530,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setAbiFeeProxyContract(string abiFeeProxyContractInput)
-		external
-		onlyOwner
-	{
+	function setAbiFeeProxyContract(
+		string abiFeeProxyContractInput
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -576,10 +567,10 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function deleteVersion(uint8 contract_type, uint8 version_)
-		external
-		onlyOwner
-	{
+	function deleteVersion(
+		uint8 contract_type,
+		uint8 version_
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -617,10 +608,10 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setDeployServiceParams(address currency_root, uint128 lock_amount)
-		external
-		onlyOwner
-	{
+	function setDeployServiceParams(
+		address currency_root,
+		uint128 lock_amount
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -664,10 +655,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		wallets_mapping[msg.sender] = service_deploy_params;
 	}
 
-	function setAccountGasThreshold(uint128 account_threshold_)
-		external
-		onlyOwner
-	{
+	function setAccountGasThreshold(
+		uint128 account_threshold_
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -683,10 +673,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		}(account_threshold, owner);
 	}
 
-	function setRecurringPaymentGas(uint128 recurring_payment_gas_)
-		external
-		onlyOwner
-	{
+	function setRecurringPaymentGas(
+		uint128 recurring_payment_gas_
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -702,10 +691,10 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		}(recurring_payment_gas);
 	}
 
-	function setFees(uint8 service_fee_, uint8 subscription_fee_)
-		external
-		onlyOwner
-	{
+	function setFees(
+		uint8 service_fee_,
+		uint8 subscription_fee_
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -722,10 +711,10 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function setGasCompenstationProportion(uint8 service_gas_compenstation_, uint8 subscription_gas_compenstation_)
-		external
-		onlyOwner
-	{
+	function setGasCompenstationProportion(
+		uint8 service_gas_compenstation_,
+		uint8 subscription_gas_compenstation_
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -742,10 +731,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function installOrUpgradeDUESRevenueDelegationAddress(address revenue_to)
-		external
-		onlyOwner
-	{
+	function installOrUpgradeDUESRevenueDelegationAddress(
+		address revenue_to
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -777,11 +765,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
-	function installOrUpdateFeeProxyParams(address[] currencies)
-		external
-		view
-		onlyOwner
-	{
+	function installOrUpdateFeeProxyParams(
+		address[] currencies
+	) external view onlyOwner {
 		require(
 			fee_proxy_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -803,10 +789,35 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		}(fee_proxy_contract_params, owner);
 	}
 
-	function installOrUpgradeDUESRootAddress(address dues_root)
-		external
-		onlyOwner
-	{
+	function installOrUpgradeEverDuesWrappedTokens(
+		address tip3_root
+	) external onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		cross_chain_token = tip3_root;
+		ServiceDeployParams empty;
+		wallets_mapping[tip3_root] = empty;
+		ITokenRoot(tip3_root).deployWallet{
+			value: EverduesGas.DEPLOY_EMPTY_WALLET_VALUE,
+			bounce: false,
+			flag: MsgFlag.SENDER_PAYS_FEES,
+			callback: EverduesRootSettings.onDeployWallet
+		}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
+		IEverduesFeeProxy(fee_proxy_address).updateSupportedWrappedTokens{
+			value: 0,
+			bounce: true,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(tip3_root, owner);
+	}
+
+	function installOrUpgradeDUESRootAddress(
+		address dues_root
+	) external onlyOwner {
 		require(
 			fee_proxy_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -848,6 +859,25 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(dex_root_address, owner);
+	}
+
+	function installOrUpgradeCrossChainContractsAddresses(
+		uint8 chain_id,
+		uint256 contract_address
+	) external onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		cross_chain_proxies.add(chain_id, contract_address);
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function checkVersionCodeAlreadyExists(

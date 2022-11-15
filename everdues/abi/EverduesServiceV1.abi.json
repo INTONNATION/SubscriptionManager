@@ -190,6 +190,14 @@
 			]
 		},
 		{
+			"name": "supported_chains",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"supported_chains","type":"map(uint8,address)"}
+			]
+		},
+		{
 			"name": "wallet_balance",
 			"inputs": [
 			],
@@ -234,6 +242,7 @@
 		{"name":"service_gas_compenstation","type":"uint8"},
 		{"name":"subscription_gas_compenstation","type":"uint8"},
 		{"name":"subscription_plans","type":"map(uint8,cell)"},
+		{"name":"supported_chains","type":"map(uint8,address)"},
 		{"name":"root","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
