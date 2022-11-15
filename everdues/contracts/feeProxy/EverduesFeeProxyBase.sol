@@ -47,10 +47,10 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		}
 	}
 
-	function swapRevenueToDUES(address currency_root, address send_gas_to)
-		external
-		onlyRoot
-	{
+	function swapRevenueToDUES(
+		address currency_root,
+		address send_gas_to
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -86,10 +86,9 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		}
 	}
 
-	function onGetExpectedPairAddress(address dex_pair_address)
-		external
-		onlyDexRoot
-	{
+	function onGetExpectedPairAddress(
+		address dex_pair_address
+	) external onlyDexRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -203,10 +202,10 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		);
 	}
 
-	function syncBalance(address currency_root, address send_gas_to)
-		external
-		onlyRoot
-	{
+	function syncBalance(
+		address currency_root,
+		address send_gas_to
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -257,10 +256,10 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		delete _tmp_sync_wallets[msg.sender];
 	}
 
-	function transferRevenue(address revenue_to, address send_gas_to)
-		external
-		onlyRoot
-	{
+	function transferRevenue(
+		address revenue_to,
+		address send_gas_to
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -290,10 +289,10 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		}
 	}
 
-	function setSupportedCurrencies(address[] currencies, address send_gas_to)
-		internal
-		inline
-	{
+	function setSupportedCurrencies(
+		address[] currencies,
+		address send_gas_to
+	) internal inline {
 		for (address currency_root: currencies) {
 			// iteration over the array
 			optional(

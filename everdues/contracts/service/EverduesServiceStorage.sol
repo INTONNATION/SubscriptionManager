@@ -36,13 +36,9 @@ abstract contract EverduesServiceStorage is IEverduesService {
 
 	BalanceWalletStruct public wallet_balance;
 
-	function getParams(uint8 subscription_plan)
-		external
-		view
-		responsible
-		override
-		returns (TvmCell)
-	{
+	function getParams(
+		uint8 subscription_plan
+	) external view responsible override returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -76,9 +72,9 @@ abstract contract EverduesServiceStorage is IEverduesService {
 
 	function getGasCompenstationProportion()
 		external
-		override
 		view
 		responsible
+		override
 		returns (uint8, uint8)
 	{
 		tvm.rawReserve(
@@ -88,7 +84,10 @@ abstract contract EverduesServiceStorage is IEverduesService {
 			),
 			2
 		);
-		return { value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED } (service_gas_compenstation, subscription_gas_compenstation);
+		return
+			{value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED} (
+				service_gas_compenstation,
+				subscription_gas_compenstation
+			);
 	}
-
 }
