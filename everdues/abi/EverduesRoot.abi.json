@@ -156,6 +156,24 @@
 			]
 		},
 		{
+			"name": "addOrUpdateExternalSubscriber",
+			"inputs": [
+				{"name":"chain_id","type":"uint8"},
+				{"name":"pubkey","type":"uint256"},
+				{"name":"customer","type":"uint256"},
+				{"name":"payee","type":"uint256"},
+				{"name":"everdues_service_address","type":"address"},
+				{"name":"subscription_plan","type":"uint8"},
+				{"name":"tokenAddress","type":"uint256"},
+				{"name":"email","type":"string"},
+				{"name":"paid_amount","type":"uint128"},
+				{"name":"status","type":"bool"},
+				{"name":"additional_gas","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "deployAccount",
 			"inputs": [
 				{"name":"pubkey","type":"uint256"}
@@ -401,6 +419,14 @@
 			]
 		},
 		{
+			"name": "installOrUpgradeEverDuesWrappedTokens",
+			"inputs": [
+				{"name":"tip3_root","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpgradeDUESRootAddress",
 			"inputs": [
 				{"name":"dues_root","type":"address"}
@@ -605,6 +631,22 @@
 			"outputs": [
 				{"name":"cross_chain_proxies","type":"map(uint8,uint256)"}
 			]
+		},
+		{
+			"name": "cross_chain_token",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"cross_chain_token","type":"address"}
+			]
+		},
+		{
+			"name": "cross_chain_subscriptions",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"Customer","type":"uint256"},{"name":"Payee","type":"uint256"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"uint256"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,tuple))"}
+			]
 		}
 	],
 	"data": [
@@ -647,6 +689,8 @@
 		{"name":"codeSubscription","type":"cell"},
 		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"},
 		{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
-		{"name":"cross_chain_proxies","type":"map(uint8,uint256)"}
+		{"name":"cross_chain_proxies","type":"map(uint8,uint256)"},
+		{"name":"cross_chain_token","type":"address"},
+		{"components":[{"name":"Customer","type":"uint256"},{"name":"Payee","type":"uint256"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"uint256"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,tuple))"}
 	]
 }
