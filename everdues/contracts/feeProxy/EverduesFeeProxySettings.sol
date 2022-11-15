@@ -44,10 +44,10 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 		_;
 	}
 
-	function setDUESRootAddress(address dues_root, address send_gas_to)
-		external
-		onlyRoot
-	{
+	function setDUESRootAddress(
+		address dues_root,
+		address send_gas_to
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -63,10 +63,10 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 		});
 	}
 
-	function setDexRootAddress(address dex_root, address send_gas_to)
-		external
-		onlyRoot
-	{
+	function setDexRootAddress(
+		address dex_root,
+		address send_gas_to
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -82,10 +82,9 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 		});
 	}
 
-	function setRecurringPaymentGas(uint128 recurring_payment_gas_)
-		external
-		onlyRoot
-	{
+	function setRecurringPaymentGas(
+		uint128 recurring_payment_gas_
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
@@ -103,7 +102,10 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 
 	// TODO: add updateSupportedCurrencies
 
-	function updateSupportedWrappedTokens(address tip3_root, address send_gas_to) external onlyRoot {
+	function updateSupportedWrappedTokens(
+		address tip3_root,
+		address send_gas_to
+	) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.FEE_PROXY_INITIAL_BALANCE,

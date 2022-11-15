@@ -70,15 +70,15 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		) {
 			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else if (
-				now >
-				(subscription.payment_timestamp +
-					svcparams.period -
-					preprocessing_window) && (subscription.status !=
+			now >
+			(subscription.payment_timestamp +
+				svcparams.period -
+				preprocessing_window) &&
+			(subscription.status !=
 				EverduesSubscriptionStatus.STATUS_PROCESSING)
 		) {
 			return EverduesSubscriptionStatus.STATUS_EXECUTE;
-		}
-		 else {
+		} else {
 			return EverduesSubscriptionStatus.STATUS_PROCESSING;
 		}
 	}

@@ -61,23 +61,18 @@ abstract contract EverduesAccountStorage {
 		return builder.toCell();
 	}
 
-	function _buildPlatformParamsOwnerAddress(address account_owner)
-		internal
-		inline
-		pure
-		returns (TvmCell)
-	{
+	function _buildPlatformParamsOwnerAddress(
+		address account_owner
+	) internal inline pure returns (TvmCell) {
 		TvmBuilder builder;
 		builder.store(account_owner);
 		return builder.toCell();
 	}
 
-	function _buildInitData(uint8 type_id_, TvmCell params)
-		internal
-		inline
-		view
-		returns (TvmCell)
-	{
+	function _buildInitData(
+		uint8 type_id_,
+		TvmCell params
+	) internal inline view returns (TvmCell) {
 		return
 			tvm.buildStateInit({
 				contr: Platform,

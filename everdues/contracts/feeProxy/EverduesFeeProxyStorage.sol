@@ -42,12 +42,10 @@ abstract contract EverduesFeeProxyStorage {
 		return builder.toCell();
 	}
 
-	function _buildInitData(uint8 type_id_, TvmCell params)
-		internal
-		inline
-		view
-		returns (TvmCell)
-	{
+	function _buildInitData(
+		uint8 type_id_,
+		TvmCell params
+	) internal inline view returns (TvmCell) {
 		return
 			tvm.buildStateInit({
 				contr: Platform,

@@ -29,11 +29,9 @@ abstract contract EverduesSubscriptionBase is
 		}
 	}
 
-	function upgradeSubscriptionPlan(uint8 new_subscription_plan)
-		external
-		override
-		onlyOwner
-	{
+	function upgradeSubscriptionPlan(
+		uint8 new_subscription_plan
+	) external override onlyOwner {
 		tvm.accept();
 		subscription_plan = new_subscription_plan;
 		IEverduesService(service_address).getParams{
@@ -55,11 +53,9 @@ abstract contract EverduesSubscriptionBase is
 		}();
 	}
 
-	function executeSubscription(uint128 additional_gas)
-		external
-		override
-		onlyRootOrServiceOrOwner
-	{
+	function executeSubscription(
+		uint128 additional_gas
+	) external override onlyRootOrServiceOrOwner {
 		require(
 			!service_params.toSlice().empty(),
 			EverduesErrors.error_subscription_has_no_service_params
@@ -69,11 +65,7 @@ abstract contract EverduesSubscriptionBase is
 			EverduesErrors.error_subscription_is_stopped
 		);
 		if (subscription.period != 0) {
-			if (
-				now >
-				(subscription.payment_timestamp -
-					preprocessing_window)
-			) {
+			if (now > (subscription.payment_timestamp - preprocessing_window)) {
 				tvm.accept();
 				uint8 subcr_status = subscriptionStatus();
 				require(
@@ -149,11 +141,11 @@ abstract contract EverduesSubscriptionBase is
 	}
 
 	function onAcceptTokensTransfer(
-		address, /*tokenRoot*/
+		address /*tokenRoot*/,
 		uint128 amount,
-		address, /*sender*/
-		address, /*senderWallet*/
-		address, /*remainingGasTo*/
+		address /*sender*/,
+		address /*senderWallet*/,
+		address /*remainingGasTo*/,
 		TvmCell payload
 	) external {
 		require(
@@ -212,7 +204,9 @@ abstract contract EverduesSubscriptionBase is
 		if (subscription.payment_timestamp == 0) {
 			subscription.payment_timestamp = uint32(now) + subscription.period;
 		} else {
-			subscription.payment_timestamp = subscription.payment_timestamp + subscription.period;
+			subscription.payment_timestamp =
+				subscription.payment_timestamp +
+				subscription.period;
 		}
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		if (compensate_subscription_deploy) {
@@ -263,6 +257,7 @@ abstract contract EverduesSubscriptionBase is
 			svcparams.image,
 			svcparams.category,
 			,
+
 		) = abi.decode(
 			service_params,
 			(address, string, string, string, string, uint256, string)
@@ -306,10 +301,9 @@ abstract contract EverduesSubscriptionBase is
 		}
 	}
 
-	function onDeployWallet(address subscription_wallet_)
-		external
-		onlyCurrencyRoot
-	{
+	function onDeployWallet(
+		address subscription_wallet_
+	) external onlyCurrencyRoot {
 		subscription_wallet = subscription_wallet_;
 		if (subscription.payment_timestamp == 0) {
 			executeSubscriptionOnDeploy();
