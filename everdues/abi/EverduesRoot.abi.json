@@ -418,6 +418,15 @@
 			]
 		},
 		{
+			"name": "installOrUpgradeCrossChainContractsAddresses",
+			"inputs": [
+				{"name":"chain_id","type":"uint8"},
+				{"name":"contract_address","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "getCodeHashes",
 			"inputs": [
 				{"name":"owner_pubkey","type":"uint256"}
@@ -588,6 +597,14 @@
 			"outputs": [
 				{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
 			]
+		},
+		{
+			"name": "cross_chain_proxies",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"cross_chain_proxies","type":"map(uint8,uint256)"}
+			]
 		}
 	],
 	"data": [
@@ -629,6 +646,7 @@
 		{"name":"codeIndex","type":"cell"},
 		{"name":"codeSubscription","type":"cell"},
 		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"},
-		{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"}
+		{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
+		{"name":"cross_chain_proxies","type":"map(uint8,uint256)"}
 	]
 }

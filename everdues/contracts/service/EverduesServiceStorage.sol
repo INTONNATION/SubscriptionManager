@@ -20,6 +20,7 @@ abstract contract EverduesServiceStorage is IEverduesService {
 	uint8 service_gas_compenstation;
 	uint8 subscription_gas_compenstation;
 	mapping(uint8 => TvmCell) public subscription_plans;
+	mapping(uint8 => address) public supported_chains;
 
 	address root;
 	TvmCell platform_code;

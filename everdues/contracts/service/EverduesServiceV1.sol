@@ -78,13 +78,18 @@ contract EverduesService_V1 is EverduesServiceBase {
 			(TvmCell service_params_cell, TvmCell additional_params) = abi
 				.decode(contract_params, (TvmCell, TvmCell));
 			TvmCell subscription_plans_cell;
-			(service_params, subscription_plans_cell) = abi.decode(
+			TvmCell supported_chains_cell;
+			(service_params, subscription_plans_cell, supported_chains_cell) = abi.decode(
 				service_params_cell,
-				(TvmCell, TvmCell)
+				(TvmCell, TvmCell, TvmCell)
 			);
 			subscription_plans = abi.decode(
 				subscription_plans_cell,
 				(mapping(uint8 => TvmCell))
+			);
+			supported_chains = abi.decode(
+				supported_chains_cell,
+				(mapping(uint8 => address))
 			);
 			(
 				subscription_service_index_address,
