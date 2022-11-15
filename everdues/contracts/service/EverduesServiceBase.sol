@@ -27,13 +27,13 @@ abstract contract EverduesServiceBase is
 	}
 
 	modifier onlyOwner() {
-		require((
-			msg.pubkey() == owner_pubkey),
+		require(
+			(msg.pubkey() == owner_pubkey),
 			EverduesErrors.error_message_sender_is_not_owner
 		);
 		_;
 	}
-	
+
 	modifier onlyAccount() {
 		require(
 			msg.sender == account_address,
@@ -45,8 +45,8 @@ abstract contract EverduesServiceBase is
 	function onAcceptTokensTransfer(
 		address tokenRoot,
 		uint128 amount,
-		address, /*sender*/
-		address, /*senderWallet*/
+		address /*sender*/,
+		address /*senderWallet*/,
 		address remainingGasTo,
 		TvmCell /*payload*/
 	) external {
@@ -65,10 +65,9 @@ abstract contract EverduesServiceBase is
 		});
 	}
 
-	function updateServiceParams(TvmCell new_service_params)
-		external
-		onlyOwner
-	{
+	function updateServiceParams(
+		TvmCell new_service_params
+	) external onlyOwner {
 		tvm.accept();
 		TvmCell subscription_plans_cell;
 		(service_params, subscription_plans_cell) = abi.decode(
@@ -81,10 +80,10 @@ abstract contract EverduesServiceBase is
 		);
 	}
 
-	function updateGasCompenstationProportion(uint8 service_gas_compenstation_, uint8 subscription_gas_compenstation_)
-		external
-		onlyOwner
-	{
+	function updateGasCompenstationProportion(
+		uint8 service_gas_compenstation_,
+		uint8 subscription_gas_compenstation_
+	) external onlyOwner {
 		tvm.accept();
 		service_gas_compenstation = service_gas_compenstation_;
 		subscription_gas_compenstation = subscription_gas_compenstation_;
@@ -130,8 +129,12 @@ abstract contract EverduesServiceBase is
 			flag: 0
 		}(account_address);
 		TvmCell empty;
-		if(subscription_service_index_identificator_address != address(tvm.hash(empty))){
-			IEverduesIndex(subscription_service_index_identificator_address).cancel{
+		if (
+			subscription_service_index_identificator_address !=
+			address(tvm.hash(empty))
+		) {
+			IEverduesIndex(subscription_service_index_identificator_address)
+				.cancel{
 				value: EverduesGas.MESSAGE_MIN_VALUE,
 				bounce: false,
 				flag: 0
