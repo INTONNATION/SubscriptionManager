@@ -65,7 +65,7 @@ abstract contract EverduesRootStorage {
 		string[] categories;
 		string everdues_fee_proxy_abi;
 		string index_abi;
-		mapping (uint256=>string) subs_abis;
+		mapping(uint256 => string) subs_abis;
 	}
 
 	struct ServiceDeployParams {
@@ -75,29 +75,28 @@ abstract contract EverduesRootStorage {
 
 	struct ExternalSubscription {
 		uint256 Customer; // subscriber
-        uint256 Payee; // service owner
-		uint8   SubscriptionPlan; // subscription_plan
+		uint256 Payee; // service owner
+		uint8 SubscriptionPlan; // subscription_plan
 		uint256 TokenAddress; // ERC20 token address
 		uint256 PubKey; // subscriber pubkey
-		string  Email; // subscriber email
+		string Email; // subscriber email
 		uint128 PaidAmount; // sum(value)
-		bool    IsActive; // canceled or not
+		bool IsActive; // canceled or not
 	}
 
 	mapping(uint8 => mapping(uint32 => ContractParams)) public versions;
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
-	
-	mapping(uint8 => uint256) public cross_chain_proxies; 
-    address public cross_chain_token;
 
-	mapping(uint8 => mapping(uint256 => ExternalSubscription)) public cross_chain_subscriptions;
+	mapping(uint8 => uint256) public cross_chain_proxies;
+	address public cross_chain_token;
 
-	function getCodeHashes(uint256 owner_pubkey)
-		external
-		view
-		returns (EverduesContractsInfo everdues_contracts_info)
-	{
+	mapping(uint8 => mapping(uint256 => ExternalSubscription))
+		public cross_chain_subscriptions;
+
+	function getCodeHashes(
+		uint256 owner_pubkey
+	) external view returns (EverduesContractsInfo everdues_contracts_info) {
 		mapping(uint8 => mapping(uint256 => ContractVersionParams)) external_data_structure;
 		mapping(uint256 => ContractVersionParams) contracts;
 		address account = address(
@@ -187,13 +186,17 @@ abstract contract EverduesRootStorage {
 		for (uint256 i = 0; i < categories.length; i++) {
 			everdues_contracts_info.categories.push(categories[i]);
 		}
-		everdues_contracts_info.index_abi = versions[ContractTypes.Index][1].contractAbi;
-		mapping (uint256=>string) subs_abis_mapping;
+		everdues_contracts_info.index_abi = versions[ContractTypes.Index][1]
+			.contractAbi;
+		mapping(uint256 => string) subs_abis_mapping;
 		for (
 			(, ContractParams contract_params):
 			versions[ContractTypes.Subscription]
 		) {
-			subs_abis_mapping.add(tvm.hash(contract_params.contractAbi), contract_params.contractAbi);
+			subs_abis_mapping.add(
+				tvm.hash(contract_params.contractAbi),
+				contract_params.contractAbi
+			);
 		}
 		everdues_contracts_info.subs_abis = subs_abis_mapping;
 	}
@@ -212,12 +215,10 @@ abstract contract EverduesRootStorage {
 			} pending_owner;
 	}
 
-	function _buildAccountInitData(uint8 type_id, uint256 pubkey)
-		internal
-		inline
-		view
-		returns (TvmCell)
-	{
+	function _buildAccountInitData(
+		uint8 type_id,
+		uint256 pubkey
+	) internal inline view returns (TvmCell) {
 		TvmCell params;
 		return
 			tvm.buildStateInit({
@@ -232,11 +233,10 @@ abstract contract EverduesRootStorage {
 			});
 	}
 
-	function _buildPublicServiceCodeByVersion(string category, uint32 version_)
-		internal
-		view
-		returns (TvmCell)
-	{
+	function _buildPublicServiceCodeByVersion(
+		string category,
+		uint32 version_
+	) internal view returns (TvmCell) {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(category, address(this));
 		ContractParams latestVersion = versions[ContractTypes.Service][
@@ -267,11 +267,9 @@ abstract contract EverduesRootStorage {
 
 	// Builders
 
-	function _buildSubscriptionCode(address subscription_owner)
-		internal
-		view
-		returns (TvmCell)
-	{
+	function _buildSubscriptionCode(
+		address subscription_owner
+	) internal view returns (TvmCell) {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(subscription_owner, address(this));
 		optional(uint32, ContractParams) latest_version_opt = versions[
@@ -285,11 +283,9 @@ abstract contract EverduesRootStorage {
 		return code;
 	}
 
-	function _buildPublicServiceCode(string category)
-		internal
-		view
-		returns (TvmCell)
-	{
+	function _buildPublicServiceCode(
+		string category
+	) internal view returns (TvmCell) {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(category, address(this));
 		optional(uint32, ContractParams) latest_version_opt = versions[
@@ -303,11 +299,9 @@ abstract contract EverduesRootStorage {
 		return code;
 	}
 
-	function _buildPrivateServiceCode(uint256 nonce)
-		internal
-		view
-		returns (TvmCell)
-	{
+	function _buildPrivateServiceCode(
+		uint256 nonce
+	) internal view returns (TvmCell) {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(nonce, address(this));
 		optional(uint32, ContractParams) latest_version_opt = versions[
@@ -344,11 +338,9 @@ abstract contract EverduesRootStorage {
 		return stateInit;
 	}
 
-	function _buildSubscriptionIndexCode(address service_address)
-		internal
-		view
-		returns (TvmCell code)
-	{
+	function _buildSubscriptionIndexCode(
+		address service_address
+	) internal view returns (TvmCell code) {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(abi.encode(service_address), address(this));
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
@@ -373,22 +365,20 @@ abstract contract EverduesRootStorage {
 		return stateInit;
 	}
 
-	function _buildServiceIndexCode(TvmCell contractCode, address serviceOwner)
-		internal
-		pure
-		returns (TvmCell)
-	{
+	function _buildServiceIndexCode(
+		TvmCell contractCode,
+		address serviceOwner
+	) internal pure returns (TvmCell) {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(abi.encode(serviceOwner), address(this));
 		TvmCell code = tvm.setCodeSalt(contractCode, saltBuilder.toCell());
 		return code;
 	}
 
-	function _buildServiceIndex(address serviceOwner, string serviceName)
-		internal
-		view
-		returns (TvmCell)
-	{
+	function _buildServiceIndex(
+		address serviceOwner,
+		string serviceName
+	) internal view returns (TvmCell) {
 		TvmBuilder saltBuilder;
 		saltBuilder.store(abi.encode(serviceOwner), address(this));
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
@@ -428,12 +418,10 @@ abstract contract EverduesRootStorage {
 		return state;
 	}
 
-	function _buildInitData(uint8 type_id, TvmCell params)
-		internal
-		inline
-		view
-		returns (TvmCell)
-	{
+	function _buildInitData(
+		uint8 type_id,
+		TvmCell params
+	) internal inline view returns (TvmCell) {
 		return
 			tvm.buildStateInit({
 				contr: Platform,
@@ -447,12 +435,9 @@ abstract contract EverduesRootStorage {
 			});
 	}
 
-	function _buildPlatformParamsOwnerAddress(address account_owner)
-		internal
-		inline
-		pure
-		returns (TvmCell)
-	{
+	function _buildPlatformParamsOwnerAddress(
+		address account_owner
+	) internal inline pure returns (TvmCell) {
 		TvmBuilder builder;
 		builder.store(account_owner);
 		return builder.toCell();
@@ -493,26 +478,27 @@ abstract contract EverduesRootStorage {
 			),
 			2
 		);
-		return { value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED } (service_gas_compenstation, subscription_gas_compenstation);
+		return
+			{value: 0, bounce: false, flag: MsgFlag.ALL_NOT_RESERVED} (
+				service_gas_compenstation,
+				subscription_gas_compenstation
+			);
 	}
 
 	// Addresses calculations
 
-	function accountOf(uint256 owner_pubkey)
-		external
-		view
-		returns (address account)
-	{
+	function accountOf(
+		uint256 owner_pubkey
+	) external view returns (address account) {
 		account = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
 		);
 	}
 
-	function serviceOf(address owner_address_, string service_name_)
-		external
-		view
-		returns (address service)
-	{
+	function serviceOf(
+		address owner_address_,
+		string service_name_
+	) external view returns (address service) {
 		service = address(
 			tvm.hash(
 				_buildInitData(
@@ -523,11 +509,10 @@ abstract contract EverduesRootStorage {
 		);
 	}
 
-	function subscriptionOf(address owner_address_, address service_address_)
-		external
-		view
-		returns (address subscription)
-	{
+	function subscriptionOf(
+		address owner_address_,
+		address service_address_
+	) external view returns (address subscription) {
 		subscription = address(
 			tvm.hash(
 				_buildInitData(
@@ -541,11 +526,9 @@ abstract contract EverduesRootStorage {
 		);
 	}
 
-	function subscribersOf(address service_address)
-		external
-		view
-		returns (uint256 subscribers_code_hash)
-	{
+	function subscribersOf(
+		address service_address
+	) external view returns (uint256 subscribers_code_hash) {
 		subscribers_code_hash = tvm.hash(
 			_buildSubscriptionIndexCode(service_address)
 		);
@@ -556,7 +539,7 @@ abstract contract EverduesRootStorage {
 		TvmCell identificator
 	) external view returns (uint256) {
 		TvmBuilder saltBuilder;
-		TvmCell index_salt_data = abi.encode(service_address, identificator); 
+		TvmCell index_salt_data = abi.encode(service_address, identificator);
 		saltBuilder.store(index_salt_data, address(this));
 		ContractParams latestVersion = versions[ContractTypes.Index][1];
 		TvmCell code = tvm.setCodeSalt(

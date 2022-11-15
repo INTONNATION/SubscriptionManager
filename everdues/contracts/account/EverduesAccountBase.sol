@@ -134,17 +134,12 @@ abstract contract EverduesAccountBase is
 				);
 				if (external_subscription) {
 					TvmCell payload = abi.encode(uint128(0));
-					ITokenWallet(current_balance_key_value.wallet).transferToWallet{
+					ITokenWallet(current_balance_key_value.wallet)
+						.transferToWallet{
 						value: 1 ever,
 						bounce: true,
 						flag: MsgFlag.SENDER_PAYS_FEES
-					}(
-						value,
-						subscription_wallet,
-						address(this),
-						true,
-						payload
-					);
+					}(value, subscription_wallet, address(this), true, payload);
 				} else if (subscription_deploy) {
 					IEverduesService(service_address)
 						.getGasCompenstationProportion{
@@ -275,7 +270,8 @@ abstract contract EverduesAccountBase is
 				payload
 			);
 			uint128 balance_after_pay = current_balance_key.balance -
-				last_operation.value - value_gas_compensation;
+				last_operation.value -
+				value_gas_compensation;
 			current_balance_key.balance = balance_after_pay;
 			wallets_mapping[last_operation.currency_root] = current_balance_key;
 			_tmp_subscription_operations.delMin();
@@ -315,10 +311,10 @@ abstract contract EverduesAccountBase is
 		}
 	}
 
-	function syncBalance(address currency_root, uint128 additional_gas)
-		external
-		onlyOwner
-	{
+	function syncBalance(
+		address currency_root,
+		uint128 additional_gas
+	) external onlyOwner {
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
@@ -402,8 +398,7 @@ abstract contract EverduesAccountBase is
 			current_balance_key.balance -= deploy_value;
 			wallets_mapping[currency_root] = current_balance_key;
 			ITokenWallet(account_wallet).transfer{
-				value: EverduesGas.DEPLOY_SERVICE_VALUE +
-					additional_gas,
+				value: EverduesGas.DEPLOY_SERVICE_VALUE + additional_gas,
 				bounce: true,
 				flag: 0
 			}(deploy_value, root, 0, address(this), true, payload);
@@ -549,8 +544,8 @@ abstract contract EverduesAccountBase is
 	function onAcceptTokensTransfer(
 		address tokenRoot,
 		uint128 amount,
-		address, /*sender*/
-		address, /*senderWallet*/
+		address /*sender*/,
+		address /*senderWallet*/,
 		address remainingGasTo,
 		TvmCell /*payload*/
 	) external {
@@ -603,10 +598,9 @@ abstract contract EverduesAccountBase is
 		}
 	}
 
-	function onGetExpectedPairAddress(address dex_pair_address)
-		external
-		onlyDexRoot
-	{
+	function onGetExpectedPairAddress(
+		address dex_pair_address
+	) external onlyDexRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ACCOUNT_INITIAL_BALANCE,
