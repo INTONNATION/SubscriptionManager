@@ -9,6 +9,7 @@ interface IEverduesFeeProxy {
 		address subscription_wallet,
 		uint128 account_gas_balance,
 		bool subscription_deploy,
+		bool external_subscription,
 		uint128 additional_gas
 	) external;
 
@@ -23,6 +24,8 @@ interface IEverduesFeeProxy {
 		TvmCell fee_proxy_contract_params,
 		address send_gas_to
 	) external;
+
+	function updateSupportedWrappedTokens(address tip3_root, address send_gas_to) external;
 
 	function setDUESRootAddress(address dues_root, address send_gas_to)
 		external;

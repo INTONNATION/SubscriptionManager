@@ -101,6 +101,24 @@ abstract contract EverduesFeeProxySettings is EverduesFeeProxyStorage {
 		});
 	}
 
+	// TODO: add updateSupportedCurrencies
+
+	function updateSupportedWrappedTokens(address tip3_root, address send_gas_to) external onlyRoot {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.FEE_PROXY_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		cross_chain_token = tip3_root;
+		send_gas_to.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
 	function setAccountGasThreshold(
 		uint128 account_threshold_,
 		address send_gas_to

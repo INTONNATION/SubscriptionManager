@@ -215,7 +215,9 @@ abstract contract EverduesSubscriptionBase is
 			subscription.payment_timestamp = subscription.payment_timestamp + subscription.period;
 		}
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
-		compensate_subscription_deploy = false;
+		if (compensate_subscription_deploy) {
+			compensate_subscription_deploy = false;
+		}
 		emit subscriptionExecuted();
 	}
 
@@ -239,6 +241,7 @@ abstract contract EverduesSubscriptionBase is
 				subscription_wallet,
 				account_gas_balance,
 				compensate_subscription_deploy,
+				external_subscription,
 				subscription.pay_subscription_gas
 			);
 		}
@@ -285,12 +288,22 @@ abstract contract EverduesSubscriptionBase is
 			EverduesSubscriptionStatus.STATUS_NONACTIVE,
 			0
 		);
-		ITokenRoot(svcparams.currency_root).deployWallet{
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.REMAINING_GAS,
-			callback: EverduesSubscriptionBase.onDeployWallet
-		}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
+		if (external_subscription) {
+			svcparams.currency_root = cross_chain_token;
+			ITokenRoot(svcparams.currency_root).deployWallet{
+				value: 0,
+				bounce: false,
+				flag: MsgFlag.REMAINING_GAS,
+				callback: EverduesSubscriptionBase.onDeployWallet
+			}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
+		} else {
+			ITokenRoot(svcparams.currency_root).deployWallet{
+				value: 0,
+				bounce: false,
+				flag: MsgFlag.REMAINING_GAS,
+				callback: EverduesSubscriptionBase.onDeployWallet
+			}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
+		}
 	}
 
 	function onDeployWallet(address subscription_wallet_)

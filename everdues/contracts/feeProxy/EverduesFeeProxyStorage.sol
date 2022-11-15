@@ -30,6 +30,7 @@ abstract contract EverduesFeeProxyStorage {
 	// token_root -> send_gas_to
 	mapping(address => address) _tmp_deploying_wallets;
 	mapping(address => SyncWalletBalanceStruct) _tmp_sync_wallets;
+	address cross_chain_token;
 
 	function _buildSubscriptionParams(
 		address subscription_owner,

@@ -134,9 +134,12 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 		address subscription_wallet,
 		uint128 account_gas_balance,
 		bool subscription_deploy,
+		bool external_subscription,
 		uint128 additional_gas
 	) external view onlySubscriptionContract(account_address, service_address) {
 		uint128 gas_;
+		// TODO: add check that this TIP3 supported
+		// TODO: restrict to allow EverDues wrapped TIP3 only if external_subscription - True
 		if (account_gas_balance < account_threshold) {
 			gas_ =
 				account_threshold -
@@ -156,6 +159,7 @@ abstract contract EverduesFeeProxyBase is EverduesFeeProxySettings {
 			subscription_wallet,
 			service_address,
 			subscription_deploy,
+			external_subscription,
 			recurring_payment_gas,
 			additional_gas
 		);
