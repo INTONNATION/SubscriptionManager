@@ -72,9 +72,26 @@ abstract contract EverduesRootStorage {
 		address wallet_address;
 		uint128 required_amount;
 	}
+
+	struct ExternalSubscription {
+		uint256 Customer; // subscriber
+        uint256 Payee; // service owner
+		uint8   SubscriptionPlan; // subscription_plan
+		uint256 TokenAddress; // ERC20 token address
+		uint256 PubKey; // subscriber pubkey
+		string  Email; // subscriber email
+		uint128 PaidAmount; // sum(value)
+		bool    IsActive; // canceled or not
+	}
+
 	mapping(uint8 => mapping(uint32 => ContractParams)) public versions;
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
+	
+	mapping(uint8 => uint256) public cross_chain_proxies; 
+    address public cross_chain_token;
+
+	mapping(uint8 => mapping(uint256 => ExternalSubscription)) public cross_chain_subscriptions;
 
 	function getCodeHashes(uint256 owner_pubkey)
 		external

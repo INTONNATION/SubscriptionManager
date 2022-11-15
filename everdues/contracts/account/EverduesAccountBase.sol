@@ -101,6 +101,7 @@ abstract contract EverduesAccountBase is
 		address subscription_wallet,
 		address service_address,
 		bool subscription_deploy,
+		bool external_subscription,
 		uint128 recurring_payment_gas_,
 		uint128 additional_gas
 	) external override onlyFeeProxy {
@@ -131,7 +132,20 @@ abstract contract EverduesAccountBase is
 					0,
 					service_address
 				);
-				if (subscription_deploy) {
+				if (external_subscription) {
+					TvmCell payload = abi.encode(uint128(0));
+					ITokenWallet(current_balance_key_value.wallet).transferToWallet{
+						value: 1 ever,
+						bounce: true,
+						flag: MsgFlag.SENDER_PAYS_FEES
+					}(
+						value,
+						subscription_wallet,
+						address(this),
+						true,
+						payload
+					);
+				} else if (subscription_deploy) {
 					IEverduesService(service_address)
 						.getGasCompenstationProportion{
 						value: 1 ever,
