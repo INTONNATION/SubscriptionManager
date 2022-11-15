@@ -54,6 +54,7 @@
 				{"name":"subscription_wallet","type":"address"},
 				{"name":"account_gas_balance","type":"uint128"},
 				{"name":"subscription_deploy","type":"bool"},
+				{"name":"external_subscription","type":"bool"},
 				{"name":"additional_gas","type":"uint128"}
 			],
 			"outputs": [
@@ -135,6 +136,15 @@
 			"name": "setRecurringPaymentGas",
 			"inputs": [
 				{"name":"recurring_payment_gas_","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateSupportedWrappedTokens",
+			"inputs": [
+				{"name":"tip3_root","type":"address"},
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
@@ -232,6 +242,7 @@
 		{"name":"recurring_payment_gas","type":"uint128"},
 		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"_tmp_deploying_wallets","type":"map(address,address)"},
-		{"components":[{"name":"send_gas_to","type":"address"},{"name":"currency_root","type":"address"}],"name":"_tmp_sync_wallets","type":"map(address,tuple)"}
+		{"components":[{"name":"send_gas_to","type":"address"},{"name":"currency_root","type":"address"}],"name":"_tmp_sync_wallets","type":"map(address,tuple)"},
+		{"name":"cross_chain_token","type":"address"}
 	]
 }
