@@ -89,7 +89,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 			);
 			supported_chains = abi.decode(
 				supported_chains_cell,
-				(mapping(uint8 => address))
+				(mapping(uint8 => uint256))
 			);
 			(
 				subscription_service_index_address,
