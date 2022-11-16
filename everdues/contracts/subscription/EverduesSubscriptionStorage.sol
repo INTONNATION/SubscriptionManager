@@ -31,6 +31,9 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	uint8 type_id;
 	bool compensate_subscription_deploy;
 	bool external_subscription;
+	uint8 chain_id;
+	uint256 external_account_address;
+	uint256 external_token_address;
 	address cross_chain_token;
 
 	struct serviceParams {
