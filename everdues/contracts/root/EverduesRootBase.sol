@@ -455,6 +455,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(amount, recipient, EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS, remainingGasTo, true, payload);		
 	}
 
+
+
 	function addOrUpdateExternalSubscriber(uint8 chain_id, uint256 pubkey, uint256 customer, uint256 payee, address everdues_service_address, uint8 subscription_plan, uint256 tokenAddress, string email, uint128 paid_amount, bool status, uint128 additional_gas) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
@@ -490,7 +492,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			depositCrossChainTokens(account_address, msg.sender, paid_amount);
 			//TODO: add deploy subscrion to token transfer callback
 			TvmCell identificator = abi.encode(email);
-			deployExternalSubscription(everdues_service_address, identificator, pubkey, subscription_plan, additional_gas);
+			deployExternalSubscription(chain_id, customer, tokenAddress, everdues_service_address, identificator, pubkey, subscription_plan, additional_gas);
 		}
 		msg.sender.transfer({
 			value: 0,
@@ -566,6 +568,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function deployExternalSubscription(
+		uint8 chain_id,
+		uint256 external_account_address,
+		uint256 external_token_address,
 		address service_address,
 		TvmCell identificator,
 		uint256 owner_pubkey,
@@ -613,6 +618,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			identificator,
 			tvm.hash(latest_version_params.contractAbi),
 			true,
+	        chain_id,
+	        external_account_address,
+	        external_token_address,
 			cross_chain_token
 		);
 		Platform platform = new Platform{
