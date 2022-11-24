@@ -38,6 +38,8 @@ contract EverduesRoot is EverduesRootBase {
 			service_gas_compenstation,
 			subscription_gas_compenstation,
 			wallets_mapping,
+			cross_chain_token,
+			cross_chain_subscriptions,
 			cross_chain_proxies
 		);
 		tvm.setcode(code);
@@ -68,6 +70,8 @@ contract EverduesRoot is EverduesRootBase {
 			service_gas_compenstation,
 			subscription_gas_compenstation,
 			wallets_mapping,
+			cross_chain_token,
+			cross_chain_subscriptions,
 			cross_chain_proxies
 		) = abi.decode(
 			upgrade_data,
@@ -91,6 +95,8 @@ contract EverduesRoot is EverduesRootBase {
 				uint8,
 				uint8,
 				mapping(address => ServiceDeployParams),
+				address,
+				mapping(uint8 => mapping(uint256 => ExternalSubscription)),
 				mapping(uint8 => uint256)
 			)
 		);
