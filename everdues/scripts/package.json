@@ -23,8 +23,6 @@
     "@eversdk/lib-node": "1.37.2",
     "@eversdk/lib-web": "1.37.2"
   },
-  "devDependencies": {
-  },
-  "scripts": {
-  }
+  "devDependencies": {},
+  "scripts": {}
 }
