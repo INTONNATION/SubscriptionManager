@@ -56,6 +56,7 @@ contract Platform {
 		);
 		TvmCell data = abi.encode(
 			root,
+			address(0),
 			uint32(0),
 			version,
 			type_id,

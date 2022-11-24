@@ -38,10 +38,12 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 2);
 		tvm.resetStorage();
 		uint32 old_version;
+		address send_gas_to;
 		TvmCell contract_params;
 		TvmCell code;
 		(
 			root,
+			send_gas_to,
 			old_version,
 			current_version,
 			type_id,
@@ -51,7 +53,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 			code
 		) = abi.decode(
 			data,
-			(address, uint32, uint32, uint8, TvmCell, TvmCell, TvmCell, TvmCell)
+			(address, address, uint32, uint32, uint8, TvmCell, TvmCell, TvmCell, TvmCell)
 		);
 		if (old_version > 0) {
 			TvmCell upgrade_params;
@@ -87,6 +89,12 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 				(address, address, address, uint128, uint256)
 			); 
 			
+		}
+		if (send_gas_to.value != 0) {
+			send_gas_to.transfer({
+				value: 0,
+				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+			});
 		}
 		emit AccountDeployed(current_version);
 	}
