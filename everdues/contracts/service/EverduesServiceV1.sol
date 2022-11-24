@@ -24,6 +24,8 @@ contract EverduesService_V1 is EverduesServiceBase {
 			subscription_gas_compenstation,
 			identificator,
 			abi_hash,
+			supported_chains,
+			wallet_balance,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -122,6 +124,8 @@ contract EverduesService_V1 is EverduesServiceBase {
 				subscription_gas_compenstation,
 				identificator,
 				abi_hash,
+				supported_chains,
+				wallet_balance,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -137,6 +141,8 @@ contract EverduesService_V1 is EverduesServiceBase {
 					uint8,
 					TvmCell,
 					uint256,
+					mapping(uint8 => uint256),
+					BalanceWalletStruct,
 					TvmCell
 				)
 			);
