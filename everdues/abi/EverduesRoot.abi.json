@@ -462,6 +462,16 @@
 			]
 		},
 		{
+			"name": "getExternalSubscriber",
+			"inputs": [
+				{"name":"chain_id","type":"uint8"},
+				{"name":"pubkey","type":"uint256"}
+			],
+			"outputs": [
+				{"components":[{"name":"Customer","type":"uint256"},{"name":"Payee","type":"uint256"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"uint256"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"value0","type":"tuple"}
+			]
+		},
+		{
 			"name": "getPendingOwner",
 			"inputs": [
 				{"name":"answerId","type":"uint32"}
