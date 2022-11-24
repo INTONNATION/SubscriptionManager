@@ -78,13 +78,15 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 			(
 				dex_root_address,
 				wever_root,
-				/*address tip3_to_ever_address*/,
+				//*address tip3_to_ever_address
+				,
 				account_gas_threshold,
 				abi_hash
 			) = abi.decode(
 				contract_params,
 				(address, address, address, uint128, uint256)
-			);
+			); 
+			
 		}
 		emit AccountDeployed(current_version);
 	}
