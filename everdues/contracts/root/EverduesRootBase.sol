@@ -457,7 +457,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 
 
 
-	function addOrUpdateExternalSubscriber(uint8 chain_id, uint256 pubkey, uint256 customer, uint256 payee, address everdues_service_address, uint8 subscription_plan, uint256 tokenAddress, string email, uint128 paid_amount, bool status, uint128 additional_gas) external onlyOwner {
+	function addOrUpdateExternalSubscriber(uint8 chain_id, uint256 pubkey, string customer, string payee, address everdues_service_address, uint8 subscription_plan, string tokenAddress, string email, uint128 paid_amount, bool status, uint128 additional_gas) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -569,8 +569,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 
 	function deployExternalSubscription(
 		uint8 chain_id,
-		uint256 external_account_address,
-		uint256 external_token_address,
+		string external_account_address,
+		string external_token_address,
 		address service_address,
 		TvmCell identificator,
 		uint256 owner_pubkey,

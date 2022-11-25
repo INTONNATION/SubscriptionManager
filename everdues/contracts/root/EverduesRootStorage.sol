@@ -74,10 +74,10 @@ abstract contract EverduesRootStorage {
 	}
 
 	struct ExternalSubscription {
-		uint256 Customer; // subscriber
-		uint256 Payee; // service owner
+		string Customer; // subscriber EVM address
+		string Payee; // service owner EVM address
 		uint8 SubscriptionPlan; // subscription_plan
-		uint256 TokenAddress; // ERC20 token address
+		string TokenAddress; // ERC20 token address
 		uint256 PubKey; // subscriber pubkey
 		string Email; // subscriber email
 		uint128 PaidAmount; // sum(value)
