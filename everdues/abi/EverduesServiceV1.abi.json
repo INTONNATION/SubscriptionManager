@@ -79,7 +79,7 @@
 				{"name":"chain_id","type":"uint8"}
 			],
 			"outputs": [
-				{"name":"value0","type":"uint256"}
+				{"name":"value0","type":"string"}
 			]
 		},
 		{
@@ -203,7 +203,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"supported_chains","type":"map(uint8,uint256)"}
+				{"name":"supported_chains","type":"map(uint8,string)"}
 			]
 		},
 		{
@@ -251,7 +251,7 @@
 		{"name":"service_gas_compenstation","type":"uint8"},
 		{"name":"subscription_gas_compenstation","type":"uint8"},
 		{"name":"subscription_plans","type":"map(uint8,cell)"},
-		{"name":"supported_chains","type":"map(uint8,uint256)"},
+		{"name":"supported_chains","type":"map(uint8,string)"},
 		{"name":"root","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
