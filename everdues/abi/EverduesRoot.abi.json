@@ -447,7 +447,7 @@
 			"name": "installOrUpgradeCrossChainContractsAddresses",
 			"inputs": [
 				{"name":"chain_id","type":"uint8"},
-				{"name":"contract_address","type":"uint256"}
+				{"name":"contract_address","type":"string"}
 			],
 			"outputs": [
 			]
@@ -639,7 +639,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"cross_chain_proxies","type":"map(uint8,uint256)"}
+				{"name":"cross_chain_proxies","type":"map(uint8,string)"}
 			]
 		},
 		{
@@ -699,7 +699,7 @@
 		{"name":"codeSubscription","type":"cell"},
 		{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint32,tuple))"},
 		{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
-		{"name":"cross_chain_proxies","type":"map(uint8,uint256)"},
+		{"name":"cross_chain_proxies","type":"map(uint8,string)"},
 		{"name":"cross_chain_token","type":"address"},
 		{"components":[{"name":"Customer","type":"uint256"},{"name":"Payee","type":"uint256"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"uint256"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,tuple))"}
 	]
