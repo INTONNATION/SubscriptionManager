@@ -863,7 +863,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 
 	function installOrUpgradeCrossChainContractsAddresses(
 		uint8 chain_id,
-		uint256 contract_address
+		string contract_address
 	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(

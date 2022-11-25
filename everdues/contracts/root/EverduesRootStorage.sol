@@ -88,7 +88,7 @@ abstract contract EverduesRootStorage {
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
 
-	mapping(uint8 => uint256) public cross_chain_proxies;
+	mapping(uint8 => string) public cross_chain_proxies;
 	address public cross_chain_token;
 
 	mapping(uint8 => mapping(uint256 => ExternalSubscription))
