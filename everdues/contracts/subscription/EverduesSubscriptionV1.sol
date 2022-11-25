@@ -121,8 +121,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					uint256,
 					bool,
 					uint8,
-					uint256,
-					uint256,
+					string,
+					string,
 					address
 				)
 			);
@@ -185,8 +185,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					TvmCell,
 					bool,
 					uint8,
-					uint256,
-					uint256,
+					string,
+					string,
 					address,
 					TvmCell
 				)

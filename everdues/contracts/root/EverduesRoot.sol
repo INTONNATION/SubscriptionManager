@@ -97,7 +97,7 @@ contract EverduesRoot is EverduesRootBase {
 				mapping(address => ServiceDeployParams),
 				address,
 				mapping(uint8 => mapping(uint256 => ExternalSubscription)),
-				mapping(uint8 => uint256)
+				mapping(uint8 => string)
 			)
 		);
 		owner.transfer({
