@@ -521,8 +521,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				ContractTypes.Account,
 				pubkey
 			),
-			value: 0,
-			flag: MsgFlag.ALL_NOT_RESERVED
+			value: EverduesGas.ACCOUNT_INITIAL_BALANCE + EverduesGas.MESSAGE_MIN_VALUE,
+			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			latest_params.contractCode,
 			account_params,
