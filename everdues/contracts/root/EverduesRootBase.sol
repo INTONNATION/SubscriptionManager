@@ -626,7 +626,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
 				ContractTypes.Subscription,
-				_buildSubscriptionPlatformParams(msg.sender, service_address)
+				_buildSubscriptionPlatformParams(owner_account_address, service_address)
 			),
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
 				EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +

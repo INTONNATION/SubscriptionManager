@@ -41,7 +41,6 @@ message=`tonos-cli -j body setAbiIndexContract "{\"abiIndexContractInput\":\"$ab
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 }
 deploy $CONTRACT_NAME $1
-CONTRACT_ADDRESS=$(cat $CONTRACT_NAME.addr)
 
 echo $CONTRACT_ADDRESS $1
 node upgrade-all-service-contracts.js $1
