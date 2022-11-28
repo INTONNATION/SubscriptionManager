@@ -583,7 +583,7 @@ abstract contract EverduesAccountBase is
 		} else {
 			tmp_deposit_tokens[tokenRoot] = DepositTokens(msg.sender, amount);
 			ITokenRoot(tokenRoot).walletOf{
-				value: EverduesGas.MESSAGE_MIN_VALUE,
+				value: EverduesGas.MESSAGE_MIN_VALUE * 3,
 				bounce: true,
 				flag: 0,
 				callback: EverduesAccountBase.onAcceptTokensWalletOf
