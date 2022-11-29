@@ -285,20 +285,13 @@ abstract contract EverduesSubscriptionBase is
 		);
 		if (external_subscription) {
 			svcparams.currency_root = cross_chain_token;
-			ITokenRoot(svcparams.currency_root).deployWallet{
-				value: 0,
-				bounce: false,
-				flag: MsgFlag.REMAINING_GAS,
-				callback: EverduesSubscriptionBase.onDeployWallet
-			}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
-		} else {
-			ITokenRoot(svcparams.currency_root).deployWallet{
-				value: 0,
-				bounce: false,
-				flag: MsgFlag.REMAINING_GAS,
-				callback: EverduesSubscriptionBase.onDeployWallet
-			}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
 		}
+		ITokenRoot(svcparams.currency_root).deployWallet{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.REMAINING_GAS,
+			callback: EverduesSubscriptionBase.onDeployWallet
+		}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
 	}
 
 	function onDeployWallet(
