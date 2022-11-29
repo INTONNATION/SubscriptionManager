@@ -580,22 +580,22 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		if (additional_gas != 0) {
 			additional_gas = additional_gas / 3;
 		}
+		address owner_account_address = address(
+			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
+		);
 		TvmCell subsIndexStateInit = _buildSubscriptionIndex(
 			service_address,
-			msg.sender
+			owner_account_address
 		);
 		TvmCell subsIndexIdentificatorStateInit;
 		if (!identificator.toSlice().empty()) {
 			subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
 				service_address,
 				identificator,
-				msg.sender
+				owner_account_address
 			);
 		}
-		TvmCell subscription_code_salt = _buildSubscriptionCode(msg.sender);
-		address owner_account_address = address(
-			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
-		);
+		TvmCell subscription_code_salt = _buildSubscriptionCode(owner_account_address);
 		address subs_index = address(tvm.hash(subsIndexStateInit));
 		address subs_index_identificator = address(
 			tvm.hash(subsIndexIdentificatorStateInit)
