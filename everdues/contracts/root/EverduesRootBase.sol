@@ -727,8 +727,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			tvm.hash(latest_version_params.contractAbi),
 			false,
 			uint8(0),
-			uint256(0),
-			uint256(0),
+			string(""),
+			string(""),
+			string(""),
 			address(0)
 		);
 		Platform platform = new Platform{
