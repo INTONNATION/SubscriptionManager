@@ -474,11 +474,12 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		external_subscription_event.Email = email;
 		external_subscription_event.PaidAmount = paid_amount;
 		external_subscription_event.IsActive = true;
-
-		optional(ExternalSubscription) chain_subscriptions = cross_chain_subscriptions[chain_id].getAdd(pubkey, external_subscription_event);
+		uint256 sid = tvm.hash(abi.encode(pubkey, everdues_service_address));
+		optional(ExternalSubscription) chain_subscriptions = cross_chain_subscriptions[chain_id].getAdd(sid, external_subscription_event);
         address account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		); 
+		TvmCell identificator = abi.encode(email);
 		if (chain_subscriptions.hasValue()) {
             ExternalSubscription existing_user_subscriptions = chain_subscriptions.get();
             external_subscription_event.IsActive = status;
@@ -490,8 +491,6 @@ abstract contract EverduesRootBase is EverduesRootSettings {
         } else {
 			deployExternalAccount(pubkey);
 			depositCrossChainTokens(account_address, msg.sender, paid_amount);
-			//TODO: add deploy subscrion to token transfer callback
-			TvmCell identificator = abi.encode(email);
 			deployExternalSubscription(chain_id, customer, tokenAddress, everdues_service_address, identificator, pubkey, subscription_plan, additional_gas);
 		}
 		msg.sender.transfer({
