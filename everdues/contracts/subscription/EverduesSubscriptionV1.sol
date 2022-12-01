@@ -102,6 +102,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				chain_id,
 				external_account_address,
 				external_token_address,
+				external_payee,
 				cross_chain_token
 				
 			) = abi.decode(
@@ -121,6 +122,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					uint256,
 					bool,
 					uint8,
+					string,
 					string,
 					string,
 					address
@@ -159,6 +161,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				chain_id,
 				external_account_address,
 				external_token_address,
+				external_payee,
 				cross_chain_token,
 				upgrade_params
 			) = abi.decode(
@@ -185,6 +188,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					TvmCell,
 					bool,
 					uint8,
+					string,
 					string,
 					string,
 					address,

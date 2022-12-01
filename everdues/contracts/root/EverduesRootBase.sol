@@ -491,7 +491,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
         } else {
 			deployExternalAccount(pubkey);
 			depositCrossChainTokens(account_address, msg.sender, paid_amount);
-			deployExternalSubscription(chain_id, customer, tokenAddress, everdues_service_address, identificator, pubkey, subscription_plan, additional_gas);
+			deployExternalSubscription(chain_id, customer, payee, tokenAddress, everdues_service_address, identificator, pubkey, subscription_plan, additional_gas);
 		}
 		msg.sender.transfer({
 			value: 0,
@@ -569,6 +569,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	function deployExternalSubscription(
 		uint8 chain_id,
 		string external_account_address,
+		string external_payee,
 		string external_token_address,
 		address service_address,
 		TvmCell identificator,
@@ -620,6 +621,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	        chain_id,
 	        external_account_address,
 	        external_token_address,
+			external_payee,
 			cross_chain_token
 		);
 		Platform platform = new Platform{
