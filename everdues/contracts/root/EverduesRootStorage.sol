@@ -80,6 +80,7 @@ abstract contract EverduesRootStorage {
 		string TokenAddress; // ERC20 token address
 		uint256 PubKey; // subscriber pubkey
 		string Email; // subscriber email
+		uint128 Allowance; // value
 		uint128 PaidAmount; // sum(value)
 		bool IsActive; // canceled or not
 	}
