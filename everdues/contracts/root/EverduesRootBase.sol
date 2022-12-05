@@ -207,7 +207,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(latest_params.contractCode, latest_version, update_data);
+		}(latest_params.contractCode, latest_version, msg.sender, update_data);
 	}
 
 	function upgradeAccount(uint256 pubkey)
@@ -241,7 +241,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(latest_params.contractCode, latest_version, update_data);
+		}(latest_params.contractCode, latest_version, msg.sender, update_data);
 	}
 
 	function upgradeSubscriptionPlan(
@@ -321,7 +321,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	function forceUpgradeSubscription(
 		address subscription_address,
 		address subscription_owner
-	) external view {
+	) external view onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -388,7 +388,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		address service_address,
 		string category,
 		bool publish_to_catalog
-	) external view {
+	) external view onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -525,6 +525,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				pubkey
 			),
 			value: EverduesGas.ACCOUNT_INITIAL_BALANCE + EverduesGas.MESSAGE_MIN_VALUE,
+			bounce: true,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			latest_params.contractCode,
@@ -637,6 +638,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +
 				EverduesGas.EXECUTE_SUBSCRIPTION_VALUE +
 				additional_gas,
+			bounce: true,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			subscription_code_salt,
