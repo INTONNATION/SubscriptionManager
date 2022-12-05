@@ -10,6 +10,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 	function upgrade(
 		TvmCell code,
 		uint32 version,
+		address send_gas_to,
 		TvmCell upgrade_params
 	) external override onlyRoot {
 		TvmCell contract_params = abi.encode(
@@ -21,6 +22,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 		);
 		TvmCell data = abi.encode(
 			root,
+			send_gas_to,
 			current_version,
 			version,
 			type_id,

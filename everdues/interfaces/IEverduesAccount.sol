@@ -28,6 +28,7 @@ interface IEverduesAccount {
 	function upgrade(
 		TvmCell code,
 		uint32 version,
+		address send_gas_to,
 		TvmCell contract_params
 	) external;
 }

@@ -8,6 +8,7 @@
 			"inputs": [
 				{"name":"code","type":"cell"},
 				{"name":"version","type":"uint32"},
+				{"name":"send_gas_to","type":"address"},
 				{"name":"upgrade_params","type":"cell"}
 			],
 			"outputs": [

@@ -33,6 +33,10 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			service_params,
 			subscription_params,
 			external_subscription,
+			chain_id,
+			external_account_address,
+			external_token_address,
+			external_payee,
 			cross_chain_token,
 			upgrade_params
 		);
