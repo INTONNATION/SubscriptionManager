@@ -95,7 +95,7 @@ abstract contract EverduesRootStorage {
 	mapping(uint8 => mapping(uint256 => ExternalSubscription))
 		public cross_chain_subscriptions;
 
-	mapping (uint8=>string[]) supported_external_tokens;
+	mapping (uint8=>string[]) public supported_external_tokens;
 
 	function getCodeHashes(
 		uint256 owner_pubkey
