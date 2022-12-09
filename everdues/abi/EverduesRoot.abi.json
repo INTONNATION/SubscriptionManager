@@ -445,6 +445,15 @@
 			]
 		},
 		{
+			"name": "installOrUpgradeExternalTokensAddresses",
+			"inputs": [
+				{"name":"chain_id","type":"uint8"},
+				{"name":"supported_tokens","type":"string[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpgradeCrossChainContractsAddresses",
 			"inputs": [
 				{"name":"chain_id","type":"uint8"},
@@ -702,6 +711,7 @@
 		{"components":[{"name":"wallet_address","type":"address"},{"name":"required_amount","type":"uint128"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"cross_chain_proxies","type":"map(uint8,string)"},
 		{"name":"cross_chain_token","type":"address"},
-		{"components":[{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"Allowance","type":"uint128"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,tuple))"}
+		{"components":[{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"Allowance","type":"uint128"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,tuple))"},
+		{"name":"supported_external_tokens","type":"map(uint8,string[])"}
 	]
 }
