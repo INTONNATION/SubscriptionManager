@@ -288,6 +288,14 @@
 			]
 		},
 		{
+			"name": "setAbiEVMRecurringContract",
+			"inputs": [
+				{"name":"abiEVMRecurringContractInput","type":"string"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setAbiTIP3TokenWalletContract",
 			"inputs": [
 				{"name":"abiTIP3TokenWalletContractInput","type":"string"}
@@ -468,7 +476,7 @@
 				{"name":"owner_pubkey","type":"uint256"}
 			],
 			"outputs": [
-				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"account_versions","type":"map(uint32,tuple)"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"everdues_root_abi","type":"string"},{"name":"platform_abi","type":"string"},{"name":"account_address","type":"address"},{"name":"categories","type":"string[]"},{"name":"everdues_fee_proxy_abi","type":"string"},{"name":"index_abi","type":"string"},{"name":"subs_abis","type":"map(uint256,string)"}],"name":"everdues_contracts_info","type":"tuple"}
+				{"components":[{"components":[{"name":"contractVersion","type":"uint32"},{"name":"contractAbi","type":"string"}],"name":"versions","type":"map(uint8,map(uint256,tuple))"},{"components":[{"name":"contractCode","type":"cell"},{"name":"contractAbi","type":"string"}],"name":"account_versions","type":"map(uint32,tuple)"},{"name":"platform_code","type":"cell"},{"name":"tip3_root_abi","type":"string"},{"name":"tip3_wallet_abi","type":"string"},{"name":"everdues_root_abi","type":"string"},{"name":"platform_abi","type":"string"},{"name":"account_address","type":"address"},{"name":"categories","type":"string[]"},{"name":"everdues_fee_proxy_abi","type":"string"},{"name":"evm_contract_abi","type":"string"},{"name":"index_abi","type":"string"},{"name":"subs_abis","type":"map(uint256,string)"},{"name":"cross_chain_proxies","type":"map(uint8,string)"},{"name":"supported_external_tokens","type":"map(uint8,string[])"}],"name":"everdues_contracts_info","type":"tuple"}
 			]
 		},
 		{
@@ -704,6 +712,7 @@
 		{"name":"abiEverduesRootContract","type":"string"},
 		{"name":"abiTIP3RootContract","type":"string"},
 		{"name":"abiTIP3TokenWalletContract","type":"string"},
+		{"name":"abiEVMRecurringContract","type":"string"},
 		{"name":"abiEverduesAccountContract","type":"string"},
 		{"name":"abiServiceContract","type":"string"},
 		{"name":"abiIndexContract","type":"string"},

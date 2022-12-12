@@ -369,6 +369,24 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
+	function setAbiEVMRecurringContract(
+		string abiEVMRecurringContractInput
+	) external onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		abiEVMRecurringContract = abiEVMRecurringContractInput;
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
 	function setAbiTIP3TokenWalletContract(
 		string abiTIP3TokenWalletContractInput
 	) external onlyOwner {
