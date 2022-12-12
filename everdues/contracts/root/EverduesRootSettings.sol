@@ -888,7 +888,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		cross_chain_proxies.add(chain_id, contract_address);
+		cross_chain_proxies[chain_id] = contract_address;
 		owner.transfer({
 			value: 0,
 			bounce: false,
