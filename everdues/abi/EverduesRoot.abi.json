@@ -667,6 +667,14 @@
 			"outputs": [
 				{"components":[{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"Allowance","type":"uint128"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,tuple))"}
 			]
+		},
+		{
+			"name": "supported_external_tokens",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"supported_external_tokens","type":"map(uint8,string[])"}
+			]
 		}
 	],
 	"data": [
