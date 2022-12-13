@@ -52,7 +52,7 @@ async function executeUpgrade(client, account) {
             function_name: "forceUpgradeService",
             input: {
                 service_address: account,
-		category: "Other",
+        	category: "Other",
                 publish_to_catalog: true
             },
         },
@@ -60,34 +60,34 @@ async function executeUpgrade(client, account) {
         signer: signerNone(),
     })).body;
 
-    await multisigAccount.run("sendTransaction", {
-        dest: rootAddress,
-        value: 1_000_000_000, 
-        bounce: false,
-        flags: 0,
-        payload
-    });
+	 await multisigAccount.run("sendTransaction", {
+   	     dest: rootAddress,
+   	     value: 1_000_000_000, 
+   	     bounce: false,
+   	     flags: 0,
+   	     payload
+   	 });
 
-    console.log("Wait for upgrade answer:");
+   	 console.log("Wait for upgrade answer:");
 
-    // Wait for transaction
-    const subscriptionMessage = await client.net.wait_for_collection({
-        collection: 'messages',
-        filter: {
-            src: { eq: account },
-            //dst: { eq: account },
-        },
-        result: "boc"
-    });
+   	 // Wait for transaction
+   	 const subscriptionMessage = await client.net.wait_for_collection({
+   	     collection: 'messages',
+   	     filter: {
+   	         src: { eq: account },
+   	         //dst: { eq: account },
+   	     },
+   	     result: "boc"
+   	 });
 
-    console.log('Service recieved upgrade message from root');
+   	 console.log('Service recieved upgrade message from root');
 
-    const decoded = (await client.abi.decode_message({
-	                abi: abiContract(svcAbiFile),
-                        message: subscriptionMessage.result.boc,
-    }));
+   	 const decoded = (await client.abi.decode_message({
+   	                     abi: abiContract(svcAbiFile),
+   	                     message: subscriptionMessage.result.boc,
+   	 }));
 
-    console.log(`External outbound message, event "${decoded.name}", parameters`, JSON.stringify(decoded.value));
+        console.log(`External outbound message, event "${decoded.name}", parameters`, JSON.stringify(decoded.value));
 }
 
 (async () => {
