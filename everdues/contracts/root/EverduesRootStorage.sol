@@ -30,6 +30,7 @@ abstract contract EverduesRootStorage {
 	string abiEverduesRootContract;
 	string abiTIP3RootContract;
 	string abiTIP3TokenWalletContract;
+	string abiEVMRecurringContract;
 	string abiEverduesAccountContract;
 	string abiServiceContract;
 	string abiIndexContract;
@@ -64,8 +65,11 @@ abstract contract EverduesRootStorage {
 		address account_address;
 		string[] categories;
 		string everdues_fee_proxy_abi;
+		string evm_contract_abi;
 		string index_abi;
 		mapping(uint256 => string) subs_abis;
+		mapping(uint8 => string) cross_chain_proxies;
+		mapping(uint8 => string[]) supported_external_tokens;
 	}
 
 	struct ServiceDeployParams {
@@ -94,6 +98,8 @@ abstract contract EverduesRootStorage {
 
 	mapping(uint8 => mapping(uint256 => ExternalSubscription))
 		public cross_chain_subscriptions;
+
+	mapping (uint8=>string[]) public supported_external_tokens;
 
 	function getCodeHashes(
 		uint256 owner_pubkey
@@ -176,6 +182,7 @@ abstract contract EverduesRootStorage {
 		everdues_contracts_info.platform_abi = abiPlatformContract;
 		everdues_contracts_info.tip3_root_abi = abiTIP3RootContract;
 		everdues_contracts_info.tip3_wallet_abi = abiTIP3TokenWalletContract;
+		everdues_contracts_info.evm_contract_abi = abiEVMRecurringContract;
 		everdues_contracts_info.everdues_root_abi = abiEverduesRootContract;
 		everdues_contracts_info.everdues_fee_proxy_abi = versions[
 			ContractTypes.FeeProxy
@@ -200,6 +207,12 @@ abstract contract EverduesRootStorage {
 			);
 		}
 		everdues_contracts_info.subs_abis = subs_abis_mapping;
+		everdues_contracts_info.cross_chain_proxies = cross_chain_proxies;
+		everdues_contracts_info.supported_external_tokens = supported_external_tokens;
+	}
+
+	function getExternalSubscriber(uint8 chain_id, uint256 pubkey) external view returns (ExternalSubscription) {
+		return cross_chain_subscriptions[chain_id][pubkey];
 	}
 
 	function getExternalSubscriber(uint8 chain_id, uint256 pubkey) external view returns (ExternalSubscription) {
