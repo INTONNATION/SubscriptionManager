@@ -215,6 +215,10 @@ abstract contract EverduesRootStorage {
 		return cross_chain_subscriptions[chain_id][pubkey];
 	}
 
+	function getExternalSubscriber(uint8 chain_id, uint256 pubkey) external view returns (ExternalSubscription) {
+		return cross_chain_subscriptions[chain_id][pubkey];
+	}
+
 	function getPendingOwner()
 		external
 		view

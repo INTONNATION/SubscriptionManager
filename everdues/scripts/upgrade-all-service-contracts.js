@@ -52,7 +52,7 @@ async function executeUpgrade(client, account) {
             function_name: "forceUpgradeService",
             input: {
                 service_address: account,
-        	category: "Other",
+        	      category: "Other",
                 publish_to_catalog: true
             },
         },

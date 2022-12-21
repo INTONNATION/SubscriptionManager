@@ -173,6 +173,7 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"1\",\"supported_tokens\":[\"0xdAC17F958D2ee523a2206206994597C13D831ec7\",\"0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48\",\"0x4Fabb145d64652a948d72533023f6E7A623C7C53\",\"0x6B175474E89094C44Da98b954EedeAC495271d0F\"]}"`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"137\",\"supported_tokens\":[\"0xc2132D05D31c914a87C6611C10748AEb04B58e8F\",\"0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174\",\"0xdAb529f40E671A1D4bF91361c21bf9f0C9712ab7\",\"0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063\"]}"`
+
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 message=`tonos-cli -j body installOrUpgradeEverDuesWrappedTokens "{\"tip3_root\":\"0:741249b8a3564133403dc7816e59548943721bbd2604da43038222ed463fe0a9\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
