@@ -369,6 +369,24 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		});
 	}
 
+	function setAbiEVMRecurringContract(
+		string abiEVMRecurringContractInput
+	) external onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		abiEVMRecurringContract = abiEVMRecurringContractInput;
+		owner.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
 	function setAbiTIP3TokenWalletContract(
 		string abiTIP3TokenWalletContractInput
 	) external onlyOwner {
@@ -861,6 +879,22 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		}(dex_root_address, owner);
 	}
 
+	function installOrUpgradeExternalTokensAddresses(uint8 chain_id, string[] supported_tokens) external onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		supported_external_tokens.add(chain_id,supported_tokens);
+		msg.sender.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
+	}
+
 	function installOrUpgradeCrossChainContractsAddresses(
 		uint8 chain_id,
 		string contract_address
@@ -872,7 +906,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		cross_chain_proxies.add(chain_id, contract_address);
+		cross_chain_proxies[chain_id] = contract_address;
 		owner.transfer({
 			value: 0,
 			bounce: false,

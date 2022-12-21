@@ -40,7 +40,8 @@ contract EverduesRoot is EverduesRootBase {
 			wallets_mapping,
 			cross_chain_token,
 			cross_chain_subscriptions,
-			cross_chain_proxies
+			cross_chain_proxies,
+			supported_external_tokens
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -72,7 +73,8 @@ contract EverduesRoot is EverduesRootBase {
 			wallets_mapping,
 			cross_chain_token,
 			cross_chain_subscriptions,
-			cross_chain_proxies
+			cross_chain_proxies,
+			supported_external_tokens
 		) = abi.decode(
 			upgrade_data,
 			(
@@ -97,7 +99,8 @@ contract EverduesRoot is EverduesRootBase {
 				mapping(address => ServiceDeployParams),
 				address,
 				mapping(uint8 => mapping(uint256 => ExternalSubscription)),
-				mapping(uint8 => string)
+				mapping(uint8 => string),
+				mapping (uint8=>string[])
 			)
 		);
 		owner.transfer({
