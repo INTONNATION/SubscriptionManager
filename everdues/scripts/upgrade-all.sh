@@ -132,13 +132,13 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 message=`tonos-cli -j body setRecurringPaymentGas "{\"recurring_payment_gas_\":\"400000000\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
-message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"56\",\"contract_address\":\"0x2e2560Cd0a75C578FbA03A767B87a269BD945CA7\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"56\",\"contract_address\":\"0xa458e719dFEd474ed29B4bC5498111Db50acAa74\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
 message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"1\",\"contract_address\":\"0x02f51930f73459EeD79C8016c25C91b08560dd3A\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
-message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"137\",\"contract_address\":\"0x5E4E307335DEb3BB1BE7CBE27656E603D45bE818\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"137\",\"contract_address\":\"0xE0184d6c2c75964a08B66081ECDDd0Ab5F45463F\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
 message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"56\",\"supported_tokens\":[\"0x55d398326f99059fF775485246999027B3197955\",\"0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56\",\"0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d\",\"0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3\"]}"  --abi ../abi/$1.abi.json | jq -r .Message`
