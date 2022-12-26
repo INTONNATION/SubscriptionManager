@@ -207,6 +207,14 @@
 			]
 		},
 		{
+			"name": "external_supported_tokens",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"external_supported_tokens","type":"map(uint8,string[])"}
+			]
+		},
+		{
 			"name": "wallet_balance",
 			"inputs": [
 			],
