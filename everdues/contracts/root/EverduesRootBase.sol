@@ -887,7 +887,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		address tokenRoot,
 		uint128 amount,
 		address sender,
-		address, /*senderWallet*/
+		address senderWallet,
 		address remainingGasTo,
 		TvmCell payload
 	) external view {
@@ -949,7 +949,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				);
 			} else {
 				// TODO rewrite payload to add error code - unsupported tip3 root
-				ITokenWallet(service_deploy_params.wallet_address).transfer{
+				ITokenWallet(senderWallet).transfer{
 					value: 0,
 					bounce: true,
 					flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS

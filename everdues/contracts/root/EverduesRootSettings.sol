@@ -887,7 +887,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		supported_external_tokens.add(chain_id,supported_tokens);
+		supported_external_tokens[chain_id] = supported_tokens;
 		msg.sender.transfer({
 			value: 0,
 			bounce: false,
