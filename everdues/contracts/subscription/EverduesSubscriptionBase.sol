@@ -68,13 +68,12 @@ abstract contract EverduesSubscriptionBase is
 			if (now > (subscription.payment_timestamp - preprocessing_window)) {
 				tvm.accept();
 				uint8 subcr_status = subscriptionStatus();
-				require(
-					subcr_status !=
-						EverduesSubscriptionStatus.STATUS_PROCESSING &&
-						subcr_status !=
-						EverduesSubscriptionStatus.STATUS_ACTIVE,
+				require(subcr_status != EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
-				); // optinal(add processing timeout (e.q few hours))
+				);
+				if (subcr_status == EverduesSubscriptionStatus.STATUS_PROCESSING && ((now - subscription.execution_timestamp) < payment_processing_timeout)) {
+					revert(EverduesErrors.error_subscription_already_executed);
+				}
 				executeSubscription_(additional_gas);
 			} else {
 				revert(EverduesErrors.error_subscription_status_already_active);
@@ -86,7 +85,7 @@ abstract contract EverduesSubscriptionBase is
 				revert(EverduesErrors.error_subscription_status_already_active);
 			} else if (
 				subscription.status ==
-				EverduesSubscriptionStatus.STATUS_PROCESSING
+				EverduesSubscriptionStatus.STATUS_PROCESSING && ((now - subscription.execution_timestamp) < payment_processing_timeout)
 			) {
 				revert(EverduesErrors.error_subscription_already_executed); // optinal(add processing timeout (e.q 1 day))
 			} else {
