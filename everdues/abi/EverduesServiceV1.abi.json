@@ -215,6 +215,14 @@
 			]
 		},
 		{
+			"name": "root",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"root","type":"address"}
+			]
+		},
+		{
 			"name": "wallet_balance",
 			"inputs": [
 			],
