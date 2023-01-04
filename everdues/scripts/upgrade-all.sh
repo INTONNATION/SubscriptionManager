@@ -160,10 +160,10 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 
 deploy $CONTRACT_NAME $1
 ## Upgrade all deployed contracts
-#npm i
-#node upgrade-all-service-contracts.js $1
-#node upgrade-all-account-contracts.js $1
-#node upgrade-all-subscription-contracts.js $1
+npm i
+node upgrade-all-service-contracts.js $1
+node upgrade-all-account-contracts.js $1
+node upgrade-all-subscription-contracts.js $1
 
 CONTRACT_ADDRESS=$(cat ./envs/$1-$CONTRACT_NAME.addr)
 
