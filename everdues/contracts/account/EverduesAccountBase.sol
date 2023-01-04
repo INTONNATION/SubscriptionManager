@@ -120,18 +120,6 @@ abstract contract EverduesAccountBase is
 			if (value > current_balance) {
 				revert(EverduesErrors.error_tip3_low_value);
 			} else {
-				_tmp_subscription_operations[now] = SubscriptionOperation(
-					currency_root,
-					value,
-					subscription_wallet,
-					additional_gas,
-					msg.sender,
-					recurring_payment_gas,
-					subscription_deploy,
-					0,
-					0,
-					service_address
-				);
 				if (external_subscription) {
 					TvmCell payload = abi.encode(uint128(0));
 					ITokenWallet(current_balance_key_value.wallet)
@@ -141,6 +129,18 @@ abstract contract EverduesAccountBase is
 						flag: MsgFlag.SENDER_PAYS_FEES
 					}(value, subscription_wallet, address(this), true, payload);
 				} else if (subscription_deploy) {
+					_tmp_subscription_operations[now] = SubscriptionOperation(
+						currency_root,
+						value,
+						subscription_wallet,
+						additional_gas,
+						msg.sender,
+						recurring_payment_gas,
+						subscription_deploy,
+						0,
+						0,
+						service_address
+					);
 					IEverduesService(service_address)
 						.getGasCompenstationProportion{
 						value: 1 ever,
@@ -150,6 +150,18 @@ abstract contract EverduesAccountBase is
 							.onGetGasCompenstationProportion
 					}();
 				} else {
+					_tmp_subscription_operations[now] = SubscriptionOperation(
+						currency_root,
+						value,
+						subscription_wallet,
+						additional_gas,
+						msg.sender,
+						recurring_payment_gas,
+						subscription_deploy,
+						0,
+						0,
+						service_address
+					);
 					IDexPair(current_balance_key_value.dex_ever_pair_address)
 						.expectedSpendAmount{
 						value: 1 ever,

@@ -23,7 +23,7 @@ abstract contract EverduesServiceStorage is IEverduesService {
 	mapping(uint8 => string) public supported_chains;
 	mapping(uint8 => string[]) public external_supported_tokens;
 
-	address root;
+	address public root;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	uint32 current_version;

@@ -37,6 +37,8 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	string external_payee;
 	address cross_chain_token;
 
+	uint32 constant payment_processing_timeout = 3600;
+
 	struct serviceParams {
 		address to;
 		uint128 subscription_value;
