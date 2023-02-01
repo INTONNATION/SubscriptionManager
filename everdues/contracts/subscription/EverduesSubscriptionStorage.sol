@@ -64,7 +64,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 
 	function subscriptionStatus() public override returns (uint8) {
 		if (
-			now < (subscription.payment_timestamp + svcparams.period) ||
+			subscription.payment_timestamp !=0 &&
 			(subscription.period == 0 &&
 				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE)
 		) {
@@ -84,8 +84,10 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 				EverduesSubscriptionStatus.STATUS_PROCESSING)
 		) {
 			return EverduesSubscriptionStatus.STATUS_EXECUTE;
-		} else {
+		} else if ((now - subscription.execution_timestamp) < payment_processing_timeout) {
 			return EverduesSubscriptionStatus.STATUS_PROCESSING;
+		} else {
+			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		}
 	}
 }

@@ -17,4 +17,6 @@ interface IEverduesSubscription {
 		address send_gas_to,
 		TvmCell contract_params_
 	) external;
+
+	function cancel(address send_gas_to) external;
 }
