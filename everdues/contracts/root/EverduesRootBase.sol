@@ -490,6 +490,15 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 					depositCrossChainTokens(account_address, msg.sender, value);
 				}
 			} else {
+				address subscription_address = address(
+					tvm.hash(_buildInitData(
+					ContractTypes.Subscription,
+					_buildSubscriptionPlatformParams(account_address, everdues_service_address)))
+			    );
+				IEverduesSubscription(subscription_address).cancel{
+					value: 0,
+					flag: MsgFlag.ALL_NOT_RESERVED
+		}		(msg.sender);
 				delete cross_chain_subscriptions[chain_id][sid];
 			}
         } else {
