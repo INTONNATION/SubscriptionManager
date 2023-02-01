@@ -627,7 +627,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	        external_account_address,
 	        external_token_address,
 			external_payee,
-			cross_chain_token
+			cross_chain_token,
+			address(0)
 		);
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
@@ -673,6 +674,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		address service_address,
 		TvmCell identificator,
 		uint256 owner_pubkey,
+		address tip3_wallet_owner_address,
 		uint8 subscription_plan,
 		uint128 additional_gas
 	) external view onlyAccountContract(owner_pubkey) {
@@ -736,7 +738,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			string(""),
 			string(""),
 			string(""),
-			address(0)
+			address(0),
+			tip3_wallet_owner_address
 		);
 		Platform platform = new Platform{
 			stateInit: _buildInitData(

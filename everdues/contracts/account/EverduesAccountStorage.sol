@@ -9,6 +9,7 @@ abstract contract EverduesAccountStorage {
 	uint32 current_version;
 	uint8 type_id;
 	address public root;
+	uint256 public account_pubkey;
 	address dex_root_address;
 	address wever_root;
 	TvmCell platform_code;
@@ -50,6 +51,7 @@ abstract contract EverduesAccountStorage {
 	mapping(uint64 => GetDexPairOperation) _tmp_get_pairs;
 	mapping(uint64 => SubscriptionOperation) _tmp_subscription_operations;
 	mapping(address => DepositTokens) tmp_deposit_tokens;
+	mapping(address => uint128) associated_wallets;
 
 	function _buildSubscriptionParams(
 		address subscription_owner,

@@ -40,6 +40,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	uint32 constant payment_processing_timeout = 3600;
 
 	struct serviceParams {
+		address from,
 		address to;
 		uint128 subscription_value;
 		uint128 service_value;
@@ -57,6 +58,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		uint32 execution_timestamp;
 		uint8 status;
 		uint128 pay_subscription_gas;
+		uint128 account_gas_balance;
 	}
 
 	serviceParams public svcparams;

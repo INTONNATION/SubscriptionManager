@@ -4,6 +4,7 @@ interface IEverduesSubscription {
 	event paramsRecieved(TvmCell service_params_);
 	event SubscriptionDeleted();
 	event subscriptionExecuted();
+	event paymentStatus(uint8 status);
 	
 	function subscriptionStatus() external returns (uint8);
 

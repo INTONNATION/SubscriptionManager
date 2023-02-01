@@ -90,6 +90,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 				contract_params,
 				(address, address, address, uint128, uint256)
 			); 
+			account_pubkey = tvm.pubkey();
 			
 		}
 		if (send_gas_to.value != 0) {

@@ -22,7 +22,8 @@ interface IEverduesAccount {
 	function getNextPaymentStatus(
 		address service_address,
 		uint128 value,
-		address currency_root
+		address currency_root,
+		address tip3_wallet_owner_address
 	) external responsible returns (uint8, uint128);
 
 	function upgrade(

@@ -4,6 +4,7 @@ pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
 import "./EverduesSubscriptionSettings.sol";
+import "../../libraries/NextPaymentStatus.sol";
 
 import "../../interfaces/IEverduesAccount.sol";
 import "../../interfaces/IEverduesFeeProxy.sol";
@@ -111,7 +112,8 @@ abstract contract EverduesSubscriptionBase is
 			}(
 				service_address,
 				svcparams.subscription_value,
-				svcparams.currency_root
+				svcparams.currency_root,
+				svcparams.from
 			);
 		} else {
 			revert(EverduesErrors.error_service_is_not_active);
@@ -130,7 +132,8 @@ abstract contract EverduesSubscriptionBase is
 		}(
 			service_address,
 			svcparams.subscription_value,
-			svcparams.currency_root
+			svcparams.currency_root,
+			svcparams.from
 		);
 		account_address.transfer({
 			value: 0,
@@ -218,10 +221,12 @@ abstract contract EverduesSubscriptionBase is
 		uint8 next_payment_status,
 		uint128 account_gas_balance
 	) external onlyAccount {
-		if (next_payment_status == 1) {
+		if (next_payment_status == NextPaymentStatus.STATUS_BALANCE_NOT_ENOUGH || next_payment_status == NextPaymentStatus.STATUS_ALLOWANCE_NOT_ENOUGH) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
-		} else if (next_payment_status == 0) {
+			emit paymentStatus(next_payment_status);
+		} else if (next_payment_status == NextPaymentStatus.STATUS_BALANCE_ENOUGH) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
+			emit paymentStatus(next_payment_status);
 			IEverduesFeeProxy(address_fee_proxy).executePaySubscription{
 				value: 0,
 				bounce: true,
@@ -237,6 +242,45 @@ abstract contract EverduesSubscriptionBase is
 				external_subscription,
 				subscription.pay_subscription_gas
 			);
+		// allowance
+		} else if (next_payment_status == NextPaymentStatus.STATUS_ALLOWANCE_ENOUGH) {
+			// check tip3 balance
+			emit paymentStatus(next_payment_status);
+			subscription.account_gas_balance = account_gas_balance;
+			ITokenWallet(svcparams.from).balance{
+				value: 0,
+				bounce: true,
+				flag: MsgFlag.REMAINING_GAS,
+				callback: EverduesSubscriptionBase.onGetWalletBalance
+			}();
+		} else {
+			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
+		}
+	}
+
+	function onGetWalletBalance(uint128 balance) external {
+		require(msg.sender != address(0) && msg.sender == svcparams.from, EverduesErrors.error_message_sender_is_not_subscription_wallet);
+		if (balance > svcparams.value) {
+			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
+			emit paymentStatus(NextPaymentStatus.STATUS_ALLOWANCE_AND_BALANCE_ENOUGH);
+			IEverduesFeeProxy(address_fee_proxy).executePaySubscription{
+				value: 0,
+				bounce: true,
+				flag: MsgFlag.REMAINING_GAS
+			}(
+				account_address,
+				service_address,
+				svcparams.service_value,
+				svcparams.currency_root,
+				subscription_wallet,
+				subscription.account_gas_balance,
+				compensate_subscription_deploy,
+				external_subscription,
+				subscription.pay_subscription_gas
+			);
+		} else {
+			subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
+			emit paymentStatus(NextPaymentStatus.STATUS_ALLOWANCE_AND_BALANCE_NOT_ENOUGH);
 		}
 	}
 

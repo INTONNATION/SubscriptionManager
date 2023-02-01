@@ -64,6 +64,12 @@ abstract contract EverduesAccountSettings is
 		_;
 	}
 
+	function setOrUpdateAccountAllowance(address tip3_wallet_owner_address, uint128 allowance) external onlyOwner {
+		if (!associated_wallets.exists(tip3_wallet_owner_address)) {
+			associated_wallets[tip3_wallet_owner_address] = allowance;
+		}
+	}
+
 	function destroyAccount(
 		address send_gas_to
 	) external override onlyOwnerOrRoot {
