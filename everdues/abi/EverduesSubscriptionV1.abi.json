@@ -23,6 +23,14 @@
 			]
 		},
 		{
+			"name": "cancel",
+			"inputs": [
+				{"name":"send_gas_to","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "executeSubscription",
 			"inputs": [
 				{"name":"additional_gas","type":"uint128"}
@@ -85,13 +93,6 @@
 		},
 		{
 			"name": "resumeSubscription",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "cancel",
 			"inputs": [
 			],
 			"outputs": [

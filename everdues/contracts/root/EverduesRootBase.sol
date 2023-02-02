@@ -488,20 +488,34 @@ abstract contract EverduesRootBase is EverduesRootSettings {
            		cross_chain_subscriptions[chain_id].replace(sid, external_subscription_event);
 				if (value > 0) {
 					depositCrossChainTokens(account_address, msg.sender, value);
+					msg.sender.transfer({
+						value: 0,
+						bounce: false,
+						flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+					});
 				}
 			} else {
+				address subscription_address = address(
+					tvm.hash(_buildInitData(
+					ContractTypes.Subscription,
+					_buildSubscriptionPlatformParams(account_address, everdues_service_address)))
+			    );
+				IEverduesSubscription(subscription_address).cancel{
+					value: 0,
+					flag: MsgFlag.ALL_NOT_RESERVED
+				}(msg.sender);
 				delete cross_chain_subscriptions[chain_id][sid];
 			}
         } else {
 			deployExternalAccount(pubkey);
 			depositCrossChainTokens(account_address, msg.sender, paid_amount);
 			deployExternalSubscription(chain_id, customer, payee, tokenAddress, everdues_service_address, identificator, pubkey, subscription_plan, additional_gas);
+			msg.sender.transfer({
+				value: 0,
+				bounce: false,
+				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+			});
 		}
-		msg.sender.transfer({
-			value: 0,
-			bounce: false,
-			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-		});
 	}
 
 	function deployExternalAccount(uint256 pubkey) private view {
