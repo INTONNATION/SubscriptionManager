@@ -61,6 +61,7 @@ abstract contract EverduesSubscriptionBase is
 				flag: MsgFlag.SENDER_PAYS_FEES
 			}(send_gas_to);
 		}
+		selfdestruct(send_gas_to);
 	}
 
 	function executeSubscription_(uint128 additional_gas) private {
