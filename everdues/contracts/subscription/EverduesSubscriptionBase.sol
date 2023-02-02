@@ -41,6 +41,28 @@ abstract contract EverduesSubscriptionBase is
 			callback: EverduesSubscriptionBase.onGetParams
 		}(new_subscription_plan);
 	}
+	
+	function cancel(address send_gas_to) external override onlyRootOrOwner {
+		tvm.accept();
+		emit SubscriptionDeleted();
+		if(send_gas_to == address(0)){
+			send_gas_to = account_address;
+		}
+		IEverduesIndex(subscription_index_address).cancel{
+			value: EverduesGas.MESSAGE_MIN_VALUE,
+			flag: MsgFlag.SENDER_PAYS_FEES
+		}(send_gas_to);
+		TvmCell empty;
+		if (
+			subscription_index_identificator_address != address(tvm.hash(empty))
+		) {
+			IEverduesIndex(subscription_index_identificator_address).cancel{
+				value: EverduesGas.MESSAGE_MIN_VALUE,
+				flag: MsgFlag.SENDER_PAYS_FEES
+			}(send_gas_to);
+		}
+		selfdestruct(send_gas_to);
+	}
 
 	function executeSubscription_(uint128 additional_gas) private {
 		subscription.pay_subscription_gas = additional_gas;
