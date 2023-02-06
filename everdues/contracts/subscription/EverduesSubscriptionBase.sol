@@ -12,6 +12,7 @@ import "../../interfaces/IEverduesSubscription.sol";
 
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
+import "https://raw.githubusercontent.com/broxus/tip3/master/contracts/interfaces/IBurnableTokenWallet.tsol";
 
 abstract contract EverduesSubscriptionBase is
 	IEverduesSubscription,
@@ -93,7 +94,7 @@ abstract contract EverduesSubscriptionBase is
 				require(subcr_status != EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
 				);
-				if (subcr_status == EverduesSubscriptionStatus.STATUS_PROCESSING && ((now - subscription.execution_timestamp) < payment_processing_timeout)) {
+				if (subcr_status == EverduesSubscriptionStatus.STATUS_PROCESSING) {
 					revert(EverduesErrors.error_subscription_already_executed);
 				}
 				executeSubscription_(additional_gas);
@@ -162,13 +163,14 @@ abstract contract EverduesSubscriptionBase is
 	}
 
 	function onAcceptTokensTransfer(
-		address /*tokenRoot*/,
+		address tokenRoot,
 		uint128 amount,
 		address /*sender*/,
 		address /*senderWallet*/,
 		address /*remainingGasTo*/,
 		TvmCell payload
 	) external {
+		require(tokenRoot == svcparams.currency_root, EverduesErrors.error_message_sender_is_not_currency_root);
 		require(
 			amount >= svcparams.subscription_value,
 			EverduesErrors.error_message_low_value
@@ -184,45 +186,53 @@ abstract contract EverduesSubscriptionBase is
 			),
 			2
 		);
-		uint128 account_compensation_fee = abi.decode(payload, (uint128));
-		uint128 service_value_percentage = svcparams.service_value / 100;
-		uint128 service_fee_value = service_value_percentage * service_fee;
-		uint128 protocol_fee = ((svcparams.subscription_value -
-			svcparams.service_value) +
-			(amount - svcparams.subscription_value) +
-			service_fee_value +
-			account_compensation_fee);
-		if (protocol_fee > amount) {
-			ITokenWallet(msg.sender).transfer{
-				value: EverduesGas.TRANSFER_MIN_VALUE,
-				flag: MsgFlag.SENDER_PAYS_FEES
-			}(amount, address_fee_proxy, 0, address_fee_proxy, true, payload);
+		if (!external_subscription) {
+			uint128 account_compensation_fee = abi.decode(payload, (uint128));
+			uint128 service_value_percentage = svcparams.service_value / 100;
+			uint128 service_fee_value = service_value_percentage * service_fee;
+			uint128 protocol_fee = ((svcparams.subscription_value -
+				svcparams.service_value) +
+				(amount - svcparams.subscription_value) +
+				service_fee_value +
+				account_compensation_fee);
+			if (protocol_fee > amount) {
+				ITokenWallet(msg.sender).transfer{
+					value: 0,
+					flag: MsgFlag.ALL_NOT_RESERVED
+				}(amount, address_fee_proxy, 0, address_fee_proxy, true, payload);
+			} else {
+				uint128 pay_value = svcparams.subscription_value - protocol_fee;
+				ITokenWallet(msg.sender).transfer{
+					value: EverduesGas.TRANSFER_MIN_VALUE,
+					flag: MsgFlag.SENDER_PAYS_FEES
+				}(
+					protocol_fee,
+					address_fee_proxy,
+					0,
+					address_fee_proxy,
+					true,
+					payload
+				);
+				ITokenWallet(msg.sender).transfer{
+					value: 0,
+					flag: MsgFlag.ALL_NOT_RESERVED
+				}(
+					pay_value,
+					svcparams.to,
+					0, // TODO: add EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS or fix in case multicurrencies support
+					address_fee_proxy,
+					true,
+					payload
+				);
+			}
 		} else {
-			uint128 pay_value = svcparams.subscription_value - protocol_fee;
-			ITokenWallet(msg.sender).transfer{
-				value: EverduesGas.TRANSFER_MIN_VALUE,
-				flag: MsgFlag.SENDER_PAYS_FEES
-			}(
-				protocol_fee,
-				address_fee_proxy,
-				0,
-				address_fee_proxy,
-				true,
-				payload
-			);
-			ITokenWallet(msg.sender).transfer{
+			// Burn oracle tokens
+			IBurnableTokenWallet(msg.sender).burn{
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED
-			}(
-				pay_value,
-				svcparams.to,
-				0, // TODO: add EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS or fix in case multicurrencies support
-				address_fee_proxy,
-				true,
-				payload
-			);
+			}(amount, address_fee_proxy, account_address, payload);
 		}
-		if (subscription.payment_timestamp == 0) {
+		if (subscription.payment_timestamp == 0 || subscriptionStatus() == EverduesSubscriptionStatus.STATUS_NONACTIVE) {
 			subscription.payment_timestamp = uint32(now) + subscription.period;
 		} else {
 			subscription.payment_timestamp =
