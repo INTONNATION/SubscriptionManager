@@ -37,7 +37,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	string external_payee;
 	address cross_chain_token;
 
-	uint32 constant payment_processing_timeout = 3600;
+	uint32 constant payment_processing_timeout = 3600 * 24;
 
 	struct serviceParams {
 		address to;
@@ -65,20 +65,24 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	function subscriptionStatus() public override returns (uint8) {
 		if (
 			subscription.payment_timestamp !=0 &&
-			(subscription.period == 0 &&
-				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE)
+			subscription.period == 0
 		) {
 			return EverduesSubscriptionStatus.STATUS_ACTIVE;
 		} else if (
-			(now > (subscription.payment_timestamp + svcparams.period)) &&
+			(now < (subscription.payment_timestamp)) &&
+			(subscription.status !=
+				EverduesSubscriptionStatus.STATUS_PROCESSING)
+		) {
+				return EverduesSubscriptionStatus.STATUS_ACTIVE;
+		} else if (
+			(now > (subscription.payment_timestamp)) &&
 			(subscription.status !=
 				EverduesSubscriptionStatus.STATUS_PROCESSING)
 		) {
 			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else if (
 			now >
-			(subscription.payment_timestamp +
-				svcparams.period -
+			(subscription.payment_timestamp -
 				preprocessing_window) &&
 			(subscription.status !=
 				EverduesSubscriptionStatus.STATUS_PROCESSING)
