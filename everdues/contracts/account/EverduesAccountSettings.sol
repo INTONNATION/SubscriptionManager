@@ -15,6 +15,14 @@ abstract contract EverduesAccountSettings is
 	EverduesAccountStorage,
 	IEverduesAccount
 {
+	modifier onlyOracleRootToken() {
+		require(
+			msg.sender == cross_chain_token,
+			EverduesErrors.error_message_sender_is_not_currency_root
+		);
+		_;
+	}
+
 	modifier onlyFeeProxy() {
 		address fee_proxy_address = address(
 			tvm.hash(

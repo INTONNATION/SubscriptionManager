@@ -180,6 +180,18 @@
 			]
 		},
 		{
+			"name": "onAcceptTokensBurn",
+			"inputs": [
+				{"name":"amount","type":"uint128"},
+				{"name":"value1","type":"address"},
+				{"name":"value2","type":"address"},
+				{"name":"remainingGasTo","type":"address"},
+				{"name":"value4","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "onGetExpectedPairAddress",
 			"inputs": [
 				{"name":"dex_pair_address","type":"address"}
@@ -282,6 +294,7 @@
 		{"name":"root","type":"address"},
 		{"name":"dex_root_address","type":"address"},
 		{"name":"wever_root","type":"address"},
+		{"name":"cross_chain_token","type":"address"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"account_gas_threshold","type":"uint128"},
