@@ -577,7 +577,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			wever_root,
 			tip3_to_ever_address,
 			account_threshold,
-			tvm.hash(latest_params.contractAbi)
+			tvm.hash(latest_params.contractAbi),
+			cross_chain_token
 		);
 		Platform(msg.sender).initializeByRoot{
 			value: 0,
