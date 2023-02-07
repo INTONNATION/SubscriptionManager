@@ -22,6 +22,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	TvmCell public identificator;
 	uint256 public abi_hash;
 	uint256 public root_pubkey;
+	uint256 public totalPaid;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address subscription_wallet;
@@ -36,6 +37,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	string external_token_address;
 	string external_payee;
 	address cross_chain_token;
+	//bool notify;
 
 	uint32 constant payment_processing_timeout = 3600 * 24;
 
