@@ -224,6 +224,7 @@ abstract contract EverduesSubscriptionBase is
 					true,
 					payload
 				);
+				totalPaid += pay_value;
 			}
 		} else {
 			// Burn oracle tokens
@@ -231,6 +232,7 @@ abstract contract EverduesSubscriptionBase is
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED
 			}(amount, address_fee_proxy, account_address, payload);
+			totalPaid += amount;
 		}
 		if (subscription.period != 0) {
 			if (subscription.payment_timestamp == 0 || subscriptionStatus() == EverduesSubscriptionStatus.STATUS_NONACTIVE) {
