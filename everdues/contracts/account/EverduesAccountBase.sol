@@ -562,6 +562,7 @@ abstract contract EverduesAccountBase is
 		address remainingGasTo,
 		TvmCell /*payload*/
 	) external {
+		// TODO: totalCreditsEarned (+= if sender subscription contract, parse payload to receive service_address)
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(tokenRoot);
 		if (current_balance_struct.hasValue()) {
