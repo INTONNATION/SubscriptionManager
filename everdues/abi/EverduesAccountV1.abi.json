@@ -239,6 +239,22 @@
 			]
 		},
 		{
+			"name": "totalExternalEarned",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"totalExternalEarned","type":"uint256"}
+			]
+		},
+		{
+			"name": "totalPaid",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"totalPaid","type":"uint256"}
+			]
+		},
+		{
 			"name": "wallets_mapping",
 			"inputs": [
 			],
@@ -300,6 +316,8 @@
 		{"name":"account_gas_threshold","type":"uint128"},
 		{"name":"abi_hash","type":"uint256"},
 		{"name":"pubkey","type":"uint256"},
+		{"name":"totalExternalEarned","type":"uint256"},
+		{"name":"totalPaid","type":"uint256"},
 		{"components":[{"name":"wallet","type":"address"},{"name":"balance","type":"uint128"},{"name":"dex_ever_pair_address","type":"address"}],"name":"wallets_mapping","type":"map(address,tuple)"},
 		{"name":"_tmp_sync_balance","type":"map(address,address)"},
 		{"components":[{"name":"currency_root","type":"address"},{"name":"send_gas_to","type":"address"}],"name":"_tmp_get_pairs","type":"map(uint64,tuple)"},

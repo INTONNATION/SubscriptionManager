@@ -87,10 +87,10 @@ abstract contract EverduesSubscriptionBase is
 			subscription.status != EverduesSubscriptionStatus.STATUS_STOPPED,
 			EverduesErrors.error_subscription_is_stopped
 		);
+		uint8 subcr_status = subscriptionStatus();
 		if (subscription.period != 0) {
 			if (now > (subscription.payment_timestamp - preprocessing_window)) {
 				tvm.accept(); // move
-				uint8 subcr_status = subscriptionStatus();
 				require(subcr_status != EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
 				);
@@ -103,14 +103,14 @@ abstract contract EverduesSubscriptionBase is
 			}
 		} else {
 			if (
-				subscription.status == EverduesSubscriptionStatus.STATUS_ACTIVE
+				subcr_status == EverduesSubscriptionStatus.STATUS_ACTIVE
 			) {
 				revert(EverduesErrors.error_subscription_status_already_active);
 			} else if (
-				subscription.status ==
+				subcr_status ==
 				EverduesSubscriptionStatus.STATUS_PROCESSING
 			) {
-				revert(EverduesErrors.error_subscription_already_executed); // optinal(add processing timeout (e.q 1 day))
+				revert(EverduesErrors.error_subscription_already_executed);
 			} else {
 				tvm.accept();
 				executeSubscription_(additional_gas);
@@ -224,6 +224,7 @@ abstract contract EverduesSubscriptionBase is
 					true,
 					payload
 				);
+				totalPaid += pay_value;
 			}
 		} else {
 			// Burn oracle tokens
@@ -231,13 +232,16 @@ abstract contract EverduesSubscriptionBase is
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED
 			}(amount, address_fee_proxy, account_address, payload);
+			totalPaid += amount;
 		}
-		if (subscription.payment_timestamp == 0 || subscriptionStatus() == EverduesSubscriptionStatus.STATUS_NONACTIVE) {
-			subscription.payment_timestamp = uint32(now) + subscription.period;
-		} else {
-			subscription.payment_timestamp =
-				subscription.payment_timestamp +
-				subscription.period;
+		if (subscription.period != 0) {
+			if (subscription.payment_timestamp == 0 || subscriptionStatus() == EverduesSubscriptionStatus.STATUS_NONACTIVE) {
+				subscription.payment_timestamp = uint32(now) + subscription.period;
+			} else {
+				subscription.payment_timestamp =
+					subscription.payment_timestamp +
+					subscription.period;
+			}
 		}
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		if (compensate_subscription_deploy) {

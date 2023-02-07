@@ -122,6 +122,7 @@ abstract contract EverduesAccountBase is
 			} else {
 				if (external_subscription) {
 					TvmCell payload = abi.encode(uint128(0));
+					totalPaid += value;
 					ITokenWallet(current_balance_key_value.wallet)
 						.transferToWallet{
 						value: 1 ever,
@@ -269,7 +270,7 @@ abstract contract EverduesAccountBase is
 			} else {
 				payload = abi.encode(expected_amount);
 			}
-
+			totalPaid += last_operation.value + value_gas_compensation;
 			ITokenWallet(account_wallet).transferToWallet{
 				value: 0,
 				bounce: false,
@@ -621,18 +622,7 @@ abstract contract EverduesAccountBase is
 			msg.sender == cross_chain_token,
 			EverduesErrors.error_message_sender_is_not_currency_root
 		);
-		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
-			.fetch(cross_chain_token);
-		if (current_balance_struct.hasValue()) {
-			BalanceWalletStruct current_balance_key = current_balance_struct
-				.get();
-			current_balance_key.balance += amount;
-			wallets_mapping[cross_chain_token] = current_balance_key;
-		} else {
-			BalanceWalletStruct current_balance_key;
-			current_balance_key.balance += amount;
-			wallets_mapping[cross_chain_token] = current_balance_key;
-		}
+		totalExternalEarned += amount;
 		emit Deposit(msg.sender, amount);
 		if (remainingGasTo != address(this)) {
 			remainingGasTo.transfer({

@@ -17,6 +17,8 @@ abstract contract EverduesAccountStorage {
 	uint128 account_gas_threshold;
 	uint256 public abi_hash;
 	uint256 public pubkey;
+	uint256 public totalExternalEarned;
+	uint256 public totalPaid;
 
 	struct BalanceWalletStruct {
 		address wallet;

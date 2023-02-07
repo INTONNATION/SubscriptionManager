@@ -242,6 +242,14 @@
 			]
 		},
 		{
+			"name": "totalPaid",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"totalPaid","type":"uint256"}
+			]
+		},
+		{
 			"name": "svcparams",
 			"inputs": [
 			],
@@ -303,6 +311,7 @@
 		{"name":"identificator","type":"cell"},
 		{"name":"abi_hash","type":"uint256"},
 		{"name":"root_pubkey","type":"uint256"},
+		{"name":"totalPaid","type":"uint256"},
 		{"name":"platform_code","type":"cell"},
 		{"name":"platform_params","type":"cell"},
 		{"name":"subscription_wallet","type":"address"},
