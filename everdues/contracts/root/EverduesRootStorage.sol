@@ -120,7 +120,7 @@ abstract contract EverduesRootStorage {
 				_buildPublicServiceCodeByVersion(categories[i], latest_version)
 			);
 			categories_hash[tvm.hash(categories[i])] = hash_;
-		};
+		}
 		for (uint256 i = 0; i < categories.length; i++) {
 			uint256 hash_ = tvm.hash(
 				_buildPublicServiceCodeByVersion(categories[i], latest_version)
