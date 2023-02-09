@@ -109,19 +109,18 @@ abstract contract EverduesRootStorage {
 		address account = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
 		);
-		for (
-			(uint32 version, ContractParams contract_params):
-			versions[ContractTypes.Service]
-		) {
-			for (uint256 i = 0; i < categories.length; i++) {
-				uint256 hash_ = tvm.hash(
-					_buildPublicServiceCodeByVersion(categories[i], version)
-				);
-				ContractVersionParams contract_info;
-				contract_info.contractVersion = version;
-				contract_info.contractAbi = contract_params.contractAbi;
-				contracts.add(hash_, contract_info);
-			}
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
+		for (uint256 i = 0; i < categories.length; i++) {
+			uint256 hash_ = tvm.hash(
+				_buildPublicServiceCodeByVersion(categories[i], latest_version)
+			);
+			ContractVersionParams contract_info;
+			contract_info.contractVersion = latest_version;
+			contract_info.contractAbi = latest_version_params.contractAbi;
+			contracts.add(hash_, contract_info);
 		}
 		external_data_structure.add(ContractTypes.Service, contracts);
 		delete contracts;
