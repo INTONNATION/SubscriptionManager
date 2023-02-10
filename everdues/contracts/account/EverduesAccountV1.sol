@@ -67,7 +67,7 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 				wever_root,
 				wallets_mapping,
 				abi_hash,
-				cross_chain_token, // TODO COMMENT/UNCOMMENT FOR DEPLOY TO TEST			
+				cross_chain_token,	
 				totalExternalEarned,
 				totalPaid,
 				upgrade_params
