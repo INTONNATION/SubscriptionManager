@@ -70,6 +70,7 @@ abstract contract EverduesRootStorage {
 		mapping(uint256 => string) subs_abis;
 		mapping(uint8 => string) cross_chain_proxies;
 		mapping(uint8 => string[]) supported_external_tokens;
+		mapping(uint256 => uint256) categories_hash;
 	}
 
 	struct ServiceDeployParams {
@@ -106,22 +107,28 @@ abstract contract EverduesRootStorage {
 	) external view returns (EverduesContractsInfo everdues_contracts_info) {
 		mapping(uint8 => mapping(uint256 => ContractVersionParams)) external_data_structure;
 		mapping(uint256 => ContractVersionParams) contracts;
+		mapping(uint256 => uint256) categories_hash;
 		address account = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, owner_pubkey))
 		);
-		for (
-			(uint32 version, ContractParams contract_params):
-			versions[ContractTypes.Service]
-		) {
-			for (uint256 i = 0; i < categories.length; i++) {
-				uint256 hash_ = tvm.hash(
-					_buildPublicServiceCodeByVersion(categories[i], version)
-				);
-				ContractVersionParams contract_info;
-				contract_info.contractVersion = version;
-				contract_info.contractAbi = contract_params.contractAbi;
-				contracts.add(hash_, contract_info);
-			}
+		optional(uint32, ContractParams) latest_version_opt = versions[
+			ContractTypes.Service
+		].max();
+		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
+		for (uint256 i = 0; i < categories.length; i++) {
+			uint256 hash_ = tvm.hash(
+				_buildPublicServiceCodeByVersion(categories[i], latest_version)
+			);
+			categories_hash[tvm.hash(abi.encode(categories[i]))] = hash_;
+		}
+		for (uint256 i = 0; i < categories.length; i++) {
+			uint256 hash_ = tvm.hash(
+				_buildPublicServiceCodeByVersion(categories[i], latest_version)
+			);
+			ContractVersionParams contract_info;
+			contract_info.contractVersion = latest_version;
+			contract_info.contractAbi = latest_version_params.contractAbi;
+			contracts.add(hash_, contract_info);
 		}
 		external_data_structure.add(ContractTypes.Service, contracts);
 		delete contracts;
@@ -209,6 +216,7 @@ abstract contract EverduesRootStorage {
 		everdues_contracts_info.subs_abis = subs_abis_mapping;
 		everdues_contracts_info.cross_chain_proxies = cross_chain_proxies;
 		everdues_contracts_info.supported_external_tokens = supported_external_tokens;
+		everdues_contracts_info.categories_hash = categories_hash;
 	}
 
 	function getExternalSubscriber(uint8 chain_id, uint256 pubkey) external view returns (ExternalSubscription) {

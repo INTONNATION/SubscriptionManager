@@ -39,6 +39,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			external_payee,
 			cross_chain_token,
 			root_pubkey,
+			totalPaid,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -169,6 +170,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				external_payee,
 				cross_chain_token,
 				root_pubkey,
+				totalPaid,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -198,6 +200,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					string,
 					string,
 					address,
+					uint256,
 					uint256,
 					TvmCell
 				)

@@ -11,7 +11,7 @@ abstract contract EverduesAccountStorage {
 	address public root;
 	address dex_root_address;
 	address wever_root;
-	address cross_chain_token;
+	address public cross_chain_token;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	uint128 account_gas_threshold;

@@ -19,6 +19,8 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 			wallets_mapping,
 			abi_hash,
 			cross_chain_token,
+			totalExternalEarned,
+			totalPaid,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -65,7 +67,9 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 				wever_root,
 				wallets_mapping,
 				abi_hash,
-				cross_chain_token, // TODO COMMENT/UNCOMMENT FOR DEPLOY TO TEST
+				cross_chain_token,	
+				totalExternalEarned,
+				totalPaid,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -75,6 +79,8 @@ contract EverduesAccount_V1 is IEverduesAccount, EverduesAccountBase {
 					mapping(address => BalanceWalletStruct),
 					uint256,
 					address,
+					uint256,
+					uint256,
 					TvmCell
 				)
 			);

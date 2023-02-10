@@ -231,7 +231,7 @@ abstract contract EverduesSubscriptionBase is
 			IBurnableTokenWallet(msg.sender).burn{
 				value: 0,
 				flag: MsgFlag.ALL_NOT_RESERVED
-			}(amount, address_fee_proxy, account_address, payload);
+			}(amount, address_fee_proxy, svcparams.to, payload);
 			totalPaid += amount;
 		}
 		if (subscription.period != 0) {
