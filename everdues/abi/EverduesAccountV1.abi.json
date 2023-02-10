@@ -223,6 +223,14 @@
 			]
 		},
 		{
+			"name": "cross_chain_token",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"cross_chain_token","type":"address"}
+			]
+		},
+		{
 			"name": "abi_hash",
 			"inputs": [
 			],
