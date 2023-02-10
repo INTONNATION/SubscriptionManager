@@ -37,7 +37,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	string external_token_address;
 	string external_payee;
 	address cross_chain_token;
-	//bool notify;
+	bool notify;
 
 	uint32 constant payment_processing_timeout = 3600 * 24;
 
