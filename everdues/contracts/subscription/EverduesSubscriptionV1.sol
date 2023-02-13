@@ -40,6 +40,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			cross_chain_token,
 			root_pubkey,
 			totalPaid,
+			notify,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
