@@ -172,7 +172,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				cross_chain_token,
 				root_pubkey,
 				totalPaid,
-				//notify,
+				notify,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -203,8 +203,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					string,
 					address,
 					uint256,
-					uint256,
-					//bool,
+					uint128,
+					bool,
 					TvmCell
 				)
 			);

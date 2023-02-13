@@ -83,6 +83,17 @@
 			]
 		},
 		{
+			"name": "getMetadata",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"cell"},
+				{"name":"value1","type":"map(uint8,cell)"},
+				{"name":"value2","type":"map(uint8,string)"},
+				{"name":"value3","type":"map(uint8,string[])"}
+			]
+		},
+		{
 			"name": "getParams",
 			"inputs": [
 				{"name":"answerId","type":"uint32"},
