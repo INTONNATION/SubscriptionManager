@@ -104,12 +104,12 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		if (
+		/*if (
 			!checkVersionCodeAlreadyExists(
 				ContractTypes.Service,
 				codeServiceInput
 			)
-		) {
+		) {*/
 			if (!abiServiceContract.empty()) {
 				optional(uint32, ContractParams) latest_version_opt = versions[
 					ContractTypes.Service
@@ -132,7 +132,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			} else {
 				codeService = codeServiceInput;
 			}
-		}
+		//}
 		owner.transfer({
 			value: 0,
 			bounce: false,
@@ -150,12 +150,12 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		if (
+		/*if (
 			!checkVersionCodeAlreadyExists(
 				ContractTypes.Subscription,
 				codeSubscriptionInput
 			)
-		) {
+		) {*/
 			if (!abiSubscriptionContract.empty()) {
 				optional(uint32, ContractParams) latest_version_opt = versions[
 					ContractTypes.Subscription
@@ -178,7 +178,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			} else {
 				codeSubscription = codeSubscriptionInput;
 			}
-		}
+		//}
 		owner.transfer({
 			value: 0,
 			bounce: false,
@@ -415,13 +415,13 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		if (
+		/*if (
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Service,
 				abiServiceContractInput
 			) ||
 			!checkVersionCodeAlreadyExists(ContractTypes.Service, codeService)
-		) {
+		) {*/
 			if (!codeService.toSlice().empty()) {
 				optional(uint32, ContractParams) latest_version_opt = versions[
 					ContractTypes.Service
@@ -444,7 +444,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			} else {
 				abiServiceContract = abiServiceContractInput;
 			}
-		}
+		//}
 		owner.transfer({
 			value: 0,
 			bounce: false,
@@ -462,7 +462,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		if (
+		/*if (
 			!checkVersionAbiAlreadyExists(
 				ContractTypes.Subscription,
 				abiSubscriptionContractInput
@@ -471,7 +471,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 				ContractTypes.Subscription,
 				codeSubscription
 			)
-		) {
+		) {*/
 			if (!codeSubscription.toSlice().empty()) {
 				uint32 latest_version;
 				optional(uint32, ContractParams) latest_version_opt = versions[
@@ -494,7 +494,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			} else {
 				abiSubscriptionContract = abiSubscriptionContractInput;
 			}
-		}
+		//}
 		owner.transfer({
 			value: 0,
 			bounce: false,
