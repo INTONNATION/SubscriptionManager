@@ -41,6 +41,13 @@ abstract contract EverduesServiceStorage is IEverduesService {
 		return supported_chains[chain_id];
 	}
 
+	function getMetadata() external view returns(TvmCell, mapping(uint8 => TvmCell),mapping(uint8 => string),mapping(uint8 => string[])){
+		return (service_params,
+			subscription_plans,
+			supported_chains,
+			external_supported_tokens);
+	}
+
 	function getParams(
 		uint8 subscription_plan
 	) external view responsible override returns (TvmCell) {

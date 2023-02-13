@@ -215,6 +215,14 @@
 			]
 		},
 		{
+			"name": "current_version",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"current_version","type":"uint32"}
+			]
+		},
+		{
 			"name": "root",
 			"inputs": [
 			],

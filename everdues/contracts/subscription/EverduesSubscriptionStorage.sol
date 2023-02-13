@@ -22,7 +22,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	TvmCell public identificator;
 	uint256 public abi_hash;
 	uint256 public root_pubkey;
-	uint256 public totalPaid;
+	uint128 public totalPaid;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address subscription_wallet;
@@ -64,18 +64,43 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	serviceParams public svcparams;
 	paymentStatus public subscription;
 
+	function getMetadata()
+		external
+		view
+		returns (
+			TvmCell,
+			serviceParams,
+			address,
+			uint128,
+			paymentStatus,
+			bool,
+			string,
+			string,
+			uint8
+		)
+	{
+		return (
+			subscription_params,
+			svcparams,
+			service_address,
+			totalPaid,
+			subscription,
+			external_subscription,
+			external_token_address,
+			external_account_address,
+			chain_id
+		);
+	}
+
 	function subscriptionStatus() public override returns (uint8) {
-		if (
-			subscription.payment_timestamp !=0 &&
-			subscription.period == 0
-		) {
+		if (subscription.payment_timestamp != 0 && subscription.period == 0) {
 			return EverduesSubscriptionStatus.STATUS_ACTIVE;
 		} else if (
 			(now < (subscription.payment_timestamp)) &&
 			(subscription.status !=
 				EverduesSubscriptionStatus.STATUS_PROCESSING)
 		) {
-				return EverduesSubscriptionStatus.STATUS_ACTIVE;
+			return EverduesSubscriptionStatus.STATUS_ACTIVE;
 		} else if (
 			(now > (subscription.payment_timestamp)) &&
 			(subscription.status !=
@@ -83,14 +108,15 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		) {
 			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else if (
-			now >
-			(subscription.payment_timestamp -
-				preprocessing_window) &&
+			now > (subscription.payment_timestamp - preprocessing_window) &&
 			(subscription.status !=
 				EverduesSubscriptionStatus.STATUS_PROCESSING)
 		) {
 			return EverduesSubscriptionStatus.STATUS_EXECUTE;
-		} else if ((now - subscription.execution_timestamp) < payment_processing_timeout) {
+		} else if (
+			(now - subscription.execution_timestamp) <
+			payment_processing_timeout
+		) {
 			return EverduesSubscriptionStatus.STATUS_PROCESSING;
 		} else {
 			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
