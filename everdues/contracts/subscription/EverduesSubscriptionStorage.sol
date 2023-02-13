@@ -61,35 +61,39 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		uint128 pay_subscription_gas;
 	}
 
+	struct MetadataStruct {
+		TvmCell subscription_params;
+		serviceParams svcparams;
+		address service_address;
+		uint128 totalPaid;
+		paymentStatus subscription;
+		bool external_subscription;
+		string external_token_address;
+		string external_account_address;
+		uint8 chain_id;
+	}
+			
 	serviceParams public svcparams;
 	paymentStatus public subscription;
 
 	function getMetadata()
 		external
 		view
-		returns (
-			TvmCell,
-			serviceParams,
-			address,
-			uint128,
-			paymentStatus,
-			bool,
-			string,
-			string,
-			uint8
+		returns (MetadataStruct
 		)
 	{
-		return (
-			subscription_params,
-			svcparams,
-			service_address,
-			totalPaid,
-			subscription,
-			external_subscription,
-			external_token_address,
-			external_account_address,
-			chain_id
-		);
+		MetadataStruct returned_data;
+
+		returned_data.subscription_params = subscription_params;
+		returned_data.svcparams = svcparams;
+		returned_data.service_address = service_address;
+		returned_data.totalPaid = totalPaid;
+		returned_data.subscription = subscription;
+		returned_data.external_subscription = external_subscription;
+		returned_data.external_token_address = external_token_address;
+		returned_data.external_account_address = external_account_address;
+		returned_data.chain_id = chain_id;
+		return returned_data;
 	}
 
 	function subscriptionStatus() public override returns (uint8) {
