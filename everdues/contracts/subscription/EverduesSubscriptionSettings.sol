@@ -20,6 +20,15 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 		_;
 	}
 
+	modifier onlyRootKey() {
+		require(
+			msg.pubkey() == root_pubkey,
+			EverduesErrors.error_message_sender_is_not_everdues_root
+		);
+		tvm.accept();
+		_;
+	}
+
 	modifier onlyService() {
 		require(
 			msg.sender == service_address,
