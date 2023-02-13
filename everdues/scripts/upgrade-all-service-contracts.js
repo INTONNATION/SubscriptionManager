@@ -123,7 +123,7 @@ async function executeUpgrade(client, account) {
         let response = await accountRoot.runLocal("getCodeHashes", {
             owner_pubkey: 0
         });
-        formatCodeHashes0x = Object.keys(response.decoded.output.everdues_contracts_info.versions['2']);
+        formatCodeHashes0x = ["69fbf2ab08f279867aa262c316f9e9c197dea800914f727561036b0f99f857bf"];
 	formatCodeHashes = []
 	for (let i = 0; i < formatCodeHashes0x.length; i++) {
             formatCodeHashes.push(formatCodeHashes0x[i].replace(/^0x+/, ''));
