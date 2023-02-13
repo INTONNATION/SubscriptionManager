@@ -22,7 +22,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	TvmCell public identificator;
 	uint256 public abi_hash;
 	uint256 public root_pubkey;
-	uint256 public totalPaid;
+	uint128 public totalPaid;
 	TvmCell platform_code;
 	TvmCell platform_params;
 	address subscription_wallet;
@@ -37,7 +37,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	string external_token_address;
 	string external_payee;
 	address cross_chain_token;
-	//bool notify;
+	bool notify;
 
 	uint32 constant payment_processing_timeout = 3600 * 24;
 
@@ -61,21 +61,50 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		uint128 pay_subscription_gas;
 	}
 
+	struct MetadataStruct {
+		TvmCell subscription_params;
+		serviceParams svcparams;
+		address service_address;
+		uint128 totalPaid;
+		paymentStatus subscription;
+		bool external_subscription;
+		string external_token_address;
+		string external_account_address;
+		uint8 chain_id;
+	}
+			
 	serviceParams public svcparams;
 	paymentStatus public subscription;
 
+	function getMetadata()
+		external
+		view
+		returns (MetadataStruct
+		)
+	{
+		MetadataStruct returned_data;
+
+		returned_data.subscription_params = subscription_params;
+		returned_data.svcparams = svcparams;
+		returned_data.service_address = service_address;
+		returned_data.totalPaid = totalPaid;
+		returned_data.subscription = subscription;
+		returned_data.external_subscription = external_subscription;
+		returned_data.external_token_address = external_token_address;
+		returned_data.external_account_address = external_account_address;
+		returned_data.chain_id = chain_id;
+		return returned_data;
+	}
+
 	function subscriptionStatus() public override returns (uint8) {
-		if (
-			subscription.payment_timestamp !=0 &&
-			subscription.period == 0
-		) {
+		if (subscription.payment_timestamp != 0 && subscription.period == 0) {
 			return EverduesSubscriptionStatus.STATUS_ACTIVE;
 		} else if (
 			(now < (subscription.payment_timestamp)) &&
 			(subscription.status !=
 				EverduesSubscriptionStatus.STATUS_PROCESSING)
 		) {
-				return EverduesSubscriptionStatus.STATUS_ACTIVE;
+			return EverduesSubscriptionStatus.STATUS_ACTIVE;
 		} else if (
 			(now > (subscription.payment_timestamp)) &&
 			(subscription.status !=
@@ -83,14 +112,15 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		) {
 			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
 		} else if (
-			now >
-			(subscription.payment_timestamp -
-				preprocessing_window) &&
+			now > (subscription.payment_timestamp - preprocessing_window) &&
 			(subscription.status !=
 				EverduesSubscriptionStatus.STATUS_PROCESSING)
 		) {
 			return EverduesSubscriptionStatus.STATUS_EXECUTE;
-		} else if ((now - subscription.execution_timestamp) < payment_processing_timeout) {
+		} else if (
+			(now - subscription.execution_timestamp) <
+			payment_processing_timeout
+		) {
 			return EverduesSubscriptionStatus.STATUS_PROCESSING;
 		} else {
 			return EverduesSubscriptionStatus.STATUS_NONACTIVE;

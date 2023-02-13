@@ -83,6 +83,14 @@
 			]
 		},
 		{
+			"name": "getMetadata",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint8,string)"},{"name":"external_supported_tokens","type":"map(uint8,string[])"}],"name":"value0","type":"tuple"}
+			]
+		},
+		{
 			"name": "getParams",
 			"inputs": [
 				{"name":"answerId","type":"uint32"},

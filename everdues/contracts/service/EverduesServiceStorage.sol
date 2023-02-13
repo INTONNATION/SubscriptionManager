@@ -35,10 +35,28 @@ abstract contract EverduesServiceStorage is IEverduesService {
 		uint128 tokens;
 	}
 
+	struct MetadataStruct {
+		TvmCell service_params;
+		mapping(uint8 => TvmCell) subscription_plans;
+		mapping(uint8 => string) supported_chains;
+		mapping(uint8 => string[]) external_supported_tokens;
+	}
+
 	BalanceWalletStruct public wallet_balance;
 
-	function getExternalChainAddress(uint8 chain_id) external view returns (string) {
+	function getExternalChainAddress(
+		uint8 chain_id
+	) external view returns (string) {
 		return supported_chains[chain_id];
+	}
+
+	function getMetadata() external view returns (MetadataStruct) {
+		MetadataStruct returned_data;
+		returned_data.service_params = service_params;
+		returned_data.subscription_plans = subscription_plans;
+		returned_data.supported_chains = supported_chains;
+		returned_data.external_supported_tokens = external_supported_tokens;
+		return returned_data;
 	}
 
 	function getParams(

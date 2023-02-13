@@ -6,7 +6,7 @@ pragma AbiHeader pubkey;
 import "../Platform.sol";
 
 abstract contract EverduesAccountStorage {
-	uint32 current_version;
+	uint32 public current_version;
 	uint8 type_id;
 	address public root;
 	address dex_root_address;

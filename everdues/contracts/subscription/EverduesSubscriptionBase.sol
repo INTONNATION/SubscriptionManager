@@ -141,6 +141,10 @@ abstract contract EverduesSubscriptionBase is
 		}
 	}
 
+	function setNofifyFlag(bool _notify) external onlyRootKey {
+		notify = _notify;
+	}
+
 	function executeSubscriptionOnDeploy() private inline {
 		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		subscription.execution_timestamp = uint32(now);
@@ -247,6 +251,7 @@ abstract contract EverduesSubscriptionBase is
 		if (compensate_subscription_deploy) {
 			compensate_subscription_deploy = false;
 		}
+		notify = true;
 		emit subscriptionExecuted();
 	}
 
