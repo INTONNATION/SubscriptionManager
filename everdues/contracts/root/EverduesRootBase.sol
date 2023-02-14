@@ -79,7 +79,11 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(dues_revenue_accumulator_address, owner);
 	}
 
-	function swapRevenueToEver(uint128 amount, address currency_root, address dex_ever_pair_address) external view onlyOwner {
+	function swapRevenueToEver(
+		uint128 amount,
+		address currency_root,
+		address dex_ever_pair_address
+	) external view onlyOwner {
 		require(
 			fee_proxy_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -95,7 +99,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
-		}(amount, currency_root, dex_ever_pair_address, tip3_to_ever_address);		
+		}(amount, currency_root, dex_ever_pair_address, tip3_to_ever_address);
 	}
 
 	function swapRevenue(address currency_root) external view onlyOwner {
@@ -117,11 +121,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(currency_root, owner);
 	}
 
-	function syncFeeProxyBalance(address currency_root)
-		external
-		view
-		onlyOwner
-	{
+	function syncFeeProxyBalance(
+		address currency_root
+	) external view onlyOwner {
 		require(
 			fee_proxy_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -164,11 +166,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(latestVersion.contractCode, 1, msg.sender, upgrade_data);
 	}
 
-	function forceDestroyAccount(address account_address) // temp function
-		external
-		view
-		onlyOwner
-	{
+	function forceDestroyAccount(
+		address account_address // temp function
+	) external view onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -183,11 +183,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(address(this));
 	}
 
-	function forceUpgradeAccount(address account_address)
-		external
-		view
-		onlyOwner
-	{
+	function forceUpgradeAccount(
+		address account_address
+	) external view onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -210,11 +208,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(latest_params.contractCode, latest_version, msg.sender, update_data);
 	}
 
-	function upgradeAccount(uint256 pubkey)
-		external
-		view
-		onlyAccountContract(pubkey)
-	{
+	function upgradeAccount(
+		uint256 pubkey
+	) external view onlyAccountContract(pubkey) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -278,11 +274,10 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(subscription_plan);
 	}
 
-	function upgradeSubscription(address service_address, uint256 owner_pubkey)
-		external
-		view
-		onlyAccountContract(owner_pubkey)
-	{
+	function upgradeSubscription(
+		address service_address,
+		uint256 owner_pubkey
+	) external view onlyAccountContract(owner_pubkey) {
 		require(
 			service_address != address(0),
 			EverduesErrors.error_address_is_empty
@@ -445,19 +440,42 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		fee_proxy_address = address(platform);
 	}
 
-	function depositCrossChainTokens(address recipient, address remainingGasTo, uint128 amount) private view {
+	function depositCrossChainTokens(
+		address recipient,
+		address remainingGasTo,
+		uint128 amount
+	) private view {
 		TvmCell payload;
 
-		ITokenWallet(wallets_mapping[cross_chain_token].wallet_address).transfer{
+		ITokenWallet(wallets_mapping[cross_chain_token].wallet_address)
+			.transfer{
 			value: 0,
 			bounce: true,
 			flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-		}(amount, recipient, EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS, remainingGasTo, true, payload);		
+		}(
+			amount,
+			recipient,
+			EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS,
+			remainingGasTo,
+			true,
+			payload
+		);
 	}
 
-
-
-	function addOrUpdateExternalSubscriber(uint8 chain_id, uint256 pubkey, string customer, string payee, address everdues_service_address, uint8 subscription_plan, string tokenAddress, string email, uint128 allowance, uint128 paid_amount, bool status, uint128 additional_gas) external onlyOwner {
+	function addOrUpdateExternalSubscriber(
+		uint8 chain_id,
+		uint256 pubkey,
+		string customer,
+		string payee,
+		address everdues_service_address,
+		uint8 subscription_plan,
+		string tokenAddress,
+		string email,
+		uint128 allowance,
+		uint128 paid_amount,
+		bool status,
+		uint128 additional_gas
+	) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -476,16 +494,26 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		external_subscription_event.PaidAmount = paid_amount;
 		external_subscription_event.IsActive = status;
 		uint256 sid = tvm.hash(abi.encode(pubkey, everdues_service_address));
-		optional(ExternalSubscription) chain_subscriptions = cross_chain_subscriptions[chain_id].getAdd(sid, external_subscription_event);
-        address account_address = address(
+		optional(
+			ExternalSubscription
+		) chain_subscriptions = cross_chain_subscriptions[chain_id].getAdd(
+				sid,
+				external_subscription_event
+			);
+		address account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
-		); 
+		);
 		TvmCell identificator = abi.encode(email);
 		if (chain_subscriptions.hasValue()) {
-            ExternalSubscription existing_user_subscriptions = chain_subscriptions.get();
+			ExternalSubscription existing_user_subscriptions = chain_subscriptions
+					.get();
 			if (status) {
-				uint128 value = existing_user_subscriptions.PaidAmount - external_subscription_event.PaidAmount;
-           		cross_chain_subscriptions[chain_id].replace(sid, external_subscription_event);
+				uint128 value = existing_user_subscriptions.PaidAmount -
+					external_subscription_event.PaidAmount;
+				cross_chain_subscriptions[chain_id].replace(
+					sid,
+					external_subscription_event
+				);
 				if (value > 0) {
 					depositCrossChainTokens(account_address, msg.sender, value);
 					msg.sender.transfer({
@@ -496,20 +524,36 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				}
 			} else {
 				address subscription_address = address(
-					tvm.hash(_buildInitData(
-					ContractTypes.Subscription,
-					_buildSubscriptionPlatformParams(account_address, everdues_service_address)))
-			    );
+					tvm.hash(
+						_buildInitData(
+							ContractTypes.Subscription,
+							_buildSubscriptionPlatformParams(
+								account_address,
+								everdues_service_address
+							)
+						)
+					)
+				);
 				IEverduesSubscription(subscription_address).cancel{
 					value: 0,
 					flag: MsgFlag.ALL_NOT_RESERVED
 				}(msg.sender);
 				delete cross_chain_subscriptions[chain_id][sid];
 			}
-        } else {
+		} else {
 			deployExternalAccount(pubkey);
 			depositCrossChainTokens(account_address, msg.sender, paid_amount);
-			deployExternalSubscription(chain_id, customer, payee, tokenAddress, everdues_service_address, identificator, pubkey, subscription_plan, additional_gas);
+			deployExternalSubscription(
+				chain_id,
+				customer,
+				payee,
+				tokenAddress,
+				everdues_service_address,
+				identificator,
+				pubkey,
+				subscription_plan,
+				additional_gas
+			);
 			msg.sender.transfer({
 				value: 0,
 				bounce: false,
@@ -531,14 +575,13 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			wever_root,
 			tip3_to_ever_address,
 			account_threshold,
-			tvm.hash(latest_params.contractAbi)
+			tvm.hash(latest_params.contractAbi),
+			cross_chain_token
 		);
 		new Platform{
-			stateInit: _buildAccountInitData(
-				ContractTypes.Account,
-				pubkey
-			),
-			value: EverduesGas.ACCOUNT_INITIAL_BALANCE + EverduesGas.MESSAGE_MIN_VALUE,
+			stateInit: _buildAccountInitData(ContractTypes.Account, pubkey),
+			value: EverduesGas.ACCOUNT_INITIAL_BALANCE +
+				EverduesGas.MESSAGE_MIN_VALUE,
 			bounce: true,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
@@ -615,7 +658,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				owner_account_address
 			);
 		}
-		TvmCell subscription_code_salt = _buildSubscriptionCode(owner_account_address);
+		TvmCell subscription_code_salt = _buildSubscriptionCode(
+			owner_account_address
+		);
 		address subs_index = address(tvm.hash(subsIndexStateInit));
 		address subs_index_identificator = address(
 			tvm.hash(subsIndexIdentificatorStateInit)
@@ -623,7 +668,10 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		optional(uint32, ContractParams) latest_version_opt = versions[
 			ContractTypes.Subscription
 		].max();
-		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
+		(
+			uint32 latest_version,
+			ContractParams latest_version_params
+		) = latest_version_opt.get();
 		TvmCell subscription_params = abi.encode(
 			fee_proxy_address,
 			service_fee,
@@ -638,16 +686,19 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			identificator,
 			tvm.hash(latest_version_params.contractAbi),
 			true,
-	        chain_id,
-	        external_account_address,
-	        external_token_address,
+			chain_id,
+			external_account_address,
+			external_token_address,
 			external_payee,
 			cross_chain_token
 		);
 		Platform platform = new Platform{
 			stateInit: _buildInitData(
 				ContractTypes.Subscription,
-				_buildSubscriptionPlatformParams(owner_account_address, service_address)
+				_buildSubscriptionPlatformParams(
+					owner_account_address,
+					service_address
+				)
 			),
 			value: EverduesGas.SUBSCRIPTION_INITIAL_BALANCE +
 				EverduesGas.DEPLOY_SUBSCRIPTION_VALUE +
@@ -732,7 +783,10 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		optional(uint32, ContractParams) latest_version_opt = versions[
 			ContractTypes.Subscription
 		].max();
-		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
+		(
+			uint32 latest_version,
+			ContractParams latest_version_params
+		) = latest_version_opt.get();
 		TvmCell subscription_params = abi.encode(
 			fee_proxy_address,
 			service_fee,
@@ -803,18 +857,19 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		if (additional_gas != 0) {
 			additional_gas = additional_gas / 3;
 		}
-		(
-			TvmCell service_params, /*TvmCell subscription_plans*/
-
-		) = abi.decode(service_params_cell, (TvmCell, TvmCell));
+		(TvmCell service_params /*TvmCell subscription_plans*/, ) = abi.decode(
+			service_params_cell,
+			(TvmCell, TvmCell)
+		);
 		(
 			,
 			/*address account*/
-			string service_name, /*string description*/ /*string image*/
+			string service_name /*string description*/ /*string image*/,
 			,
 			,
 			string category,
 			,
+
 		) = abi.decode(
 				service_params,
 				(address, string, string, string, string, uint256, string)
@@ -851,7 +906,10 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		optional(uint32, ContractParams) latest_version_opt = versions[
 			ContractTypes.Service
 		].max();
-		(uint32 latest_version, ContractParams latest_version_params) = latest_version_opt.get();
+		(
+			uint32 latest_version,
+			ContractParams latest_version_params
+		) = latest_version_opt.get();
 		TvmCell additional_params = abi.encode(
 			address(tvm.hash(serviceIndexStateInit)),
 			address(tvm.hash(serviceIdentificatorIndexStateInit)),
@@ -871,7 +929,9 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				ContractTypes.Service,
 				_buildServicePlatformParams(owner_address, service_name)
 			),
-			value: EverduesGas.SERVICE_INITIAL_BALANCE + EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
+			value: EverduesGas.SERVICE_INITIAL_BALANCE +
+				EverduesGas.MESSAGE_MIN_VALUE +
+				additional_gas,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
 			service_code_salt,
