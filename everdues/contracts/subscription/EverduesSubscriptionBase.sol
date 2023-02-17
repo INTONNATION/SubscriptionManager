@@ -44,6 +44,7 @@ abstract contract EverduesSubscriptionBase is
 	}
 	
 	function cancel(address send_gas_to) external override onlyRootOrOwner {
+		require((subscription.status == EverduesSubscriptionStatus.STATUS_STOPPED) && (now > (subscription.payment_timestamp)), EverduesErrors.error_subscription_status_is_not_stopped);
 		tvm.accept();
 		emit SubscriptionDeleted();
 		if(send_gas_to == address(0)){
@@ -238,7 +239,7 @@ abstract contract EverduesSubscriptionBase is
 			}(amount, address_fee_proxy, svcparams.to, payload);
 			totalPaid += amount;
 		}
-		if (subscription.payment_timestamp == 0 || subscriptionStatus() == EverduesSubscriptionStatus.STATUS_NONACTIVE) {
+		if (subscription.payment_timestamp == 0 || subscriptionStatus() == EverduesSubscriptionStatus.STATUS_NONACTIVE || now > subscription.payment_timestamp) {
 			subscription.payment_timestamp = uint32(now) + subscription.period;
 		} else {
 			subscription.payment_timestamp =

@@ -103,33 +103,38 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	}
 
 	function subscriptionStatus() public override returns (uint8) {
-		if (subscription.payment_timestamp != 0 && subscription.period == 0) {
-			return EverduesSubscriptionStatus.STATUS_ACTIVE;
-		} else if (
-			(now < (subscription.payment_timestamp)) &&
-			(subscription.status !=
-				EverduesSubscriptionStatus.STATUS_PROCESSING)
-		) {
-			return EverduesSubscriptionStatus.STATUS_ACTIVE;
-		} else if (
-			(now > (subscription.payment_timestamp)) &&
-			(subscription.status !=
-				EverduesSubscriptionStatus.STATUS_PROCESSING)
-		) {
-			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
-		} else if (
-			now > (subscription.payment_timestamp - preprocessing_window) &&
-			(subscription.status !=
-				EverduesSubscriptionStatus.STATUS_PROCESSING)
-		) {
-			return EverduesSubscriptionStatus.STATUS_EXECUTE;
-		} else if (
-			(now - subscription.execution_timestamp) <
-			payment_processing_timeout
-		) {
-			return EverduesSubscriptionStatus.STATUS_PROCESSING;
+		if (subscription.status !=
+				EverduesSubscriptionStatus.STATUS_STOPPED) {
+			if (subscription.payment_timestamp != 0 && subscription.period == 0) {
+				return EverduesSubscriptionStatus.STATUS_ACTIVE;
+			} else if (
+				(now < (subscription.payment_timestamp)) &&
+				(subscription.status !=
+					EverduesSubscriptionStatus.STATUS_PROCESSING)
+			) {
+				return EverduesSubscriptionStatus.STATUS_ACTIVE;
+			} else if (
+				(now > (subscription.payment_timestamp)) &&
+				(subscription.status !=
+					EverduesSubscriptionStatus.STATUS_PROCESSING)
+			) {
+				return EverduesSubscriptionStatus.STATUS_NONACTIVE;
+			} else if (
+				now > (subscription.payment_timestamp - preprocessing_window) &&
+				(subscription.status !=
+					EverduesSubscriptionStatus.STATUS_PROCESSING)
+			) {
+				return EverduesSubscriptionStatus.STATUS_EXECUTE;
+			} else if (
+				(now - subscription.execution_timestamp) <
+				payment_processing_timeout
+			) {
+				return EverduesSubscriptionStatus.STATUS_PROCESSING;
+			} else {
+				return EverduesSubscriptionStatus.STATUS_NONACTIVE;
+			}
 		} else {
-			return EverduesSubscriptionStatus.STATUS_NONACTIVE;
+			return EverduesSubscriptionStatus.STATUS_STOPPED;
 		}
 	}
 }
