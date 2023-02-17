@@ -87,7 +87,7 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 
 	function resumeSubscription() external onlyOwner {
 		tvm.accept();
-		subscription.status = EverduesSubscriptionStatus.STATUS_NONACTIVE;
+		subscription.status = subscriptionStatus();
 	}
 
 	function updateIdentificator(TvmCell index_data) external view onlyOwner {
