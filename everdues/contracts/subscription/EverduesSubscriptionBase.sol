@@ -238,14 +238,12 @@ abstract contract EverduesSubscriptionBase is
 			}(amount, address_fee_proxy, svcparams.to, payload);
 			totalPaid += amount;
 		}
-		if (subscription.period != 0) {
-			if (subscription.payment_timestamp == 0 || subscriptionStatus() == EverduesSubscriptionStatus.STATUS_NONACTIVE) {
-				subscription.payment_timestamp = uint32(now) + subscription.period;
-			} else {
-				subscription.payment_timestamp =
-					subscription.payment_timestamp +
-					subscription.period;
-			}
+		if (subscription.payment_timestamp == 0 || subscriptionStatus() == EverduesSubscriptionStatus.STATUS_NONACTIVE) {
+			subscription.payment_timestamp = uint32(now) + subscription.period;
+		} else {
+			subscription.payment_timestamp =
+				subscription.payment_timestamp +
+				subscription.period;
 		}
 		subscription.status = EverduesSubscriptionStatus.STATUS_ACTIVE;
 		if (compensate_subscription_deploy) {

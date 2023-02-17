@@ -73,6 +73,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		uint8 chain_id;
 		TvmCell identificator;
 		address account_address;
+		bool notify;
 	}
 			
 	serviceParams public svcparams;
@@ -97,6 +98,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		returned_data.chain_id = chain_id;
 		returned_data.identificator = identificator;
 		returned_data.account_address = account_address;
+		returned_data.notify = notify;
 		return returned_data;
 	}
 
