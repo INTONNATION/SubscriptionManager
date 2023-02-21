@@ -301,7 +301,14 @@
 			]
 		},
 		{
-			"name": "subscriptionExecuted",
+			"name": "SubscriptionExecuted",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "SubscriptionStopped",
 			"inputs": [
 			],
 			"outputs": [
