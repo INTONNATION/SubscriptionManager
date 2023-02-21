@@ -251,7 +251,7 @@ abstract contract EverduesSubscriptionBase is
 			compensate_subscription_deploy = false;
 		}
 		notify = true;
-		emit subscriptionExecuted();
+		emit SubscriptionExecuted();
 	}
 
 	function onGetNextPaymentStatus(

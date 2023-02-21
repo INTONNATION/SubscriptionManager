@@ -80,9 +80,21 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 		_;
 	}
 
-	function stopSubscription() external onlyOwner {
-		tvm.accept();
+	function stopSubscription() external override onlyRoot {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		subscription.status = EverduesSubscriptionStatus.STATUS_STOPPED;
+		emit SubscriptionStopped();
+		msg.sender.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function resumeSubscription() external onlyOwner {
