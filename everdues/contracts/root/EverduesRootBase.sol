@@ -534,10 +534,10 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 						)
 					)
 				);
-				IEverduesSubscription(subscription_address).cancel{
+				IEverduesSubscription(subscription_address).stopSubscription{
 					value: 0,
 					flag: MsgFlag.ALL_NOT_RESERVED
-				}(msg.sender);
+				}();
 				delete cross_chain_subscriptions[chain_id][sid];
 			}
 		} else {

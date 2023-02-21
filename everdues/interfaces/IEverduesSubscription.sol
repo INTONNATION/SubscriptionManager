@@ -3,7 +3,8 @@ pragma ton-solidity >=0.56.0;
 interface IEverduesSubscription {
 	event paramsRecieved(TvmCell service_params_);
 	event SubscriptionDeleted();
-	event subscriptionExecuted();
+	event SubscriptionExecuted();
+	event SubscriptionStopped();
 	
 	function subscriptionStatus() external returns (uint8);
 
@@ -19,4 +20,6 @@ interface IEverduesSubscription {
 	) external;
 
 	function cancel(address send_gas_to) external;
+
+	function stopSubscription() external;
 }
