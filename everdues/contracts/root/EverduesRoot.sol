@@ -42,7 +42,8 @@ contract EverduesRoot is EverduesRootBase {
 			cross_chain_token,
 			cross_chain_subscriptions,
 			cross_chain_proxies,
-			supported_external_tokens
+			supported_external_tokens//,
+			//service_registration_token
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
