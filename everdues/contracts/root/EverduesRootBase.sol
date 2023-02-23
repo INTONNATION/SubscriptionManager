@@ -166,6 +166,21 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(latestVersion.contractCode, 1, msg.sender, upgrade_data);
 	}
 
+	function forceDestroySubscription(address subscription_address) external view onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		IEverduesSubscription(subscription_address).cancel{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(msg.sender);
+	}
+
 	function forceDestroyAccount(
 		address account_address // temp function
 	) external view onlyOwner {

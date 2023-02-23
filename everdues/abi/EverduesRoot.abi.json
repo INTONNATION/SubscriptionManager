@@ -75,6 +75,14 @@
 			]
 		},
 		{
+			"name": "forceDestroySubscription",
+			"inputs": [
+				{"name":"subscription_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "forceDestroyAccount",
 			"inputs": [
 				{"name":"account_address","type":"address"}
