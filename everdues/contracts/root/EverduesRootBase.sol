@@ -464,6 +464,13 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function deployServiceAccount(uint256 pubkey, uint128 tokens, uint128 additional_gas) external view onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
