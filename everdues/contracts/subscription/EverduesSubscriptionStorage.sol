@@ -51,6 +51,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		string image;
 		address currency_root;
 		string category;
+		uint256 owner_pubkey;
 	}
 
 	struct paymentStatus {
@@ -99,6 +100,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		returned_data.identificator = identificator;
 		returned_data.account_address = account_address;
 		returned_data.notify = notify;
+		rerurned_data.owner_pubkey = owner_pubkey;
 		return returned_data;
 	}
 
