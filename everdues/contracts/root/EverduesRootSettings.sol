@@ -641,6 +641,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			ServiceDeployParams
 		) service_deploy_params_opt = wallets_mapping.fetch(currency_root);
 		if (!service_deploy_params_opt.hasValue()) {
+			service_registration_token = currency_root;
 			ServiceDeployParams service_deploy_params;
 			service_deploy_params.required_amount = lock_amount;
 			wallets_mapping[currency_root] = service_deploy_params;
@@ -651,6 +652,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 				callback: EverduesRootSettings.onDeployWallet
 			}(address(this), EverduesGas.DEPLOY_EMPTY_WALLET_GRAMS);
 		} else {
+			service_registration_token = currency_root;
 			ServiceDeployParams service_deploy_params = service_deploy_params_opt
 					.get();
 			service_deploy_params.required_amount = lock_amount;
