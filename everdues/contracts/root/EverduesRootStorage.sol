@@ -71,6 +71,7 @@ abstract contract EverduesRootStorage {
 		mapping(uint8 => string) cross_chain_proxies;
 		mapping(uint8 => string[]) supported_external_tokens;
 		mapping(uint256 => uint256) categories_hash;
+		address service_registration_token;
 	}
 
 	struct ServiceDeployParams {
@@ -96,6 +97,7 @@ abstract contract EverduesRootStorage {
 
 	mapping(uint8 => string) public cross_chain_proxies;
 	address public cross_chain_token;
+	address public service_registration_token;
 
 	mapping(uint8 => mapping(uint256 => ExternalSubscription))
 		public cross_chain_subscriptions;
@@ -217,6 +219,7 @@ abstract contract EverduesRootStorage {
 		everdues_contracts_info.cross_chain_proxies = cross_chain_proxies;
 		everdues_contracts_info.supported_external_tokens = supported_external_tokens;
 		everdues_contracts_info.categories_hash = categories_hash;
+		everdues_contracts_info.service_registration_token = service_registration_token;
 	}
 
 	function getExternalSubscriber(uint8 chain_id, uint256 pubkey) external view returns (ExternalSubscription) {
