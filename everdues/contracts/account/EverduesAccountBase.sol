@@ -129,6 +129,8 @@ abstract contract EverduesAccountBase is
 						bounce: true,
 						flag: MsgFlag.SENDER_PAYS_FEES
 					}(value, subscription_wallet, address(this), true, payload);
+					wallets_mapping[currency_root] = current_balance_key_value;
+
 				} else if (subscription_deploy) {
 					_tmp_subscription_operations[now] = SubscriptionOperation(
 						currency_root,
