@@ -88,10 +88,10 @@ abstract contract EverduesSubscriptionBase is
 			subscription.status != EverduesSubscriptionStatus.STATUS_STOPPED,
 			EverduesErrors.error_subscription_is_stopped
 		);
-		uint8 subcr_status = subscriptionStatus();
 		if (subscription.period != 0) {
 			if (now > (subscription.payment_timestamp - preprocessing_window)) {
 				tvm.accept(); // move
+				uint8 subcr_status = subscriptionStatus();
 				require(subcr_status != EverduesSubscriptionStatus.STATUS_ACTIVE,
 					EverduesErrors.error_subscription_already_executed
 				);
@@ -103,6 +103,7 @@ abstract contract EverduesSubscriptionBase is
 				revert(EverduesErrors.error_subscription_status_already_active);
 			}
 		} else {
+			uint8 subcr_status = subscriptionStatus();
 			if (
 				subcr_status == EverduesSubscriptionStatus.STATUS_ACTIVE
 			) {

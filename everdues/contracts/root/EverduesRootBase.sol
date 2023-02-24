@@ -166,6 +166,21 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}(latestVersion.contractCode, 1, msg.sender, upgrade_data);
 	}
 
+	function forceDestroySubscription(address subscription_address) external view onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		IEverduesSubscription(subscription_address).cancel{
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}(msg.sender);
+	}
+
 	function forceDestroyAccount(
 		address account_address // temp function
 	) external view onlyOwner {
@@ -440,14 +455,15 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		fee_proxy_address = address(platform);
 	}
 
-	function depositCrossChainTokens(
+	function depositTokens(
+		address currencyRoot,
 		address recipient,
 		address remainingGasTo,
 		uint128 amount
 	) private view {
 		TvmCell payload;
 
-		ITokenWallet(wallets_mapping[cross_chain_token].wallet_address)
+		ITokenWallet(wallets_mapping[currencyRoot].wallet_address)
 			.transfer{
 			value: 0,
 			bounce: true,
@@ -460,6 +476,21 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			true,
 			payload
 		);
+	}
+
+	function deployServiceAccount(uint256 pubkey, uint128 tokens, uint128 additional_gas) external view onlyOwner {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		address account_address = address(
+			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
+		);
+		deployExternalAccount(pubkey, additional_gas);
+		depositTokens(service_registration_token, account_address, msg.sender, tokens);
 	}
 
 	function addOrUpdateExternalSubscriber(
@@ -515,7 +546,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 					external_subscription_event
 				);
 				if (value > 0) {
-					depositCrossChainTokens(account_address, msg.sender, value);
+					depositTokens(cross_chain_token, account_address, msg.sender, value);
 					msg.sender.transfer({
 						value: 0,
 						bounce: false,
@@ -541,8 +572,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				delete cross_chain_subscriptions[chain_id][sid];
 			}
 		} else {
-			deployExternalAccount(pubkey);
-			depositCrossChainTokens(account_address, msg.sender, paid_amount);
+			deployExternalAccount(pubkey, 0);
+			depositTokens(cross_chain_token, account_address, msg.sender, paid_amount);
 			deployExternalSubscription(
 				chain_id,
 				customer,
@@ -562,7 +593,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}
 	}
 
-	function deployExternalAccount(uint256 pubkey) private view {
+	function deployExternalAccount(uint256 pubkey, uint128 additional_gas) private view {
 		optional(uint32, ContractParams) latest_version_opt = versions[
 			ContractTypes.Account
 		].max();
@@ -581,7 +612,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		new Platform{
 			stateInit: _buildAccountInitData(ContractTypes.Account, pubkey),
 			value: EverduesGas.ACCOUNT_INITIAL_BALANCE +
-				EverduesGas.MESSAGE_MIN_VALUE,
+				EverduesGas.MESSAGE_MIN_VALUE +
+				additional_gas,
 			bounce: true,
 			flag: MsgFlag.SENDER_PAYS_FEES
 		}(
@@ -982,6 +1014,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				msg.sender == service_deploy_params.wallet_address,
 				EverduesErrors.error_message_sender_is_not_root_wallet
 			);
+			// TODO: add check on currency Root
 			if (amount >= service_deploy_params.required_amount) {
 				(
 					TvmCell service_params,
