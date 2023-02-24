@@ -1057,7 +1057,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				);
 			} else {
 				// TODO rewrite payload to add error code - unsupported tip3 root
-				ITokenWallet(senderWallet).transfer{
+				ITokenWallet(msg.sender).transfer{
 					value: 0,
 					bounce: true,
 					flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
