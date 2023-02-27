@@ -75,6 +75,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		address account_address;
 		bool notify;
 		uint256 owner_pubkey;
+		uint8 subscriptionStatus;
 	}
 			
 	serviceParams public svcparams;
@@ -82,7 +83,6 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 
 	function getMetadata()
 		external
-		view
 		returns (MetadataStruct
 		)
 	{
@@ -101,6 +101,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		returned_data.account_address = account_address;
 		returned_data.notify = notify;
 		returned_data.owner_pubkey = owner_pubkey;
+		returned_data.subscriptionStatus = subscriptionStatus();
 		return returned_data;
 	}
 
