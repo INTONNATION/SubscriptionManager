@@ -184,7 +184,6 @@
 				{"name":"subscription_plan","type":"uint8"},
 				{"name":"tokenAddress","type":"string"},
 				{"name":"email","type":"string"},
-				{"name":"allowance","type":"uint128"},
 				{"name":"paid_amount","type":"uint128"},
 				{"name":"status","type":"bool"},
 				{"name":"additional_gas","type":"uint128"}
@@ -498,16 +497,6 @@
 			]
 		},
 		{
-			"name": "getExternalSubscriber",
-			"inputs": [
-				{"name":"chain_id","type":"uint8"},
-				{"name":"pubkey","type":"uint256"}
-			],
-			"outputs": [
-				{"components":[{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"Allowance","type":"uint128"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"value0","type":"tuple"}
-			]
-		},
-		{
 			"name": "getPendingOwner",
 			"inputs": [
 				{"name":"answerId","type":"uint32"}
@@ -699,7 +688,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"Allowance","type":"uint128"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,tuple))"}
+				{"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,uint128))"}
 			]
 		},
 		{
@@ -755,7 +744,7 @@
 		{"name":"cross_chain_proxies","type":"map(uint8,string)"},
 		{"name":"cross_chain_token","type":"address"},
 		{"name":"service_registration_token","type":"address"},
-		{"components":[{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"SubscriptionPlan","type":"uint8"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"Allowance","type":"uint128"},{"name":"PaidAmount","type":"uint128"},{"name":"IsActive","type":"bool"}],"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,tuple))"},
+		{"name":"cross_chain_subscriptions","type":"map(uint8,map(uint256,uint128))"},
 		{"name":"supported_external_tokens","type":"map(uint8,string[])"}
 	]
 }

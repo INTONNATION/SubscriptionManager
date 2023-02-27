@@ -502,7 +502,6 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		uint8 subscription_plan,
 		string tokenAddress,
 		string email,
-		uint128 allowance,
 		uint128 paid_amount,
 		bool status,
 		uint128 additional_gas
@@ -514,35 +513,25 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			),
 			2
 		);
-		ExternalSubscription external_subscription_event;
-		external_subscription_event.Customer = customer;
-		external_subscription_event.Payee = payee;
-		external_subscription_event.SubscriptionPlan = subscription_plan;
-		external_subscription_event.TokenAddress = tokenAddress;
-		external_subscription_event.PubKey = pubkey;
-		external_subscription_event.Email = email;
-		external_subscription_event.Allowance = allowance;
-		external_subscription_event.PaidAmount = paid_amount;
-		external_subscription_event.IsActive = status;
 		uint256 sid = tvm.hash(abi.encode(pubkey, everdues_service_address));
 		optional(
-			ExternalSubscription
-		) chain_subscriptions = cross_chain_subscriptions[chain_id].getAdd(
+			uint128
+		) totalPaidBy = cross_chain_subscriptions[chain_id].getAdd(
 				sid,
-				external_subscription_event
+				paid_amount
 			);
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
 		TvmCell identificator = abi.encode(email);
-		if (chain_subscriptions.hasValue()) {
-			ExternalSubscription existing_user_subscriptions = chain_subscriptions
+		if (totalPaidBy.hasValue()) {
+			uint128 totalPaid = totalPaidBy
 					.get();
 			if (status) {
-				uint128 value = external_subscription_event.PaidAmount - existing_user_subscriptions.PaidAmount;
+				uint128 value = paid_amount - totalPaid;
 				cross_chain_subscriptions[chain_id].replace(
 					sid,
-					external_subscription_event
+					paid_amount
 				);
 				if (value > 0) {
 					depositTokens(cross_chain_token, account_address, msg.sender, value);

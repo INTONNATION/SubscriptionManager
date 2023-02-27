@@ -79,18 +79,6 @@ abstract contract EverduesRootStorage {
 		uint128 required_amount;
 	}
 
-	struct ExternalSubscription {
-		string Customer; // subscriber EVM address
-		string Payee; // service owner EVM address
-		uint8 SubscriptionPlan; // subscription_plan
-		string TokenAddress; // ERC20 token address
-		uint256 PubKey; // subscriber pubkey
-		string Email; // subscriber email
-		uint128 Allowance; // value
-		uint128 PaidAmount; // sum(value)
-		bool IsActive; // canceled or not
-	}
-
 	mapping(uint8 => mapping(uint32 => ContractParams)) public versions;
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
@@ -99,7 +87,7 @@ abstract contract EverduesRootStorage {
 	address public cross_chain_token;
 	address public service_registration_token;
 
-	mapping(uint8 => mapping(uint256 => ExternalSubscription))
+	mapping(uint8 => mapping(uint256 => uint128))
 		public cross_chain_subscriptions;
 
 	mapping (uint8=>string[]) public supported_external_tokens;
@@ -220,10 +208,6 @@ abstract contract EverduesRootStorage {
 		everdues_contracts_info.supported_external_tokens = supported_external_tokens;
 		everdues_contracts_info.categories_hash = categories_hash;
 		everdues_contracts_info.service_registration_token = service_registration_token;
-	}
-
-	function getExternalSubscriber(uint8 chain_id, uint256 pubkey) external view returns (ExternalSubscription) {
-		return cross_chain_subscriptions[chain_id][pubkey];
 	}
 
 	function getPendingOwner()

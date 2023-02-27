@@ -103,7 +103,7 @@ contract EverduesRoot is EverduesRootBase {
 				uint8,
 				mapping(address => ServiceDeployParams),
 				address,
-				mapping(uint8 => mapping(uint256 => ExternalSubscription)),
+				mapping(uint8 => mapping(uint256 => uint128)),
 				mapping(uint8 => string),
 				mapping (uint8=>string[]),
 				address
