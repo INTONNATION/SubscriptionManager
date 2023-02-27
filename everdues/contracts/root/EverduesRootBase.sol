@@ -523,7 +523,6 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
-		TvmCell identificator = abi.encode(email);
 		if (totalPaidBy.hasValue()) {
 			uint128 totalPaid = totalPaidBy
 					.get();
@@ -562,6 +561,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		} else {
 			deployExternalAccount(pubkey, 0);
 			depositTokens(cross_chain_token, account_address, msg.sender, paid_amount);
+			TvmCell identificator = abi.encode(email);
 			deployExternalSubscription(
 				chain_id,
 				customer,
