@@ -539,8 +539,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			ExternalSubscription existing_user_subscriptions = chain_subscriptions
 					.get();
 			if (status) {
-				uint128 value = existing_user_subscriptions.PaidAmount -
-					external_subscription_event.PaidAmount;
+				uint128 value = external_subscription_event.PaidAmount - existing_user_subscriptions.PaidAmount;
 				cross_chain_subscriptions[chain_id].replace(
 					sid,
 					external_subscription_event
