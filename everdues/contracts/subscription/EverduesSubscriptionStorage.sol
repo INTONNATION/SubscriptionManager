@@ -138,7 +138,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 			} else {
 				return EverduesSubscriptionStatus.STATUS_NONACTIVE;
 			}
-		} else if (now < (subscription.payment_timestamp)) {
+		} else if (now > (subscription.payment_timestamp)) {
 			return EverduesSubscriptionStatus.STATUS_STOPPED;
 		} else {
 			return EverduesSubscriptionStatus.STATUS_ACTIVE;
