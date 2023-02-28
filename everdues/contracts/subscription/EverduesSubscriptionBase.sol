@@ -122,10 +122,6 @@ abstract contract EverduesSubscriptionBase is
 
 	function onGetInfo(TvmCell svc_info) external onlyService {
 		uint8 status = svc_info.toSlice().decode(uint8);
-		require(
-			subscription.status != EverduesSubscriptionStatus.STATUS_PROCESSING,
-			EverduesErrors.error_subscription_status_is_not_processed
-		);
 		if (status == 0) {
 			subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
 			IEverduesAccount(account_address).getNextPaymentStatus{
