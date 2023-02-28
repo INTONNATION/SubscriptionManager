@@ -107,7 +107,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 
 	function subscriptionStatus() public override returns (uint8) {
 		if (subscription.status !=
-				EverduesSubscriptionStatus.STATUS_STOPPED) {
+			EverduesSubscriptionStatus.STATUS_STOPPED) {
 			if (subscription.payment_timestamp != 0 && subscription.period == 0) {
 				return EverduesSubscriptionStatus.STATUS_ACTIVE;
 			} else if (
@@ -115,19 +115,21 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 				(subscription.status !=
 					EverduesSubscriptionStatus.STATUS_PROCESSING)
 			) {
-				return EverduesSubscriptionStatus.STATUS_ACTIVE;
+				if (
+					now > (subscription.payment_timestamp - preprocessing_window) &&
+					(subscription.status !=
+						EverduesSubscriptionStatus.STATUS_PROCESSING)
+					) {
+						return EverduesSubscriptionStatus.STATUS_EXECUTE;
+				} else {
+					return EverduesSubscriptionStatus.STATUS_ACTIVE;
+				}
 			} else if (
 				(now > (subscription.payment_timestamp)) &&
 				(subscription.status !=
 					EverduesSubscriptionStatus.STATUS_PROCESSING)
 			) {
 				return EverduesSubscriptionStatus.STATUS_NONACTIVE;
-			} else if (
-				now > (subscription.payment_timestamp - preprocessing_window) &&
-				(subscription.status !=
-					EverduesSubscriptionStatus.STATUS_PROCESSING)
-			) {
-				return EverduesSubscriptionStatus.STATUS_EXECUTE;
 			} else if (
 				(now - subscription.execution_timestamp) <
 				payment_processing_timeout
@@ -136,7 +138,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 			} else {
 				return EverduesSubscriptionStatus.STATUS_NONACTIVE;
 			}
-		} else if (now < (subscription.payment_timestamp)) {
+		} else if (now > (subscription.payment_timestamp)) {
 			return EverduesSubscriptionStatus.STATUS_STOPPED;
 		} else {
 			return EverduesSubscriptionStatus.STATUS_ACTIVE;
