@@ -28,7 +28,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	address subscription_wallet;
 	address service_address;
 	uint32 current_version;
-	uint32 preprocessing_window;
+	uint32 public preprocessing_window;
 	uint8 type_id;
 	bool compensate_subscription_deploy;
 	bool external_subscription;
@@ -39,7 +39,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	address cross_chain_token;
 	bool notify;
 
-	uint32 constant payment_processing_timeout = 3600 * 24;
+	uint32 constant public payment_processing_timeout = 3600 * 24;
 
 	struct serviceParams {
 		address to;
@@ -59,6 +59,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		uint32 execution_timestamp;
 		uint8 status;
 		uint128 pay_subscription_gas;
+		uint32 registation_timestamp;
 	}
 
 	struct MetadataStruct {
