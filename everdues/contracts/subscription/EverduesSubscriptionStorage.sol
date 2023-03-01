@@ -62,6 +62,14 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		uint32 registation_timestamp;
 	}
 
+	struct paymentStatusOld {
+		uint32 period;
+		uint32 payment_timestamp;
+		uint32 execution_timestamp;
+		uint8 status;
+		uint128 pay_subscription_gas;
+	}
+
 	struct MetadataStruct {
 		TvmCell subscription_params;
 		serviceParams svcparams;
