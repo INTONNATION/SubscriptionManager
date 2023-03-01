@@ -147,6 +147,7 @@ abstract contract EverduesSubscriptionBase is
 		tvm.rawReserve(EverduesGas.SUBSCRIPTION_INITIAL_BALANCE, 0);
 		subscription.execution_timestamp = uint32(now);
 		subscription.status = EverduesSubscriptionStatus.STATUS_PROCESSING;
+		subscription.registation_timestamp = now;
 		IEverduesAccount(account_address).getNextPaymentStatus{
 			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE,
 			bounce: true,
@@ -317,6 +318,7 @@ abstract contract EverduesSubscriptionBase is
 			0,
 			0,
 			EverduesSubscriptionStatus.STATUS_NONACTIVE,
+			0,
 			0
 		);
 		if (external_subscription) {
