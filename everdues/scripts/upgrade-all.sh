@@ -31,7 +31,7 @@ code=`tvm_linker decode --tvc ../abi/EverduesRoot.tvc | grep code: | awk '{ prin
 message=`tonos-cli -j body upgrade "{\"code\":\"$code\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 5T --bounce true --allBalance false --payload "$message"
 # Categories
-categories=[\"Telegram\",\"Gambling\",\"Rentals\",\"Content\",\"Media\",\"Music\",\"Goods\",\"Education\",\"Software\",\"Membership\",\"DeFi\",\"NFT\",\"Games\",\"Other\"]
+categories=[\"Crypto\",\"Content\",\"Membership\",\"Software\",\"Infrastructure\",\"Investments\",\"Data\",\"Other\"]
 
 # TVC
 platformCode=$(tvm_linker decode --tvc ../abi/Platform.tvc | grep code: | awk '{ print $2 }')
