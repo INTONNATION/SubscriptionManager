@@ -546,12 +546,12 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				);
 				if (value > 0) {
 					depositTokens(cross_chain_token, account_address, msg.sender, value);
-					msg.sender.transfer({
+				}
+				msg.sender.transfer({
 						value: 0,
 						bounce: false,
 						flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-					});
-				}
+				});
 			} else {
 				address subscription_address = address(
 					tvm.hash(
