@@ -596,13 +596,13 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			),
 			2
 		);
-		if (version_ != 1) {
+		//if (version_ != 1) {
 			mapping(uint32 => ContractParams) versions_ = versions[
 				contract_type
 			];
 			delete versions_[version_];
 			versions[contract_type] = versions_;
-		}
+		//}
 		owner.transfer({
 			value: 0,
 			bounce: false,
