@@ -89,7 +89,7 @@ abstract contract EverduesSubscriptionBase is
 			EverduesErrors.error_subscription_is_stopped
 		);
 		if (subscription.period != 0) {
-			if (now > (subscription.payment_timestamp - preprocessing_window)) {
+			if (subscription.payment_timestamp == 0 || now > (subscription.payment_timestamp - preprocessing_window)) {
 				tvm.accept(); // move
 				uint8 subcr_status = subscriptionStatus();
 				require(subcr_status != EverduesSubscriptionStatus.STATUS_ACTIVE,
