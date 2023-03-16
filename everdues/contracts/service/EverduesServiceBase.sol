@@ -34,6 +34,15 @@ abstract contract EverduesServiceBase is
 		_;
 	}
 
+	modifier onlyRootOrOwner() {
+		require(
+			(msg.sender == root ||
+				msg.pubkey() == owner_pubkey),
+			EverduesErrors.error_message_sender_is_not_owner
+		);
+		_;
+	}
+	
 	modifier onlyAccount() {
 		require(
 			msg.sender == account_address,
