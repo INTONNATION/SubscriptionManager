@@ -17,6 +17,7 @@ abstract contract EverduesRootStorage {
 	address public wever_root;
 	address public pending_owner;
 	address public tip3_to_ever_address;
+	address public watcher;
 	uint8 public service_fee;
 	uint8 public subscription_fee;
 	uint8 service_gas_compenstation;

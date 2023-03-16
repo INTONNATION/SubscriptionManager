@@ -43,7 +43,8 @@ contract EverduesRoot is EverduesRootBase {
 			cross_chain_subscriptions,
 			cross_chain_proxies,
 			supported_external_tokens,
-			service_registration_token
+			service_registration_token,
+			watcher
 		);
 		tvm.setcode(code);
 		tvm.setCurrentCode(code);
@@ -106,7 +107,7 @@ contract EverduesRoot is EverduesRootBase {
 				mapping(uint8 => mapping(uint256 => ExternalSubscription)),
 				mapping(uint8 => string),
 				mapping (uint8=>string[]),
-				address
+				address// TODO: add ,address (watcher)
 			)
 		);
 		owner.transfer({

@@ -153,6 +153,9 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 message=`tonos-cli -j body installOrUpgradeEverDuesWrappedTokens "{\"tip3_root\":\"0:9e7cd76a84c20ae013348de6709d954ef65f3679c1ce565dcb6ec1ac8add57fa\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
+message=`tonos-cli -j body installOrUpgradeWatcherAddress "{\"watcher_address\":\"0:a38e7e90fd54cccd8eabf499d25dec8a36ef6bb8317e85a566778138ede91192\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+
 evm_abi=`cat ../abi/RecurringPayments.json | jq .abi | jq -c .| base64 $prefix`
 message=`tonos-cli -j body setAbiEVMRecurringContract "{\"abiEVMRecurringContractInput\":\"${evm_abi}\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
