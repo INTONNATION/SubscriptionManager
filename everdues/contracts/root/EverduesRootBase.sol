@@ -506,7 +506,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		uint128 paid_amount,
 		bool status,
 		uint128 additional_gas
-	) external onlyOwner {
+	) external onlyWatcher {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,

@@ -462,6 +462,14 @@
 			]
 		},
 		{
+			"name": "installOrUpgradeWatcherAddress",
+			"inputs": [
+				{"name":"watcher_address","type":"address"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpgradeDexRootAddresses",
 			"inputs": [
 				{"name":"dex_root","type":"address"},
@@ -639,6 +647,14 @@
 			]
 		},
 		{
+			"name": "watcher",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"watcher","type":"address"}
+			]
+		},
+		{
 			"name": "service_fee",
 			"inputs": [
 			],
@@ -727,6 +743,7 @@
 		{"name":"wever_root","type":"address"},
 		{"name":"pending_owner","type":"address"},
 		{"name":"tip3_to_ever_address","type":"address"},
+		{"name":"watcher","type":"address"},
 		{"name":"service_fee","type":"uint8"},
 		{"name":"subscription_fee","type":"uint8"},
 		{"name":"service_gas_compenstation","type":"uint8"},
