@@ -19,6 +19,15 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		_;
 	}
 
+	modifier onlyWatcher() {
+		require(
+			msg.sender == watcher,
+			EverduesErrors.error_message_sender_is_not_watcher
+		);
+		tvm.accept();
+		_;
+	}
+
 	modifier onlyAccountContract(uint256 pubkey) {
 		address account_contract_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
@@ -855,6 +864,22 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED
 		}(dues_root_address, owner);
+	}
+
+	function installOrUpgradeWatcherAddress(address watcher_address) external {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
+		watcher = watcher_address;
+		msg.sender.transfer({
+			value: 0,
+			bounce: false,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		});
 	}
 
 	function installOrUpgradeDexRootAddresses(

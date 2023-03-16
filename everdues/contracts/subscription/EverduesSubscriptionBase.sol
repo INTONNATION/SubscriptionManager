@@ -44,7 +44,9 @@ abstract contract EverduesSubscriptionBase is
 	}
 	
 	function cancel(address send_gas_to) external override onlyRootOrOwner {
-		require((subscription.status == EverduesSubscriptionStatus.STATUS_STOPPED) && (now > (subscription.payment_timestamp)), EverduesErrors.error_subscription_status_is_not_stopped);
+		if (msg.sender != root) {
+			require((subscription.status == EverduesSubscriptionStatus.STATUS_STOPPED) && (now > (subscription.payment_timestamp)), EverduesErrors.error_subscription_status_is_not_stopped);
+		}
 		tvm.accept();
 		emit SubscriptionDeleted();
 		if(send_gas_to == address(0)){
