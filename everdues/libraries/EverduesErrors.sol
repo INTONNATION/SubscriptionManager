@@ -30,4 +30,5 @@ library EverduesErrors {
 	uint8 constant error_service_tokens_already_locked = 127;
 	uint8 constant error_tip3_low_value = 128;
 	uint8 constant error_subscription_status_is_not_stopped = 129;
+	uint8 constant error_message_sender_is_not_watcher = 130;
 }

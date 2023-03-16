@@ -329,7 +329,7 @@ abstract contract EverduesAccountBase is
 	function syncBalance(
 		address currency_root,
 		uint128 additional_gas
-	) external onlyOwner {
+	) external onlyOwnerOrRoot {
 		tvm.rawReserve(EverduesGas.ACCOUNT_INITIAL_BALANCE, 0);
 		optional(BalanceWalletStruct) current_balance_struct = wallets_mapping
 			.fetch(currency_root);
