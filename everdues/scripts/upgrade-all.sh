@@ -26,7 +26,11 @@ CONTRACT_NAME=EverduesRoot
 
 function deploy {
 CONTRACT_ADDRESS=`cat ./envs/$2-EverduesRoot.addr`
-owner=`cat dev-single.msig.addr`
+if [[ $2 == "prod" ]]; then
+    owner=`cat prod-multisig.msig.addr`
+else
+    owner=`cat dev-single.msig.addr`
+fi
 code=`tvm_linker decode --tvc ../abi/EverduesRoot.tvc | grep code: | awk '{ print $2 }'`
 message=`tonos-cli -j body upgrade "{\"code\":\"$code\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 5T --bounce true --allBalance false --payload "$message"
