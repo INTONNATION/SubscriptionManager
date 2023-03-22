@@ -20,6 +20,7 @@ if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
+rm -rf node_modules
 ./compile.sh
 
 CONTRACT_NAME=EverduesRoot
@@ -174,9 +175,9 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 deploy $CONTRACT_NAME $1
 ## Upgrade all deployed contracts
 npm i
-node upgrade-all-service-contracts.js $1
-node upgrade-all-account-contracts.js $1
-node upgrade-all-subscription-contracts.js $1
+node upgrade-all-service-contracts.js $1 $owner
+node upgrade-all-account-contracts.js $1 $owner
+node upgrade-all-subscription-contracts.js $1 $owner
 
 CONTRACT_ADDRESS=$(cat ./envs/$1-$CONTRACT_NAME.addr)
 

@@ -16,7 +16,8 @@ const msigAbiFile = path.join(__dirname, msigAbiFileName);
 const KeyPair = JSON.parse(fs.readFileSync(KeyPairFile, 'utf8'));
 
 
-const rootType = process.argv.slice(2);
+const rootType = process.argv[2];
+const owner = process.argv[3];
 const rootAddrFileName = './envs/'+rootType+'-EverduesRoot.addr';
 const rootAddrFile = path.join(__dirname, rootAddrFileName);
 const rootAddress = fs.readFileSync(rootAddrFile, 'utf8');
@@ -25,7 +26,7 @@ const rootAddress = fs.readFileSync(rootAddrFile, 'utf8');
 async function getExistingMultisigAccount(client) {
     const contractPackage = { abi: JSON.parse(fs.readFileSync(msigAbiFile, 'utf8'))};
     account = new Account(contractPackage, {
-        address: "0:aba04121a9e69a0140e072ce770ddb012aa828279b1a7c2e6d6f1dbe38e4ceb0",
+        address: owner,
         signer: signerKeys(KeyPair),
         client
     });
