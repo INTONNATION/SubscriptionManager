@@ -11,13 +11,18 @@ import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWalle
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
 abstract contract EverduesServiceBase is
-	IEverduesService,
 	EverduesServiceStorage
 {
 	constructor() public {
 		revert();
 	}
 
+	event ServiceDeployed(
+		address subscription_service_index_address,
+		address subscription_service_index_identificator_address
+	);
+
+	event ServiceDeleted();
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,
@@ -117,7 +122,7 @@ abstract contract EverduesServiceBase is
 		status = 0;
 	}
 
-	function cancel() external override onlyOwner {
+	function cancel() external onlyOwner {
 		tvm.accept();
 		TvmCell payload;
 		ITokenWallet(wallet_balance.wallet).transfer{

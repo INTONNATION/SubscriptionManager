@@ -15,7 +15,6 @@ import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.
 import "https://raw.githubusercontent.com/broxus/tip3/master/contracts/interfaces/IBurnableTokenWallet.tsol";
 
 abstract contract EverduesSubscriptionBase is
-	IEverduesSubscription,
 	EverduesSubscriptionSettings
 {
 	constructor() public {
@@ -32,7 +31,7 @@ abstract contract EverduesSubscriptionBase is
 
 	function upgradeSubscriptionPlan(
 		uint8 new_subscription_plan
-	) external override onlyOwner {
+	) external onlyOwner {
 		tvm.accept();
 		subscription_plan = new_subscription_plan;
 		IEverduesService(service_address).getParams{
@@ -43,7 +42,7 @@ abstract contract EverduesSubscriptionBase is
 		}(new_subscription_plan);
 	}
 	
-	function cancel(address send_gas_to) external override onlyRootOrOwner {
+	function cancel(address send_gas_to) external onlyRootOrOwner {
 		if (msg.sender != root) {
 			require((subscription.status == EverduesSubscriptionStatus.STATUS_STOPPED) && (now > (subscription.payment_timestamp)), EverduesErrors.error_subscription_status_is_not_stopped);
 		}
@@ -81,7 +80,7 @@ abstract contract EverduesSubscriptionBase is
 
 	function executeSubscription(
 		uint128 additional_gas
-	) external override onlyRootOrServiceOrOwner {
+	) external onlyRootOrServiceOrOwner {
 		require(
 			!service_params.toSlice().empty(),
 			EverduesErrors.error_subscription_has_no_service_params

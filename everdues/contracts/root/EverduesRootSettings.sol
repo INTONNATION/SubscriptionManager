@@ -39,6 +39,36 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		_;
 	}
 
+	modifier onlyServiceContract(address owner_address, string service_name){
+		address service_contract_address = address(
+			tvm.hash(
+			_buildInitData(
+				ContractTypes.Service,
+				_buildServicePlatformParams(owner_address, service_name)
+			)
+			));
+		_;
+	}
+
+	modifier onlySubscriptionContract(
+		address account_address,
+		address service_address
+	) {
+		address subscription_contract_address = address(
+			tvm.hash(
+				_buildInitData(
+					ContractTypes.Subscription,
+					_buildSubscriptionPlatformParams(account_address, service_address)
+				)
+			)
+		);
+		require(
+			msg.sender == subscription_contract_address,
+			EverduesErrors.error_message_sender_is_not_my_subscription
+		);
+		_;
+	}
+
 	function setCodePlatform(TvmCell codePlatformInput) external onlyOwner {
 		require(
 			codePlatform.toSlice().empty(),
