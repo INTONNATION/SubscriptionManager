@@ -11,7 +11,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 		uint32 version,
 		address send_gas_to,
 		TvmCell upgrade_params
-	) external override onlyRoot {
+	) external onlyRoot {
 		TvmCell contract_params = abi.encode(
 			service_params,
 			subscription_plans,

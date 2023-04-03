@@ -7,6 +7,8 @@ import "./EverduesRootSettings.sol";
 import "../../interfaces/IEverduesService.sol";
 import "../../interfaces/IEverduesAccount.sol";
 import "../../interfaces/IEverduesSubscription.sol";
+import "../subscription/EverduesSubscriptionStorage.sol";
+import "../service/EverduesServiceStorage.sol";
 
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWallet.sol";
 
@@ -493,98 +495,152 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		depositTokens(service_registration_token, account_address, msg.sender, tokens);
 	}
 
-	function addOrUpdateExternalSubscriber(
-		uint8 chain_id,
-		uint256 pubkey,
-		string customer,
-		string payee,
-		address everdues_service_address,
-		uint8 subscription_plan,
-		string tokenAddress,
-		string email,
-		uint128 allowance,
-		uint128 paid_amount,
-		bool status,
-		uint128 additional_gas
+	function createExternalSubscriber(
+		uint8 chainId, // from watcher
+		uint256 pubkey, // from IPFS (IPFS hash in function param)
+		address serviceAddress, // from IPFS (IPFS hash in function param)
+		string tokenAddress, // from transaction
+		string customer, // from transaction
+		string payee, // from transaction
+		uint128 value, // from transaction
+		uint32 period, // from IPFS (IPFS hash in function param)
+		//uint8 subscription_plan, //  need to get it on-chain from everdues_service_address, verify payee, value, period
+		string email, // from IPFS (IPFS hash in function param)
+		uint128 additional_gas // 0
 	) external onlyWatcher {
-		tvm.rawReserve(
-			math.max(
-				EverduesGas.ROOT_INITIAL_BALANCE,
-				address(this).balance - msg.value
-			),
-			2
-		);
 		ExternalSubscription external_subscription_event;
+		external_subscription_event.ChainID = chainId;
 		external_subscription_event.Customer = customer;
 		external_subscription_event.Payee = payee;
-		external_subscription_event.SubscriptionPlan = subscription_plan;
 		external_subscription_event.TokenAddress = tokenAddress;
 		external_subscription_event.PubKey = pubkey;
 		external_subscription_event.Email = email;
-		external_subscription_event.Allowance = allowance;
-		external_subscription_event.PaidAmount = paid_amount;
-		external_subscription_event.IsActive = status;
-		uint256 sid = tvm.hash(abi.encode(pubkey, everdues_service_address));
-		optional(
-			ExternalSubscription
-		) chain_subscriptions = cross_chain_subscriptions[chain_id].getAdd(
-				sid,
-				external_subscription_event
+		external_subscription_event.Value = value;
+		external_subscription_event.Period = period;
+		external_subscription_event.AdditionalGas = additional_gas;
+		tmp_cross_chain_subscriptions_create[now] =
+				external_subscription_event;
+		IEverduesService(serviceAddress).getMetadata{
+			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + additional_gas,
+			bounce: true,
+			flag: 0,
+			callback: EverduesRootBase.onGetServiceMetdata
+		}();
+	}
+
+	function onGetServiceMetdata(EverduesServiceStorage.MetadataStruct svc_info) external { // TODO: onlyService(svc_info,svc_info) {
+		optional(uint64, ExternalSubscription) keyOpt = tmp_cross_chain_subscriptions_create.min();
+		if (keyOpt.hasValue()) {
+			(, ExternalSubscription ext_operation) = keyOpt.get();
+			uint8 subscription_plan;
+			for ((uint8 plan, TvmCell subscriptionParams) : svc_info.subscription_plans) {
+				(
+				uint128 service_value,
+				uint32 period,
+				,
+				) = abi.decode(subscriptionParams, (uint128, uint32, address, string));
+				if (ext_operation.Value == service_value && ext_operation.Period == period) {
+					subscription_plan = plan;
+				}
+			}
+			(
+			uint128 service_value,
+			uint32 period,
+			,
+			) = abi.decode(svc_info.subscription_plans[subscription_plan], (uint128, uint32, address, string));
+			if (ext_operation.Value != service_value && ext_operation.Period != period) {
+				tmp_cross_chain_subscriptions_create.delMin();
+				tvm.commit();
+				tvm.exit1();
+			}
+			address account_address = address(
+				tvm.hash(_buildAccountInitData(ContractTypes.Account, ext_operation.PubKey))
 			);
+			TvmCell identificator = abi.encode(ext_operation.Email);
+			deployExternalAccount(ext_operation.PubKey, 0);
+			depositTokens(cross_chain_token, account_address, msg.sender, ext_operation.Value);
+			deployExternalSubscription(
+				ext_operation.ChainID,
+				ext_operation.Customer,
+				ext_operation.Payee,
+				ext_operation.TokenAddress,
+				msg.sender,
+				identificator,
+				ext_operation.PubKey,
+				subscription_plan,
+				ext_operation.AdditionalGas
+			);
+			tmp_cross_chain_subscriptions_create.delMin();
+			watcher.transfer({
+				value: 0,
+				bounce: false,
+				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
+			});
+		}
+	}
+
+	function cancelExternalSubscriber(
+		uint256 pubkey, // from IPFS
+		address serviceAddress // from IPFS
+	) external onlyWatcher {
+		address account_address = address(
+				tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
+		);
+		address subscription_address = address(
+			tvm.hash(
+				_buildInitData(
+					ContractTypes.Subscription,
+					_buildSubscriptionPlatformParams(
+						account_address,
+						serviceAddress
+					)
+				)
+			)
+		);
+		IEverduesSubscription(subscription_address).stopSubscription{
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED
+		}();	
+	}
+
+	// EverDues trust point
+	function executeExternalSubscriber(
+		address everdues_service_address,
+		uint256 pubkey, // from IPFS
+		uint128 paidAmount // from watcher
+	) external onlyWatcher {
+       // verify paidAmount on-chain and send tokens
+		tmp_cross_chain_subscriptions_execute[now] = paidAmount;
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
-		TvmCell identificator = abi.encode(email);
-		if (chain_subscriptions.hasValue()) {
-			ExternalSubscription existing_user_subscriptions = chain_subscriptions
-					.get();
-			if (status) {
-				uint128 value = external_subscription_event.PaidAmount - existing_user_subscriptions.PaidAmount;
-				cross_chain_subscriptions[chain_id].replace(
-					sid,
-					external_subscription_event
-				);
-				if (value > 0) {
-					depositTokens(cross_chain_token, account_address, msg.sender, value);
-				}
-				msg.sender.transfer({
-						value: 0,
-						bounce: false,
-						flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS
-				});
-			} else {
-				address subscription_address = address(
-					tvm.hash(
-						_buildInitData(
-							ContractTypes.Subscription,
-							_buildSubscriptionPlatformParams(
-								account_address,
-								everdues_service_address
-							)
-						)
+		address subscription_address = address(
+			tvm.hash(
+				_buildInitData(
+					ContractTypes.Subscription,
+					_buildSubscriptionPlatformParams(
+						account_address,
+						everdues_service_address
 					)
-				);
-				IEverduesSubscription(subscription_address).stopSubscription{
-					value: 0,
-					flag: MsgFlag.ALL_NOT_RESERVED
-				}();
-				delete cross_chain_subscriptions[chain_id][sid];
+				)
+			)
+		);
+		IEverduesSubscription(subscription_address).getMetadata{
+			value: 0,
+			flag: MsgFlag.ALL_NOT_RESERVED,
+			callback: EverduesRootBase.onGetSubscriptionMetadata
+		}();
+	}
+
+	function onGetSubscriptionMetadata(EverduesSubscriptionStorage.MetadataStruct _subscription) external onlySubscriptionContract(_subscription.account_address, _subscription.service_address){
+		optional(uint64, uint128) keyOpt = tmp_cross_chain_subscriptions_execute.min();
+		if (keyOpt.hasValue()) {
+			(, uint128 paidAmount) = keyOpt.get();
+			if (paidAmount - _subscription.totalPaid > 0){
+				depositTokens(cross_chain_token, _subscription.account_address, watcher, uint128(paidAmount - _subscription.totalPaid));
 			}
-		} else {
-			deployExternalAccount(pubkey, 0);
-			depositTokens(cross_chain_token, account_address, msg.sender, paid_amount);
-			deployExternalSubscription(
-				chain_id,
-				customer,
-				payee,
-				tokenAddress,
-				everdues_service_address,
-				identificator,
-				pubkey,
-				subscription_plan,
-				additional_gas
-			);
-			msg.sender.transfer({
+			tmp_cross_chain_subscriptions_execute.delMin();
+			watcher.transfer({
 				value: 0,
 				bounce: false,
 				flag: MsgFlag.ALL_NOT_RESERVED + MsgFlag.IGNORE_ERRORS

@@ -7,7 +7,7 @@ import "../../libraries/EverduesGas.sol";
 import "../../libraries/MsgFlag.sol";
 import "../../interfaces/IEverduesService.sol";
 
-abstract contract EverduesServiceStorage is IEverduesService {
+abstract contract EverduesServiceStorage {
 	address public account_address;
 	uint256 public owner_pubkey;
 	address public subscription_service_index_address;
@@ -28,6 +28,7 @@ abstract contract EverduesServiceStorage is IEverduesService {
 	TvmCell platform_params;
 	uint32 current_version;
 	uint8 type_id;
+
 
 	struct BalanceWalletStruct {
 		address currency_root;
@@ -61,7 +62,7 @@ abstract contract EverduesServiceStorage is IEverduesService {
 
 	function getParams(
 		uint8 subscription_plan
-	) external view responsible override returns (TvmCell) {
+	) external view responsible returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -78,7 +79,7 @@ abstract contract EverduesServiceStorage is IEverduesService {
 			{value: 0, flag: MsgFlag.ALL_NOT_RESERVED, bounce: false} response;
 	}
 
-	function getInfo() external view responsible override returns (TvmCell) {
+	function getInfo() external view responsible returns (TvmCell) {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SERVICE_INITIAL_BALANCE,
@@ -97,7 +98,6 @@ abstract contract EverduesServiceStorage is IEverduesService {
 		external
 		view
 		responsible
-		override
 		returns (uint8, uint8)
 	{
 		tvm.rawReserve(

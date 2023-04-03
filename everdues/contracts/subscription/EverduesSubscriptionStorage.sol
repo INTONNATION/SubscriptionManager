@@ -6,7 +6,7 @@ pragma AbiHeader pubkey;
 import "../../libraries/EverduesSubscriptionStatus.sol";
 import "../../interfaces/IEverduesSubscription.sol";
 
-abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
+abstract contract EverduesSubscriptionStorage {
 	address public root;
 	address public address_fee_proxy;
 	address public account_address;
@@ -114,7 +114,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		return returned_data;
 	}
 
-	function subscriptionStatus() public override returns (uint8) {
+	function subscriptionStatus() public returns (uint8) {
 		if (subscription.status !=
 			EverduesSubscriptionStatus.STATUS_STOPPED) {
 			if (subscription.payment_timestamp != 0 && subscription.period == 0) {
