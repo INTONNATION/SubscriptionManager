@@ -95,6 +95,7 @@
 		{
 			"name": "stopSubscription",
 			"inputs": [
+				{"name":"send_gas_to","type":"address"}
 			],
 			"outputs": [
 			]
