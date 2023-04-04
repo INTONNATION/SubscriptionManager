@@ -38,6 +38,7 @@ abstract contract EverduesSubscriptionStorage {
 	string external_payee;
 	address cross_chain_token;
 	bool notify;
+	string ipfs_hash;
 
 	uint32 constant public payment_processing_timeout = 3600 * 24;
 

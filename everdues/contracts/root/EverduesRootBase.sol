@@ -496,7 +496,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function createExternalSubscriber(
-		uint8 chainId, // from watcher
+		uint32 chainId, // from watcher
 		uint256 pubkey, // from IPFS (IPFS hash in function param)
 		address serviceAddress, // from IPFS (IPFS hash in function param)
 		string tokenAddress, // from transaction
@@ -506,8 +506,16 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		uint32 period, // from IPFS (IPFS hash in function param)
 		//uint8 subscription_plan, //  need to get it on-chain from everdues_service_address, verify payee, value, period
 		string email, // from IPFS (IPFS hash in function param)
-		uint128 additional_gas // 0
+		string ipfsHash,
+		uint128 additional_gas
 	) external onlyWatcher {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		ExternalSubscription external_subscription_event;
 		external_subscription_event.ChainID = chainId;
 		external_subscription_event.Customer = customer;
@@ -517,11 +525,12 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		external_subscription_event.Email = email;
 		external_subscription_event.Value = value;
 		external_subscription_event.Period = period;
+		external_subscription_event.IpfsHash = ipfsHash;
 		external_subscription_event.AdditionalGas = additional_gas;
 		tmp_cross_chain_subscriptions_create[now] =
 				external_subscription_event;
 		IEverduesService(serviceAddress).getMetadata{
-			value: EverduesGas.EXECUTE_SUBSCRIPTION_VALUE + additional_gas,
+			value: MsgFlag.ALL_NOT_RESERVED,
 			bounce: true,
 			flag: 0,
 			callback: EverduesRootBase.onGetServiceMetdata
@@ -529,6 +538,13 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function onGetServiceMetdata(EverduesServiceStorage.MetadataStruct svc_info) external onlyServiceContract(svc_info) {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		optional(uint64, ExternalSubscription) keyOpt = tmp_cross_chain_subscriptions_create.min();
 		if (keyOpt.hasValue()) {
 			(, ExternalSubscription ext_operation) = keyOpt.get();
@@ -568,6 +584,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				identificator,
 				ext_operation.PubKey,
 				subscription_plan,
+				ext_operation.IpfsHash,
 				ext_operation.AdditionalGas
 			);
 			tmp_cross_chain_subscriptions_create.delMin();
@@ -583,6 +600,13 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		uint256 pubkey, // from IPFS
 		address serviceAddress // from IPFS
 	) external onlyWatcher {
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		address account_address = address(
 				tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
@@ -610,6 +634,13 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		uint128 paidAmount // from watcher
 	) external onlyWatcher {
        // verify paidAmount on-chain and send tokens
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		tmp_cross_chain_subscriptions_execute[now] = paidAmount;
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
@@ -633,6 +664,13 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function onGetSubscriptionMetadata(EverduesSubscriptionStorage.MetadataStruct _subscription) external onlySubscriptionContract(_subscription.account_address, _subscription.service_address){
+		tvm.rawReserve(
+			math.max(
+				EverduesGas.ROOT_INITIAL_BALANCE,
+				address(this).balance - msg.value
+			),
+			2
+		);
 		optional(uint64, uint128) keyOpt = tmp_cross_chain_subscriptions_execute.min();
 		if (keyOpt.hasValue()) {
 			(, uint128 paidAmount) = keyOpt.get();
@@ -717,7 +755,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function deployExternalSubscription(
-		uint8 chain_id,
+		uint32 chain_id,
 		string external_account_address,
 		string external_payee,
 		string external_token_address,
@@ -725,6 +763,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		TvmCell identificator,
 		uint256 owner_pubkey,
 		uint8 subscription_plan,
+		string ipfs_hash,
 		uint128 additional_gas
 	) private view {
 		if (additional_gas != 0) {
@@ -777,7 +816,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			external_account_address,
 			external_token_address,
 			external_payee,
-			cross_chain_token
+			cross_chain_token,
+			ipfs_hash
 		);
 		Platform platform = new Platform{
 			stateInit: _buildInitData(

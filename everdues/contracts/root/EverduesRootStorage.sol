@@ -69,8 +69,8 @@ abstract contract EverduesRootStorage {
 		string evm_contract_abi;
 		string index_abi;
 		mapping(uint256 => string) subs_abis;
-		mapping(uint8 => string) cross_chain_proxies;
-		mapping(uint8 => string[]) supported_external_tokens;
+		mapping(uint32 => string) cross_chain_proxies;
+		mapping(uint32 => string[]) supported_external_tokens;
 		mapping(uint256 => uint256) categories_hash;
 		address service_registration_token;
 	}
@@ -81,7 +81,7 @@ abstract contract EverduesRootStorage {
 	}
 
 	struct ExternalSubscription {
-		uint8 ChainID;
+		uint32 ChainID;
 		string Customer; // subscriber EVM address
 		string Payee; // service owner EVM address
 		uint32 Period; // subscription_plan
@@ -89,6 +89,7 @@ abstract contract EverduesRootStorage {
 		uint256 PubKey; // subscriber pubkey
 		string Email; // subscriber email
 		uint128 Value; // value
+		string IpfsHash;
 		uint128 AdditionalGas;
 	}
 
@@ -96,14 +97,14 @@ abstract contract EverduesRootStorage {
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
 
-	mapping(uint8 => string) public cross_chain_proxies;
+	mapping(uint32 => string) public cross_chain_proxies;
 	address public cross_chain_token;
 	address public service_registration_token;
 
 	mapping(uint64 => ExternalSubscription) public tmp_cross_chain_subscriptions_create;
 	mapping(uint64 => uint128) public tmp_cross_chain_subscriptions_execute;
 
-	mapping (uint8=>string[]) public supported_external_tokens;
+	mapping (uint32=>string[]) public supported_external_tokens;
 
 	function getCodeHashes(
 		uint256 owner_pubkey

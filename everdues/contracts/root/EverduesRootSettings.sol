@@ -952,7 +952,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		}(dex_root_address, owner);
 	}
 
-	function installOrUpgradeExternalTokensAddresses(uint8 chain_id, string[] supported_tokens) external onlyOwner {
+	function installOrUpgradeExternalTokensAddresses(uint32 chain_id, string[] supported_tokens) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.ROOT_INITIAL_BALANCE,
@@ -969,7 +969,7 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 	}
 
 	function installOrUpgradeCrossChainContractsAddresses(
-		uint8 chain_id,
+		uint32 chain_id,
 		string contract_address
 	) external onlyOwner {
 		tvm.rawReserve(

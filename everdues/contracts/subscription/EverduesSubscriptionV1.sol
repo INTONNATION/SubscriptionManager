@@ -41,6 +41,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			root_pubkey,
 			totalPaid,
 			notify,
+			ipfs_hash,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -110,8 +111,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				external_account_address,
 				external_token_address,
 				external_payee,
-				cross_chain_token
-				
+				cross_chain_token,
+				ipfs_hash
 			) = abi.decode(
 				contract_params,
 				(
@@ -132,7 +133,8 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					string,
 					string,
 					string,
-					address
+					address,
+					string
 				)
 			);
 			notify = true;
@@ -176,6 +178,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					root_pubkey,
 					totalPaid,
 					notify,
+					ipfs_hash,
 					upgrade_params
 				) = abi.decode(
 					contract_params,
@@ -208,6 +211,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 						uint256,
 						uint128,
 						bool,
+						string,
 						TvmCell
 					)
 				);
