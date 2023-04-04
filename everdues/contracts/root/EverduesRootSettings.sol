@@ -6,6 +6,7 @@ pragma AbiHeader pubkey;
 import "./EverduesRootStorage.sol";
 import "../../libraries/EverduesErrors.sol";
 import "../../interfaces/IEverduesFeeProxy.sol";
+import "../service/EverduesServiceStorage.sol";
 
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
