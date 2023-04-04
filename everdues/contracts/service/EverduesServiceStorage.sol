@@ -41,6 +41,7 @@ abstract contract EverduesServiceStorage {
 		mapping(uint8 => TvmCell) subscription_plans;
 		mapping(uint8 => string) supported_chains;
 		mapping(uint8 => string[]) external_supported_tokens;
+		address account_address;
 	}
 
 	BalanceWalletStruct public wallet_balance;
@@ -57,6 +58,7 @@ abstract contract EverduesServiceStorage {
 		returned_data.subscription_plans = subscription_plans;
 		returned_data.supported_chains = supported_chains;
 		returned_data.external_supported_tokens = external_supported_tokens;
+		returned_data.account_address = account_address;
 		return returned_data;
 	}
 

@@ -39,14 +39,29 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		_;
 	}
 
-	modifier onlyServiceContract(address owner_address, string service_name){
+	modifier onlyServiceContract(EverduesServiceStorage.MetadataStruct svc_info){
+		string service_name;
+		(
+			,
+			service_name,
+			,
+			,
+			,
+			,
+
+		) = abi.decode(
+			svc_info.service_params,
+			(address, string, string, string, string, uint256, string)
+		);
 		address service_contract_address = address(
 			tvm.hash(
-			_buildInitData(
-				ContractTypes.Service,
-				_buildServicePlatformParams(owner_address, service_name)
+				_buildInitData(
+					ContractTypes.Service,
+					_buildServicePlatformParams(svc_info.account_address, service_name)
+				)
 			)
-			));
+		);
+		require(msg.sender == service_contract_address, EverduesErrors.error_message_sender_is_not_service_address);
 		_;
 	}
 

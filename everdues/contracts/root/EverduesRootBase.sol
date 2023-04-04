@@ -528,7 +528,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		}();
 	}
 
-	function onGetServiceMetdata(EverduesServiceStorage.MetadataStruct svc_info) external { // TODO: onlyService(svc_info,svc_info) {
+	function onGetServiceMetdata(EverduesServiceStorage.MetadataStruct svc_info) external onlyServiceContract(svc_info) {
 		optional(uint64, ExternalSubscription) keyOpt = tmp_cross_chain_subscriptions_create.min();
 		if (keyOpt.hasValue()) {
 			(, ExternalSubscription ext_operation) = keyOpt.get();
