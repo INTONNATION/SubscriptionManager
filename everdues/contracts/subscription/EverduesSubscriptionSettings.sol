@@ -86,7 +86,7 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 		_;
 	}
 
-	function stopSubscription() external onlyRoot {
+	function stopSubscription(address send_gas_to) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
@@ -96,7 +96,7 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 		);
 		subscription.status = EverduesSubscriptionStatus.STATUS_STOPPED;
 		emit SubscriptionStopped();
-		msg.sender.transfer({
+		send_gas_to.transfer({
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED

@@ -20,5 +20,5 @@ interface IEverduesSubscription {
 
 	function cancel(address send_gas_to) external;
 
-	function stopSubscription() external;
+	function stopSubscription(address send_gas_to) external;
 }
