@@ -765,7 +765,8 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		uint8 subscription_plan,
 		string ipfs_hash,
 		uint128 additional_gas
-	) private view {
+	) public view { //TODO: private
+		tvm.accept(); // TODO: remove
 		if (additional_gas != 0) {
 			additional_gas = additional_gas / 3;
 		}
@@ -776,20 +777,33 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			service_address,
 			owner_account_address
 		);
-		TvmCell subsIndexIdentificatorStateInit;
+		TvmCell subsIndexIdentificator1StateInit;
+		TvmCell subsIndexIdentificator2StateInit;
 		if (!identificator.toSlice().empty()) {
-			subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
-				service_address,
-				identificator,
-				owner_account_address
-			);
+			if(identificator.toSlice().depth() > 0) {
+				TvmCell identificator2;
+				(, identificator2)= abi.decode(identificator, (TvmCell, TvmCell));
+				subsIndexIdentificator2StateInit = _buildSubscriptionIdentificatorIndex(
+					service_address,
+					identificator2,
+					owner_account_address
+				);
+			} else {
+				TvmCell identificator1;
+				identificator1= abi.decode(identificator, (TvmCell));
+				subsIndexIdentificator1StateInit = _buildSubscriptionIdentificatorIndex(
+					service_address,
+					identificator1,
+					owner_account_address
+				);
+			}
 		}
 		TvmCell subscription_code_salt = _buildSubscriptionCode(
 			owner_account_address
 		);
 		address subs_index = address(tvm.hash(subsIndexStateInit));
 		address subs_index_identificator = address(
-			tvm.hash(subsIndexIdentificatorStateInit)
+			tvm.hash(subsIndexIdentificator1StateInit)
 		);
 		optional(uint32, ContractParams) latest_version_opt = versions[
 			ContractTypes.Subscription
@@ -852,8 +866,16 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
-				stateInit: subsIndexIdentificatorStateInit
+				stateInit: subsIndexIdentificator1StateInit
 			}(index_owner, msg.sender);
+			if(identificator.toSlice().depth() > 0) {
+				new Index{
+					value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
+					flag: MsgFlag.SENDER_PAYS_FEES,
+					bounce: false,
+					stateInit: subsIndexIdentificator2StateInit
+				}(index_owner, msg.sender);				
+			}
 		}
 		msg.sender.transfer({
 			value: 0,
