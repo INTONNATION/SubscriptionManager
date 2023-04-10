@@ -26,6 +26,7 @@ abstract contract EverduesServiceStorage is IEverduesService {
 	address public root;
 	TvmCell platform_code;
 	TvmCell platform_params;
+	TvmCell additional_identificator;
 	uint32 current_version;
 	uint8 type_id;
 
@@ -40,6 +41,7 @@ abstract contract EverduesServiceStorage is IEverduesService {
 		mapping(uint8 => TvmCell) subscription_plans;
 		mapping(uint8 => string) supported_chains;
 		mapping(uint8 => string[]) external_supported_tokens;
+		string additionalIdentificator;
 	}
 
 	BalanceWalletStruct public wallet_balance;
@@ -56,6 +58,11 @@ abstract contract EverduesServiceStorage is IEverduesService {
 		returned_data.subscription_plans = subscription_plans;
 		returned_data.supported_chains = supported_chains;
 		returned_data.external_supported_tokens = external_supported_tokens;
+		if (!additional_identificator.toSlice().empty()) {
+			returned_data.additionalIdentificator = abi.decode(additional_identificator, (string));
+	    } else {
+			returned_data.additionalIdentificator = "";
+		}
 		return returned_data;
 	}
 

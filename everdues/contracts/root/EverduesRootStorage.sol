@@ -69,8 +69,8 @@ abstract contract EverduesRootStorage {
 		string evm_contract_abi;
 		string index_abi;
 		mapping(uint256 => string) subs_abis;
-		mapping(uint8 => string) cross_chain_proxies;
-		mapping(uint8 => string[]) supported_external_tokens;
+		mapping(uint32 => string) cross_chain_proxies;
+		mapping(uint32 => string[]) supported_external_tokens;
 		mapping(uint256 => uint256) categories_hash;
 		address service_registration_token;
 	}
@@ -96,14 +96,14 @@ abstract contract EverduesRootStorage {
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
 
-	mapping(uint8 => string) public cross_chain_proxies;
+	mapping(uint32 => string) public cross_chain_proxies;
 	address public cross_chain_token;
 	address public service_registration_token;
 
-	mapping(uint8 => mapping(uint256 => ExternalSubscription))
+	mapping(uint32 => mapping(uint256 => ExternalSubscription))
 		public cross_chain_subscriptions;
 
-	mapping (uint8=>string[]) public supported_external_tokens;
+	mapping (uint32=>string[]) public supported_external_tokens;
 
 	function getCodeHashes(
 		uint256 owner_pubkey

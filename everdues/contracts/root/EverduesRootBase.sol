@@ -494,7 +494,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function addOrUpdateExternalSubscriber(
-		uint8 chain_id,
+		uint32 chain_id,
 		uint256 pubkey,
 		string customer,
 		string payee,
@@ -661,7 +661,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 	}
 
 	function deployExternalSubscription(
-		uint8 chain_id,
+		uint32 chain_id,
 		string external_account_address,
 		string external_payee,
 		string external_token_address,
@@ -681,20 +681,33 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			service_address,
 			owner_account_address
 		);
-		TvmCell subsIndexIdentificatorStateInit;
+		TvmCell subsIndexIdentificator1StateInit;
+		TvmCell subsIndexIdentificator2StateInit;
+		TvmCell identificator1;
+		TvmCell identificator2;
 		if (!identificator.toSlice().empty()) {
-			subsIndexIdentificatorStateInit = _buildSubscriptionIdentificatorIndex(
-				service_address,
-				identificator,
-				owner_account_address
-			);
+			if(identificator.toSlice().depth() > 0) {
+				(identificator1, identificator2)= abi.decode(identificator, (TvmCell, TvmCell));
+				subsIndexIdentificator1StateInit = _buildSubscriptionIdentificatorIndex(
+					service_address,
+					identificator1,
+					owner_account_address
+				);
+				if (!identificator2.toSlice().empty()) {
+					subsIndexIdentificator2StateInit = _buildSubscriptionIdentificatorIndex(
+						service_address,
+						identificator2,
+						owner_account_address
+					);
+				}
+			}
 		}
 		TvmCell subscription_code_salt = _buildSubscriptionCode(
 			owner_account_address
 		);
 		address subs_index = address(tvm.hash(subsIndexStateInit));
 		address subs_index_identificator = address(
-			tvm.hash(subsIndexIdentificatorStateInit)
+			tvm.hash(subsIndexIdentificator1StateInit)
 		);
 		optional(uint32, ContractParams) latest_version_opt = versions[
 			ContractTypes.Subscription
@@ -751,13 +764,21 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 			bounce: false,
 			stateInit: subsIndexStateInit
 		}(index_owner, msg.sender);
-		if (!identificator.toSlice().empty()) {
+		if (!identificator1.toSlice().empty()) {
 			new Index{
 				value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
 				flag: MsgFlag.SENDER_PAYS_FEES,
 				bounce: false,
-				stateInit: subsIndexIdentificatorStateInit
+				stateInit: subsIndexIdentificator1StateInit
 			}(index_owner, msg.sender);
+			if(!identificator2.toSlice().empty()) {
+				new Index{
+					value: EverduesGas.MESSAGE_MIN_VALUE + additional_gas,
+					flag: MsgFlag.SENDER_PAYS_FEES,
+					bounce: false,
+					stateInit: subsIndexIdentificator2StateInit
+				}(index_owner, msg.sender);				
+			}
 		}
 		msg.sender.transfer({
 			value: 0,
