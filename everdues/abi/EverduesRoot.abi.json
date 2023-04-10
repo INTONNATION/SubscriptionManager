@@ -183,7 +183,7 @@
 				{"name":"everdues_service_address","type":"address"},
 				{"name":"subscription_plan","type":"uint8"},
 				{"name":"tokenAddress","type":"string"},
-				{"name":"email","type":"string"},
+				{"name":"identifier","type":"cell"},
 				{"name":"allowance","type":"uint128"},
 				{"name":"paid_amount","type":"uint128"},
 				{"name":"status","type":"bool"},
@@ -479,13 +479,6 @@
 			]
 		},
 		{
-			"name": "eraseMappings",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "installOrUpgradeExternalTokensAddresses",
 			"inputs": [
 				{"name":"chain_id","type":"uint32"},
@@ -501,6 +494,14 @@
 				{"name":"contract_address","type":"string"}
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "getCatalogCodeHashes",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"map(uint256,uint256)"}
 			]
 		},
 		{
