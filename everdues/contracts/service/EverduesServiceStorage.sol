@@ -20,8 +20,8 @@ abstract contract EverduesServiceStorage is IEverduesService {
 	uint8 service_gas_compenstation;
 	uint8 subscription_gas_compenstation;
 	mapping(uint8 => TvmCell) public subscription_plans;
-	mapping(uint8 => string) public supported_chains;
-	mapping(uint8 => string[]) public external_supported_tokens;
+	mapping(uint32 => string) public supported_chains;
+	mapping(uint32 => string[]) public external_supported_tokens;
 
 	address public root;
 	TvmCell platform_code;
@@ -39,15 +39,15 @@ abstract contract EverduesServiceStorage is IEverduesService {
 	struct MetadataStruct {
 		TvmCell service_params;
 		mapping(uint8 => TvmCell) subscription_plans;
-		mapping(uint8 => string) supported_chains;
-		mapping(uint8 => string[]) external_supported_tokens;
+		mapping(uint32 => string) supported_chains;
+		mapping(uint32 => string[]) external_supported_tokens;
 		string additionalIdentificator;
 	}
 
 	BalanceWalletStruct public wallet_balance;
 
 	function getExternalChainAddress(
-		uint8 chain_id
+		uint32 chain_id
 	) external view returns (string) {
 		return supported_chains[chain_id];
 	}

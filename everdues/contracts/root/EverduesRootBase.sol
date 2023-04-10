@@ -501,7 +501,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		address everdues_service_address,
 		uint8 subscription_plan,
 		string tokenAddress,
-		string email,
+		TvmCell identifier,
 		uint128 allowance,
 		uint128 paid_amount,
 		bool status,
@@ -520,7 +520,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		external_subscription_event.SubscriptionPlan = subscription_plan;
 		external_subscription_event.TokenAddress = tokenAddress;
 		external_subscription_event.PubKey = pubkey;
-		external_subscription_event.Email = email;
+		external_subscription_event.Email = "";
 		external_subscription_event.Allowance = allowance;
 		external_subscription_event.PaidAmount = paid_amount;
 		external_subscription_event.IsActive = status;
@@ -534,7 +534,6 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 		address account_address = address(
 			tvm.hash(_buildAccountInitData(ContractTypes.Account, pubkey))
 		);
-		TvmCell identificator = abi.encode(email);
 		if (chain_subscriptions.hasValue()) {
 			ExternalSubscription existing_user_subscriptions = chain_subscriptions
 					.get();
@@ -579,7 +578,7 @@ abstract contract EverduesRootBase is EverduesRootSettings {
 				payee,
 				tokenAddress,
 				everdues_service_address,
-				identificator,
+				identifier,
 				pubkey,
 				subscription_plan,
 				additional_gas
