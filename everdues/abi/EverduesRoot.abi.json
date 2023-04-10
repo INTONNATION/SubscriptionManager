@@ -479,9 +479,16 @@
 			]
 		},
 		{
+			"name": "eraseMappings",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "installOrUpgradeExternalTokensAddresses",
 			"inputs": [
-				{"name":"chain_id","type":"uint8"},
+				{"name":"chain_id","type":"uint32"},
 				{"name":"supported_tokens","type":"string[]"}
 			],
 			"outputs": [
@@ -490,7 +497,7 @@
 		{
 			"name": "installOrUpgradeCrossChainContractsAddresses",
 			"inputs": [
-				{"name":"chain_id","type":"uint8"},
+				{"name":"chain_id","type":"uint32"},
 				{"name":"contract_address","type":"string"}
 			],
 			"outputs": [

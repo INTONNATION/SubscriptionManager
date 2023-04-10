@@ -906,6 +906,13 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		}(dex_root_address, owner);
 	}
 
+	function eraseMappings() public {
+		tvm.accept();
+		delete supported_external_tokens;
+		delete cross_chain_subscriptions;
+		delete cross_chain_proxies;
+	}
+
 	function installOrUpgradeExternalTokensAddresses(uint32 chain_id, string[] supported_tokens) external onlyOwner {
 		tvm.rawReserve(
 			math.max(
