@@ -27,6 +27,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 			supported_chains,
 			external_supported_tokens,
 			wallet_balance,
+			additional_identificator,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -93,11 +94,11 @@ contract EverduesService_V1 is EverduesServiceBase {
 			);
 			supported_chains = abi.decode(
 				supported_chains_cell,
-				(mapping(uint8 => string))
+				(mapping(uint32 => string))
 			);
 			external_supported_tokens = abi.decode(
 				supported_external_tokens_cell,
-				(mapping(uint8 => string[]))
+				(mapping(uint32 => string[]))
 			);
 			(
 				subscription_service_index_address,
@@ -133,6 +134,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 				supported_chains,
 				external_supported_tokens,
 				wallet_balance,
+				additional_identificator,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -148,9 +150,10 @@ contract EverduesService_V1 is EverduesServiceBase {
 					uint8,
 					TvmCell,
 					uint256,
-					mapping(uint8 => string),
-					mapping(uint8 => string[]),
+					mapping(uint32=> string),
+					mapping(uint32 => string[]),
 					BalanceWalletStruct,
+					TvmCell,
 					TvmCell
 				)
 			);

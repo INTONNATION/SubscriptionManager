@@ -120,15 +120,17 @@ async function executeUpgrade(client, account) {
         RootAddress = await accountRoot.getAddress();
         console.log(`Everdues Root address: ${RootAddress}`);
 
-        let response = await accountRoot.runLocal("getCodeHashes", {
-            owner_pubkey: 0
+        let response = await accountRoot.runLocal("getCatalogCodeHashes", {});
+        console.log(response.decoded.output.value0);
+        formatCodeHashes0x = ["69c39cff60a06ade6925289ce8f08d1c5e21c19a5cde384e4686ca67fd3a7f2c"];
+	    formatCodeHashes = []
+        let categories_hash = Object.keys(response.decoded.output.value0);
+        
+        categories_hash.forEach((hash) => {
+            formatCodeHashes.push(response.decoded.output.value0[hash].replace(/^0x+/, ''));
+            //formatCodeHashes.push(formatCodeHashes0x[0].replace(/^0x+/, ''));
+            console.log(formatCodeHashes);
         });
-        formatCodeHashes0x = ["69fbf2ab08f279867aa262c316f9e9c197dea800914f727561036b0f99f857bf"];
-	formatCodeHashes = []
-	for (let i = 0; i < formatCodeHashes0x.length; i++) {
-            formatCodeHashes.push(formatCodeHashes0x[i].replace(/^0x+/, ''));
-        }
-
         // In the following we query a collection. We get balance of the first wallet.
         // See https://github.com/tonlabs/ever-sdk/blob/master/docs/reference/types-and-methods/mod_net.md#query_collection
         console.log(">> query_collection contract hash");
