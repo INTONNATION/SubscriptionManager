@@ -348,4 +348,10 @@ abstract contract EverduesSubscriptionBase is
 			});
 		}
 	}
+
+	function eraseChainId(uint32 chain_id_) public {
+		tvm.accept();
+		delete chain_id;
+		chain_id = chain_id_;
+	}
 }
