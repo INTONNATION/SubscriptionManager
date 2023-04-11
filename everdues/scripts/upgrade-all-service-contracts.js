@@ -174,9 +174,6 @@ async function executeUpgrade(client, account) {
         })).result;
         for (const account of accounts) {
             console.log(account.id);
-            if (account.id == "0:1e1aaa35af43cf1ac56114ac6d45e400a4680d515a64b42d88e9d8b5250483c9") {
-                continue
-            }
 	    //upgrade account
         // read external
         const supported_chains = await getSupportedChains(client,account.id);
