@@ -11,7 +11,7 @@ const rootAbiFileName = '../abi/EverduesRoot.abi.json';
 const KeyPairFile = path.join(__dirname, KeyPairFileName);
 const rootAbiFile = path.join(__dirname, rootAbiFileName);
 const msigAbiFile = path.join(__dirname, msigAbiFileName);
-const svcAbiFile = require("../abi/EverduesServiceV1.abi.json");
+const svcAbiFile = path.join(__dirname, "../abi/EverduesServiceV1.abi.json");
 
 const KeyPair = JSON.parse(fs.readFileSync(KeyPairFile, 'utf8'));
 
@@ -34,7 +34,40 @@ async function getExistingMultisigAccount(client) {
     console.log(`Multisig address: ${address}`);
     return account;
 }
+async function getSupportedChains(client, account) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: subscription_address,
+        signer: signerNone(),
+        client
+    });
+    let supported_chains = await account.runLocal("supported_chains", {});
+    console.log(supported_chains);
+    return supported_chains.value0;
+}
 
+async function getSupportedTokens(client, account) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: subscription_address,
+        signer: signerNone(),
+        client
+    });
+    let external_supported_tokens = await account.runLocal("external_supported_tokens", {});
+    console.log(external_supported_tokens);
+    return external_supported_tokens.value0;
+}
+async function updateData(client,account, supported_chains, external_supported_tokens) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: subscription_address,
+        signer: signerNone(),
+        client
+    });
+    await account.run("updateMapping1", {external_supported_tokens_: external_supported_tokens});
+    await account.run("updateMapping2", {supported_chains_: supported_chains});
+
+}
 async function executeUpgrade(client, account) {
     if (!fs.existsSync(KeyPairFile)) {
         console.log(`Please place ${KeyPairFileName} file in project root folder with Everdues Root's keys`);
@@ -142,7 +175,12 @@ async function executeUpgrade(client, account) {
         for (const account of accounts) {
             console.log(account.id);
 	    //upgrade account
+        // read external
+        let supported_chains = getSupportedChains(client,account.id);
+        let external_supported_tokens = getSupportedTokens(client,account.id);
 	    await executeUpgrade(client,account.id);
+        await updateData(client,account.id,supported_chains,external_supported_tokens);
+        
 	}
 
         process.exit(0);
