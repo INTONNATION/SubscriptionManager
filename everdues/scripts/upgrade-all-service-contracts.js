@@ -64,6 +64,7 @@ async function updateData(client,account, supported_chains, external_supported_t
         signer: signerNone(),
         client
     });
+    await account.run("eraseMappings", {});
     await account.run("updateMapping1", {external_supported_tokens_: external_supported_tokens});
     await account.run("updateMapping2", {supported_chains_: supported_chains});
 
