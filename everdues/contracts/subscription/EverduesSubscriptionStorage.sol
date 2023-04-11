@@ -32,7 +32,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 	uint8 type_id;
 	bool compensate_subscription_deploy;
 	bool external_subscription;
-	uint8 chain_id;
+	uint32 chain_id;
 	string external_account_address;
 	string external_token_address;
 	string external_payee;
@@ -79,7 +79,7 @@ abstract contract EverduesSubscriptionStorage is IEverduesSubscription {
 		bool external_subscription;
 		string external_token_address;
 		string external_account_address;
-		uint8 chain_id;
+		uint32 chain_id;
 		TvmCell identificator;
 		address account_address;
 		bool notify;
