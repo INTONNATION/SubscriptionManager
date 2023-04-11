@@ -43,7 +43,7 @@ async function getSupportedChains(client, account) {
     });
     let supported_chains = await account.runLocal("supported_chains", {});
     console.log(supported_chains);
-    return supported_chains.value0;
+    return supported_chains.supported_chains;
 }
 
 async function getSupportedTokens(client, account) {
@@ -55,7 +55,7 @@ async function getSupportedTokens(client, account) {
     });
     let external_supported_tokens = await account.runLocal("external_supported_tokens", {});
     console.log(external_supported_tokens);
-    return external_supported_tokens.value0;
+    return external_supported_tokens.external_supported_tokens;
 }
 async function updateData(client,account, supported_chains, external_supported_tokens) {
     const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
