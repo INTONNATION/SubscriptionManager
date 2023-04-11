@@ -190,8 +190,8 @@ async function executeUpgrade(client, subscription_address, subscription_owner) 
                                allow_partial: true,
                 })).data.subscription_owner;
 		console.log(subscriptionOwner);
-	        //await executeUpgrade(client,subscriptionIndexDecodedData.index_owner, subscriptionOwner);
-            await eraseChainId(client,subscriptionIndexDecodedData.index_owner);
+	        await executeUpgrade(client,subscriptionIndexDecodedData.index_owner, subscriptionOwner);
+            //await eraseChainId(client,subscriptionIndexDecodedData.index_owner);
 	    }
 	}
 
