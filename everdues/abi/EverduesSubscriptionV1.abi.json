@@ -93,14 +93,6 @@
 			]
 		},
 		{
-			"name": "eraseChainId",
-			"inputs": [
-				{"name":"chain_id_","type":"uint32"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "stopSubscription",
 			"inputs": [
 			],
