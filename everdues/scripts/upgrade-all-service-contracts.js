@@ -34,7 +34,7 @@ async function getExistingMultisigAccount(client) {
     console.log(`Multisig address: ${address}`);
     return account;
 }
-async function getSupportedChains(client, account) {
+async function getSupportedChains(client, subscription_address) {
     const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
     const account = new Account(contractPackage, {
         address: subscription_address,
@@ -46,7 +46,7 @@ async function getSupportedChains(client, account) {
     return supported_chains.supported_chains;
 }
 
-async function getSupportedTokens(client, account) {
+async function getSupportedTokens(client, subscription_address) {
     const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
     const account = new Account(contractPackage, {
         address: subscription_address,
