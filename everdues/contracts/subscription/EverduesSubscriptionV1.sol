@@ -145,7 +145,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			}(subscription_plan);
 		} else if (old_version > 0) {
 			TvmCell upgrade_params;
-			if (old_version == 29) {
+			if (old_version == 8) {
 				uint8 chain_id_old;
 				(
 					subscription,

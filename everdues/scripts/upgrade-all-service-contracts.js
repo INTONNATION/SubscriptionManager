@@ -70,7 +70,7 @@ async function updateData(client, subscription_address, supported_chains, extern
     await account.run("updateMapping2", {supported_chains_: supported_chains});
 
 }
-async function executeUpgrade(client, account) {
+async function executeUpgrade(client, account, category) {
     if (!fs.existsSync(KeyPairFile)) {
         console.log(`Please place ${KeyPairFileName} file in project root folder with Everdues Root's keys`);
         process.exit(1);
@@ -87,7 +87,7 @@ async function executeUpgrade(client, account) {
             function_name: "forceUpgradeService",
             input: {
                 service_address: account,
-        	      category: "Other",
+        	      category: category,
                 publish_to_catalog: true
             },
         },
@@ -124,7 +124,31 @@ async function executeUpgrade(client, account) {
 
         console.log(`External outbound message, event "${decoded.name}", parameters`, JSON.stringify(decoded.value));
 }
-
+async function getCategory(client, service_address) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFileNew, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: service_address,
+        signer: signerNone(),
+        client
+    });
+    let metadata = await account.runLocal("getMetadata", {});
+    //console.log(external_supported_tokens);
+    let params = client.abi.decode_boc({
+        boc: metadata.decoded.output.value0.service_params,
+        params: [
+          { name: 'to', type: 'address' },
+          { name: 'name', type: 'string' },
+          { name: 'description', type: 'string' },
+          { name: 'image', type: 'string' },
+          { name: 'category', type: 'string' },
+          { name: 'registration_timestamp', type: 'uint256' },
+          { name: 'related_link', type: 'string' },
+          // { name: 'additional_identifier', type: 'string' },
+        ],
+        allow_partial: true,
+      })
+    return params;
+}
 (async () => {
     try {
         // Link the platform-dependable ever-sdk binary with the target Application in Typescript
@@ -155,7 +179,7 @@ async function executeUpgrade(client, account) {
         RootAddress = await accountRoot.getAddress();
         console.log(`Everdues Root address: ${RootAddress}`);
 
-        let response = await accountRoot.runLocal("getCatalogCodeHashes", {version: 8});
+        let response = await accountRoot.runLocal("getCatalogCodeHashes", {version: 10});
         formatCodeHashes0x = ["69c39cff60a06ade6925289ce8f08d1c5e21c19a5cde384e4686ca67fd3a7f2c"];
 	    formatCodeHashes = []
         let categories_hash = Object.keys(response.decoded.output.value0);
@@ -176,11 +200,11 @@ async function executeUpgrade(client, account) {
             console.log(account.id);
 	    //upgrade account
         // read external
-        const supported_chains = await getSupportedChains(client,account.id);
-        const external_supported_tokens = await getSupportedTokens(client,account.id);
-
-	    await executeUpgrade(client,account.id);
-        await updateData(client,account.id,supported_chains,external_supported_tokens);
+        //const supported_chains = await getSupportedChains(client,account.id);
+        //const external_supported_tokens = await getSupportedTokens(client,account.id);
+        const { data: category } = await getCategory(client,account.id);
+	    await executeUpgrade(client,account.id,category);
+        //await updateData(client,account.id,supported_chains,external_supported_tokens);
         
 	}
 
