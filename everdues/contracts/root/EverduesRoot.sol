@@ -79,7 +79,8 @@ contract EverduesRoot is EverduesRootBase {
 			cross_chain_subscriptions,
 			cross_chain_proxies,
 			supported_external_tokens,
-			service_registration_token
+			service_registration_token,
+			watcher
 		) = abi.decode(
 			upgrade_data,
 			(
@@ -104,10 +105,11 @@ contract EverduesRoot is EverduesRootBase {
 				uint8,
 				mapping(address => ServiceDeployParams),
 				address,
-				mapping(uint8 => mapping(uint256 => ExternalSubscription)),
-				mapping(uint8 => string),
-				mapping (uint8=>string[]),
-				address// TODO: add ,address (watcher)
+				mapping(uint32 => mapping(uint256 => ExternalSubscription)),
+				mapping(uint32 => string),
+				mapping (uint32=>string[]),
+				address,
+				address
 			)
 		);
 		owner.transfer({

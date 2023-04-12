@@ -49,4 +49,5 @@ echo $CONTRACT_ADDRESS
 }
 
 deploy $CONTRACT_NAME $1
+npm i
 node upgrade-all-subscription-contracts.js $1

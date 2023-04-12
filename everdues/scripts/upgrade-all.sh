@@ -20,13 +20,18 @@ if [[ `uname` = "Linux" ]]; then
     prefix="-w0"
 fi
 
+rm -rf node_modules
 ./compile.sh
 
 CONTRACT_NAME=EverduesRoot
 
 function deploy {
 CONTRACT_ADDRESS=`cat ./envs/$2-EverduesRoot.addr`
-owner=`cat dev-single.msig.addr`
+if [[ $2 == "prod" ]]; then
+    owner=`cat prod-multisig.msig.addr`
+else
+    owner=`cat dev-single.msig.addr`
+fi
 code=`tvm_linker decode --tvc ../abi/EverduesRoot.tvc | grep code: | awk '{ print $2 }'`
 message=`tonos-cli -j body upgrade "{\"code\":\"$code\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 5T --bounce true --allBalance false --payload "$message"
@@ -52,6 +57,8 @@ abiIndexContract=$(cat ../abi/Index.abi.json | jq -c .| base64 $prefix)
 abiSubscriptionContract=$(cat ../abi/EverduesSubscriptionV1.abi.json | jq -c .| base64 $prefix)
 abiFeeProxyContract=$(cat ../abi/EverduesFeeProxy.abi.json | jq -c .| base64 $prefix)
 
+#DELETE IN NEXT RELEASE
+tonos-cli call $CONTRACT_ADDRESS eraseMappings "{}" --abi ../abi/$1.abi.json
 # Set TVCs
 message=`tonos-cli -j body setCodePlatform "{\"codePlatformInput\":\"$platformCode\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
@@ -138,10 +145,16 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"1\",\"contract_address\":\"0x961d8d0eE1855e600816Feb98BfcE17202aDCC2f\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
+message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"11155111\",\"contract_address\":\"0xCcC0dA10d94BC915F4BAf26293a0d94c0A806485\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+
 message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"137\",\"contract_address\":\"0xE0184d6c2c75964a08B66081ECDDd0Ab5F45463F\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
 message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"56\",\"supported_tokens\":[\"0x55d398326f99059ff775485246999027b3197955\",\"0xe9e7cea3dedca5984780bafc599bd69add087d56\",\"0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d\",\"0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3\"]}"  --abi ../abi/$1.abi.json | jq -r .Message`
+tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
+
+message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"11155111\",\"supported_tokens\":[\"0x0bd5f04b456ab34a2ab3e9d556fe5b3a41a0bc8d\"]}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
 message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"1\",\"supported_tokens\":[\"0xdac17f958d2ee523a2206206994597c13d831ec7\",\"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"0x4fabb145d64652a948d72533023f6e7a623c7c53\",\"0x6b175474e89094c44da98b954eedeac495271d0f\"]}"  --abi ../abi/$1.abi.json | jq -r .Message`
@@ -169,10 +182,10 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 
 deploy $CONTRACT_NAME $1
 ## Upgrade all deployed contracts
-npm i
-node upgrade-all-service-contracts.js $1
-node upgrade-all-account-contracts.js $1
-node upgrade-all-subscription-contracts.js $1
+#npm i
+#node upgrade-all-service-contracts.js $1
+#node upgrade-all-account-contracts.js $1
+#node upgrade-all-subscription-contracts.js $1
 
 CONTRACT_ADDRESS=$(cat ./envs/$1-$CONTRACT_NAME.addr)
 
