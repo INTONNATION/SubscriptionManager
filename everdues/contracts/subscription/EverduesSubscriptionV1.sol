@@ -129,7 +129,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					TvmCell,
 					uint256,
 					bool,
-					uint8,
+					uint32,
 					string,
 					string,
 					string,
@@ -147,10 +147,10 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 			}(subscription_plan);
 		} else if (old_version > 0) {
 			TvmCell upgrade_params;
-			if (old_version == 13) {
-				EverduesSubscriptionStorage.paymentStatusOld subscriptionOld;
+			if (old_version == 8) {
+				uint8 chain_id_old;
 				(
-					subscriptionOld,
+					subscription,
 					address_fee_proxy,
 					account_address,
 					subscription_index_address,
@@ -170,7 +170,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					service_params,
 					subscription_params,
 					external_subscription,
-					chain_id,
+					chain_id_old,
 					external_account_address,
 					external_token_address,
 					external_payee,
@@ -183,7 +183,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 				) = abi.decode(
 					contract_params,
 					(
-						EverduesSubscriptionStorage.paymentStatusOld,
+						EverduesSubscriptionStorage.paymentStatus,
 						address,
 						address,
 						address,
@@ -215,12 +215,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 						TvmCell
 					)
 				);
-				subscription.period = subscriptionOld.period;
-				subscription.payment_timestamp = subscriptionOld.payment_timestamp;
-				subscription.execution_timestamp = subscriptionOld.execution_timestamp;
-				subscription.status = subscriptionOld.status;
-				subscription.pay_subscription_gas = subscriptionOld.pay_subscription_gas;
-				subscription.registation_timestamp = uint32(now);
+				chain_id = uint32(chain_id_old);
 			} else {
 				(
 					subscription,
@@ -275,7 +270,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 						TvmCell,
 						TvmCell,
 						bool,
-						uint8,
+						uint32,
 						string,
 						string,
 						string,

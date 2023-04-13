@@ -101,6 +101,20 @@ abstract contract EverduesRootStorage {
 	address public cross_chain_token;
 	address public service_registration_token;
 
+	mapping (uint32=>string[]) public supported_external_tokens;
+	
+	function getCatalogCodeHashes(uint32 version) public view returns (mapping(uint256 => uint256)) {
+		mapping(uint256 => ContractVersionParams) contracts;
+		mapping(uint256 => uint256) categories_hash;
+		for (uint256 i = 0; i < categories.length; i++) {
+			uint256 hash_ = tvm.hash(
+				_buildPublicServiceCodeByVersion(categories[i], version)
+			);
+			categories_hash[tvm.hash(abi.encode(categories[i]))] = hash_;
+		}
+		return categories_hash;
+	}
+
 	mapping(uint64 => ExternalSubscription) public tmp_cross_chain_subscriptions_create;
 	mapping(uint64 => uint128) public tmp_cross_chain_subscriptions_execute;
 

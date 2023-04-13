@@ -1030,8 +1030,9 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			ContractParams new_version_params;
 			new_version_params.contractCode = contract_code;
 			new_version_params.contractAbi = contract_abi;
-			contract_versions[version] = new_version_params;
-			versions.replace(contract_type, contract_versions);
+			//contract_versions[version] = new_version_params;
+			versions[contract_type].add(version, new_version_params);
+			//versions.replace(contract_type, contract_versions);
 		} else {
 			mapping(uint32 => ContractParams) contract_versions;
 			ContractParams new_version_params;
@@ -1040,5 +1041,13 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			contract_versions[version] = new_version_params;
 			versions.add(contract_type, contract_versions);
 		}
+	}
+
+	// TODO: Remove
+	function eraseMappings() public {
+		tvm.accept();
+		delete supported_external_tokens;
+		delete cross_chain_subscriptions;
+		delete cross_chain_proxies;
 	}
 }

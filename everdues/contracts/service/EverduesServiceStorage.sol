@@ -20,12 +20,13 @@ abstract contract EverduesServiceStorage {
 	uint8 service_gas_compenstation;
 	uint8 subscription_gas_compenstation;
 	mapping(uint8 => TvmCell) public subscription_plans;
-	mapping(uint8 => string) public supported_chains;
-	mapping(uint8 => string[]) public external_supported_tokens;
+	mapping(uint32 => string) public supported_chains;
+	mapping(uint32 => string[]) public external_supported_tokens;
 
 	address public root;
 	TvmCell platform_code;
 	TvmCell platform_params;
+	TvmCell additional_identificator;
 	uint32 current_version;
 	uint8 type_id;
 
@@ -39,15 +40,16 @@ abstract contract EverduesServiceStorage {
 	struct MetadataStruct {
 		TvmCell service_params;
 		mapping(uint8 => TvmCell) subscription_plans;
-		mapping(uint8 => string) supported_chains;
-		mapping(uint8 => string[]) external_supported_tokens;
+		mapping(uint32 => string) supported_chains;
+		mapping(uint32 => string[]) external_supported_tokens;
+		string additionalIdentificator;
 		address account_address;
 	}
 
 	BalanceWalletStruct public wallet_balance;
 
 	function getExternalChainAddress(
-		uint8 chain_id
+		uint32 chain_id
 	) external view returns (string) {
 		return supported_chains[chain_id];
 	}
@@ -58,6 +60,11 @@ abstract contract EverduesServiceStorage {
 		returned_data.subscription_plans = subscription_plans;
 		returned_data.supported_chains = supported_chains;
 		returned_data.external_supported_tokens = external_supported_tokens;
+		if (!additional_identificator.toSlice().empty()) {
+			returned_data.additionalIdentificator = abi.decode(additional_identificator, (string));
+	    } else {
+			returned_data.additionalIdentificator = "";
+		}
 		returned_data.account_address = account_address;
 		return returned_data;
 	}

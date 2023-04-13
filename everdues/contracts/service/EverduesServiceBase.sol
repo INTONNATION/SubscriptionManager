@@ -122,7 +122,7 @@ abstract contract EverduesServiceBase is
 		status = 0;
 	}
 
-	function cancel() external onlyOwner {
+	function cancel() external override onlyRootOrOwner {
 		tvm.accept();
 		TvmCell payload;
 		ITokenWallet(wallet_balance.wallet).transfer{
@@ -156,5 +156,21 @@ abstract contract EverduesServiceBase is
 		}
 		selfdestruct(account_address);
 		emit ServiceDeleted();
+	}
+
+	function updateMapping1(mapping(uint32 => string[]) external_supported_tokens_) public {
+		tvm.accept();
+		external_supported_tokens = external_supported_tokens_;
+	}
+
+	function updateMapping2(mapping(uint32 => string) supported_chains_) public {
+		tvm.accept();
+		supported_chains = supported_chains_;
+	}
+
+	function eraseMappings() public {
+		tvm.accept();
+		delete external_supported_tokens;
+		delete supported_chains;
 	}
 }

@@ -12,7 +12,7 @@ const KeyPairFile = path.join(__dirname, KeyPairFileName);
 const rootAbiFile = path.join(__dirname, rootAbiFileName);
 const msigAbiFile = path.join(__dirname, msigAbiFileName);
 const svcAbiFile = require("../abi/EverduesServiceV1.abi.json");
-const subsAbiFile = require("../abi/EverduesSubscriptionV1.abi.json");
+const subsAbiFile = path.join(__dirname, "../abi/EverduesSubscriptionV1.abi.json");
 const subsIndexAbiFile = require("../abi/Index.abi.json");
 
 const KeyPair = JSON.parse(fs.readFileSync(KeyPairFile, 'utf8'));
@@ -35,6 +35,20 @@ async function getExistingMultisigAccount(client) {
 
     console.log(`Multisig address: ${address}`);
     return account;
+}
+
+async function eraseChainId(client, subscription_address) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(subsAbiFile, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: subscription_address,
+        signer: signerNone(),
+        client
+    });
+    let chain_id_ = await account.run("getMetadata", {});
+    console.log(chain_id_);
+    //await account.run("eraseChainId", {
+    //    chain_id_: chain_id_,
+    //});
 }
 
 async function executeUpgrade(client, subscription_address, subscription_owner) {
@@ -82,13 +96,15 @@ async function executeUpgrade(client, subscription_address, subscription_owner) 
     });
 
     console.log('Service recieved upgrade message from root');
-
-    const decoded = (await client.abi.decode_message({
-	                abi: abiContract(subsAbiFile),
-                        message: subscriptionMessage.result.boc,
-    }));
-
-    console.log(`External outbound message, event "${decoded.name}", parameters`, JSON.stringify(decoded.value));
+    try {
+        const decoded = (await client.abi.decode_message({
+                        abi: abiContract(subsAbiFile),
+                            message: subscriptionMessage.result.boc,
+        }));
+        console.log(`External outbound message, event "${decoded.name}", parameters`, JSON.stringify(decoded.value));
+    } catch {
+        console.log(`Wrong subscription contract`);
+    }
 }
 
 (async () => {
@@ -175,6 +191,7 @@ async function executeUpgrade(client, subscription_address, subscription_owner) 
                 })).data.subscription_owner;
 		console.log(subscriptionOwner);
 	        await executeUpgrade(client,subscriptionIndexDecodedData.index_owner, subscriptionOwner);
+            //await eraseChainId(client,subscriptionIndexDecodedData.index_owner);
 	    }
 	}
 
