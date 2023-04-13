@@ -1,15 +1,12 @@
 pragma ton-solidity >=0.56.0;
+import "../contracts/service/EverduesServiceStorage.sol";
 
 interface IEverduesService {
-	event ServiceDeployed(
-		address subscription_service_index_address,
-		address subscription_service_index_identificator_address
-	);
-
-	event ServiceDeleted();
 
 	function getGasCompenstationProportion() external view responsible returns(uint8 service_gas_compenstation,uint8 subscription_gas_compenstation);
 	
+	function getMetadata() external view responsible returns(EverduesServiceStorage.MetadataStruct);
+
 	function getParams(uint8 subscription_plan)
 		external
 		view

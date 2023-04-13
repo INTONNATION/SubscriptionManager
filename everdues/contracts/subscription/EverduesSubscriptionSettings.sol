@@ -10,8 +10,14 @@ import "../../interfaces/IEverduesIndex.sol";
 import "../../libraries/EverduesErrors.sol";
 import "../../libraries/EverduesGas.sol";
 import "../../libraries/MsgFlag.sol";
+import "../../interfaces/IEverduesSubscription.sol";
 
 abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
+	event paramsRecieved(TvmCell service_params_);
+	event SubscriptionDeleted();
+	event SubscriptionExecuted();
+	event SubscriptionStopped();
+	
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,
@@ -80,7 +86,7 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 		_;
 	}
 
-	function stopSubscription() external override onlyRoot {
+	function stopSubscription(address send_gas_to) external onlyRoot {
 		tvm.rawReserve(
 			math.max(
 				EverduesGas.SUBSCRIPTION_INITIAL_BALANCE,
@@ -90,7 +96,7 @@ abstract contract EverduesSubscriptionSettings is EverduesSubscriptionStorage {
 		);
 		subscription.status = EverduesSubscriptionStatus.STATUS_STOPPED;
 		emit SubscriptionStopped();
-		msg.sender.transfer({
+		send_gas_to.transfer({
 			value: 0,
 			bounce: false,
 			flag: MsgFlag.ALL_NOT_RESERVED

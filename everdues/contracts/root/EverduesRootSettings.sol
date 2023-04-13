@@ -6,6 +6,7 @@ pragma AbiHeader pubkey;
 import "./EverduesRootStorage.sol";
 import "../../libraries/EverduesErrors.sol";
 import "../../interfaces/IEverduesFeeProxy.sol";
+import "../service/EverduesServiceStorage.sol";
 
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
@@ -35,6 +36,51 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 		require(
 			msg.sender == account_contract_address,
 			EverduesErrors.error_message_sender_is_not_account_address
+		);
+		_;
+	}
+
+	modifier onlyServiceContract(EverduesServiceStorage.MetadataStruct svc_info){
+		string service_name;
+		(
+			,
+			service_name,
+			,
+			,
+			,
+			,
+
+		) = abi.decode(
+			svc_info.service_params,
+			(address, string, string, string, string, uint256, string)
+		);
+		address service_contract_address = address(
+			tvm.hash(
+				_buildInitData(
+					ContractTypes.Service,
+					_buildServicePlatformParams(svc_info.account_address, service_name)
+				)
+			)
+		);
+		require(msg.sender == service_contract_address, EverduesErrors.error_message_sender_is_not_service_address);
+		_;
+	}
+
+	modifier onlySubscriptionContract(
+		address account_address,
+		address service_address
+	) {
+		address subscription_contract_address = address(
+			tvm.hash(
+				_buildInitData(
+					ContractTypes.Subscription,
+					_buildSubscriptionPlatformParams(account_address, service_address)
+				)
+			)
+		);
+		require(
+			msg.sender == subscription_contract_address,
+			EverduesErrors.error_message_sender_is_not_my_subscription
 		);
 		_;
 	}

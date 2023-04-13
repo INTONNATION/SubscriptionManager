@@ -1,12 +1,11 @@
 pragma ton-solidity >=0.56.0;
+import "../contracts/subscription/EverduesSubscriptionStorage.sol";
 
 interface IEverduesSubscription {
-	event paramsRecieved(TvmCell service_params_);
-	event SubscriptionDeleted();
-	event SubscriptionExecuted();
-	event SubscriptionStopped();
-	
-	function subscriptionStatus() external returns (uint8);
+
+	function getMetadata() external view responsible returns(EverduesSubscriptionStorage.MetadataStruct);
+
+	function subscriptionStatus()  external returns (uint8);
 
 	function executeSubscription(uint128 paySubscriptionGas) external;
 
@@ -21,5 +20,5 @@ interface IEverduesSubscription {
 
 	function cancel(address send_gas_to) external;
 
-	function stopSubscription() external;
+	function stopSubscription(address send_gas_to) external;
 }
