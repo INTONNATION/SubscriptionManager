@@ -11,13 +11,18 @@ import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenWalle
 import "../../../ton-eth-bridge-token-contracts/contracts/interfaces/ITokenRoot.sol";
 
 abstract contract EverduesServiceBase is
-	IEverduesService,
 	EverduesServiceStorage
 {
 	constructor() public {
 		revert();
 	}
 
+	event ServiceDeployed(
+		address subscription_service_index_address,
+		address subscription_service_index_identificator_address
+	);
+
+	event ServiceDeleted();
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,

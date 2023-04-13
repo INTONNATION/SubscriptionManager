@@ -81,15 +81,16 @@ abstract contract EverduesRootStorage {
 	}
 
 	struct ExternalSubscription {
+		uint32 ChainID;
 		string Customer; // subscriber EVM address
 		string Payee; // service owner EVM address
-		uint8 SubscriptionPlan; // subscription_plan
+		uint32 Period; // subscription_plan
 		string TokenAddress; // ERC20 token address
 		uint256 PubKey; // subscriber pubkey
 		string Email; // subscriber email
-		uint128 Allowance; // value
-		uint128 PaidAmount; // sum(value)
-		bool IsActive; // canceled or not
+		uint128 Value; // value
+		string IpfsHash;
+		uint128 AdditionalGas;
 	}
 
 	mapping(uint8 => mapping(uint32 => ContractParams)) public versions;
@@ -99,9 +100,6 @@ abstract contract EverduesRootStorage {
 	mapping(uint32 => string) public cross_chain_proxies;
 	address public cross_chain_token;
 	address public service_registration_token;
-
-	mapping(uint32 => mapping(uint256 => ExternalSubscription))
-		public cross_chain_subscriptions;
 
 	mapping (uint32=>string[]) public supported_external_tokens;
 	
@@ -116,6 +114,11 @@ abstract contract EverduesRootStorage {
 		}
 		return categories_hash;
 	}
+
+	mapping(uint64 => ExternalSubscription) public tmp_cross_chain_subscriptions_create;
+	mapping(uint64 => uint128) public tmp_cross_chain_subscriptions_execute;
+
+	mapping (uint32=>string[]) public supported_external_tokens;
 
 	function getCodeHashes(
 		uint256 owner_pubkey
@@ -233,10 +236,6 @@ abstract contract EverduesRootStorage {
 		everdues_contracts_info.supported_external_tokens = supported_external_tokens;
 		everdues_contracts_info.categories_hash = categories_hash;
 		everdues_contracts_info.service_registration_token = service_registration_token;
-	}
-
-	function getExternalSubscriber(uint8 chain_id, uint256 pubkey) external view returns (ExternalSubscription) {
-		return cross_chain_subscriptions[chain_id][pubkey];
 	}
 
 	function getPendingOwner()
