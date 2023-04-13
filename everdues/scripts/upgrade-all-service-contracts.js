@@ -11,8 +11,9 @@ const rootAbiFileName = '../abi/EverduesRoot.abi.json';
 const KeyPairFile = path.join(__dirname, KeyPairFileName);
 const rootAbiFile = path.join(__dirname, rootAbiFileName);
 const msigAbiFile = path.join(__dirname, msigAbiFileName);
-const svcAbiFile = require("../abi/EverduesServiceV1.abi.json");
-
+const svcAbiFile = path.join(__dirname, "../abi/EverduesServiceV0.abi.json");
+const svcAbiFileNew = path.join(__dirname, "../abi/EverduesServiceV1.abi.json");
+const svcAbiFile3 = require("../abi/EverduesServiceV1.abi.json");
 const KeyPair = JSON.parse(fs.readFileSync(KeyPairFile, 'utf8'));
 
 
@@ -35,8 +36,42 @@ async function getExistingMultisigAccount(client) {
     console.log(`Multisig address: ${address}`);
     return account;
 }
+async function getSupportedChains(client, subscription_address) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: subscription_address,
+        signer: signerNone(),
+        client
+    });
+    let supported_chains = await account.runLocal("supported_chains", {});
+    //console.log(supported_chains);
+    return supported_chains.decoded.output.supported_chains;
+}
 
-async function executeUpgrade(client, account) {
+async function getSupportedTokens(client, subscription_address) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: subscription_address,
+        signer: signerNone(),
+        client
+    });
+    let external_supported_tokens = await account.runLocal("external_supported_tokens", {});
+    //console.log(external_supported_tokens);
+    return external_supported_tokens.decoded.output.external_supported_tokens;
+}
+async function updateData(client, subscription_address, supported_chains, external_supported_tokens) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFileNew, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: subscription_address,
+        signer: signerNone(),
+        client
+    });
+    await account.run("eraseMappings", {});
+    await account.run("updateMapping1", {external_supported_tokens_: external_supported_tokens});
+    await account.run("updateMapping2", {supported_chains_: supported_chains});
+
+}
+async function executeUpgrade(client, account, category) {
     if (!fs.existsSync(KeyPairFile)) {
         console.log(`Please place ${KeyPairFileName} file in project root folder with Everdues Root's keys`);
         process.exit(1);
@@ -53,7 +88,7 @@ async function executeUpgrade(client, account) {
             function_name: "forceUpgradeService",
             input: {
                 service_address: account,
-        	      category: "Other",
+        	      category: category,
                 publish_to_catalog: true
             },
         },
@@ -84,13 +119,37 @@ async function executeUpgrade(client, account) {
    	 console.log('Service recieved upgrade message from root');
 
    	 const decoded = (await client.abi.decode_message({
-   	                     abi: abiContract(svcAbiFile),
+   	                     abi: abiContract(svcAbiFile3),
    	                     message: subscriptionMessage.result.boc,
    	 }));
 
         console.log(`External outbound message, event "${decoded.name}", parameters`, JSON.stringify(decoded.value));
 }
-
+async function getCategory(client, service_address) {
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFileNew, 'utf8'))};
+    const account = new Account(contractPackage, {
+        address: service_address,
+        signer: signerNone(),
+        client
+    });
+    let metadata = await account.runLocal("getMetadata", {});
+    //console.log(external_supported_tokens);
+    let params = client.abi.decode_boc({
+        boc: metadata.decoded.output.value0.service_params,
+        params: [
+          { name: 'to', type: 'address' },
+          { name: 'name', type: 'string' },
+          { name: 'description', type: 'string' },
+          { name: 'image', type: 'string' },
+          { name: 'category', type: 'string' },
+          { name: 'registration_timestamp', type: 'uint256' },
+          { name: 'related_link', type: 'string' },
+          // { name: 'additional_identifier', type: 'string' },
+        ],
+        allow_partial: true,
+      })
+    return params;
+}
 (async () => {
     try {
         // Link the platform-dependable ever-sdk binary with the target Application in Typescript
@@ -121,15 +180,15 @@ async function executeUpgrade(client, account) {
         RootAddress = await accountRoot.getAddress();
         console.log(`Everdues Root address: ${RootAddress}`);
 
-        let response = await accountRoot.runLocal("getCodeHashes", {
-            owner_pubkey: 0
+        let response = await accountRoot.runLocal("getCatalogCodeHashes", {version: 10});
+        formatCodeHashes0x = ["69c39cff60a06ade6925289ce8f08d1c5e21c19a5cde384e4686ca67fd3a7f2c"];
+	    formatCodeHashes = []
+        let categories_hash = Object.keys(response.decoded.output.value0);
+        
+        categories_hash.forEach((hash) => {
+            formatCodeHashes.push(response.decoded.output.value0[hash].replace(/^0x+/, ''));
+            //formatCodeHashes.push(formatCodeHashes0x[0].replace(/^0x+/, ''));
         });
-        formatCodeHashes0x = ["69fbf2ab08f279867aa262c316f9e9c197dea800914f727561036b0f99f857bf"];
-	formatCodeHashes = []
-	for (let i = 0; i < formatCodeHashes0x.length; i++) {
-            formatCodeHashes.push(formatCodeHashes0x[i].replace(/^0x+/, ''));
-        }
-
         // In the following we query a collection. We get balance of the first wallet.
         // See https://github.com/tonlabs/ever-sdk/blob/master/docs/reference/types-and-methods/mod_net.md#query_collection
         console.log(">> query_collection contract hash");
@@ -141,7 +200,13 @@ async function executeUpgrade(client, account) {
         for (const account of accounts) {
             console.log(account.id);
 	    //upgrade account
-	    await executeUpgrade(client,account.id);
+        // read external
+        //const supported_chains = await getSupportedChains(client,account.id);
+        //const external_supported_tokens = await getSupportedTokens(client,account.id);
+        const { data: category } = await getCategory(client,account.id);
+	    await executeUpgrade(client,account.id,category);
+        //await updateData(client,account.id,supported_chains,external_supported_tokens);
+        
 	}
 
         process.exit(0);

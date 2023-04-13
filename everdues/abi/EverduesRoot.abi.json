@@ -548,6 +548,22 @@
 			]
 		},
 		{
+			"name": "eraseMappings",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getCatalogCodeHashes",
+			"inputs": [
+				{"name":"version","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"map(uint256,uint256)"}
+			]
+		},
+		{
 			"name": "getCodeHashes",
 			"inputs": [
 				{"name":"owner_pubkey","type":"uint256"}
