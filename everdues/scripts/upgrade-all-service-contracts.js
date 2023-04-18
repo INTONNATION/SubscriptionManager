@@ -26,13 +26,15 @@ const rootAddress = fs.readFileSync(rootAddrFile, 'utf8');
 
 async function getExistingMultisigAccount(client) {
     const contractPackage = { abi: JSON.parse(fs.readFileSync(msigAbiFile, 'utf8'))};
+    console.log("here2")
     const account = new Account(contractPackage, {
         address: owner,
         signer: signerKeys(KeyPair),
         client
     });
+    console.log("here2")
     const address = await account.getAddress();
-
+    console.log("here2")
     console.log(`Multisig address: ${address}`);
     return account;
 }
@@ -76,9 +78,10 @@ async function executeUpgrade(client, account, category) {
         console.log(`Please place ${KeyPairFileName} file in project root folder with Everdues Root's keys`);
         process.exit(1);
     }
+    console.log("here1");
     let multisigAccount = await getExistingMultisigAccount(client);
-    const multisigAccountAddress = await multisigAccount.getAddress();
-
+    
+    
     const payload = (await client.abi.encode_message_body({
         abi: {
                 type: 'Contract',
@@ -95,7 +98,7 @@ async function executeUpgrade(client, account, category) {
         is_internal: true,
         signer: signerNone(),
     })).body;
-
+     console.log("here1");
 	 await multisigAccount.run("sendTransaction", {
    	     dest: rootAddress,
    	     value: 1_000_000_000, 
@@ -126,7 +129,7 @@ async function executeUpgrade(client, account, category) {
         console.log(`External outbound message, event "${decoded.name}", parameters`, JSON.stringify(decoded.value));
 }
 async function getCategory(client, service_address) {
-    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFileNew, 'utf8'))};
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
     const account = new Account(contractPackage, {
         address: service_address,
         signer: signerNone(),
@@ -203,8 +206,9 @@ async function getCategory(client, service_address) {
         // read external
         //const supported_chains = await getSupportedChains(client,account.id);
         //const external_supported_tokens = await getSupportedTokens(client,account.id);
-        const { data: category } = await getCategory(client,account.id);
-	    await executeUpgrade(client,account.id,category);
+        //const { data: category } = await getCategory(client,account.id);
+        console.log("here1");
+	    await executeUpgrade(client,account.id,"Others");
         //await updateData(client,account.id,supported_chains,external_supported_tokens);
         
 	}
