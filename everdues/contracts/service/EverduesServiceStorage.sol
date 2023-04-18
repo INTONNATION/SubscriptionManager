@@ -54,7 +54,7 @@ abstract contract EverduesServiceStorage {
 		return supported_chains[chain_id];
 	}
 
-	function getMetadata() external view returns (MetadataStruct) {
+	function getMetadata() external view responsible returns (MetadataStruct) {
 		MetadataStruct returned_data;
 		returned_data.service_params = service_params;
 		returned_data.subscription_plans = subscription_plans;
@@ -66,7 +66,7 @@ abstract contract EverduesServiceStorage {
 			returned_data.additionalIdentificator = "";
 		}
 		returned_data.account_address = account_address;
-		return returned_data;
+		return{value: 0, bounce: false, flag: 64} returned_data;
 	}
 
 	function getParams(

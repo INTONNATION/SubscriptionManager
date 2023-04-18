@@ -122,7 +122,7 @@ abstract contract EverduesServiceBase is
 		status = 0;
 	}
 
-	function cancel() external override onlyRootOrOwner {
+	function cancel() external onlyRootOrOwner {
 		tvm.accept();
 		TvmCell payload;
 		ITokenWallet(wallet_balance.wallet).transfer{
