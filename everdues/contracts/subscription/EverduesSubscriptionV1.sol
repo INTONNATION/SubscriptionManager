@@ -246,6 +246,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 					root_pubkey,
 					totalPaid,
 					notify,
+					ipfs_hash,
 					upgrade_params
 				) = abi.decode(
 					contract_params,
@@ -278,6 +279,7 @@ contract EverduesSubscriprion_V1 is EverduesSubscriptionBase {
 						uint256,
 						uint128,
 						bool,
+						string,
 						TvmCell
 					)
 				);				
