@@ -86,6 +86,7 @@ abstract contract EverduesSubscriptionStorage {
 		bool notify;
 		uint256 owner_pubkey;
 		uint8 subscriptionStatus;
+		string ipfs_hash;
 	}
 			
 	serviceParams public svcparams;
@@ -112,6 +113,7 @@ abstract contract EverduesSubscriptionStorage {
 		returned_data.notify = notify;
 		returned_data.owner_pubkey = owner_pubkey;
 		returned_data.subscriptionStatus = subscriptionStatus();
+		returned_data.ipfs_hash = ipfs_hash;
 		return returned_data;
 	}
 

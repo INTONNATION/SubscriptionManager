@@ -184,7 +184,7 @@
 				{"name":"payee","type":"string"},
 				{"name":"value","type":"uint128"},
 				{"name":"period","type":"uint32"},
-				{"name":"email","type":"string"},
+				{"name":"identifier","type":"cell"},
 				{"name":"ipfsHash","type":"string"},
 				{"name":"additional_gas","type":"uint128"}
 			],
@@ -192,9 +192,9 @@
 			]
 		},
 		{
-			"name": "onGetServiceMetdata",
+			"name": "onGetServiceMetadata",
 			"inputs": [
-				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint8,string)"},{"name":"external_supported_tokens","type":"map(uint8,string[])"},{"name":"account_address","type":"address"}],"name":"svc_info","type":"tuple"}
+				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint32,string)"},{"name":"external_supported_tokens","type":"map(uint32,string[])"},{"name":"additionalIdentificator","type":"string"},{"name":"account_address","type":"address"}],"name":"svc_info","type":"tuple"}
 			],
 			"outputs": [
 			]
@@ -221,7 +221,7 @@
 		{
 			"name": "onGetSubscriptionMetadata",
 			"inputs": [
-				{"components":[{"name":"subscription_params","type":"cell"},{"components":[{"name":"to","type":"address"},{"name":"subscription_value","type":"uint128"},{"name":"service_value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},{"name":"service_address","type":"address"},{"name":"totalPaid","type":"uint128"},{"components":[{"name":"period","type":"uint32"},{"name":"payment_timestamp","type":"uint32"},{"name":"execution_timestamp","type":"uint32"},{"name":"status","type":"uint8"},{"name":"pay_subscription_gas","type":"uint128"},{"name":"registation_timestamp","type":"uint32"}],"name":"subscription","type":"tuple"},{"name":"external_subscription","type":"bool"},{"name":"external_token_address","type":"string"},{"name":"external_account_address","type":"string"},{"name":"chain_id","type":"uint8"},{"name":"identificator","type":"cell"},{"name":"account_address","type":"address"},{"name":"notify","type":"bool"},{"name":"owner_pubkey","type":"uint256"},{"name":"subscriptionStatus","type":"uint8"}],"name":"_subscription","type":"tuple"}
+				{"components":[{"name":"subscription_params","type":"cell"},{"components":[{"name":"to","type":"address"},{"name":"subscription_value","type":"uint128"},{"name":"service_value","type":"uint128"},{"name":"period","type":"uint32"},{"name":"name","type":"string"},{"name":"description","type":"string"},{"name":"image","type":"string"},{"name":"currency_root","type":"address"},{"name":"category","type":"string"}],"name":"svcparams","type":"tuple"},{"name":"service_address","type":"address"},{"name":"totalPaid","type":"uint128"},{"components":[{"name":"period","type":"uint32"},{"name":"payment_timestamp","type":"uint32"},{"name":"execution_timestamp","type":"uint32"},{"name":"status","type":"uint8"},{"name":"pay_subscription_gas","type":"uint128"},{"name":"registation_timestamp","type":"uint32"}],"name":"subscription","type":"tuple"},{"name":"external_subscription","type":"bool"},{"name":"external_token_address","type":"string"},{"name":"external_account_address","type":"string"},{"name":"chain_id","type":"uint32"},{"name":"identificator","type":"cell"},{"name":"account_address","type":"address"},{"name":"notify","type":"bool"},{"name":"owner_pubkey","type":"uint256"},{"name":"subscriptionStatus","type":"uint8"},{"name":"ipfs_hash","type":"string"}],"name":"_subscription","type":"tuple"}
 			],
 			"outputs": [
 			]
@@ -548,13 +548,6 @@
 			]
 		},
 		{
-			"name": "eraseMappings",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "getCatalogCodeHashes",
 			"inputs": [
 				{"name":"version","type":"uint32"}
@@ -772,7 +765,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"ChainID","type":"uint32"},{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"Period","type":"uint32"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"Value","type":"uint128"},{"name":"IpfsHash","type":"string"},{"name":"AdditionalGas","type":"uint128"}],"name":"tmp_cross_chain_subscriptions_create","type":"map(uint64,tuple)"}
+				{"components":[{"name":"ChainID","type":"uint32"},{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"Period","type":"uint32"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Identifier","type":"cell"},{"name":"Value","type":"uint128"},{"name":"IpfsHash","type":"string"},{"name":"AdditionalGas","type":"uint128"}],"name":"tmp_cross_chain_subscriptions_create","type":"map(uint64,tuple)"}
 			]
 		},
 		{
@@ -837,7 +830,7 @@
 		{"name":"cross_chain_proxies","type":"map(uint32,string)"},
 		{"name":"cross_chain_token","type":"address"},
 		{"name":"service_registration_token","type":"address"},
-		{"components":[{"name":"ChainID","type":"uint32"},{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"Period","type":"uint32"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Email","type":"string"},{"name":"Value","type":"uint128"},{"name":"IpfsHash","type":"string"},{"name":"AdditionalGas","type":"uint128"}],"name":"tmp_cross_chain_subscriptions_create","type":"map(uint64,tuple)"},
+		{"components":[{"name":"ChainID","type":"uint32"},{"name":"Customer","type":"string"},{"name":"Payee","type":"string"},{"name":"Period","type":"uint32"},{"name":"TokenAddress","type":"string"},{"name":"PubKey","type":"uint256"},{"name":"Identifier","type":"cell"},{"name":"Value","type":"uint128"},{"name":"IpfsHash","type":"string"},{"name":"AdditionalGas","type":"uint128"}],"name":"tmp_cross_chain_subscriptions_create","type":"map(uint64,tuple)"},
 		{"name":"tmp_cross_chain_subscriptions_execute","type":"map(uint64,uint128)"},
 		{"name":"supported_external_tokens","type":"map(uint32,string[])"}
 	]

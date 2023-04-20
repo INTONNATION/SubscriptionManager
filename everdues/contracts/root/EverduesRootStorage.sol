@@ -87,7 +87,7 @@ abstract contract EverduesRootStorage {
 		uint32 Period; // subscription_plan
 		string TokenAddress; // ERC20 token address
 		uint256 PubKey; // subscriber pubkey
-		string Email; // subscriber email
+		TvmCell Identifier; // subscriber email
 		uint128 Value; // value
 		string IpfsHash;
 		uint128 AdditionalGas;
@@ -101,8 +101,6 @@ abstract contract EverduesRootStorage {
 	address public cross_chain_token;
 	address public service_registration_token;
 
-	mapping (uint32=>string[]) public supported_external_tokens;
-	
 	function getCatalogCodeHashes(uint32 version) public view returns (mapping(uint256 => uint256)) {
 		mapping(uint256 => ContractVersionParams) contracts;
 		mapping(uint256 => uint256) categories_hash;

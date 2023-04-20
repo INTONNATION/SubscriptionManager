@@ -57,8 +57,6 @@ abiIndexContract=$(cat ../abi/Index.abi.json | jq -c .| base64 $prefix)
 abiSubscriptionContract=$(cat ../abi/EverduesSubscriptionV1.abi.json | jq -c .| base64 $prefix)
 abiFeeProxyContract=$(cat ../abi/EverduesFeeProxy.abi.json | jq -c .| base64 $prefix)
 
-#DELETE IN NEXT RELEASE
-tonos-cli call $CONTRACT_ADDRESS eraseMappings "{}" --abi ../abi/$1.abi.json
 # Set TVCs
 message=`tonos-cli -j body setCodePlatform "{\"codePlatformInput\":\"$platformCode\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
@@ -155,7 +153,7 @@ tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWall
 message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"56\",\"supported_tokens\":[\"0x55d398326f99059ff775485246999027b3197955\",\"0xe9e7cea3dedca5984780bafc599bd69add087d56\",\"0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d\",\"0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3\"]}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
-message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"11155111\",\"supported_tokens\":[\"0x0Bd5F04B456ab34a2aB3e9d556Fe5b3A41A0BC8D\"]}"  --abi ../abi/$1.abi.json | jq -r .Message`
+message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"11155111\",\"supported_tokens\":[\"0x0bd5f04b456ab34a2ab3e9d556fe5b3a41a0bc8d\"]}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
 message=`tonos-cli -j body installOrUpgradeExternalTokensAddresses "{\"chain_id\":\"1\",\"supported_tokens\":[\"0xdac17f958d2ee523a2206206994597c13d831ec7\",\"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\",\"0x4fabb145d64652a948d72533023f6e7a623c7c53\",\"0x6b175474e89094c44da98b954eedeac495271d0f\"]}"  --abi ../abi/$1.abi.json | jq -r .Message`

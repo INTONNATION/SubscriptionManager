@@ -108,9 +108,10 @@
 		{
 			"name": "getMetadata",
 			"inputs": [
+				{"name":"answerId","type":"uint32"}
 			],
 			"outputs": [
-				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint32,string)"},{"name":"external_supported_tokens","type":"map(uint32,string[])"},{"name":"additionalIdentificator","type":"string"}],"name":"value0","type":"tuple"}
+				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint32,string)"},{"name":"external_supported_tokens","type":"map(uint32,string[])"},{"name":"additionalIdentificator","type":"string"},{"name":"account_address","type":"address"}],"name":"value0","type":"tuple"}
 			]
 		},
 		{
@@ -276,6 +277,13 @@
 		},
 		{
 			"name": "ServiceDeleted",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "ServiceParamsUpdated",
 			"inputs": [
 			],
 			"outputs": [
