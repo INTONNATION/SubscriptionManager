@@ -23,6 +23,9 @@ abstract contract EverduesServiceBase is
 	);
 
 	event ServiceDeleted();
+
+	event ServiceParamsUpdated();
+
 	modifier onlyRoot() {
 		require(
 			msg.sender == root,
@@ -84,14 +87,25 @@ abstract contract EverduesServiceBase is
 	) external onlyOwner {
 		tvm.accept();
 		TvmCell subscription_plans_cell;
-		(service_params, subscription_plans_cell) = abi.decode(
+		TvmCell supported_chains_cell;
+		TvmCell supported_external_tokens_cell;
+		(service_params, subscription_plans_cell,supported_chains_cell,supported_external_tokens_cell,additional_identificator) = abi.decode(
 			new_service_params,
-			(TvmCell, TvmCell)
+			(TvmCell, TvmCell,TvmCell, TvmCell,TvmCell)
 		);
 		subscription_plans = abi.decode(
 			subscription_plans_cell,
 			mapping(uint8 => TvmCell)
 		);
+		supported_chains = abi.decode(
+			supported_chains_cell,
+			(mapping(uint32 => string))
+		);
+		external_supported_tokens = abi.decode(
+			supported_external_tokens_cell,
+			(mapping(uint32 => string[]))
+		);
+		emit ServiceParamsUpdated();
 	}
 
 	function updateGasCompenstationProportion(
