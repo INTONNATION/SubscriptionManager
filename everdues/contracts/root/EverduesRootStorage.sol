@@ -93,6 +93,18 @@ abstract contract EverduesRootStorage {
 		uint128 AdditionalGas;
 	}
 
+	struct ExternalSubscriptionOld {
+		string Customer; // subscriber EVM address
+		string Payee; // service owner EVM address
+		uint8 SubscriptionPlan; // subscription_plan
+		string TokenAddress; // ERC20 token address
+		uint256 PubKey; // subscriber pubkey
+		string Email; // subscriber email
+		uint128 Allowance; // value
+		uint128 PaidAmount; // sum(value)
+		bool IsActive; // canceled or not		
+	}
+
 	mapping(uint8 => mapping(uint32 => ContractParams)) public versions;
 
 	mapping(address => ServiceDeployParams) public wallets_mapping; // supported tip3 for locking -> rquired token's amount (service deploy)
