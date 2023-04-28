@@ -548,6 +548,13 @@
 			]
 		},
 		{
+			"name": "deleteTmp",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "getCatalogCodeHashes",
 			"inputs": [
 				{"name":"version","type":"uint32"}

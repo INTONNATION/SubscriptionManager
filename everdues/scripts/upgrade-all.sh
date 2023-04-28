@@ -144,7 +144,7 @@ message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chai
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
 
-message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"11155111\",\"contract_address\":\"0x41fde22032d9044ebfe888cda819072fe108f7d4\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
+message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"11155111\",\"contract_address\":\"0x1413a6BaD6C12dEaa06bc6f0393266C58C5cb2B9\"}"  --abi ../abi/$1.abi.json | jq -r .Message`
 tonos-cli callx -m submitTransaction --addr $owner --abi ../abi/SafeMultisigWallet.abi.json --keys owner.msig.keys.json --dest $CONTRACT_ADDRESS --value 1T --bounce true --allBalance false --payload "$message"
 
 message=`tonos-cli -j body installOrUpgradeCrossChainContractsAddresses "{\"chain_id\":\"137\",\"contract_address\":\"0xE0184d6c2c75964a08B66081ECDDd0Ab5F45463F\"}"  --abi ../abi/$1.abi.json | jq -r .Message`

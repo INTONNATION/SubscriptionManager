@@ -53,6 +53,7 @@ contract EverduesRoot is EverduesRootBase {
 
 	function onCodeUpgrade(TvmCell upgrade_data) private {
 		tvm.rawReserve(EverduesGas.ROOT_INITIAL_BALANCE, 2);
+		//mapping(uint8 => mapping(uint256 => ExternalSubscriptionOld)) cross_chain_subscriptions;
 		tvm.resetStorage();
 		(
 			owner,
@@ -105,7 +106,7 @@ contract EverduesRoot is EverduesRootBase {
 				uint8,
 				mapping(address => ServiceDeployParams),
 				address,
-				//mapping(uint8 => mapping(uint256 => ExternalSubscription)),
+				//mapping(uint8 => mapping(uint256 => ExternalSubscriptionOld)),
 				mapping(uint32 => string),
 				mapping (uint32=>string[]),
 				address,

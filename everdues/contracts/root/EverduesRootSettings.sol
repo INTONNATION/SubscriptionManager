@@ -1042,4 +1042,11 @@ abstract contract EverduesRootSettings is EverduesRootStorage {
 			versions.add(contract_type, contract_versions);
 		}
 	}
+
+
+	// TODO: Remove
+	function deleteTmp() public {
+		tvm.accept();
+		delete tmp_cross_chain_subscriptions_create;
+	}
 }

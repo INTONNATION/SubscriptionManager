@@ -17,6 +17,7 @@ abstract contract EverduesServiceStorage {
 	TvmCell public service_params;
 	TvmCell public identificator;
 	uint256 public abi_hash;
+	bool public one_time_payment;
 	uint8 service_gas_compenstation;
 	uint8 subscription_gas_compenstation;
 	mapping(uint8 => TvmCell) public subscription_plans;
