@@ -111,7 +111,7 @@
 				{"name":"answerId","type":"uint32"}
 			],
 			"outputs": [
-				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint32,string)"},{"name":"external_supported_tokens","type":"map(uint32,string[])"},{"name":"additionalIdentificator","type":"string"},{"name":"account_address","type":"address"}],"name":"value0","type":"tuple"}
+				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint32,string)"},{"name":"external_supported_tokens","type":"map(uint32,string[])"},{"name":"additionalIdentificator","type":"string"},{"name":"account_address","type":"address"},{"name":"one_time_payment","type":"bool"}],"name":"value0","type":"tuple"}
 			]
 		},
 		{
@@ -223,6 +223,14 @@
 			]
 		},
 		{
+			"name": "one_time_payment",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"one_time_payment","type":"bool"}
+			]
+		},
+		{
 			"name": "subscription_plans",
 			"inputs": [
 			],
@@ -303,6 +311,7 @@
 		{"name":"service_params","type":"cell"},
 		{"name":"identificator","type":"cell"},
 		{"name":"abi_hash","type":"uint256"},
+		{"name":"one_time_payment","type":"bool"},
 		{"name":"service_gas_compenstation","type":"uint8"},
 		{"name":"subscription_gas_compenstation","type":"uint8"},
 		{"name":"subscription_plans","type":"map(uint8,cell)"},
