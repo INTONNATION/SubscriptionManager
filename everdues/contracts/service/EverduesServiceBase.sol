@@ -105,6 +105,7 @@ abstract contract EverduesServiceBase is
 			supported_external_tokens_cell,
 			(mapping(uint32 => string[]))
 		);
+		// TODO: add upgrade(tvm.code and category if it's was changed)
 		emit ServiceParamsUpdated();
 	}
 

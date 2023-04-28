@@ -28,6 +28,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 			external_supported_tokens,
 			wallet_balance,
 			additional_identificator,
+			one_time_payment,
 			upgrade_params
 		);
 		TvmCell data = abi.encode(
@@ -107,10 +108,11 @@ contract EverduesService_V1 is EverduesServiceBase {
 				service_gas_compenstation,
 				subscription_gas_compenstation,
 				identificator,
-				abi_hash
+				abi_hash,
+				one_time_payment
 			) = abi.decode(
 				additional_params,
-				(address, address, uint256, uint8, uint8, TvmCell, uint256)
+				(address, address, uint256, uint8, uint8, TvmCell, uint256, bool)
 			);
 			emit ServiceDeployed(
 				subscription_service_index_address,
@@ -135,6 +137,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 				external_supported_tokens,
 				wallet_balance,
 				additional_identificator,
+				//one_time_payment,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -154,6 +157,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 					mapping(uint32 => string[]),
 					BalanceWalletStruct,
 					TvmCell,
+					//bool,
 					TvmCell
 				)
 			);

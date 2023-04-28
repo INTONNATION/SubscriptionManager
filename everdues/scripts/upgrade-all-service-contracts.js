@@ -183,8 +183,8 @@ async function getCategory(client, service_address) {
         RootAddress = await accountRoot.getAddress();
         console.log(`Everdues Root address: ${RootAddress}`);
 
-        let response = await accountRoot.runLocal("getCatalogCodeHashes", {version: 10});
-        formatCodeHashes0x = ["69c39cff60a06ade6925289ce8f08d1c5e21c19a5cde384e4686ca67fd3a7f2c"];
+        let response = await accountRoot.runLocal("getCatalogCodeHashes", {version: 33});
+        //formatCodeHashes0x = ["69c39cff60a06ade6925289ce8f08d1c5e21c19a5cde384e4686ca67fd3a7f2c"];
 	    formatCodeHashes = []
         let categories_hash = Object.keys(response.decoded.output.value0);
         
@@ -206,9 +206,9 @@ async function getCategory(client, service_address) {
         // read external
         //const supported_chains = await getSupportedChains(client,account.id);
         //const external_supported_tokens = await getSupportedTokens(client,account.id);
-        //const { data: category } = await getCategory(client,account.id);
+        const { data: category } = await getCategory(client,account.id);
         console.log("here1");
-	    await executeUpgrade(client,account.id,"Others");
+	    await executeUpgrade(client,account.id,category.category);
         //await updateData(client,account.id,supported_chains,external_supported_tokens);
         
 	}
