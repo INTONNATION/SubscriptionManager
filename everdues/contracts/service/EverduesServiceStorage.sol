@@ -45,6 +45,7 @@ abstract contract EverduesServiceStorage {
 		mapping(uint32 => string[]) external_supported_tokens;
 		string additionalIdentificator;
 		address account_address;
+		bool one_time_payment;
 	}
 
 	BalanceWalletStruct public wallet_balance;
@@ -67,6 +68,7 @@ abstract contract EverduesServiceStorage {
 			returned_data.additionalIdentificator = "";
 		}
 		returned_data.account_address = account_address;
+		returned_data.one_time_payment = one_time_payment;
 		return{value: 0, bounce: false, flag: 64} returned_data;
 	}
 

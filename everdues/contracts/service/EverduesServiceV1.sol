@@ -85,9 +85,9 @@ contract EverduesService_V1 is EverduesServiceBase {
 			TvmCell subscription_plans_cell;
 			TvmCell supported_chains_cell;
 			TvmCell supported_external_tokens_cell;
-			(service_params, subscription_plans_cell, supported_chains_cell, supported_external_tokens_cell, additional_identificator) = abi.decode(
+			(service_params, subscription_plans_cell, supported_chains_cell, supported_external_tokens_cell, additional_identificator, one_time_payment) = abi.decode(
 				service_params_cell,
-				(TvmCell, TvmCell, TvmCell, TvmCell, TvmCell)
+				(TvmCell, TvmCell, TvmCell, TvmCell, TvmCell, bool)
 			);
 			subscription_plans = abi.decode(
 				subscription_plans_cell,
@@ -108,11 +108,10 @@ contract EverduesService_V1 is EverduesServiceBase {
 				service_gas_compenstation,
 				subscription_gas_compenstation,
 				identificator,
-				abi_hash,
-				one_time_payment
+				abi_hash
 			) = abi.decode(
 				additional_params,
-				(address, address, uint256, uint8, uint8, TvmCell, uint256, bool)
+				(address, address, uint256, uint8, uint8, TvmCell, uint256)
 			);
 			emit ServiceDeployed(
 				subscription_service_index_address,
@@ -137,7 +136,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 				external_supported_tokens,
 				wallet_balance,
 				additional_identificator,
-				//one_time_payment,
+				one_time_payment,
 				upgrade_params
 			) = abi.decode(
 				contract_params,
@@ -157,7 +156,7 @@ contract EverduesService_V1 is EverduesServiceBase {
 					mapping(uint32 => string[]),
 					BalanceWalletStruct,
 					TvmCell,
-					//bool,
+					bool,
 					TvmCell
 				)
 			);
