@@ -194,7 +194,7 @@
 		{
 			"name": "onGetServiceMetadata",
 			"inputs": [
-				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint32,string)"},{"name":"external_supported_tokens","type":"map(uint32,string[])"},{"name":"additionalIdentificator","type":"string"},{"name":"account_address","type":"address"}],"name":"svc_info","type":"tuple"}
+				{"components":[{"name":"service_params","type":"cell"},{"name":"subscription_plans","type":"map(uint8,cell)"},{"name":"supported_chains","type":"map(uint32,string)"},{"name":"external_supported_tokens","type":"map(uint32,string[])"},{"name":"additionalIdentificator","type":"string"},{"name":"account_address","type":"address"},{"name":"one_time_payment","type":"bool"}],"name":"svc_info","type":"tuple"}
 			],
 			"outputs": [
 			]
