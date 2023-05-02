@@ -85,9 +85,14 @@ contract EverduesService_V1 is EverduesServiceBase {
 			TvmCell subscription_plans_cell;
 			TvmCell supported_chains_cell;
 			TvmCell supported_external_tokens_cell;
-			(service_params, subscription_plans_cell, supported_chains_cell, supported_external_tokens_cell, additional_identificator, one_time_payment) = abi.decode(
+			TvmCell one_time_payment_cell;
+			(service_params, subscription_plans_cell, supported_chains_cell, supported_external_tokens_cell, additional_identificator, one_time_payment_cell) = abi.decode(
 				service_params_cell,
-				(TvmCell, TvmCell, TvmCell, TvmCell, TvmCell, bool)
+				(TvmCell, TvmCell, TvmCell, TvmCell, TvmCell, TvmCell)
+			);
+			one_time_payment = abi.decode(
+				one_time_payment_cell,
+				(bool)
 			);
 			subscription_plans = abi.decode(
 				subscription_plans_cell,

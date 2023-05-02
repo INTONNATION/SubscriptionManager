@@ -129,7 +129,7 @@ async function executeUpgrade(client, account, category) {
         console.log(`External outbound message, event "${decoded.name}", parameters`, JSON.stringify(decoded.value));
 }
 async function getCategory(client, service_address) {
-    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFileNew, 'utf8'))};
+    const contractPackage = { abi: JSON.parse(fs.readFileSync(svcAbiFile, 'utf8'))};
     const account = new Account(contractPackage, {
         address: service_address,
         signer: signerNone(),
@@ -183,7 +183,7 @@ async function getCategory(client, service_address) {
         RootAddress = await accountRoot.getAddress();
         console.log(`Everdues Root address: ${RootAddress}`);
 
-        let response = await accountRoot.runLocal("getCatalogCodeHashes", {version: 36});
+        let response = await accountRoot.runLocal("getCatalogCodeHashes", {version: 37});
         //formatCodeHashes0x = ["69c39cff60a06ade6925289ce8f08d1c5e21c19a5cde384e4686ca67fd3a7f2c"];
 	    formatCodeHashes = []
         let categories_hash = Object.keys(response.decoded.output.value0);
